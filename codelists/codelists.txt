@@ -1,0 +1,12 @@
+opensafely/ethnicity/2020-04-27
+opensafely/acute-respiratory-illness-primary-care/30f1c6ca
+opensafely/sick-notes-snomed/0f8ffb90
+ons/neurological-disorders/54fabb61
+opensafely/antibacterials/26390d85
+opensafely/opioid-containing-medicines-buccal-nasal-and-oromucosal-excluding-drugs-for-substance-misuse-dmd/20d38d99
+opensafely/opioid-containing-medicines-inhalation-excluding-drugs-for-substance-misuse-dmd/07c41a64
+opensafely/opioid-containing-medicines-oral-excluding-drugs-for-substance-misuse-dmd/6eb4a72e
+opensafely/opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd/55a533f9
+opensafely/opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd/3c95c0c4
+opensafely/opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd/23864d8f
+bristol/antidepressants-snomedct/677f55d2

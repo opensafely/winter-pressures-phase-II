@@ -1,0 +1,102 @@
+code,term
+103695000,Preparation of medical certificate
+1321000000100,MED3 - doctor's statement
+1331000000103,Med3 certificate issued to patient
+1341000000107,Med3 certificate duplicate issued
+1351000000105,Med3 certificate not issued to patient
+1361000000108,MED5 - doctor's special statement
+1371000000101,MED5 issued to patient
+13851000000100,SC1 - self certificate
+1391000000102,MED6 vague diagnostic statement to regional medical officer
+1411000000102,Private sickness certificate
+1421000000108,Forces sickness on leave certificate
+14241000000101,Med3 certificate issued - back to work
+152925005,(Sickness notif GP) or (LOC1/2/3)
+152927002,LOC 2-sickness notification
+152928007,LOC 3-sickness payment record
+152944003,MED3 - doctor's statement
+152945002,MED3 issued to patient
+152946001,MED3 duplicate issued
+152950008,MED5 - doctor's special statement
+152951007,MED5 issued to patient
+152954004,MED6 - vague diagnostic statement to RMO
+152956002,Private sickness certificate
+152960004,Private sickness cert. NOS
+152965009,Forces sickness on leave certificate
+152966005,Forces sickness on leave certification - fee not paid
+152967001,Forces sickness on leave certification - receipt given
+153009009,MED4 - doctors statement
+153010004,MED4 - issued to patient
+153011000,MED4 - duplicate issued
+160978002,(Sickness &/ or invalidity benefit) or invalidity pension
+1631000000107,MED4 - issued to patient
+165801000000106,Sick note generated from secondary care done by practice
+16611000000106,MED4 - doctors statement
+16621000000100,MED4 - duplicate issued
+170591000000101,Sick note generated from secondary care done by practice
+175251000000102,Sick note generated from secondary care done by practice
+18341000000104,MED4 status
+18351000000101,MED6 status
+18381000000107,Sickness certificates
+184710007,(Sickness notif GP) or (LOC1/2/3)
+184746003,Private sickness certificate NOS
+184752002,Forces sickness on leave certification - fee not paid
+184753007,Forces sickness on leave certification - receipt given
+18691000000103,Sickness notification of general practitioner
+224459001,On sick leave from work
+23091000000108,LOC1/2/3 notification of sickness form
+30201000000104,LOC 2-sickness notification
+30211000000102,LOC 3-sickness payment record
+30371000000102,MED3 - doctor's statement
+30381000000100,MED3 issued to patient
+30391000000103,MED3 duplicate issued
+30411000000103,MED3 - NOS
+30421000000109,MED5 - doctor's special statement
+30431000000106,MED5 issued to patient
+30461000000101,MED6 - vague diagnostic statement to RMO
+30481000000105,Private sickness certificate
+30501000000101,Forces sickness on leave certificate
+30761000000108,MED4 - doctors statement
+30771000000101,MED4 - issued to patient
+30781000000104,MED4 - duplicate issued
+307906008,Forces sickness on leave certification status
+316462004,[V]Issue of medical certificate
+333311000000101,Sickness and absence policy - National Public Health Classification
+340051000000109,Sickness absence - National Public Health Classification
+430551000000108,[V]Issue of medical certificate
+5071000000100,LOC1/2/3 - notification of sickness status
+5121000000100,Med3 certification status
+5131000000103,MED5 status
+645301000000107,Private sickness certificate NOS
+661751000000100,Forces sickness on leave certification NOS
+721221000000102,Sickness absence
+751481000000104,"eMED3 (2010) new statement issued, not fit for work"
+751491000000102,"eMED3 (2010) new statement issued, not fit for work "
+751601000000107,"eMED3 (2010) new statement issued, may be fit for work"
+751611000000109,"eMED3 (2010) new statement issued, may be fit for work "
+751621000000103,"eMED3 (2010) duplicate issued, not fit for work"
+751631000000101,"eMED3 (2010) duplicate issued, not fit for work "
+751641000000105,"eMED3 (2010) duplicate issued, may be fit for work"
+751651000000108,"eMED3 (2010) duplicate issued, may be fit for work "
+751731000000106,"MED3 (2010) issued by hand, not fit for work"
+751741000000102,"MED3 (2010) issued by hand, not fit for work "
+751751000000104,"MED3 (2010) issued by hand, may be fit for work"
+751761000000101,"MED3 (2010) issued by hand, may be fit for work "
+772786005,Medical certificate
+775221000000101,MED3 (2010) certificate not issued to patient
+775241000000108,MED3 (2010) certificate issued to patient
+775251000000106,MED3 (2010) issued to patient 
+775261000000109,MED3 (2010) certificate duplicate issued
+775271000000102,MED3 (2010) duplicate issued 
+775281000000100,MED3 (2010) certificate issued - recommend phased return to work
+775291000000103,MED3 (2010) issued - recommend phased return to work 
+775301000000104,MED3 (2010) certificate issued - recommend altered hours
+775311000000102,MED3 (2010) issued - recommend altered hours 
+775321000000108,MED3 (2010) certificate issued - recommend amended duties
+775331000000105,MED3 (2010) issued - recommend amended duties 
+775351000000103,MED3 (2010) certificate issued - recommend workplace adaptation
+775361000000100,MED3 (2010) issued - recommend workplace adaptation 
+7941000000101,LOC1 application for additional payments during sickness form
+7951000000103,LOC2 sickness notification form
+7961000000100,LOC3 sickness payment record
+831641000000107,Sickness certificates
