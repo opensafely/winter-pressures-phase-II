@@ -10,12 +10,12 @@ actions:
       highly_sensitive:
         dataset: output/dataset_measures.csv.gz
   generate_app_measures:
-    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py
+    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv.gz analysis/appointments/app_measures.py
     outputs:
       highly_sensitive:
-        dataset: output/appointments/app_measures.csv
+        dataset: output/appointments/app_measures.csv.gz
   generate_app_viz:
-    run: r:latest analysis/appointments/app_viz.R
+    run: r:latest analysis/appointments/app_viz.r
     needs: [generate_app_measures]
     outputs:
       moderately_sensitive:
@@ -24,5 +24,5 @@ actions:
     run: python:latest analysis/appointments/app_summary.py
     needs: [generate_app_measures]
     outputs:
-      moderately_sensitive:
-        app_table: output/appointments/app_summary.csv
+      highly_sensitive:
+        app_table: output/appointments/app_summary.csv.gz
