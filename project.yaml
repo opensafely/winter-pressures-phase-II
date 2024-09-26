@@ -1,12 +1,28 @@
-version: '3.0'
+version: "3.0"
 
-# Ignore this`expectation` block. It is required but not used, and will be removed in future versions.
 expectations:
   population_size: 1000
 
 actions:
-  generate_dataset:
-    run: ehrql:v1 generate-dataset analysis/dataset_definition.py --output output/dataset.csv.gz
+  generate_measures:
+    run: ehrql:v1 generate-measures --output output/dataset_measures.csv.gz analysis/dataset_definition_measures.py
     outputs:
       highly_sensitive:
-        dataset: output/dataset.csv.gz
+        dataset: output/dataset_measures.csv.gz
+  generate_app_measures:
+    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py
+    outputs:
+      highly_sensitive:
+        dataset: output/appointments/app_measures.csv
+  generate_app_viz:
+    run: r:latest analysis/appointments/app_viz.R
+    needs: [generate_app_measures]
+    outputs:
+      moderately_sensitive:
+        app_figures: output/appointments/*.png
+  generate_app_summary:
+    run: python:latest analysis/appointments/app_summary.py
+    needs: [generate_app_measures]
+    outputs:
+      moderately_sensitive:
+        app_table: output/appointments/app_summary.csv
