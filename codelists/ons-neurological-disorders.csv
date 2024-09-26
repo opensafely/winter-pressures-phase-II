@@ -1,0 +1,580 @@
+code,term
+10394003,Friedreich's ataxia
+1089411000000104,Cerebral infarction due to occlusion of cerebral artery
+1089421000000105,Cerebral infarction due to stenosis of cerebral artery
+110270004,Sequela of infection caused by Human poliovirus
+111297002,Nonparalytic stroke
+111501005,Congenital hereditary muscular dystrophy
+111502003,Fukuyama congenital muscular dystrophy
+111503008,Merosin deficient congenital muscular dystrophy
+111504002,Walker-Warburg congenital muscular dystrophy
+111505001,"Muscle-eye-brain disease, congenital muscular dystrophy"
+111508004,Emery-Dreifuss muscular dystrophy
+116288000,Paralytic stroke
+116401000119105,Recurrent complex partial epilepsy
+1212005,Childhood type dermatomyositis
+124122005,Deficiency of 3-hydroxyacyl-CoA dehydrogenase
+124166007,Deficiency of butyryl-CoA dehydrogenase
+124621004,Deficiency of enoyl-coenzyme A hydratase
+125081000119106,Cerebral infarction due to occlusion of precerebral artery
+128212001,"Spinal muscular atrophy, type II"
+128213006,Neuromuscular junction disorder
+128596003,Medium-chain acyl-coenzyme A dehydrogenase deficiency
+13973009,Grand mal status
+140921000119102,Ischemic stroke without coma
+14289006,Myopathy in hypopituitarism
+14309005,Anterior choroidal artery syndrome
+14637005,Late-infantile neuronal ceroid lipofuscinosis
+15258001,Subclavian steal syndrome
+15978431000119106,Thrombosis of right vertebral artery
+16000351000119109,Cerebrovascular accident due to occlusion of left posterior cerebral artery
+16000391000119104,Cerebrovascular accident due to occlusion of right posterior cerebral artery
+16000431000119109,Cerebrovascular accident due to occlusion of right middle cerebral artery
+16000511000119103,Cerebrovascular accident due to occlusion of left middle cerebral artery
+16002031000119102,Cerebrovascular accident due to thrombus of right middle cerebral artery
+16002111000119106,Cerebrovascular accident due to thrombus of left middle cerebral artery
+16218291000119100,Acute cerebral ischemia
+16371781000119100,Cerebellar stroke
+16851005,Mitochondrial myopathy
+16873003,Musicogenic seizure
+186476008,Acute paralytic non-bulbar poliomyelitis
+186478009,"Acute paralytic poliomyelitis, vaccine-associated"
+186479001,"Acute paralytic poliomyelitis, wild virus, imported"
+186480003,"Acute paralytic poliomyelitis, wild virus, indigenous"
+189198006,Epileptic drop attack
+191382009,Chronic congestive splenomegaly
+191397007,Pseudocholinesterase deficiency
+192686004,Polioencephalitis
+192845009,Myoclonic encephalopathy
+192979009,Generalized non-convulsive epilepsy
+192981006,Epileptic seizures - atonic
+192982004,Epileptic seizures - akinetic
+192991000,Epileptic seizures - clonic
+192992007,Epileptic seizures - myoclonic
+192993002,Epileptic seizures - tonic
+192999003,Partial epilepsy with impairment of consciousness
+193000002,Temporal lobe epilepsy
+193002005,Psychosensory epilepsy
+193003000,Mesiobasal limbic epilepsy
+193004006,Epileptic automatism
+193008009,Somatosensory epilepsy
+193009001,Partial epilepsy with autonomic symptoms
+193010006,Visual reflex epilepsy
+193011005,Unilateral epilepsy
+193021002,Cursive (running) epilepsy
+193022009,Localization-related(focal)(partial)idiopathic epilepsy and epileptic syndromes with seizures of localized onset
+193206003,Persistent neonatal myasthenia gravis
+193207007,Juvenile or adult myasthenia gravis
+193209005,Myasthenic syndrome due to another disorder
+193212008,Myasthenic syndrome due to hypothyroidism
+193213003,Myasthenic syndrome due to pernicious anemia
+193214009,Myasthenic syndrome due to thyrotoxicosis
+193216006,Congenital and developmental myasthenia
+193225000,Hereditary progressive muscular dystrophy
+193227008,Pelvic muscular dystrophy
+193230001,Distal muscular dystrophy with juvenile onset
+193237003,Myotonic disorder
+193238008,Infantile myotonia
+193246009,Symptomatic inflammatory myopathy associated with another disorder
+193248005,Myopathy due to disseminated lupus erythematosus
+193249002,Myopathy due to polyarteritis nodosa
+193250002,Myopathy due to rheumatoid arthritis
+193251003,Sarcoid myopathy
+193252005,Myopathy due to scleroderma
+193253000,Myopathy due to Sjögren's disease
+195163003,Intracerebral hemorrhage (& [cerebrovascular accident due to])
+195165005,Basal ganglia hemorrhage
+195167002,External capsule hemorrhage
+195169004,"Intracerebral hemorrhage, multiple localized"
+195185009,Cerebral infarct due to thrombosis of precerebral arteries
+195186005,Cerebral infarction due to embolism of precerebral arteries
+195189003,Cerebral infarction due to thrombosis of cerebral arteries
+195190007,Cerebral infarction due to embolism of cerebral arteries
+195200006,Carotid artery syndrome hemispheric
+195201005,Multiple and bilateral precerebral artery syndromes
+195206000,Intermittent cerebral ischemia
+195209007,Middle cerebral artery syndrome
+195210002,Anterior cerebral artery syndrome
+195211003,Posterior cerebral artery syndrome
+195212005,Brainstem stroke syndrome
+195213000,Cerebellar stroke syndrome
+195216008,Left sided cerebral hemisphere cerebrovascular accident
+195217004,Right sided cerebral hemisphere cerebrovascular accident
+195230003,"Cerebral infarction due to cerebral venous thrombosis, non-pyogenic"
+19598007,Generalized epilepsy
+196136009,Lung disease co-occurrent with polymyositis
+199451000000106,Simple partial epileptic seizure
+19972008,Postencephalitic parkinsonism
+20059004,Occlusion of cerebral artery
+20908003,Subcortical cerebral hemorrhage
+21764004,Renal carnitine transport defect
+22062008,"X-linked glutaric aciduria, type 2"
+22886006,"Glutaric aciduria, type 2"
+230191005,Rasmussen syndrome
+230237004,Progressive spinocerebellar ataxia with decreased tendon reflexes
+230238009,Progressive spinocerebellar ataxia with retained tendon reflexes
+230246005,Progressive bulbar palsy of childhood
+230247001,Distal spinal muscular atrophy
+230248006,Scapuloperoneal spinal muscular atrophy
+230249003,Facioscapulohumeral spinal muscular atrophy
+230250003,Facioscapulohumeral spinal muscular atrophy with sensory loss
+230251004,Scapulohumeral spinal muscular atrophy
+230252006,Oculopharyngeal spinal muscular atrophy
+230253001,Bulbospinal neuronopathy
+230254007,Western Pacific motor neurone disease
+230255008,Madras-type motor neurone disease
+230257000,Paraneoplastic motor neurone disease
+230258005,Amyotrophic lateral sclerosis with dementia
+230264003,Troyer syndrome
+230274000,Frontal lobe degeneration with motor neurone disease
+230291001,Juvenile Parkinson's disease
+230292008,Secondary parkinsonism
+230296006,Vascular parkinsonism
+230381009,Localization-related epilepsy
+230387008,Benign occipital epilepsy of childhood - early onset variant
+230389006,Primary inherited reading epilepsy
+230390002,Localization-related symptomatic epilepsy
+230391003,Amygdalo-hippocampal epilepsy
+230392005,Rhinencephalic epilepsy
+230393000,Lateral temporal epilepsy
+230394006,Frontal lobe epilepsy
+230395007,Supplementary motor epilepsy
+230396008,Cingulate epilepsy
+230397004,Anterior frontopolar epilepsy
+230398009,Orbitofrontal epilepsy
+230399001,Dorsolateral epilepsy
+230400008,Opercular epilepsy
+230401007,Non-progressive Kozhevnikow syndrome
+230403005,Parietal lobe epilepsy
+230404004,Occipital lobe epilepsy
+230405003,Chronic progressive epilepsia partialis continua of childhood
+230406002,Localization-related symptomatic epilepsy with specific precipitant
+230407006,Hemiplegia-hemiconvulsion-epilepsy syndrome
+230408001,Localization-related cryptogenic epilepsy
+230415009,Cryptogenic generalized epilepsy
+230416005,Cryptogenic West syndrome
+230417001,Symptomatic West syndrome
+230418006,Lennox-Gastaut syndrome
+230419003,Cryptogenic Lennox-Gastaut syndrome
+230420009,Symptomatic Lennox-Gastaut syndrome
+230421008,Myoclonic astatic epilepsy
+230422001,Myoclonic absence epilepsy
+230423006,Unverricht-Lundborg syndrome
+230425004,Lafora disease
+230426003,Myoclonic epilepsy with ragged red fibers
+230427007,Cryptogenic myoclonic epilepsy
+230428002,Idiopathic myoclonic epilepsy
+230429005,Early infantile epileptic encephalopathy with suppression bursts
+230430000,Symptomatic myoclonic epilepsy
+230435005,Epilepsy undetermined whether focal or generalized
+230439004,Epilepsy with continuous spike wave during slow-wave sleep
+230440002,Secondary reading epilepsy
+230441003,Drug-induced epilepsy
+230443000,Narcotic withdrawal epilepsy
+230444006,Menstrual epilepsy
+230445007,Nocturnal epilepsy
+230447004,Eyelid myoclonus with absences
+230448009,Writing epilepsy
+230450001,Eating epilepsy
+230452009,Toothbrushing epilepsy
+230453004,Decision-making epilepsy
+230454005,Aquagenic epilepsy
+230455006,Self-induced non-photosensitive epilepsy
+230456007,Status epilepticus
+230457003,Non-convulsive status epilepticus with three per second spike wave
+230458008,Non-convulsive status epilepticus without three per second spike wave
+230459000,Non-convulsive simple partial status epilepticus
+230460005,Complex partial status epilepticus
+230669004,Genetically determined myasthenia
+230670003,Familial infantile myasthenia
+230671004,Acetylcholine resynthesis deficiency
+230672006,Congenital myasthenic syndrome
+230673001,Congenital end-plate acetylcholine receptor deficiency
+230674007,Pseudomyopathic myasthenia
+230675008,Slow channel syndrome
+230676009,Putative defect in acetylcholine synthesis or packaging
+230677000,Congenital end-plate acetylcholinesterase deficiency
+230678005,Decrease of motor end-plate potential amplitude without acetylcholine receptor deficiency
+230679002,Abnormality of synaptic vesicles
+230682007,Penicillamine-induced myasthenia
+230685009,Myasthenia gravis associated with thymoma
+230686005,Generalized myasthenia
+230687001,Myopathy in myasthenia gravis
+230690007,Cerebrovascular accident
+230691006,Cerebrovascular accident due to occlusion of cerebral artery
+230692004,Infarction - precerebral
+230693009,Anterior cerebral circulation infarction
+230694003,Total anterior cerebral circulation infarction
+230695002,Partial anterior cerebral circulation infarction
+230696001,Posterior cerebral circulation infarction
+230698000,Lacunar infarction
+230699008,Pure motor lacunar infarction
+230700009,Pure sensory lacunar infarction
+230701008,Pure sensorimotor lacunar infarction
+230702001,Lacunar ataxic hemiparesis
+230703006,Dysarthria-clumsy hand syndrome
+230704000,Multi-infarct state
+230706003,Hemorrhagic cerebral infarction
+230707007,Anterior cerebral circulation hemorrhagic infarction
+230708002,Posterior cerebral circulation hemorrhagic infarction
+230709005,Massive supratentorial cerebral hemorrhage
+230710000,Lobar cerebral hemorrhage
+230711001,Thalamic hemorrhage
+230712008,Lacunar hemorrhage
+230713003,Stroke of uncertain pathology
+230714009,Anterior circulation stroke of uncertain pathology
+230715005,Posterior circulation stroke of uncertain pathology
+230716006,Carotid territory transient ischemic attack
+230717002,Vertebrobasilar territory transient ischemic attack
+230784003,Congenital pseudobulbar palsy
+237997005,Very long chain acyl-coenzyme A dehydrogenase deficiency
+237999008,Mitochondrial trifunctional protein deficiency
+238001003,Carnitine palmitoyltransferase I deficiency
+238002005,Carnitine palmitoyltransferase II deficiency
+238003000,Carnitine acylcarnitine translocase deficiency
+238026007,Infantile GM1 gangliosidosis
+238936001,Sclerodermatomyositis
+239898008,Polymyositis with malignant disease
+239899000,Polymyositis associated with autoimmune disease
+239901009,Dermatomyositis with malignant disease
+240046001,Muscular dystrophy with predominantly proximal limb girdle distribution
+240047005,X-linked muscular dystrophy with limb girdle distribution
+240048000,X-linked muscular dystrophy with abnormal dystrophin
+240049008,Intermediate X-linked muscular dystrophy
+240050008,Manifesting female carrier of X-linked muscular dystrophy
+240051007,X-linked limb girdle muscular dystrophy with normal dystrophin
+240052000,Ji muscular dystrophy
+240053005,Hereditary myopathy limited to females
+240054004,Autosomal recessive muscular dystrophy with limb girdle distribution
+240055003,Autosomal recessive muscular dystrophy with abnormal dystrophin-associated glycoprotein
+240056002,Severe autosomal recessive muscular dystrophy of childhood - North African type
+240057006,Autosomal recessive muscular dystrophy with gene located at 15q
+240058001,Reunion-Indiana Amish type muscular dystrophy
+240059009,Congenital muscular dystrophy
+240060004,Western type of congenital muscular dystrophy
+240061000,Congenital muscular dystrophy with arthrogryposis multiplex congenita
+240062007,Ullrich congenital muscular dystrophy
+240063002,Eichsfeld type congenital muscular dystrophy
+240064008,Hutterite type of muscular dystrophy
+240065009,Adult onset autosomal recessive muscular dystrophy with normal dystrophin
+240067001,Autosomal dominant muscular dystrophy with limb girdle distribution
+240068006,Autosomal dominant muscular dystrophy with gene located at 5q31
+240069003,Late onset proximal muscular dystrophy with dysarthria
+240070002,Muscular dystrophy not predominantly limb girdle in distribution
+240071003,X-linked muscular dystrophy not predominantly limb girdle
+240072005,Benign scapuloperoneal muscular dystrophy with cardiomyopathy
+240073000,Autosomal recessive muscular dystrophy not predominantly limb girdle
+240074006,Scapulohumeral muscular dystrophy
+240075007,Autosomal dominant muscular dystrophy not predominantly limb girdle
+240076008,Benign scapuloperoneal muscular dystrophy
+240077004,Severe scapuloperoneal muscular dystrophy with cardiomyopathy
+240078009,Benign congenital muscular dystrophy with finger flexion contractures
+240460008,Acute paralytic poliomyelitis
+240630008,Hyperimmune malarious splenomegaly
+241006,Epilepsia partialis continua
+24654003,Weber-Gubler syndrome
+249892007,Progressive pseudobulbar palsy
+25133001,Completed stroke
+25425008,"Autosomal recessive glutaric aciduria, type 2"
+256321009,Disorder of neuromuscular transmission
+26111005,Metabolic myopathy
+266257000,Transient ischemic attack
+267581004,Progressive myoclonic epilepsy
+267592003,Motor cortex epilepsy
+267604001,Myasthenic syndrome due to diabetic mellitus
+274100004,Cerebral hemorrhage
+275434003,Stroke in the puerperium
+276219001,Occipital cerebral infarction
+276220007,Foville syndrome
+276221006,Millard-Gubler syndrome
+276222004,Top of basilar syndrome
+276722003,Intracerebellar and posterior fossa hemorrhage
+277373000,Severe childhood autosomal recessive muscular dystrophy
+28055006,West syndrome
+281240008,Extension of cerebrovascular accident
+281357005,Idiopathic polymyositis
+281358000,Idiopathic dermatomyositis
+290741000119102,Intractable idiopathic partial epilepsy
+291511000119103,Spontaneous hemorrhage of deep cerebral hemisphere
+291531000119108,Spontaneous hemorrhage of cerebral hemisphere
+291541000119104,Spontaneous hemorrhage of brain stem
+29570005,Leigh's disease
+297138001,Embolus of circle of Willis
+305719002,Neuromyotonia
+307127004,Isolated long chain hydroxyacyl-CoA dehydrogenase deficiency
+307128009,Combined long chain hydroxyacyl-coenzyme A dehydrogenase deficiency
+307130006,3-Ketoacyl-coenzyme A triolase deficiency
+307356008,Motor epilepsy
+307357004,"Jacksonian, focal or motor epilepsy"
+307363008,Multiple lacunar infarcts
+307766002,Left sided cerebral infarction
+307767006,Right sided cerebral infarction
+308128006,"Right sided intracerebral hemorrhage, unspecified"
+31097004,Post poliomyelitis syndrome
+313307000,Epileptic seizure
+31384009,Polymyositis
+31839002,"Myasthenia gravis, adult form"
+322112361000132104,Epilepsy due to scarring of brain
+329461000119102,Cerebrovascular accident due to occlusion of left cerebellar artery by embolus
+329481000119106,Occlusion of right middle cerebral artery
+329491000119109,Occlusion of left middle cerebral artery
+329561000119101,Occlusion of right posterior cerebral artery
+329571000119107,Occlusion of left posterior cerebral artery
+329641000119104,Cerebrovascular accident due to thrombus of basilar artery
+329651000119102,Cerebrovascular accident due to thrombus of right carotid artery
+330791000119108,Cerebrovascular accident due to thrombus of left carotid artery
+34253008,Myopathy in Addison's disease
+34781003,Vertebral artery syndrome
+352818000,Tonic-clonic epilepsy
+361123003,Psychomotor epilepsy
+361268000,Alcohol-induced epilepsy
+371040005,Thrombotic stroke
+371041009,Embolic stroke
+37340000,Motor neuron disease
+37356005,Myoclonic seizure
+373606000,Occlusive stroke
+384993003,Periventricular hemorrhagic venous infarct
+387732009,Becker muscular dystrophy
+396230008,Dermatomyositis
+398432008,Bulbar weakness
+399091004,Facioscapulohumeral muscular dystrophy
+39912006,Hereditary spastic paraplegia
+407675009,Complex partial epileptic seizure
+40956001,Guillain-Barré syndrome
+413101007,Stress-induced epilepsy
+413102000,Infarction of basal ganglia
+413758000,Cardioembolic stroke
+41574007,Paramyotonia congenita
+41713005,Benedikt's syndrome
+419921000000105,"[X]Dermatopolymyositis, unspecified"
+4223005,Parkinsonism caused by drug
+426107000,Acute lacunar infarction
+426814001,Transient cerebral ischemia due to atrial fibrillation
+426983002,Infarction of medulla oblongata
+432504007,Cerebral infarction
+434541000124109,"Benign childhood epilepsy with centrotemporal spikes, refractory"
+434551000124106,"Benign childhood epilepsy with centrotemporal spikes, non-refractory"
+44395000,Spastic tetraplegia with rigidity syndrome
+44423001,Early myoclonic encephalopathy
+444657001,Superior cerebellar artery syndrome
+46251005,Corticospinal motor disease
+48794007,Human immunodeficiency virus infection with infectious mononucleosis-like syndrome
+49049000,Parkinson's disease
+49422009,Cortical hemorrhage
+49793008,Hereditary motor neuron disease
+509341000000107,Petit-mal epilepsy
+50967008,Gangliosidosis
+51615001,Fibrosis of lung
+52201006,Internal capsule hemorrhage
+5262007,Spinal muscular atrophy
+53509000,Myopathy in Cushing's disease
+54280009,Kugelberg-Welander disease
+54304004,Progressive bulbar palsy
+55016009,Congenital muscular hypertrophy-cerebral syndrome
+55051001,"Myasthenia gravis, juvenile form"
+56267009,Multi-infarct dementia
+56989000,Eaton-Lambert syndrome
+57938005,"Congenital myotonia, autosomal dominant form"
+57958006,Endocrine myopathy
+57981008,Progressing stroke
+58756001,Huntington's chorea
+58795000,Distal muscular dystrophy
+60738003,Secondary myopathy
+62009002,Adult neuronal ceroid lipofuscinosis
+63135006,Amyotonia congenita
+64009001,Basilar artery syndrome
+64383006,Werdnig-Hoffmann disease
+64764001,"Acute paralytic poliomyelitis, bulbar"
+65120008,Generalized convulsive epilepsy
+67747009,Ocular muscular dystrophy
+67992007,Multiple AND bilateral precerebral artery obstruction
+68437005,Thyrotoxic myopathy
+68618008,Rett's disorder
+699866005,Progressive bulbar palsy with sensorineural deafness
+702343002,Early onset myopathy with fatal cardiomyopathy
+702373006,Hereditary myopathy with early respiratory failure
+702383005,Distal myopathy 2
+7033004,Petit mal status
+703524005,Spinal muscular atrophy with progressive myoclonic epilepsy
+711406009,Autosomal recessive axonal neuropathy with neuromyotonia
+711483003,Spinal muscular atrophy with respiratory distress type 1
+713275003,Splenomegaly co-occurrent with human immunodeficiency virus infection
+71444005,Cerebral arterial thrombosis
+715429006,Congenital muscular dystrophy with infantile cataract and hypogonadism syndrome
+715565004,Lethal arthrogryposis co-occurrent with anterior horn cell disease
+716278005,Jeavons syndrome
+716722005,Acute motor sensory axonal Guillain-Barré syndrome
+716723000,Guillain-Barré syndrome acute inflammatory demyelinating polyradiculoneuropathic form
+717964007,Juvenile primary lateral sclerosis
+718177001,Autosomal recessive limb girdle muscular dystrophy type 2F
+71831005,Symptomatic generalized epilepsy
+718555006,Juvenile amyotrophic lateral sclerosis
+718572004,Bethlem myopathy
+719836007,X-linked distal arthrogryposis multiplex congenita
+722987009,Amyotrophic lateral sclerosis plus syndrome
+723308003,Epidermolysis bullosa simplex with muscular dystrophy
+723612001,"Spinal muscular atrophy, Dandy-Walker malformation, cataract syndrome"
+724429004,Stroke co-occurrent with migraine
+725046003,Mitochondrial complex I deficiency due to deficiency of acyl-coenzyme A dehydrogenase 9
+725163002,"X-linked spasticity, intellectual disability, epilepsy syndrome"
+725420009,Congenital muscular dystrophy Paradas type
+726021008,Long chain 3-hydroxyacyl-coenzyme A dehydrogenase deficiency
+73192008,Multiple AND bilateral precerebral artery stenosis
+732923001,Hemorrhage of medulla oblongata
+73297009,Muscular dystrophy
+733490006,Distal myopathy with early respiratory muscle involvement
+734383005,Thrombosis of left middle cerebral artery
+734384004,Thrombosis of right middle cerebral artery
+734434007,Pyridoxine-dependent epilepsy
+734961002,Embolus of left posterior cerebral artery
+734963004,Embolus of right posterior cerebral artery
+734964005,Embolus of left middle cerebral artery
+734965006,Embolus of right middle cerebral artery
+7379000,Pseudobulbar palsy
+75023009,Post-traumatic epilepsy
+75038005,Cerebellar hemorrhage
+75072002,Nemaline myopathy
+75543006,Cerebral embolism
+762629007,Occlusion of right middle cerebral artery by embolus
+762630002,Occlusion of left middle cerebral artery by embolus
+762651004,Occlusion of right posterior cerebral artery by embolus
+762652006,Occlusion of left posterior cerebral artery by embolus
+763067000,Autosomal dominant congenital benign spinal muscular atrophy
+763314009,Congenital muscular dystrophy with hyperlaxity
+763349002,Progressive myoclonic epilepsy with dystonia
+763533003,Distal hereditary motor neuropathy Jerash type
+763534009,Hot water reflex epilepsy
+763622006,Thinking epilepsy
+763632004,Startle epilepsy
+763802009,Micturition induced epilepsy
+763827002,Orgasm induced epilepsy
+763829004,Oculopharyngodistal myopathy
+764522009,Familial focal epilepsy with variable foci
+764812008,Autosomal recessive myogenic arthrogryposis multiplex congenita
+764944006,Congenital muscular dystrophy type 1B
+765089003,"Focal epilepsy, intellectual disability, cerebro-cerebellar malformation syndrome"
+765093009,"Rolandic epilepsy, speech dyspraxia syndrome"
+765170001,Sodium voltage-gated channel alpha subunit 8-related epilepsy with encephalopathy
+765197008,Symptomatic form of muscular dystrophy of Duchenne and Becker in female carrier
+765216006,Audiogenic epilepsy
+76670001,Duchenne muscular dystrophy
+766764008,X-linked distal spinal muscular atrophy type 3
+766815007,Perioral myoclonia with absences
+766932005,Hypothalamic hamartoma with gelastic seizure
+768666006,Syntaxin binding protein 1 encephalopathy with epilepsy
+7689009,Reading seizure
+770405003,Benign familial mesial temporal lobe epilepsy
+770431001,"Early-onset epileptic encephalopathy and intellectual disability due to glutamate receptor, ionotropic, N-methyl-D-aspartate, subunit 2A mutation"
+770558006,Late-onset distal myopathy Markesbery Griggs type
+770560008,Lissencephaly due to LIS1 mutation
+770596007,Rippling muscle disease with myasthenia gravis
+770622009,Benign infantile focal epilepsy with midline spikes and waves during sleep
+770623004,Benign occipital lobe epilepsy
+770624005,Benign partial epilepsy of infancy with complex partial seizures
+770627003,Desmin-related myofibrillar myopathy
+770643005,Mesial temporal lobe epilepsy with hippocampal sclerosis
+770722002,Proximal myopathy with extrapyramidal signs
+770727008,Spinal muscular atrophy with respiratory distress type 2
+770758009,New-onset refractory status epilepticus
+770786001,Hereditary inclusion body myopathy type 4
+770787005,Benign Samaritan congenital myopathy
+770939009,Huntington disease-like 3
+77097004,Oculopharyngeal muscular dystrophy
+771141002,Benign partial epilepsy with secondarily generalized seizures in infancy
+771142009,Cortical dysplasia with focal epilepsy syndrome
+771144005,Hereditary motor and sensory neuropathy with acrodystrophy
+771223000,Infantile epileptic dyskinetic encephalopathy
+771238004,"Spinal atrophy, ophthalmoplegia, pyramidal syndrome"
+771267003,Congenital muscular dystrophy with integrin alpha-7 deficiency
+771272007,Congenital muscular dystrophy due to lamin A/C mutation
+7713009,Intrapontine hemorrhage
+771302009,Autosomal recessive lower motor neuron disease with childhood onset
+771303004,Severe neonatal onset encephalopathy with microcephaly
+771306007,"Hereditary fibrosing poikiloderma, tendon contractures, myopathy, pulmonary fibrosis syndrome"
+771448004,Autism epilepsy syndrome due to branched chain ketoacid dehydrogenase kinase deficiency
+771469002,"Early-onset spastic ataxia, myoclonic epilepsy, neuropathy syndrome"
+771475006,Young adult-onset distal hereditary motor neuropathy
+772129007,Autosomal dominant childhood-onset proximal spinal muscular atrophy
+773230003,Cyclin-dependent kinase-like 5 deficiency
+773306002,Congenital lethal myopathy Compton North type
+773421009,Infantile-onset mesial temporal lobe epilepsy with severe cognitive regression
+773497001,"Partial corpus callosum agenesis, cerebellar vermis hypoplasia with posterior fossa cysts syndrome"
+773548008,"Early-onset epileptic encephalopathy, cortical blindness, intellectual disability, facial dysmorphism syndrome"
+773555005,Severe neurodegenerative syndrome with lipodystrophy
+773643006,"Multiple congenital anomalies, hypotonia, seizures syndrome type 2"
+773729007,X-linked myopathy with postural muscle atrophy
+774148007,Polyglucosan body myopathy type 1
+77461000119109,Myasthenia gravis with exacerbation
+77471000119103,Myasthenia gravis without exacerbation
+776087007,Autosomal recessive cerebral atrophy
+778001003,Potassium voltage-gated channel subfamily Q member 2 related epileptic encephalopathy
+778029000,FAST kinase domains 2-related infantile mitochondrial encephalomyopathy
+778047006,Myoclonic epilepsy in non-progressive encephalopathy
+778050009,Idiopathic eosinophilic myositis
+778060000,Collagen type IV alpha 1 chain related familial vascular leukoencephalopathy
+778063003,Cryptogenic late-onset epileptic spasms
+77956009,Steinert myotonic dystrophy syndrome
+782737003,"Diffuse cerebral and cerebellar atrophy, intractable seizures, progressive microcephaly syndrome"
+782743001,Huntington disease-like syndrome due to chromosome 9 open reading frame 72 expansions
+782744007,Lipoic acid synthetase deficiency
+782772000,Congenital muscular dystrophy with intellectual disability and severe epilepsy
+782883004,Fatal infantile hypertonic myofibrillar myopathy
+783010003,Pharyngeal-cervical-brachial variant of Guillain-Barré syndrome
+783012006,Parkinsonian pyramidal syndrome
+783055005,Progressive myoclonic epilepsy type 5
+783062001,Progressive myoclonic epilepsy type 6
+783064000,Progressive myoclonic epilepsy type 3
+783139000,Progressive myoclonic epilepsy type 8
+783174004,Congenital muscular dystrophy with intellectual disability
+783175003,Congenital muscular dystrophy without intellectual disability
+783176002,Congenital muscular dystrophy with cerebellar involvement
+783734000,"Mitochondrial deoxyribonucleic acid depletion syndrome, hepatocerebral form due to deoxyguanosine kinase deficiency"
+783739005,Familial temporal lobe epilepsy
+784341001,Amyotrophic lateral sclerosis type 4
+784342008,Familial infantile myoclonic epilepsy
+784345005,Malignant migrating partial seizures of infancy
+784371009,Huntington disease-like 1
+784372002,Familial mesial temporal lobe epilepsy with febrile seizures
+784377008,Autosomal dominant epilepsy with auditory features
+78468005,Erb's muscular dystrophy
+785298001,Muscle eye brain disease with bilateral multicystic leukodystrophy
+785303004,"Multiple congenital anomalies, hypotonia, seizures syndrome"
+78569004,Posterior inferior cerebellar artery syndrome
+787037000,Congenital muscular dystrophy type 1A
+788417006,"Alopecia, epilepsy, intellectual disability syndrome Moynahan type"
+788880006,Cerebral ischemic stroke due to dissection of artery
+788881005,Cerebral ischemic stroke due to aortic arch embolism
+788882003,Cerebral ischemic stroke due to global hypoperfusion with watershed infarct
+788883008,Cerebral ischemic stroke due to hypercoagulable state
+789063000,"Primary hyperaldosteronism, seizures, neurological abnormalities syndrome"
+79745005,Reflex epilepsy
+80976008,Myasthenic crisis
+81211007,Primary lateral sclerosis
+82077006,Myotubular myopathy
+84201000119105,Intractable partial temporal lobe epilepsy with impairment of consciousness
+84590007,Lower motor neuron disease
+84757009,Epilepsy
+85505000,Adult spinal muscular atrophy
+85672005,Anterior horn cell disease
+86044005,Amyotrophic lateral sclerosis
+860804005,Epilepsy due to infectious encephalitis
+860806007,Epilepsy due to infectious meningitis
+860815000,Epilepsy due to neonatal central nervous system infection
+864471000000106,Anterior opercular syndrome
+870288002,Parkinsonism caused by methanol
+870295006,Parkinsonism caused by carbon disulfide
+870544005,Occlusion of distal basilar artery
+870579007,Occlusion of branch of basilar artery
+87555007,Claude's syndrome
+87694001,Pyruvate carboxylase deficiency
+88923002,Progressive muscular atrophy
+89525009,Gelastic seizure
+90099008,Subcortical leukoencephalopathy
+9105005,Muscle adenosine monophosphate deaminase deficiency
+91637004,Myasthenia gravis
+93153005,Limb-girdle muscular dystrophy
+95208000,Photogenic epilepsy
+95454007,Brain stem hemorrhage
+95457000,Brain stem infarction
+95460007,Cerebellar infarction
+95647008,Upper motor neuron disease
