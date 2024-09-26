@@ -1,3 +1,76 @@
 {
-  "files": {}
+  "files": {
+    "opensafely-ethnicity.csv": {
+      "id": "opensafely/ethnicity/2020-04-27",
+      "url": "https://www.opencodelists.org/codelist/opensafely/ethnicity/2020-04-27/",
+      "downloaded_at": "2024-09-26 12:33:18.593613Z",
+      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    },
+    "opensafely-acute-respiratory-illness-primary-care.csv": {
+      "id": "opensafely/acute-respiratory-illness-primary-care/30f1c6ca",
+      "url": "https://www.opencodelists.org/codelist/opensafely/acute-respiratory-illness-primary-care/30f1c6ca/",
+      "downloaded_at": "2024-09-26 12:33:18.658872Z",
+      "sha": "059df7a11e9429127190acc3c57f5836611034f9"
+    },
+    "opensafely-sick-notes-snomed.csv": {
+      "id": "opensafely/sick-notes-snomed/0f8ffb90",
+      "url": "https://www.opencodelists.org/codelist/opensafely/sick-notes-snomed/0f8ffb90/",
+      "downloaded_at": "2024-09-26 12:33:18.714725Z",
+      "sha": "fbb3cde7c16769aeb5c6cfa825834224f667fac7"
+    },
+    "ons-neurological-disorders.csv": {
+      "id": "ons/neurological-disorders/54fabb61",
+      "url": "https://www.opencodelists.org/codelist/ons/neurological-disorders/54fabb61/",
+      "downloaded_at": "2024-09-26 12:33:18.786736Z",
+      "sha": "5813bee45c041662e045b157888b1352103db3db"
+    },
+    "opensafely-antibacterials.csv": {
+      "id": "opensafely/antibacterials/26390d85",
+      "url": "https://www.opencodelists.org/codelist/opensafely/antibacterials/26390d85/",
+      "downloaded_at": "2024-09-26 12:33:18.849478Z",
+      "sha": "f4b6a9659535265b0aa7a3742e778796c1452982"
+    },
+    "opensafely-opioid-containing-medicines-buccal-nasal-and-oromucosal-excluding-drugs-for-substance-misuse-dmd.csv": {
+      "id": "opensafely/opioid-containing-medicines-buccal-nasal-and-oromucosal-excluding-drugs-for-substance-misuse-dmd/20d38d99",
+      "url": "https://www.opencodelists.org/codelist/opensafely/opioid-containing-medicines-buccal-nasal-and-oromucosal-excluding-drugs-for-substance-misuse-dmd/20d38d99/",
+      "downloaded_at": "2024-09-26 12:33:18.882882Z",
+      "sha": "34bae290d319320e9cfc98bf860e4c9f264aeab6"
+    },
+    "opensafely-opioid-containing-medicines-inhalation-excluding-drugs-for-substance-misuse-dmd.csv": {
+      "id": "opensafely/opioid-containing-medicines-inhalation-excluding-drugs-for-substance-misuse-dmd/07c41a64",
+      "url": "https://www.opencodelists.org/codelist/opensafely/opioid-containing-medicines-inhalation-excluding-drugs-for-substance-misuse-dmd/07c41a64/",
+      "downloaded_at": "2024-09-26 12:33:18.925463Z",
+      "sha": "5b858c63f9403ec64e80b1274b7f73c15c96f632"
+    },
+    "opensafely-opioid-containing-medicines-oral-excluding-drugs-for-substance-misuse-dmd.csv": {
+      "id": "opensafely/opioid-containing-medicines-oral-excluding-drugs-for-substance-misuse-dmd/6eb4a72e",
+      "url": "https://www.opencodelists.org/codelist/opensafely/opioid-containing-medicines-oral-excluding-drugs-for-substance-misuse-dmd/6eb4a72e/",
+      "downloaded_at": "2024-09-26 12:33:18.991629Z",
+      "sha": "4c437b8ecfdfb2589a545ba7d31f31487e25eee8"
+    },
+    "opensafely-opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd.csv": {
+      "id": "opensafely/opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd/55a533f9",
+      "url": "https://www.opencodelists.org/codelist/opensafely/opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd/55a533f9/",
+      "downloaded_at": "2024-09-26 12:33:19.038882Z",
+      "sha": "6ff513762cf2f425e2b4fcda2f8d7b6f9319726f"
+    },
+    "opensafely-opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd.csv": {
+      "id": "opensafely/opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd/3c95c0c4",
+      "url": "https://www.opencodelists.org/codelist/opensafely/opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd/3c95c0c4/",
+      "downloaded_at": "2024-09-26 12:33:19.084892Z",
+      "sha": "2a2a240790942964cb547b732f7f0f77df903c9c"
+    },
+    "opensafely-opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd.csv": {
+      "id": "opensafely/opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd/23864d8f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd/23864d8f/",
+      "downloaded_at": "2024-09-26 12:33:19.140774Z",
+      "sha": "51704defad3ab4dcc8a9fc83d055ff61d29f2d99"
+    },
+    "bristol-antidepressants-snomedct.csv": {
+      "id": "bristol/antidepressants-snomedct/677f55d2",
+      "url": "https://www.opencodelists.org/codelist/bristol/antidepressants-snomedct/677f55d2/",
+      "downloaded_at": "2024-09-26 12:33:19.201921Z",
+      "sha": "e79f8e54a2548b07a50487b1974020dc9ef00020"
+    }
+  }
 }
