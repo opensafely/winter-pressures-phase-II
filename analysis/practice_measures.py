@@ -3,7 +3,7 @@ from scipy import stats
 import numpy as np
 
 # Load and format data
-measures = pd.read_csv("output/dataset_measures.csv.gz")
+measures = pd.read_csv("output/patient_measures/winter_pressure_measures.csv.gz")
 # Reformat ethnicity data
 measures['ethnicity'].replace(
     {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
@@ -16,7 +16,7 @@ measures['rur_urb_class'].replace(
      6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
      8: 'Rural village and dispersed in a sparse setting'},
     inplace=True)
-measures.to_csv("output/processed_measures.csv.gz")
+measures.to_csv("output/patient_measures/processed_measures.csv.gz")
 
 # Create practice-characteristics dataframe
 practice_df = measures.copy()
@@ -51,7 +51,7 @@ for col in new_cols:
     practice_df[col] = pd.qcut(practice_df[col], q=5, duplicates="drop")
 
 practice_df.drop(columns=cols_to_convert, inplace=True)
-practice_df.to_csv("output/practice_measures.csv.gz")
+practice_df.to_csv("output/practice_measures/practice_measures.csv.gz")
 
 # Create frequency table
 measures_at_start = measures[measures['interval_start'] == '2022-01-03']
@@ -63,4 +63,4 @@ for var in table_one_vars:
                       .rename_axis(f'Value')
                       .reset_index(name='Propn'))
 table_one = pd.concat(table_one)
-table_one.to_csv('output/frequency_table.csv.gz')
+table_one.to_csv('output/patient_measures/frequency_table.csv.gz')

@@ -11,13 +11,13 @@ actions:
         dataset: output/patient_measures/winter_pressure_measures.csv.gz
   generate_practice_measures:
     run: python:latest analysis/practice_measures.py 
-        --output output/practice_measures.csv.gz
-        --output output/processed_measures.csv.gz
-        --output output/frequency_table.csv.gz
+        --output output/practice_measures/practice_measures.csv.gz
+        --output output/patient_measures/processed_measures.csv.gz
+        --output output/patient_measures/frequency_table.csv.gz
     needs: [generate_measures]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures.csv.gz
-        patient_measure: output/processed_measures.csv.gz
-        frequency_table: output/frequency_table.csv.gz
+        practice_measure: output/practice_measures/practice_measures.csv.gz
+        patient_measure: output/patient_measures/processed_measures.csv.gz
+        frequency_table: output/patient_measures/frequency_table.csv.gz
 
