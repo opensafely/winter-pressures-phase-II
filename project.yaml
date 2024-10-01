@@ -20,4 +20,10 @@ actions:
         practice_measure: output/practice_measures/practice_measures.csv.gz
         patient_measure: output/patient_measures/processed_measures.csv.gz
         frequency_table: output/patient_measures/frequency_table.csv.gz
+  generate_measures_viz:
+    run: r:latest analysis/viz_measures.r
+    needs: [generate_practice_measures]
+    outputs:
+      moderately_sensitive:
+        app_figures: output/*.png
 
