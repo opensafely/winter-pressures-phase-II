@@ -5,10 +5,10 @@ expectations:
 
 actions:
   generate_measures:
-    run: ehrql:v1 generate-measures --output output/dataset_measures.csv.gz analysis/dataset_definition_measures.py
+    run: ehrql:v1 generate-measures --output output/patient_measures/winter_pressure_measures.csv.gz analysis/measures_definition.py
     outputs:
       highly_sensitive:
-        dataset: output/dataset_measures.csv.gz
+        dataset: output/patient_measures/winter_pressure_measures.csv.gz
   generate_practice_measures:
     run: python:latest analysis/practice_measures.py 
         --output output/practice_measures.csv.gz
@@ -20,3 +20,4 @@ actions:
         practice_measure: output/practice_measures.csv.gz
         patient_measure: output/processed_measures.csv.gz
         frequency_table: output/frequency_table.csv.gz
+
