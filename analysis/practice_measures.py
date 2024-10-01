@@ -55,8 +55,8 @@ practice_df.to_csv("output/practice_measures/practice_measures.csv.gz")
 
 # Create frequency table
 measures_at_start = measures[measures['interval_start'] == '2022-01-03']
-table_one_vars = ['age','sex','ethnicity','imd_quintile','carehome',
-                  'region','rur_urb_class','vax_flu_12m','vax_covid_12m']
+# Extract demographic variables
+table_one_vars = measures.columns[measures.columns.get_loc('denominator') + 1:]
 table_one = {}
 for var in table_one_vars:
     table_one[var] = (measures_at_start[var].value_counts(normalize=True)
