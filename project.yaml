@@ -22,8 +22,9 @@ actions:
         frequency_table: output/patient_measures/frequency_table.csv.gz
   generate_measures_viz:
     run: r:latest analysis/viz_measures.r
+        --output output/total_measures/total_app.png
     needs: [generate_practice_measures]
     outputs:
       moderately_sensitive:
-        app_figures: output/*.png
+        app_figures: output/*/*.png
 

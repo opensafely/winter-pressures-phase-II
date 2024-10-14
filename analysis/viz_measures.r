@@ -16,7 +16,7 @@ plot <- ggplot(total_app_df, aes(x = interval_start, y = total_app, group = 1)) 
   geom_point() +  # Add markers
   labs(title = "Apps Over Time", x = "Time Interval", y = "Appointments")  # Add title and axis labels
 # Save the plot as a PNG file
-ggsave("output/total_app.png", plot = plot)
+ggsave("output/total_measures/total_app.png", plot = plot)
 
 # Create plots for different patient characteristic
 for(col in colnames(measures)[8:length(measures)]){
