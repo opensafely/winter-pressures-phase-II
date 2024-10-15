@@ -19,7 +19,8 @@ plot <- ggplot(total_app_df, aes(x = interval_start, y = total_app, group = 1)) 
 ggsave("output/total_measures/total_app.png", plot = plot)
 
 # Create plots for different patient characteristic
-for(col in colnames(measures)[8:length(measures)]){
+# length - 1 to avoid plot for practice_pseudo_id
+for(col in colnames(measures)[8:(length(measures) - 1)]){
   df <- summarise(group_by(measures, interval_start, !!sym(col)), total_app=sum(numerator))
   patient_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
     geom_line() +  # Add line

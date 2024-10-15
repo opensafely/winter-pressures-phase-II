@@ -31,7 +31,7 @@ practice_df = (
         count_over_65=("age", lambda x: ((x == "retired") | (x == "elderly")).sum()),
         count_under_5=("age", lambda x: (x == "preschool").sum()),
         median_imd=("imd_quintile", "median"),
-        count_ethnic=("ethnicity", lambda x: (x != 1).sum()),
+        count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),
         mode_rur_urb=("rur_urb_class", lambda x: stats.mode(x).mode[0]),
     )
     .reset_index()

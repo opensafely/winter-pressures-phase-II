@@ -24,12 +24,12 @@ def create_codelist_dict(dic: dict) -> dict:
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
-measures.configure_dummy_data(population_size=100)
+measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
 # Date specifications
-study_start_date = "2015-01-01"
-study_reg_date = "2014-01-01"
+study_start_date = "2022-01-03"
+study_reg_date = "2021-01-03"
 
 # Demogragic codelists
 ethnicity = codelist_from_csv(
@@ -255,7 +255,7 @@ measures.define_defaults(
 #        "vax_flu_12m": vax_status['influenza'], Need to check vaccine target disease is correct
 #        "vax_covid_12m": vax_status['covid']
     },
-    intervals=weeks(6).starting_on("2022-01-03"),
+    intervals=weeks(6).starting_on(study_start_date),
 )
 
 # Adding measures
