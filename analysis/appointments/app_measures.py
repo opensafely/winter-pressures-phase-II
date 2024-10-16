@@ -29,7 +29,10 @@ numerators['seen_exists'] = appointments.where(appointments
                                     )
 
 # Flags
-numerators['missing_seen'] = numerators['start_exists'].where(
+statuses = ['Booked', 'Arrived', 'Did Not Attend', 'In Progress', 'Finished',
+ 'Requested', 'Blocked', 'Visit', 'Waiting', 'Cancelled by Patient','Cancelled by Unit',
+  'Cancelled by Other Service', 'No Access Visit', 'Cancelled Due To Death', 'Patient Walked Out']
+numerators['seen_outside_interval'] = numerators['start_exists'].where(
                     (numerators['start_exists']
                      .seen_date
                      .is_before(INTERVAL.start_date)
@@ -39,7 +42,7 @@ numerators['missing_seen'] = numerators['start_exists'].where(
                       .is_after(INTERVAL.end_date)
                       )
                      )
-numerators['missing_start'] = numerators['seen_exists'].where(
+numerators['start_outside_interval'] = numerators['seen_exists'].where(
                     (numerators['seen_exists']
                      .start_date
                      .is_before(INTERVAL.start_date)
@@ -49,13 +52,34 @@ numerators['missing_start'] = numerators['seen_exists'].where(
                       .is_after(INTERVAL.end_date)
                       )
                      )
-numerators['missing_seen_cancelled'] = numerators['start_exists'].where(numerators['start_exists']
-                                                 .status
-                                                 .is_in(['Did Not Attend', 'Blocked', 
-                                                         'Cancelled by Patient', 'Cancelled by Unit', 
-                                                         'Cancelled by Other Service', 'Cancelled Due To Death']
-                                                         )
-                                                )
+for status in statuses:
+    numerators[status.replace(' ','')] = numerators['start_exists'].where(numerators['start_exists']
+                                    .status
+                                    .is_in([status])
+                                    )
+numerators['start_seen_same_day'] = (appointments.where((appointments
+                                            .start_date) ==
+                                            (appointments
+                                             .seen_date)
+                                             )
+                                             )
+numerators['start_seen_same_week'] = (appointments.where((appointments
+                                            .start_date
+                                            .is_during(INTERVAL)) &
+                                            (appointments
+                                             .seen_date
+                                             .is_during(INTERVAL))
+                                             )
+                                             )
+numerators['no_status'] = numerators['start_exists'].where(numerators['start_exists']
+                                             .status
+                                             .is_not_in(statuses))
+numerators['missing_start'] = numerators['seen_exists'].where(numerators['seen_exists']
+                                                 .start_date
+                                                 .is_null())
+numerators['missing_seen'] = numerators['start_exists'].where(numerators['start_exists']
+                                                 .seen_date
+                                                 .is_null())
 
 # Defining measures ---
 measures.define_defaults(
