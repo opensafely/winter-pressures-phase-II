@@ -66,6 +66,22 @@ numerators['start_seen_same_week'] = (appointments.where((appointments
                                              .is_during(INTERVAL))
                                              )
                                              )
+numerators['start_and_reasonable_seen'] = (appointments.where((appointments
+                                            .start_date
+                                            .is_during(INTERVAL)) &
+                                            (appointments
+                                             .seen_date
+                                             .is_on_or_between("2001-01-01", "2025-01-01"))
+                                             )
+                                             )
+numerators['seen_and_reasonable_start'] = (appointments.where((appointments
+                                            .seen_date
+                                            .is_during(INTERVAL)) &
+                                            (appointments
+                                             .start_date
+                                             .is_on_or_between("2001-01-01", "2025-01-01"))
+                                             )
+                                             )
 numerators['no_status'] = numerators['start_exists'].where(numerators['start_exists']
                                              .status
                                              .is_not_in(statuses))
@@ -81,7 +97,7 @@ numerators['proxy_null_start'] = numerators['seen_exists'].except_where(numerato
 numerators['proxy_null_seen'] = numerators['start_exists'].except_where(numerators['start_exists']
                                                  .seen_date
                                                  .is_on_or_between("2001-01-01", "2025-01-01"))
-categs = ['start_exists','seen_exists','proxy_null_start','proxy_null_seen']
+categs = ['start_and_reasonable_seen','seen_and_reasonable_start','proxy_null_start','proxy_null_seen']
 for categ in categs:
     for status in statuses:
         numerators[f"{categ}_{status.replace(' ','')}"] = numerators[categ].where(numerators[categ]
