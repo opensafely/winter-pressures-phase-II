@@ -28,7 +28,8 @@ numerators['seen_exists'] = appointments.where(appointments
                                     .is_during(INTERVAL)
                                     )
 
-# Flags
+# Defining measures, which are explained in more detail here: 
+# https://docs.google.com/document/d/1EiJ3HJ4NqZZBkK8pv0-RqenCUkrhf6KzqaoqlYTwKqY/edit
 statuses = ['Booked', 'Arrived', 'Did Not Attend', 'In Progress', 'Finished',
  'Requested', 'Blocked', 'Visit', 'Waiting', 'Cancelled by Patient','Cancelled by Unit',
   'Cancelled by Other Service', 'No Access Visit', 'Cancelled Due To Death', 'Patient Walked Out']
@@ -98,6 +99,8 @@ numerators['proxy_null_seen'] = numerators['start_exists'].except_where(numerato
                                                  .seen_date
                                                  .is_on_or_between("2001-01-01", "2025-01-01"))
 categs = ['start_and_reasonable_seen','seen_and_reasonable_start','proxy_null_start','proxy_null_seen']
+
+# Creating numerators for each start-seen-status combination
 for categ in categs:
     for status in statuses:
         numerators[f"{categ}_{status.replace(' ','')}"] = numerators[categ].where(numerators[categ]

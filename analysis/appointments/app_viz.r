@@ -7,7 +7,7 @@ appointments <- read.csv('output/appointments/app_measures.csv.gz')
 appointments$interval_start <- as.Date(appointments$interval_start)
 appointments$interval_end <- as.Date(appointments$interval_end)
 
-# Grouping into larger categories using mutate and case_when
+# Grouping into broader completed/uncompleted appointment categories using mutate and case_when
 appointments <- appointments %>%
   mutate(
     category = case_when(
@@ -35,6 +35,7 @@ appointments <- appointments %>%
     )
   )
 
+# Creating the dataframe for the lineplot that only contains start-seen-status combinations
 start_seen_combos <- c("start_and_reasonable_seen_Uncompleted","seen_and_reasonable_start_Uncompleted",
 "proxy_null_start_Uncompleted","proxy_null_seen_Uncompleted","start_and_reasonable_seen_Completed","seen_and_reasonable_start_Completed",
 "proxy_null_start_Completed","proxy_null_seen_Completed")
@@ -42,8 +43,8 @@ start_seen_combos_df <- appointments %>%
   filter(category %in% start_seen_combos) %>%
   group_by(interval_start, category) %>%
   summarise(numerator = sum(numerator, na.rm = TRUE))  # Summing the numerator
-  
-# Create line plot for each of status for each start/seen combination
+
+# Create line plot for each of status for each start-seen-status combination
 plot <- ggplot(start_seen_combos_df, aes(x=interval_start, y=numerator, group = category, color=category)) +
     geom_line()+
     geom_point()+
