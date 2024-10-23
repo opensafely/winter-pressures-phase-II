@@ -24,12 +24,12 @@ def create_codelist_dict(dic: dict) -> dict:
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
-measures.configure_dummy_data(population_size=100)
+measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
 # Date specifications
-study_start_date = "2015-01-01"
-study_reg_date = "2014-01-01"
+study_start_date = "2022-01-03"
+study_reg_date = "2021-01-03"
 
 # Demogragic codelists
 ethnicity = codelist_from_csv(
@@ -131,15 +131,32 @@ practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
 region = (practice_registrations.for_patient_on(INTERVAL.start_date)
           .practice_nuts1_region_name)
 
-# Measures
+# Vaccination against flue or covid in the last 12 months
+vax_status = {}
+for disease in ['influenza', 'covid']:
+    vax_status[disease] = (vaccinations.where((vaccinations
+                                        .target_disease
+                                        .is_in([disease])) &
+                                        vaccinations
+                                        .date
+                                        .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date))
+                                        .exists_for_patient())
+
+# Measures ---
 measures_to_add = {}
+# Valid appointments are those where start_date == seen_date
+# because incomplete appointments may have been coded with extreme dates (e.g. 9999)
+valid_appointments = (appointments.where((appointments
+                                            .start_date) ==
+                                            (appointments
+                                             .seen_date)))
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = (appointments.start_date
+measures_to_add['appointments_in_interval'] = (valid_appointments.start_date
                             .is_during(INTERVAL)
                             .count_distinct_for_patient())
 # Number of follow-up appointments, defined for a patient as
 # the (number of appointments for the patient in a 2 week interval) - 1
-measures_to_add["follow_up_app"] = (appointments.start_date
+measures_to_add["follow_up_app"] = (valid_appointments.start_date
                 .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.end_date)
                 .count_distinct_for_patient() - 1)
 # Number of vaccinations during interval
@@ -209,9 +226,9 @@ for reason in app_reason_dict.keys():
                 .first_for_patient()
                 )
         # Extracting appointments that occured on that day
-        appointment = (appointments.where(appointments.start_date
+        appointment = (valid_appointments.where(valid_appointments.start_date
                     .is_on_or_between(current_day, current_day))
-                    .sort_by(appointments.start_date)
+                    .sort_by(valid_appointments.start_date)
                     .first_for_patient()
                     )
         # Adding up the events that occured on the same day as an appointment 
@@ -234,9 +251,11 @@ measures.define_defaults(
         "carehome": carehome,
         "region": region,
         "rur_urb_class": rur_urb_class,
-        "practice_pseudo_id": practice_id
+        "practice_pseudo_id": practice_id,
+#        "vax_flu_12m": vax_status['influenza'], Need to check vaccine target disease is correct
+#        "vax_covid_12m": vax_status['covid']
     },
-    intervals=weeks(2).starting_on("2022-01-03"),
+    intervals=weeks(6).starting_on(study_start_date),
 )
 
 # Adding measures
