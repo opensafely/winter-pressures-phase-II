@@ -98,7 +98,7 @@ numerators['proxy_null_start'] = numerators['seen_exists'].except_where(numerato
 numerators['proxy_null_seen'] = numerators['start_exists'].except_where(numerators['start_exists']
                                                  .seen_date
                                                  .is_on_or_between("2001-01-01", "2025-01-01"))
-categs = ['start_and_reasonable_seen','seen_and_reasonable_start','proxy_null_start','proxy_null_seen']
+categs = ['start_and_reasonable_seen','seen_and_reasonable_start','null_start','null_seen']
 
 # Creating numerators for each start-seen-status combination
 for categ in categs:
