@@ -9,6 +9,23 @@ actions:
     outputs:
       highly_sensitive:
         dataset: output/patient_measures/winter_pressure_measures.csv.gz
+  generate_app_measures:
+    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv.gz analysis/appointments/app_measures.py
+    outputs:
+      highly_sensitive:
+        dataset: output/appointments/app_measures.csv.gz
+  generate_app_viz:
+    run: r:latest analysis/appointments/app_viz.r
+    needs: [generate_app_measures]
+    outputs:
+      moderately_sensitive:
+        app_figures: output/appointments/*.png
+  generate_app_summary:
+    run: python:latest analysis/appointments/app_summary.py
+    needs: [generate_app_measures]
+    outputs:
+      highly_sensitive:
+        app_table: output/appointments/app_summary.csv.gz
   generate_practice_measures:
     run: python:latest analysis/practice_measures.py 
         --output output/practice_measures/practice_measures.csv.gz
