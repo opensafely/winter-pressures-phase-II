@@ -3,7 +3,7 @@ library(dplyr)
 library(glue)
 
 # Import appointments data
-appointments <- read.csv('output/appointments/app_measures.csv.gz')
+appointments <- read.csv('output/appointments/app_measures.csv')
 appointments$interval_start <- as.Date(appointments$interval_start)
 appointments$interval_end <- as.Date(appointments$interval_end)
 
