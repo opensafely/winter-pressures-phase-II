@@ -63,4 +63,4 @@ for var in table_one_vars:
                       .rename_axis(f'Value')
                       .reset_index(name='Propn'))
 table_one = pd.concat(table_one)
-table_one.to_csv('output/patient_measures/frequency_table.csv.gz')
+table_one.to_csv('output/patient_measures/frequency_table.csv')

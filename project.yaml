@@ -10,10 +10,10 @@ actions:
       highly_sensitive:
         dataset: output/patient_measures/winter_pressure_measures.csv.gz
   generate_app_measures:
-    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv.gz analysis/appointments/app_measures.py
+    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py
     outputs:
-      highly_sensitive:
-        dataset: output/appointments/app_measures.csv.gz
+      moderately_sensitive:
+        dataset: output/appointments/app_measures.csv
   generate_app_viz:
     run: r:latest analysis/appointments/app_viz.r
     needs: [generate_app_measures]
@@ -24,19 +24,20 @@ actions:
     run: python:latest analysis/appointments/app_summary.py
     needs: [generate_app_measures]
     outputs:
-      highly_sensitive:
-        app_table: output/appointments/app_summary.csv.gz
+      moderately_sensitive:
+        app_table: output/appointments/app_summary.csv
   generate_practice_measures:
     run: python:latest analysis/practice_measures.py 
         --output output/practice_measures/practice_measures.csv.gz
         --output output/patient_measures/processed_measures.csv.gz
-        --output output/patient_measures/frequency_table.csv.gz
+        --output output/patient_measures/frequency_table.csv
     needs: [generate_measures]
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/practice_measures.csv.gz
         patient_measure: output/patient_measures/processed_measures.csv.gz
-        frequency_table: output/patient_measures/frequency_table.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table.csv
   generate_measures_viz:
     run: r:latest analysis/viz_measures.r
         --output output/total_measures/total_app.png
