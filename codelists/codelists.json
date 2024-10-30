@@ -71,6 +71,84 @@
       "url": "https://www.opencodelists.org/codelist/bristol/antidepressants-snomedct/677f55d2/",
       "downloaded_at": "2024-09-26 12:33:19.201921Z",
       "sha": "e79f8e54a2548b07a50487b1974020dc9ef00020"
+    },
+    "nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127/",
+      "downloaded_at": "2024-10-30 15:26:44.104943Z",
+      "sha": "a1afecf03020d540eece2d6c92d6b044124489ae"
+    },
+    "nhsd-primary-care-domain-refsets-copd_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/copd_cod/20210127",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/copd_cod/20210127/",
+      "downloaded_at": "2024-10-30 15:26:44.252121Z",
+      "sha": "5d08ae3a50efe6a5fa54806e9ffce16d14ba9955"
+    },
+    "nhsd-primary-care-domain-refsets-copdres_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/copdres_cod/20200812",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/copdres_cod/20200812/",
+      "downloaded_at": "2024-10-30 15:26:44.340433Z",
+      "sha": "58b2a092a7379250596e0a46897d1ae8e95277ca"
+    },
+    "nhsd-primary-care-domain-refsets-ast_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/ast_cod/20210127",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/ast_cod/20210127/",
+      "downloaded_at": "2024-10-30 15:26:44.442291Z",
+      "sha": "662adcbaa8823de22b7f56175420e454da595177"
+    },
+    "nhsd-primary-care-domain-refsets-astres_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/astres_cod/20200812",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/astres_cod/20200812/",
+      "downloaded_at": "2024-10-30 15:26:44.522281Z",
+      "sha": "98e2d004cc77c059f3383e22b6d909c561439040"
+    },
+    "nhsd-primary-care-domain-refsets-dm_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/dm_cod/20210127",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/dm_cod/20210127/",
+      "downloaded_at": "2024-10-30 15:26:44.604602Z",
+      "sha": "ce6f9083aa89bfe6935159ffc66755d4439ff0de"
+    },
+    "nhsd-primary-care-domain-refsets-dmres_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/dmres_cod/20200812",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/dmres_cod/20200812/",
+      "downloaded_at": "2024-10-30 15:26:44.762107Z",
+      "sha": "57682a6345da78472609f01f1ca065ace27fcb43"
+    },
+    "nhsd-primary-care-domain-refsets-hyp_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/hyp_cod/20210127",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hyp_cod/20210127/",
+      "downloaded_at": "2024-10-30 15:26:44.862120Z",
+      "sha": "2c1fb493d94ce1610482d575ef14c35bd09e47c1"
+    },
+    "nhsd-primary-care-domain-refsets-hypres_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/hypres_cod/20200812",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hypres_cod/20200812/",
+      "downloaded_at": "2024-10-30 15:26:44.939538Z",
+      "sha": "8f94d85f3bb7977e96d742a6b0a48551e0f674a2"
+    },
+    "nhsd-primary-care-domain-refsets-depr_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/depr_cod/20210127",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/depr_cod/20210127/",
+      "downloaded_at": "2024-10-30 15:26:45.081840Z",
+      "sha": "fe8bce134ed68b81aee0a15f8f258bfb31fc0c1c"
+    },
+    "nhsd-primary-care-domain-refsets-depres_cod.csv": {
+      "id": "nhsd-primary-care-domain-refsets/depres_cod/20200812",
+      "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/depres_cod/20200812/",
+      "downloaded_at": "2024-10-30 15:26:45.169326Z",
+      "sha": "f76c7ec24e3149b2b8836269c01be415573c6b52"
+    },
+    "qcovid-has_severe_mental_illness.csv": {
+      "id": "qcovid/has_severe_mental_illness/351410b2",
+      "url": "https://www.opencodelists.org/codelist/qcovid/has_severe_mental_illness/351410b2/",
+      "downloaded_at": "2024-10-30 15:26:45.266749Z",
+      "sha": "a15fac463f949e6fa932cfefed35de85385e67ce"
+    },
+    "primis-covid19-vacc-uptake-cns_cov.csv": {
+      "id": "primis-covid19-vacc-uptake/cns_cov/v2.5",
+      "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/cns_cov/v2.5/",
+      "downloaded_at": "2024-10-30 15:26:45.671368Z",
+      "sha": "e46a3766e0b740c2d33443569615c53e9e8b2be5"
     }
   }
 }
