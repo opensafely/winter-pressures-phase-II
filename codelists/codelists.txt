@@ -10,3 +10,16 @@ opensafely/opioid-containing-medicines-parenteral-excluding-drugs-for-substance-
 opensafely/opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd/3c95c0c4
 opensafely/opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd/23864d8f
 bristol/antidepressants-snomedct/677f55d2
+nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127
+nhsd-primary-care-domain-refsets/copd_cod/20210127
+nhsd-primary-care-domain-refsets/copdres_cod/20200812
+nhsd-primary-care-domain-refsets/ast_cod/20210127
+nhsd-primary-care-domain-refsets/astres_cod/20200812
+nhsd-primary-care-domain-refsets/dm_cod/20210127
+nhsd-primary-care-domain-refsets/dmres_cod/20200812
+nhsd-primary-care-domain-refsets/hyp_cod/20210127
+nhsd-primary-care-domain-refsets/hypres_cod/20200812
+nhsd-primary-care-domain-refsets/depr_cod/20210127
+nhsd-primary-care-domain-refsets/depres_cod/20200812
+qcovid/has_severe_mental_illness/351410b2
+primis-covid19-vacc-uptake/cns_cov/v2.5

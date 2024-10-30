@@ -59,6 +59,23 @@ med_dict ={
 }
 med_dict = create_codelist_dict(med_dict)
 
+comorbid_dict = {
+    "chronic_resp": "codelists/nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv",
+    "copd": "codelists/nhsd-primary-care-domain-refsets-copd_cod.csv",
+    "copd_res": "codelists/nhsd-primary-care-domain-refsets-copdres_cod.csv",
+    "asthma": "codelists/nhsd-primary-care-domain-refsets-ast_cod.csv",
+    "asthma_res": "codelists/nhsd-primary-care-domain-refsets-astres_cod.csv",
+    "diabetes": "codelists/nhsd-primary-care-domain-refsets-dm_cod.csv",
+    "diabetes_res": "codelists/nhsd-primary-care-domain-refsets-dmres_cod.csv",
+    "htn": "codelists/nhsd-primary-care-domain-refsets-hyp_cod.csv",
+    "htn_res": "codelists/nhsd-primary-care-domain-refsets-hypres_cod.csv",
+    "depres": "codelists/nhsd-primary-care-domain-refsets-depr_cod.csv",
+    "depres_res": "codelists/nhsd-primary-care-domain-refsets-depres_cod.csv",
+    "mental_health": "codelists/qcovid-has_severe_mental_illness.csv",
+    "neuro": "codelists/primis-covid19-vacc-uptake-cns_cov.csv"
+}
+comorbid_dict = create_codelist_dict(comorbid_dict)
+
 # exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
@@ -131,7 +148,7 @@ practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
 region = (practice_registrations.for_patient_on(INTERVAL.start_date)
           .practice_nuts1_region_name)
 
-# Vaccination against flue or covid in the last 12 months
+# Vaccination against flu or covid in the last 12 months
 vax_status = {}
 for disease in ['influenza', 'covid']:
     vax_status[disease] = (vaccinations.where((vaccinations
@@ -141,6 +158,45 @@ for disease in ['influenza', 'covid']:
                                         .date
                                         .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date))
                                         .exists_for_patient())
+
+# Co-morbidity
+comorbid_chronic_resp = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["chronic_resp"]))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+    .date
+    .is_on_or_before(INTERVAL.start_date)
+)
+
+comorbid_copd_date_first = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd"]))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+    .date
+    .is_on_or_before(INTERVAL.start_date)
+)
+
+comorbid_copd_date_last = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd"]))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .date
+)
+
+comorbid_copd_res_date = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd_res"]))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .date
+)
+
+comorbid_copd = comorbid_copd_date_first & (
+    comorbid_copd_res_date.is_null() | (
+        (comorbid_copd_res_date < comorbid_copd_date_last) & (comorbid_copd_date_last < (INTERVAL.start_date))
+        )
+        ) 
+
+## Develop other comorbidities here
 
 # Measures ---
 measures_to_add = {}
@@ -252,6 +308,8 @@ measures.define_defaults(
         "region": region,
         "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id,
+        "comorbid_chronic_resp": comorbid_chronic_resp,
+        "comorbid_copd": comorbid_copd
 #        "vax_flu_12m": vax_status['influenza'], Need to check vaccine target disease is correct
 #        "vax_covid_12m": vax_status['covid']
     },
