@@ -1,5 +1,5 @@
 # Task one: generate weekly appointment rates for elegible patients
-# Task two: stratify by selected patient characteristics: age, sex, ethnicity, imd, care home residency, vaccination status & co-morbdiity (need to discuss which)
+# Task two: stratify by selected patient characteristics: age, sex, ethnicity, imd, care home residency, vaccination status & co-morbdiity
 
 from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients
@@ -59,6 +59,7 @@ med_dict ={
 }
 med_dict = create_codelist_dict(med_dict)
 
+# Co-morbidity codelists:
 comorbid_dict = {
     "chronic_resp": "codelists/nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv",
     "copd": "codelists/nhsd-primary-care-domain-refsets-copd_cod.csv",
@@ -161,7 +162,7 @@ for disease in ['influenza', 'covid']:
 
 # Co-morbidity
 
-# Chronic resp disease (no resolution codelist)
+# Chronic resp disease (no resolution codelist). True if disease developed before interval start, else False.
 comorbid_chronic_resp = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["chronic_resp"]))
     .sort_by(clinical_events.date)
@@ -223,13 +224,33 @@ comorbid_asthma_res_date = (
     .date
 )
 
-# True if asthma developed before interval start & never resolved OR resolved but recurred before the interval; otherwise False
+# True if asthma developed before interval start & never resolved OR resolved but recurred before the interval; else False
 comorbid_asthma = (
     (comorbid_asthma_date_first <= (INTERVAL.start_date)) & 
     (comorbid_asthma_res_date.is_null() | 
     ((comorbid_asthma_res_date < comorbid_asthma_date_last) & (comorbid_asthma_date_last < (INTERVAL.start_date)))
     )
 ).when_null_then(False)
+
+# Chronic mental health disease (no resolution codelist). True if disease developed before interval start; else False
+comorbid_mental_health = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["mental_health"]))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+    .date
+    .is_on_or_before(INTERVAL.start_date)
+    .when_null_then(False)
+)
+
+# Chronic neurological disease (no resolution codelist). True if disease developed before interval start; else False
+comorbid_neuro = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["neuro"]))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+    .date
+    .is_on_or_before(INTERVAL.start_date)
+    .when_null_then(False)
+)
 
 # Measures ---
 measures_to_add = {}
@@ -343,7 +364,9 @@ measures.define_defaults(
         "practice_pseudo_id": practice_id,
         "comorbid_chronic_resp": comorbid_chronic_resp,
         "comorbid_copd": comorbid_copd,
-        "comorbid_asthma": comorbid_asthma
+        "comorbid_asthma": comorbid_asthma,
+        "comorbid_mh": comorbid_mental_health,
+        "comorbid_neuro": comorbid_neuro
 #        "vax_flu_12m": vax_status['influenza'], Need to check vaccine target disease is correct
 #        "vax_covid_12m": vax_status['covid']
     },
