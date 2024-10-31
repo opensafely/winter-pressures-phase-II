@@ -160,20 +160,25 @@ for disease in ['influenza', 'covid']:
                                         .exists_for_patient())
 
 # Co-morbidity
+
+# Chronic resp disease (no resolution codelist)
 comorbid_chronic_resp = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["chronic_resp"]))
     .sort_by(clinical_events.date)
     .first_for_patient()
     .date
     .is_on_or_before(INTERVAL.start_date)
+    .when_null_then(False)
 )
 
+# COPD (with resolution codelist)
 comorbid_copd_date_first = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd"]))
     .sort_by(clinical_events.date)
     .first_for_patient()
     .date
     .is_on_or_before(INTERVAL.start_date)
+    .when_null_then(False)
 )
 
 comorbid_copd_date_last = (
