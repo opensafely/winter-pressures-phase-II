@@ -201,7 +201,35 @@ comorbid_copd = comorbid_copd_date_first & (
         )
         ) 
 
-## Develop other comorbidities here
+# Asthma (with resolution codelist)
+comorbid_asthma_date_first = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma"]))
+    .sort_by(clinical_events.date)
+    .first_for_patient()
+    .date
+)
+
+comorbid_asthma_date_last = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma"]))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .date
+)
+
+comorbid_asthma_res_date = (
+    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma_res"]))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .date
+)
+
+# True if asthma developed before interval start & never resolved OR resolved but recurred before the interval; otherwise False
+comorbid_asthma = (
+    (comorbid_asthma_date_first <= (INTERVAL.start_date)) & 
+    (comorbid_asthma_res_date.is_null() | 
+    ((comorbid_asthma_res_date < comorbid_asthma_date_last) & (comorbid_asthma_date_last < (INTERVAL.start_date)))
+    )
+).when_null_then(False)
 
 # Measures ---
 measures_to_add = {}
@@ -314,7 +342,8 @@ measures.define_defaults(
         "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id,
         "comorbid_chronic_resp": comorbid_chronic_resp,
-        "comorbid_copd": comorbid_copd
+        "comorbid_copd": comorbid_copd,
+        "comorbid_asthma": comorbid_asthma
 #        "vax_flu_12m": vax_status['influenza'], Need to check vaccine target disease is correct
 #        "vax_covid_12m": vax_status['covid']
     },
