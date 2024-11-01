@@ -149,6 +149,12 @@
       "url": "https://www.opencodelists.org/codelist/primis-covid19-vacc-uptake/cns_cov/v2.5/",
       "downloaded_at": "2024-10-30 15:26:45.671368Z",
       "sha": "e46a3766e0b740c2d33443569615c53e9e8b2be5"
+    },
+    "nhsd-immunosupression-pcdcluster-snomed-ct.csv": {
+      "id": "nhsd/immunosupression-pcdcluster-snomed-ct/0993606d",
+      "url": "https://www.opencodelists.org/codelist/nhsd/immunosupression-pcdcluster-snomed-ct/0993606d/",
+      "downloaded_at": "2024-11-01 15:58:45.518146Z",
+      "sha": "3cc58660e33777bd2cd4e9d43b4ff3843ee9ead2"
     }
   }
 }
