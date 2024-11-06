@@ -48,7 +48,9 @@ for index in range(0, len(cols_to_convert)):
         practice_df[cols_to_convert[index]] / practice_df["list_size"]
     )
 
-# Convert numeric cols to quintiles
+# Create column for numeric list size, used in standardization of rates
+practice_df['list_size_raw'] = practice_df['list_size']
+# Convert other numeric cols to quintiles
 new_cols.append("list_size")
 for col in new_cols:
     practice_df[col] = pd.qcut(practice_df[col], q=5, duplicates="drop")
