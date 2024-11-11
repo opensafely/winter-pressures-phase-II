@@ -8,16 +8,16 @@ practice_measures <- read.csv('output/practice_measures/practice_measures.csv.gz
 # Format data
 measures$interval_start <- as.Date(measures$interval_start)
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
-total_app_df <- summarise(group_by(measures, interval_start), numerator = sum(numerator), 
+total_app_df <- summarise(group_by(measures, interval_start, measure), numerator = sum(numerator), 
                 denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
-
 # Create the line plot using ggplot for total appointments
-plot <- ggplot(total_app_df, aes(x = interval_start, y = total_app, group = 1)) +
+plot <- ggplot(total_app_df, aes(x = interval_start, y = total_app, color = measure)) +
   geom_line() +  # Add line
   geom_point() +  # Add markers
   labs(title = "Apps Over Time", x = "Time Interval", y = "Appointments per 1000 people")  # Add title and axis labels
 # Save the plot as a PNG file
 ggsave("output/total_measures/total_app.png", plot = plot)
+write.csv(total_app_df, "output/total_measures/total_app_df.csv")
 
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
