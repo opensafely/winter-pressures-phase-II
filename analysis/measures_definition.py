@@ -154,8 +154,9 @@ valid_appointments = (appointments.where((appointments
 measures_to_add['appointments_in_interval'] = (valid_appointments.start_date
                             .is_during(INTERVAL)
                             .count_distinct_for_patient())
-# Number of follow-up appointments, defined for a patient as
-# the (number of appointments for the patient in a 2 week interval) - 1
+# Number of follow-up appointments:
+# 1. Create binary column of whether patient had follow up
+# 2. Count up the number of yes's for the interval
 measures_to_add["follow_up_app"] = (valid_appointments.start_date
                 .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.end_date)
                 .count_distinct_for_patient() - 1)
@@ -176,11 +177,10 @@ measures_to_add['secondary_referral'] = (opa_cost.where(opa_cost
 app_status_code = ['Cancelled by Unit','Waiting']
 app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
-    measures_to_add[status_measure] = ((appointments.status
-                    .is_in([status_measure])) &
+    measures_to_add[status_measure] = (appointments.where((appointments.status == status_code) &
                     (appointments.start_date
                     .is_during(INTERVAL))
-                    ).count_distinct_for_patient()
+                    )).count_for_patient()
 
 # Adding rate of analgesic, antidepressant or antibiotic prescribing
 measures_to_add['analgesic_pres'] = 0
@@ -210,6 +210,34 @@ for medication in med_dict.keys():
         measures_to_add.pop(medication)
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
+'''
+The problem:
+1. We need reasons for appointments, where reason can be inferred from the clinical code attached to the appointment 
+2. However, there doesn't appear to be an ID field available that links clinical events to appointment ID. 
+3. Thus, we infer the clinical code for an appointment by it being assigned on the same day as an appointment was seen
+4. We tried this by taking clinical events where the event date is equal to the appointment seen date
+5. But patients can have multiple events and appointments per interval (week)
+6. Thus, the line (clinical_events.where(event.date == valid_appointments.start_date) gives the following error: Cannot combine 
+series which are drawn from different tables and both have more than one value per patient.
+7. The current solution we tried was to reduce the fields to one row per patient by using first_for_patient()
+8. To prevent losing follow-up appointments in the interval for a given patient, we looped over each day with first_for_patient()
+and summed over the week
+9. This loop appears to make the job run time too long (7 hours for 6 weeks of data), and gives 0 for all outputs in the generated dummy data
+
+for reason in app_reason_dict.keys():
+    event = (clinical_events.where((clinical_events
+                                    .snomedct_code
+                                    .is_in(app_reason_dict[reason]))
+                                    & (clinical_events
+                                        .date
+                                        .is_during(INTERVAL))
+                                        )
+            )
+    measures_to_add[reason] = (clinical_events.where(event.date == valid_appointments.start_date)
+                       .count_for_patient()
+                )
+'''
+'''
 event_count = 0
 for reason in app_reason_dict.keys():
     for day in range(0,7):
@@ -237,7 +265,7 @@ for reason in app_reason_dict.keys():
                        .count_for_patient()) + event_count
     # Storing the count for the number of appointments for the given reason for the interval/week
     measures_to_add[reason] = event_count
-
+'''
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 
