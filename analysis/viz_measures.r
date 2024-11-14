@@ -30,10 +30,10 @@ for(col in colnames(measures)[8:(length(measures) - 1)]){
   ggsave(glue("output/patient_measures/{col}_plot.png"), plot = patient_plot)
 }
 
-# Function that plots patient caharcteristics, grouped by age
-plot_trends_by_age <- function (col_name) {
+# Function that plots patient charcteristics, grouped by age
+plot_trends_by_age <- function (df, col_name) {
   col <- sym(col_name)
-  df <- measures %>%
+  df <- df %>%
   group_by(interval_start, age, !!col) %>%
   summarise(total_app = sum(numerator), .groups = "drop")
 
@@ -46,9 +46,20 @@ plot_trends_by_age <- function (col_name) {
 }
 
 # Plot vax trends by age
-plot_trends_by_age("vax_flu_12m")
-plot_trends_by_age("vax_covid_12m")
-plot_trends_by_age("vax_pneum_12m")
+plot_trends_by_age(measures, "vax_flu_12m")
+plot_trends_by_age(measures, "vax_covid_12m")
+plot_trends_by_age(measures, "vax_pneum_12m")
+
+# Plot vax trends by age & indication
+# Issue: This overruns previous graphs
+for (disease in c("comorbid_chronic_resp", "comorbid_copd", "comorbid_asthma")) {
+  comorbid <- sym(disease)
+  df <- filter(measures, !!comorbid == TRUE)
+
+  for (vax in c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m")) {
+  plot_trends_by_age(df, vax)
+  }
+}
 
 # Create plots for different practice characteristics
 for(col in colnames(practice_measures)[5:length(practice_measures)]){
