@@ -30,6 +30,26 @@ for(col in colnames(measures)[8:(length(measures) - 1)]){
   ggsave(glue("output/patient_measures/{col}_plot.png"), plot = patient_plot)
 }
 
+# Function that plots patient caharcteristics, grouped by age
+plot_trends_by_age <- function (col_name) {
+  col <- sym(col_name)
+  df <- measures %>%
+  group_by(interval_start, age, !!col) %>%
+  summarise(total_app = sum(numerator), .groups = "drop")
+
+  plot_by_age <- ggplot(df, aes(x = interval_start, y = total_app, color = !!col)) +
+  geom_line() +
+  facet_wrap (~ age, scales = "free_y") +
+  labs(title = glue("Apps Over Time by {col_name}"), x = "Time Interval", y = "Appointments", color = col_name)
+
+  ggsave(glue("output/patient_measures/{col_name}_plot_by_age.png"), plot = plot_by_age)
+}
+
+# Plot vax trends by age
+plot_trends_by_age("vax_flu_12m")
+plot_trends_by_age("vax_covid_12m")
+plot_trends_by_age("vax_pneum_12m")
+
 # Create plots for different practice characteristics
 for(col in colnames(practice_measures)[5:length(practice_measures)]){
   df <- summarise(group_by(practice_measures, interval_start, !!sym(col)), total_app=sum(numerator))

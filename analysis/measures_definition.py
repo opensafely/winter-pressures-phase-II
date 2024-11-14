@@ -152,7 +152,7 @@ region = (practice_registrations.for_patient_on(INTERVAL.start_date)
 
 # Vaccination against flu or covid in the last 12 months
 vax_status = {}
-for disease in ['influenza', 'covid']:
+for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL']:
     vax_status[disease] = (vaccinations.where((vaccinations
                                         .target_disease
                                         .is_in([disease])) &
@@ -434,9 +434,10 @@ measures.define_defaults(
         "comorbid_depres": comorbid_depres,
         "comorbid_mh": comorbid_mh,
         "comorbid_neuro": comorbid_neuro,
-        "comorbid_immuno": comorbid_immuno
-#        "vax_flu_12m": vax_status['influenza'], Need to check vaccine target disease is correct
-#        "vax_covid_12m": vax_status['covid']
+        "comorbid_immuno": comorbid_immuno,
+        "vax_flu_12m": vax_status['INFLUENZA'],
+        "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
+        "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
     },
     intervals=weeks(6).starting_on(study_start_date),
 )
