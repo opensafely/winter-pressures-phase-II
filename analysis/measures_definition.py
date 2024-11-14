@@ -78,33 +78,6 @@ comorbid_dict = {
 }
 comorbid_dict = create_codelist_dict(comorbid_dict)
 
-comorbid_disease_nores_dict = {
-    "chronic_resp": "codelists/nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv",
-    "mental_health": "codelists/qcovid-has_severe_mental_illness.csv",
-    "neuro": "codelists/primis-covid19-vacc-uptake-cns_cov.csv",
-    "immuno_sup": "codelists/nhsd-immunosupression-pcdcluster-snomed-ct.csv"
-}
-
-comorbid_disease_dict = {
-    "copd": "codelists/nhsd-primary-care-domain-refsets-copd_cod.csv",
-    "asthma": "codelists/nhsd-primary-care-domain-refsets-ast_cod.csv",
-    "diabetes": "codelists/nhsd-primary-care-domain-refsets-dm_cod.csv",
-    "htn": "codelists/nhsd-primary-care-domain-refsets-hyp_cod.csv",
-    "depres": "codelists/nhsd-primary-care-domain-refsets-depr_cod.csv"
-}
-
-comorbid_disease_res_dict = {
-    "copd_res": "codelists/nhsd-primary-care-domain-refsets-copdres_cod.csv",
-    "asthma_res": "codelists/nhsd-primary-care-domain-refsets-astres_cod.csv",
-    "diabetes_res": "codelists/nhsd-primary-care-domain-refsets-dmres_cod.csv",
-    "htn_res": "codelists/nhsd-primary-care-domain-refsets-hypres_cod.csv",
-    "depres_res": "codelists/nhsd-primary-care-domain-refsets-depres_cod.csv"
-}
-
-comorbid_disease_nores_dict = create_codelist_dict
-comorbid_disease_dict = create_codelist_dict(comorbid_disease_dict)
-comorbid_disease_res_dict = create_codelist_dict(comorbid_disease_res_dict)
-
 # exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
@@ -189,62 +162,6 @@ for disease in ['influenza', 'covid']:
                                         .exists_for_patient())
 
 # Co-morbidity
-
-# Diseases with no resolution
-
-def comorbid_status(comorbid_disease_dict, comorbid_disease_res_dict = None, INTERVAL) -> dict
-    '''
-    Create a boolean vector for each comorbidity, using the codelists for each condition.
-    
-    Args:
-    - codelist_disease: a dictionary of codelists indicating presence of a disease
-    - codelist_resolved (optional): a dictionary of codelists indicating disease resolution
-    - INTERVAL: time interval during which presence of co-morbidity is assessed.
-    
-    Returns:
-    - dict: A dictonary of boolean vectors.
-    
-    For diseases with resolution: True if disease developed before interval start & never resolved OR resolved but recurred before the interval; else False.
-    For diseases with no resoultion codelist: True if disease developed before interval start, else False.
-    '''
-    if comorbid_disease_res_dict:
-        
-        for name in comorbid_disease_dict
-        ## Last disease diagnosis date before interval start
-        comorbid_disease_date_last = (clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_disease_dict[name]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
-        .sort_by(clinical_events.date)
-        .last_for_patient()
-        .date
-        )
-        
-        for name in comorbid_disease_res_dict
-        ## Last disease resolution date before interval start
-        comorbid_disease_res_date_last = (clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_disease_res_dict[name]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
-        .sort_by(clinical_events.date)
-        .last_for_patient()
-        .date
-        )
-        
-        for name in comorbid_disease_dict
-        ## True if disease developed before interval start & never resolved OR resolved but recurred before the interval; else False
-        comorbid_status[name] = (comorbid_disease_date_last.is_not_null() & 
-        (comorbid_disease_res_date_last.is_null() | (comorbid_disease_res_date_last < comorbid_disease_date_last))
-        ).when_null_then(False)
-        
-        return comorbid_status
-
-    else:
-        for name in comorbid_disease_dict
-        comborbid_status[name] = (
-            clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_disease_dict[name]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .exists_for_patient()
-        )
-        return comorbid_status
-
-comorbid_status_disease = comorbid_status
 
 # Chronic resp disease (no resolution codelist). True if disease developed before interval start, else False.
 comorbid_chronic_resp = (
