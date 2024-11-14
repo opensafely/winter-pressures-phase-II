@@ -1,0 +1,153 @@
+code,term
+162004,Severe manic bipolar I disorder without psychotic features (disorder)
+4441000,Severe bipolar disorder with psychotic features (disorder)
+4926007,Schizophrenia in remission (disorder)
+5464005,Brief reactive psychosis (disorder)
+12939007,Chronic disorganized schizophrenia (disorder)
+13313007,Mild bipolar disorder (disorder)
+13746004,Bipolar disorder (disorder)
+14291003,Subchronic disorganized schizophrenia with acute exacerbations (disorder)
+16506000,Mixed bipolar I disorder (disorder)
+16990005,Subchronic schizophrenia (disorder)
+26025008,Residual schizophrenia (disorder)
+26472000,Paraphrenia (disorder)
+27387000,Subchronic disorganized schizophrenia (disorder)
+28475009,Severe recurrent major depression with psychotic features (disorder)
+31027006,Schizotypal personality disorder (disorder)
+31373002,Disorganized schizophrenia in remission (disorder)
+31446002,"Bipolar I disorder, most recent episode hypomanic (disorder)"
+31658008,Chronic paranoid schizophrenia (disorder)
+35252006,Disorganized schizophrenia (disorder)
+35489007,Depressive disorder (disorder)
+36474008,Severe recurrent major depression without psychotic features (disorder)
+36923009,"Major depression, single episode (disorder)"
+38295006,Involutional paraphrenia (disorder)
+41836007,Bipolar disorder in full remission (disorder)
+42868002,Subchronic catatonic schizophrenia (disorder)
+48500005,Delusional disorder (disorder)
+53049002,Severe bipolar disorder without psychotic features (disorder)
+58214004,Schizophrenia (disorder)
+61403008,Severe depressed bipolar I disorder without psychotic features (disorder)
+61831009,Induced psychotic disorder (disorder)
+63181006,Paranoid schizophrenia in remission (disorder)
+63204009,BouffÃƒÂ©e dÃƒÂ©lirante (disorder)
+63249007,Manic bipolar I disorder in partial remission (disorder)
+64905009,Paranoid schizophrenia (disorder)
+68890003,Schizoaffective disorder (disorder)
+68995007,Chronic catatonic schizophrenia (disorder)
+69322001,Psychotic disorder (disorder)
+70747007,"Major depression single episode, in partial remission (disorder)"
+73867007,Severe major depression with psychotic features (disorder)
+79584002,Moderate bipolar disorder (disorder)
+79866005,Subchronic paranoid schizophrenia (disorder)
+83225003,Bipolar II disorder (disorder)
+83458005,Agitated depression (disorder)
+83746006,Chronic schizophrenia (disorder)
+84760002,"Schizoaffective disorder, depressive type (disorder)"
+85248005,Bipolar disorder in remission (disorder)
+87414006,Reactive depression (situational) (disorder)
+111482003,Subchronic schizophrenia with acute exacerbations (disorder)
+111483008,Catatonic schizophrenia in remission (disorder)
+111484002,Undifferentiated schizophrenia (disorder)
+191525009,Non-organic psychosis (disorder)
+191526005,Schizophrenic disorders (disorder)
+191527001,Simple schizophrenia (disorder)
+191531007,Acute exacerbation of chronic schizophrenia (disorder)
+191539009,Acute exacerbation of chronic hebephrenic schizophrenia (disorder)
+191542003,Catatonic schizophrenia (disorder)
+191547009,Acute exacerbation of subchronic catatonic schizophrenia (disorder)
+191548004,Acute exacerbation of chronic catatonic schizophrenia (disorder)
+191554003,Acute exacerbation of subchronic paranoid schizophrenia (disorder)
+191555002,Acute exacerbation of chronic paranoid schizophrenia (disorder)
+191559008,Latent schizophrenia (disorder)
+191562006,Chronic latent schizophrenia (disorder)
+191563001,Acute exacerbation of subchronic latent schizophrenia (disorder)
+191564007,Acute exacerbation of chronic latent schizophrenia (disorder)
+191565008,Latent schizophrenia in remission (disorder)
+191567000,Schizoaffective schizophrenia (disorder)
+191569002,Subchronic schizoaffective schizophrenia (disorder)
+191570001,Chronic schizoaffective schizophrenia (disorder)
+191571002,Acute exacerbation of subchronic schizoaffective schizophrenia (disorder)
+191572009,Acute exacerbation of chronic schizoaffective schizophrenia (disorder)
+191574005,Schizoaffective schizophrenia in remission (disorder)
+191577003,Cenesthopathic schizophrenia (disorder)
+191583000,"Single manic episode, mild (disorder)"
+191584006,"Single manic episode, moderate (disorder)"
+191586008,"Single manic episode, severe, with psychosis (disorder)"
+191588009,Single manic episode in full remission (disorder)
+191590005,Recurrent manic episodes (disorder)
+191592002,"Recurrent manic episodes, mild (disorder)"
+191593007,"Recurrent manic episodes, moderate (disorder)"
+191595000,"Recurrent manic episodes, severe, with psychosis (disorder)"
+191597008,"Recurrent manic episodes, in full remission (disorder)"
+191604000,"Single major depressive episode, severe, with psychosis (disorder)"
+191613003,"Recurrent major depressive episodes, severe, with psychosis (disorder)"
+191616006,Recurrent depression (disorder)
+191618007,"Bipolar affective disorder, current episode manic (disorder)"
+191620005,"Bipolar affective disorder, currently manic, mild (disorder)"
+191621009,"Bipolar affective disorder, currently manic, moderate (disorder)"
+191623007,"Bipolar affective disorder, currently manic, severe, with psychosis (disorder)"
+191625000,"Bipolar affective disorder, currently manic, in full remission (disorder)"
+191627008,"Bipolar affective disorder, current episode depression (disorder)"
+191629006,"Bipolar affective disorder, currently depressed, mild (disorder)"
+191630001,"Bipolar affective disorder, currently depressed, moderate (disorder)"
+191634005,"Bipolar affective disorder, currently depressed, in full remission (disorder)"
+191636007,Mixed bipolar affective disorder (disorder)
+191638008,"Mixed bipolar affective disorder, mild (disorder)"
+191639000,"Mixed bipolar affective disorder, moderate (disorder)"
+191641004,"Mixed bipolar affective disorder, severe, with psychosis (disorder)"
+191643001,"Mixed bipolar affective disorder, in full remission (disorder)"
+191658009,Atypical manic disorder (disorder)
+191659001,Atypical depressive disorder (disorder)
+191668004,Simple paranoid state (disorder)
+191670008,Shared paranoid disorder (disorder)
+191672000,Paranoia querulans (disorder)
+191676002,Reactive depressive psychosis (disorder)
+191677006,Acute hysterical psychosis (disorder)
+191680007,Psychogenic paranoid psychosis (disorder)
+191683009,Psychogenic stupor (disorder)
+192362008,"Bipolar affective disorder, current episode mixed (disorder)"
+231437006,Reactive psychoses (disorder)
+231485007,Post-schizophrenic depression (disorder)
+231487004,Persistent delusional disorder (disorder)
+231489001,Acute transient psychotic disorder (disorder)
+231494001,Mania (disorder)
+231496004,Hypomania (disorder)
+231499006,Endogenous depression first episode (disorder)
+247803002,Seasonal affective disorder (disorder)
+247804008,Schizophrenic prodrome (disorder)
+268617001,Acute schizophrenic episode (disorder)
+268619003,"Manic disorder, single episode (disorder)"
+268621008,Recurrent major depressive episodes (disorder)
+268622001,Chronic paranoid psychosis (disorder)
+268624000,Acute paranoid reaction (disorder)
+270901009,"Schizoaffective disorder, mixed type (disorder)"
+271428004,"Schizoaffective disorder, manic type (disorder)"
+274948002,Endogenous depression - recurrent (disorder)
+274952002,Borderline schizophrenia (disorder)
+278853003,Acute schizophrenia-like psychotic disorder (disorder)
+300706003,Endogenous depression (disorder)
+307417003,Cycloid psychosis (disorder)
+307504004,Oneirophrenia (finding)
+310495003,Mild depression (disorder)
+310496002,Moderate depression (disorder)
+310497006,Severe depression (disorder)
+357705009,Cotard's syndrome (disorder)
+371596008,Bipolar I disorder (disorder)
+441704009,Affective psychosis (disorder)
+698957003,Depressive disorder in remission (disorder)
+712824002,Acute polymorphic psychotic disorder without symptoms of schizophrenia (disorder)
+712850003,Acute polymorphic psychotic disorder co-occurrent with symptoms of schizophrenia (disorder)
+765176007,Psychosis and severe depression co-occurrent and due to bipolar affective disorder (disorder)
+251000119105,"Severe major depression, single episode (disorder)"
+417601000000102,"[X]Schizophrenia, schizotypal and delusional disorders (disorder)"
+755311000000100,Non-organic psychosis in remission (disorder)
+755321000000106,"Single major depressive episode, severe, with psychosis, psychosis in remission (disorder)"
+755331000000108,"Recurrent major depressive episodes, severe, with psychosis, psychosis in remission (disorder)"
+760721000000109,"Mixed bipolar affective disorder, in partial remission (disorder)"
+764591000000108,"Mixed bipolar affective disorder, severe (disorder)"
+764611000000100,"Recurrent major depressive episodes, severe (disorder)"
+764621000000106,"Recurrent manic episodes, severe (disorder)"
+764641000000104,"Single manic episode, severe (disorder)"
+764671000000105,"Recurrent manic episodes, in partial remission (disorder)"
+764731000000103,Single manic episode in partial remission (disorder)
