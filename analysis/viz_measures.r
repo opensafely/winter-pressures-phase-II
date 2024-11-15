@@ -41,13 +41,13 @@ plot_trends_by_facet <- function (df, main_col, facet_col = "age", filter_col = 
 
   df <- df %>%
   group_by(interval_start, !!facet, !!col) %>%
-  summarise(total_app = sum(numerator), .groups = "drop")
+  summarise(app_rate = sum(numerator)/ (sum(denominator)*1000), .groups = "drop")
 
-  plot_by_facet <- ggplot(df, aes(x = interval_start, y = total_app, color = !!col)) +
+  plot_by_facet <- ggplot(df, aes(x = interval_start, y = app_rate, color = !!col)) +
   geom_line() +
   geom_point() +
   facet_wrap (as.formula(paste("~", rlang::as_name(facet))), scales = "free_y") +
-  labs(title = glue("Apps Over Time by {main_col}, by {facet_col}, limited to {filter_col}"), x = "Time Interval", y = "Appointments", color = main_col) +
+  labs(title = glue("Apps Over Time by {main_col}, by {facet_col}, limited to {filter_col}"), x = "Time Interval", y = "Appointments per 1000", color = main_col) +
   theme_light() +
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
     

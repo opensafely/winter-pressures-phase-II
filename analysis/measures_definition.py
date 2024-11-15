@@ -333,11 +333,20 @@ measures_to_add['appointments_in_interval'] = (valid_appointments.start_date
 measures_to_add["follow_up_app"] = (valid_appointments.start_date
                 .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.end_date)
                 .count_distinct_for_patient() - 1)
-# Number of vaccinations during interval
+# Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = (vaccinations.where(vaccinations
                                       .date
                                       .is_during(INTERVAL))
                                       .count_for_patient())
+measures_to_add['vax_app_flu'] = (vaccinations.where(
+    vaccinations.target_disease.is_in(['INFLUENZA']) &
+    vaccinations.date.is_during(INTERVAL))
+    .count_for_patient())
+measures_to_add['vax_app_covid'] = (vaccinations.where(
+    vaccinations.target_disease.is_in(['SARS-2 CORONAVIRUS']) &
+    vaccinations.date.is_during(INTERVAL))
+    .count_for_patient())
+
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
