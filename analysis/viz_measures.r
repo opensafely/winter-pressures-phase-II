@@ -7,6 +7,7 @@ practice_measures <- read.csv('output/practice_measures/practice_measures.csv.gz
 
 # Format data
 measures$interval_start <- as.Date(measures$interval_start)
+measures <- filter(measures, measure != 'all_appointments_in_interval')
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 total_app_df <- summarise(group_by(measures, interval_start, measure), numerator = sum(numerator), 
                 denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
