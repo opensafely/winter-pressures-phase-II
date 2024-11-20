@@ -328,11 +328,28 @@ valid_appointments = (appointments.where((appointments
 measures_to_add['appointments_in_interval'] = (valid_appointments.start_date
                             .is_during(INTERVAL)
                             .count_distinct_for_patient())
-# Number of follow-up appointments, defined for a patient as
-# the (number of appointments for the patient in a 2 week interval) - 1
-measures_to_add["follow_up_app"] = (valid_appointments.start_date
-                .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.end_date)
-                .count_distinct_for_patient() - 1)
+
+measures_to_add['all_appointments_in_interval'] = (appointments.start_date
+                            .is_during(INTERVAL)
+                            .count_distinct_for_patient())
+# Number of follow-up appointments:
+
+appointments.app_prev_week = (appointments.where(
+                (appointments.start_date
+                .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.start_date - days(1))) &
+                (appointments.seen_date == appointments.start_date)
+                ).exists_for_patient()
+                )
+appointments.app_curr_week = (appointments.where(
+                (appointments.start_date.is_during(INTERVAL)) &
+                (appointments.seen_date == appointments.start_date)
+                ).exists_for_patient()
+                )
+
+measures_to_add["follow_up_app"] = (appointments.where(
+                                    appointments.app_prev_week & appointments.app_curr_week)
+                                    .exists_for_patient())
+
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = (vaccinations.where(vaccinations
                                       .date
@@ -359,11 +376,10 @@ measures_to_add['secondary_referral'] = (opa_cost.where(opa_cost
 app_status_code = ['Cancelled by Unit','Waiting']
 app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
-    measures_to_add[status_measure] = ((appointments.status
-                    .is_in([status_measure])) &
+    measures_to_add[status_measure] = (appointments.where((appointments.status == status_code) &
                     (appointments.start_date
                     .is_during(INTERVAL))
-                    ).count_distinct_for_patient()
+                    )).count_for_patient()
 
 # Adding rate of analgesic, antidepressant or antibiotic prescribing
 measures_to_add['analgesic_pres'] = 0
@@ -393,33 +409,18 @@ for medication in med_dict.keys():
         measures_to_add.pop(medication)
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
-event_count = 0
 for reason in app_reason_dict.keys():
-    for day in range(0,7):
-        # Iterate over each day of the interval (week)
-        current_day = INTERVAL.start_date + days(day)
-        # Extracting events that occured on that day
-        event = (clinical_events.where(clinical_events
-                                        .date.is_on_or_between(current_day, current_day))
-                                        .where(clinical_events.where(clinical_events
-                                        .date.is_on_or_between(current_day, current_day))
-                .snomedct_code
-                .is_in(app_reason_dict[reason]))
-                .sort_by(clinical_events.date)
-                .first_for_patient()
+    event = (clinical_events.where((clinical_events
+                                    .snomedct_code
+                                    .is_in(app_reason_dict[reason]))
+                                    & (clinical_events
+                                        .date
+                                        .is_during(INTERVAL))
+                                        )
+            )
+    measures_to_add[reason] = (event.where(event.date.is_in(valid_appointments.start_date))
+                       .count_for_patient()
                 )
-        # Extracting appointments that occured on that day
-        appointment = (valid_appointments.where(valid_appointments.start_date
-                    .is_on_or_between(current_day, current_day))
-                    .sort_by(valid_appointments.start_date)
-                    .first_for_patient()
-                    )
-        # Adding up the events that occured on the same day as an appointment 
-        # (inferring appointment reason) across each day of the interval/week
-        event_count = (clinical_events.where(event.date == appointment.start_date)
-                       .count_for_patient()) + event_count
-    # Storing the count for the number of appointments for the given reason for the interval/week
-    measures_to_add[reason] = event_count
 
 # Defining measures ---
 measures.define_defaults(

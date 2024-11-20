@@ -7,26 +7,38 @@ practice_measures <- read.csv('output/practice_measures/practice_measures.csv.gz
 
 # Format data
 measures$interval_start <- as.Date(measures$interval_start)
-practice_measures$interval_start <- as.Date(practice_measures$interval_start)
-total_app_df <- summarise(group_by(measures, interval_start), total_app=sum(numerator))
+all_appnt_df <- filter(measures, measure == 'all_appointments_in_interval')
+all_appnt_df <- summarise(group_by(all_appnt_df, interval_start, measure), numerator = sum(numerator), 
+                denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
 
-# Create the line plot using ggplot for total appointments
-plot <- ggplot(total_app_df, aes(x = interval_start, y = total_app, group = 1)) +
+measures <- filter(measures, measure != 'all_appointments_in_interval')
+practice_measures$interval_start <- as.Date(practice_measures$interval_start)
+total_app_df <- summarise(group_by(measures, interval_start, measure), numerator = sum(numerator), 
+                denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
+
+# Create a list of data frames
+data_frames <- list(all_appnt_df = all_appnt_df, total_app_df = total_app_df)
+# Loop over each data frame and create/save the plot
+for (df_name in names(data_frames)) {
+  df <- data_frames[[df_name]]
+  plot <- ggplot(df, aes(x = interval_start, y = total_app, color = measure)) +
   geom_line() +  # Add line
   geom_point() +  # Add markers
-  labs(title = "Apps Over Time", x = "Time Interval", y = "Appointments")  # Add title and axis labels
-# Save the plot as a PNG file
-ggsave("output/total_measures/total_app.png", plot = plot)
+  labs(title = "Apps Over Time", x = "Time Interval", y = "Appointments per 1000 people")  # Add title and axis labels
+  # Save the plot as a PNG file
+  ggsave(glue("output/total_measures/{df_name}.png"), plot = plot)
+}
+write.csv(total_app_df, "output/total_measures/total_app_df.csv")
 
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
 for(col in colnames(measures)[8:(length(measures) - 1)]){
-  df <- summarise(group_by(measures, interval_start, !!sym(col)), total_app=sum(numerator))
+  df <- summarise(group_by(measures, interval_start, !!sym(col)), total_app=(sum(numerator)/sum(denominator))*1000)
   patient_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
     geom_line() +  # Add line
     geom_point() +  # Add markers
     labs(title = glue("Apps Over Time by {col}"), x = "Time Interval", 
-    y = "Appointments", color = col)
+    y = "Appointments per 1000 people", color = col)
   ggsave(glue("output/patient_measures/{col}_plot.png"), plot = patient_plot)
 }
 
@@ -76,11 +88,12 @@ lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid,
 
 # Create plots for different practice characteristics
 for(col in colnames(practice_measures)[5:length(practice_measures)]){
-  df <- summarise(group_by(practice_measures, interval_start, !!sym(col)), total_app=sum(numerator))
+  df <- summarise(group_by(practice_measures, interval_start, !!sym(col)), total_app=(sum(numerator)/sum(list_size_raw))*1000)
+  print(head(df))
   practice_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
     geom_line() +  # Add line
     geom_point() +  # Add markers
     labs(title = glue("Apps Over Time by {col}"), x = "Time Interval",
-    y = "Appointments", color = col)
+    y = "Appointments per 1000 people", color = col)
   ggsave(glue("output/practice_measures/{col}_plot.png"), plot = practice_plot)
 }

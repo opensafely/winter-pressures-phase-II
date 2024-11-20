@@ -26,8 +26,8 @@ actions:
     outputs:
       moderately_sensitive:
         app_table: output/appointments/app_summary.csv
-  generate_practice_measures:
-    run: python:latest analysis/practice_measures.py 
+  generate_pre_processing:
+    run: python:latest analysis/pre_processing.py 
         --output output/practice_measures/practice_measures.csv.gz
         --output output/patient_measures/processed_measures.csv.gz
         --output output/patient_measures/frequency_table.csv
@@ -40,9 +40,9 @@ actions:
         frequency_table: output/patient_measures/frequency_table.csv
   generate_measures_viz:
     run: r:latest analysis/viz_measures.r
-        --output output/total_measures/total_app.png
-    needs: [generate_practice_measures]
+    needs: [generate_pre_processing]
     outputs:
       moderately_sensitive:
         app_figures: output/*/*.png
+        total_measures: output/total_measures/*.csv
 
