@@ -40,7 +40,6 @@ actions:
         frequency_table: output/patient_measures/frequency_table.csv
   generate_measures_viz:
     run: r:latest analysis/viz_measures.r
-        --output output/total_measures/total_app.png
     needs: [generate_pre_processing]
     outputs:
       moderately_sensitive:
