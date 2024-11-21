@@ -46,6 +46,9 @@ app_reason_dict = {
 }
 app_reason_dict = create_codelist_dict(app_reason_dict)
 
+# Append additional appointmeny reasons with SNOMED codes (no codelists) 
+app_reason_dict["back_pain"] = ['279039007', '161891005', '161894002', '278860009', '279040009']
+
 # Medications codelists:
 med_dict ={
     "antidepressant_pres":"codelists/bristol-antidepressants-snomedct.csv",
@@ -107,12 +110,12 @@ has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice
 age = age_at_interval_start
 age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
-    when((age >= 5) & (age < 12)).then("primary-school")
+    when((age >= 5) & (age < 12)).then("primary-school"),
     when((age >= 12) & (age < 18)).then("secondary-school"),
     when((age >= 18) & (age < 40)).then("adult<40"),
-    when((age >= 40) & (age <65)).then("adult<65")
+    when((age >= 40) & (age <65)).then("adult<65"),
     when((age >= 65) & (age < 80)).then("adult<80"),
-    when((age >= 80) & (age < 111)).then("adult>80"),
+    when((age >= 80) & (age < 111)).then("adult>80")
 )
 
 # Ethnicity
@@ -421,6 +424,26 @@ for reason in app_reason_dict.keys():
                                         )
             )
     measures_to_add[reason] = (event.where(event.date.is_in(valid_appointments.start_date))
+                       .count_for_patient()
+                )
+
+# Adding appointments with indication & prescription 
+indication_dict = {'back_pain_pres': app_reason_dict['back_pain']}
+prescription_dict =
+for indication, prescription in zip (indication_dict.keys(), prescription_dict.keys()) :
+    event = (clinical_events.where((clinical_events
+                                    .snomedct_code
+                                    .is_in(indication_dict[indication]))
+                                    & (clinical_events
+                                        .date
+                                        .is_during(INTERVAL))
+                                        )
+            )
+    prescription = (medications.where((medications.dmd_code.is_in(prescription_dict[prescription]))
+                                    & (medications.date.is_during(INTERVAL)))
+                    )
+    measures_to_add[indication] = (event.where((event.date.is_in(valid_appointments.start_date))
+                                            & (event.date == prescription.date))
                        .count_for_patient()
                 )
 
