@@ -41,6 +41,7 @@ ethnicity = codelist_from_csv(
 # Appointment reasons codelist:
 app_reason_dict = {
     "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist 
+    "pneum_broad": "codelists/bristol-pneumonia.csv",
     "neurological_app": "codelists/ons-neurological-disorders.csv",
     "sick_notes_app": "codelists/opensafely-sick-notes-snomed.csv"
 }
@@ -54,6 +55,9 @@ app_reason_dict["chest_inf"] = ['50417007', '54150009', '195742007', '54398005',
 # Top pneumonia specific codes
 app_reason_dict["pneum"] = ['233604007', '385093006', '312342009', '425464007', '278516003']
 
+indication_dict = {"back_pain_opioid": app_reason_dict["back_pain"], 
+                   "chest_inf_abx": app_reason_dict["chest_inf"],
+                   "pneum_abx": app_reason_dict["pneum"]}
 
 # Medications codelists:
 med_dict ={
@@ -69,7 +73,9 @@ med_dict ={
 }
 med_dict = create_codelist_dict(med_dict)
 
-prescrip_dict = {key: med_dict[key] for key in ["opioid_oral", "chest_abx"]}
+prescription_dict = {key: med_dict[key] for key in ["opioid_oral", "chest_abx", "chest_abx"]}
+# double coded of chest_Abx to match indication_dict for a loop later down
+
 
 # Co-morbidity codelists:
 comorbid_dict = {
@@ -437,8 +443,6 @@ for reason in app_reason_dict.keys():
                 )
 
 # Adding appointments with indication & prescription 
-indication_dict = {'back_pain_pres': app_reason_dict['back_pain']}
-prescription_dict =
 for indication, prescription in zip (indication_dict.keys(), prescription_dict.keys()) :
     event = (clinical_events.where((clinical_events
                                     .snomedct_code
@@ -451,10 +455,9 @@ for indication, prescription in zip (indication_dict.keys(), prescription_dict.k
     prescription = (medications.where((medications.dmd_code.is_in(prescription_dict[prescription]))
                                     & (medications.date.is_during(INTERVAL)))
                     )
-    measures_to_add[indication] = (event.where((event.date.is_in(valid_appointments.start_date))
-                                            & (event.date == prescription.date))
-                       .count_for_patient()
-                )
+    measures_to_add[indication] = ((event.where((event.date.is_in(valid_appointments.start_date))
+                                            & (event.date.is_in(prescription.date))))
+                                            .count_for_patient())
 
 # Defining measures ---
 measures.define_defaults(

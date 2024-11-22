@@ -12,6 +12,12 @@
       "downloaded_at": "2024-09-26 12:33:18.658872Z",
       "sha": "059df7a11e9429127190acc3c57f5836611034f9"
     },
+    "bristol-pneumonia.csv": {
+      "id": "bristol/pneumonia/44622d57",
+      "url": "https://www.opencodelists.org/codelist/bristol/pneumonia/44622d57/",
+      "downloaded_at": "2024-11-22 18:25:26.685379Z",
+      "sha": "6e24f2ee0f80855b5c322af2911795fb0385ad02"
+    },
     "opensafely-sick-notes-snomed.csv": {
       "id": "opensafely/sick-notes-snomed/0f8ffb90",
       "url": "https://www.opencodelists.org/codelist/opensafely/sick-notes-snomed/0f8ffb90/",

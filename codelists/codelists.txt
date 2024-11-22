@@ -1,5 +1,6 @@
 opensafely/ethnicity/2020-04-27
 opensafely/acute-respiratory-illness-primary-care/30f1c6ca
+bristol/pneumonia/44622d57
 opensafely/sick-notes-snomed/0f8ffb90
 ons/neurological-disorders/54fabb61
 opensafely/antibacterials/26390d85
