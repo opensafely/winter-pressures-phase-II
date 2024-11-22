@@ -72,6 +72,12 @@
       "downloaded_at": "2024-09-26 12:33:19.201921Z",
       "sha": "e79f8e54a2548b07a50487b1974020dc9ef00020"
     },
+    "user-arinat-chest-abx-dmd.csv": {
+      "id": "user/arinat/chest-abx-dmd/7ad5239d",
+      "url": "https://www.opencodelists.org/codelist/user/arinat/chest-abx-dmd/7ad5239d/",
+      "downloaded_at": "2024-11-22 17:59:32.300041Z",
+      "sha": "408565ecbc50893e36ef7d5c8bfb134ed7a4f589"
+    },
     "nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv": {
       "id": "nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127",
       "url": "https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127/",
