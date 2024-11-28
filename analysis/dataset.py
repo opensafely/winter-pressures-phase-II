@@ -321,28 +321,30 @@ valid_appointments = (appointments.where((appointments
                                             (appointments
                                              .seen_date)))
 # Number of appointments in interval
-dataset.appointments_in_interval = (valid_appointments.start_date
-                            .is_on_or_between(study_start_date, study_end_date)
-                            .count_distinct_for_patient())
+dataset.appointments_in_interval = (valid_appointments.where(valid_appointments.start_date
+                            .is_on_or_between(study_start_date, study_end_date))
+                            .count_for_patient())
 
-dataset.all_appointments_in_interval = (appointments.start_date
-                            .is_on_or_between(study_start_date, study_end_date)
-                            .count_distinct_for_patient())
+dataset.all_appointments_in_interval = (appointments.where(appointments.start_date
+                            .is_on_or_between(study_start_date, study_end_date))
+                            .count_for_patient())
 # Number of follow-up appointments:
 
-dataset.app_prev_week = (appointments.where(
+appointments.app_prev_week = (appointments.where(
                 (appointments.start_date
                 .is_on_or_between(study_start_date - days(7), study_start_date - days(1))) &
                 (appointments.seen_date == appointments.start_date)
                 ).exists_for_patient()
                 )
-dataset.app_curr_week = (appointments.where(
+appointments.app_curr_week = (appointments.where(
                 (appointments.start_date.is_on_or_between(study_start_date, study_end_date)) &
                 (appointments.seen_date == appointments.start_date)
                 ).exists_for_patient()
                 )
 
-#dataset.follow_up_app = appointments.app_prev_week & appointments.app_curr_week
+dataset.follow_up_app = (appointments.where(
+                                    appointments.app_prev_week & appointments.app_curr_week)
+                                    .exists_for_patient())
 
 # Number of vaccinations during interval, all and for flu and covid
 dataset.vax_app = (vaccinations.where(vaccinations

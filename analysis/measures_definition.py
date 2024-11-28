@@ -322,13 +322,13 @@ valid_appointments = (appointments.where((appointments
                                             (appointments
                                              .seen_date)))
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = (valid_appointments.start_date
-                            .is_during(INTERVAL)
-                            .count_distinct_for_patient())
+measures_to_add['appointments_in_interval'] = (valid_appointments.where(valid_appointments.start_date
+                            .is_during(INTERVAL))
+                            .count_for_patient())
 
-measures_to_add['all_appointments_in_interval'] = (appointments.start_date
-                            .is_during(INTERVAL)
-                            .count_distinct_for_patient())
+measures_to_add['all_appointments_in_interval'] = (appointments.where(appointments.start_date
+                            .is_during(INTERVAL))
+                            .count_for_patient())
 # Number of follow-up appointments:
 
 appointments.app_prev_week = (appointments.where(
