@@ -20,13 +20,12 @@ def create_codelist_dict(dic: dict) -> dict:
     return dic
 
 # Instantiate measures, with small number suppression turned off
-measures = create_measures()
-measures.configure_dummy_data(population_size=1000)
-measures.configure_disclosure_control(enabled=False)
+dataset = create_dataset()
 
 # Date specifications
-study_start_date = "2022-01-03"
-study_reg_date = "2021-01-03"
+study_start_date = "2022-01-14"
+study_reg_date = "2021-01-14"
+study_end_date = "2022-01-21"
 
 # Demogragic codelists
 ethnicity = codelist_from_csv(
@@ -78,25 +77,25 @@ comorbid_dict = create_codelist_dict(comorbid_dict)
 # exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
-age_at_interval_start = patients.age_on(INTERVAL.start_date)
+age_at_interval_start = patients.age_on(study_start_date)
 age_filter = (age_at_interval_start >= 0) & (
     age_at_interval_start <= 110)
 
 # Alive throughout the interval period (vs. at the beginning)
 was_alive = (
-    patients.date_of_death.is_after(INTERVAL.end_date) | 
+    patients.date_of_death.is_after(study_end_date) | 
     patients.date_of_death.is_null()
 )
 
 # Registered throughout the interval period (vs at the begining)
-was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
+was_registered = practice_registrations.spanning(study_start_date, study_end_date).exists_for_patient()
 # Been registered at a practice for 365 days before the study
 prior_registration = practice_registrations.spanning(study_reg_date, study_start_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
 was_female_or_male = patients.sex.is_in(["female", "male"])
-has_deprivation_index = addresses.for_patient_on(INTERVAL.start_date).imd_rounded.is_not_null()
-has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice_nuts1_region_name.is_not_null()
+has_deprivation_index = addresses.for_patient_on(study_start_date).imd_rounded.is_not_null()
+has_region = practice_registrations.for_patient_on(study_start_date).practice_nuts1_region_name.is_not_null()
 
 # Patient characteristics ---
 
@@ -111,7 +110,7 @@ age_group = case(
 )
 
 # Ethnicity
-ethnicity = (
+dataset.ethnicity = (
     clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
     .sort_by(clinical_events.date)
     .last_for_patient()
@@ -119,9 +118,9 @@ ethnicity = (
 )
 
 # Depravation
-imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
+imd_rounded = addresses.for_patient_on(study_start_date).imd_rounded
 max_imd = 32844
-imd_quintile = case(
+dataset.imd_quintile = case(
     when(imd_rounded < int(max_imd * 1 / 5)).then(1),
     when(imd_rounded < int(max_imd * 2 / 5)).then(2),
     when(imd_rounded < int(max_imd * 3 / 5)).then(3),
@@ -130,21 +129,21 @@ imd_quintile = case(
 )
 
 # Care home residency
-carehome = addresses.for_patient_on(INTERVAL.start_date).care_home_is_potential_match
+dataset.carehome = addresses.for_patient_on(study_start_date).care_home_is_potential_match
 
 # Defining interval events for reusability in later queries
 interval_events = clinical_events.where(clinical_events
                                         .date.is_during(INTERVAL))
 
 # Patient urban-rural classification
-rur_urb_class = (addresses
-                 .for_patient_on(INTERVAL.start_date)
+dataset.rur_urb_class = (addresses
+                 .for_patient_on(study_start_date)
                  .rural_urban_classification)
 
 # Practice data taken at the start of the interval
-practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
+dataset.practice_id = (practice_registrations.for_patient_on(study_start_date)
                .practice_pseudo_id)
-region = (practice_registrations.for_patient_on(INTERVAL.start_date)
+dataset.region = (practice_registrations.for_patient_on(study_start_date)
           .practice_nuts1_region_name)
 
 # Vaccination against flu or covid in the last 12 months
@@ -155,15 +154,15 @@ for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL']:
                                         .is_in([disease])) &
                                         vaccinations
                                         .date
-                                        .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date))
+                                        .is_on_or_between(study_start_date - years(1), study_start_date))
                                         .exists_for_patient())
 
 # Co-morbidity
 #region
 # Chronic resp disease (no resolution codelist). True if disease developed before interval start, else False.
-comorbid_chronic_resp = (
+dataset.comorbid_chronic_resp = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["chronic_resp"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .exists_for_patient()
 )
 
@@ -171,7 +170,7 @@ comorbid_chronic_resp = (
 ## Last COPD diagnosis date before interval start
 comorbid_copd_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
+        clinical_events.date.is_on_or_before(study_start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
     .date
@@ -180,14 +179,14 @@ comorbid_copd_date_last = (
 # Last COPD resolution date before interval start
 comorbid_copd_res_date_last = ( 
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd_res"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
+        clinical_events.date.is_on_or_before(study_start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
     .date
 )
 
 ## True if COPD developed before interval start & never resolved OR resolved but recurred before the interval; else False
-comorbid_copd = (
+dataset.comorbid_copd = (
     comorbid_copd_date_last.is_not_null() & 
     (comorbid_copd_res_date_last.is_null() | (comorbid_copd_res_date_last < comorbid_copd_date_last))
 ).when_null_then(False)
@@ -196,7 +195,7 @@ comorbid_copd = (
 ## Last asthma diagnosis date before interval start
 comorbid_asthma_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
+        clinical_events.date.is_on_or_before(study_start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
     .date
@@ -205,14 +204,14 @@ comorbid_asthma_date_last = (
 ## Last asthma resolution date before interval start
 comorbid_asthma_res_date_last = ( 
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma_res"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
+        clinical_events.date.is_on_or_before(study_start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
     .date
 )
 
 ## True if asthma developed before interval start & never resolved OR resolved but recurred before the interval; else False
-comorbid_asthma = (
+dataset.comorbid_asthma = (
     comorbid_asthma_date_last.is_not_null() & 
     (comorbid_asthma_res_date_last.is_null() | (comorbid_asthma_res_date_last < comorbid_asthma_date_last))
 ).when_null_then(False)
@@ -221,7 +220,7 @@ comorbid_asthma = (
 ## Last diabetes diagnosis date before interval start
 comorbid_dm_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["diabetes"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .sort_by(clinical_events.date)
                           .last_for_patient()
                           .date
@@ -230,14 +229,14 @@ comorbid_dm_date_last = (
 ## Last diabetes resolution date before interval start
 comorbid_dm_res_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["diabetes_res"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .sort_by(clinical_events.date)
                           .last_for_patient()
                           .date
 )
 
 ## True if diabetes developed before interval start & never resolved OR resolved but recurred before the interval start; else False
-comorbid_dm = (
+dataset.comorbid_dm = (
     comorbid_dm_date_last.is_not_null() &
     (comorbid_dm_res_date_last.is_null() | (comorbid_dm_res_date_last < comorbid_dm_date_last))
 ).when_null_then(False)
@@ -246,7 +245,7 @@ comorbid_dm = (
 ## Last hypertension diagnosis date before interval start
 comorbid_htn_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["htn"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .sort_by(clinical_events.date)
                           .last_for_patient()
                           .date
@@ -255,14 +254,14 @@ comorbid_htn_date_last = (
 ## Last hypertension resolution date before interval start
 comorbid_htn_res_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["htn_res"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .sort_by(clinical_events.date)
                           .last_for_patient()
                           .date
 )
 
 ## True if hypertension developed before interval start & never resolved OR resolved but recurred before the interval start; else False
-comorbid_htn = (
+dataset.comorbid_htn = (
     comorbid_htn_date_last.is_not_null() &
     (comorbid_htn_res_date_last.is_null() | (comorbid_htn_res_date_last < comorbid_htn_date_last))
 ).when_null_then(False)
@@ -271,7 +270,7 @@ comorbid_htn = (
 ## Last depression diagnosis date before interval start
 comorbid_depres_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["depres"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .sort_by(clinical_events.date)
                           .last_for_patient()
                           .date
@@ -280,36 +279,36 @@ comorbid_depres_date_last = (
 ## Last depression resolution date before interval start
 comorbid_depres_res_date_last = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["depres_res"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          clinical_events.date.is_on_or_before(study_start_date))
                           .sort_by(clinical_events.date)
                           .last_for_patient()
                           .date
 )
 
 ## True if depression developed before interval start & never resolved OR resolved but recurred before the interval start; else False
-comorbid_depres = (
+dataset.comorbid_depres = (
     comorbid_depres_date_last.is_not_null() &
     (comorbid_depres_res_date_last.is_null() | (comorbid_depres_res_date_last < comorbid_depres_date_last))
 ).when_null_then(False)
 
 # Chronic mental health disease (no resolution codelist). True if disease developed before interval start; else False
-comorbid_mh = (
+dataset.comorbid_mh = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["mental_health"])
-                          & clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          & clinical_events.date.is_on_or_before(study_start_date))
                           .exists_for_patient()
 )
 
 # Chronic neurological disease (no resolution codelist). True if disease developed before interval start; else False
-comorbid_neuro = (
+dataset.comorbid_neuro = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["neuro"])
-                          & clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          & clinical_events.date.is_on_or_before(study_start_date))
                           .exists_for_patient()
 )
 
 # Immunosupression (no resolution codelist). True if disease developed before interval start; else False
-comorbid_immuno = (
+dataset.comorbid_immuno = (
     clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["immuno_sup"])
-                          & clinical_events.date.is_on_or_before(INTERVAL.start_date))
+                          & clinical_events.date.is_on_or_before(study_start_date))
                           .exists_for_patient()
 )
 #endregion
@@ -322,51 +321,49 @@ valid_appointments = (appointments.where((appointments
                                             (appointments
                                              .seen_date)))
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = (valid_appointments.start_date
-                            .is_during(INTERVAL)
+dataset.appointments_in_interval = (valid_appointments.start_date
+                            .is_on_or_between(study_start_date, study_end_date)
                             .count_distinct_for_patient())
 
-measures_to_add['all_appointments_in_interval'] = (appointments.start_date
-                            .is_during(INTERVAL)
+dataset.all_appointments_in_interval = (appointments.start_date
+                            .is_on_or_between(study_start_date, study_end_date)
                             .count_distinct_for_patient())
 # Number of follow-up appointments:
 
-appointments.app_prev_week = (appointments.where(
+dataset.app_prev_week = (appointments.where(
                 (appointments.start_date
-                .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.start_date - days(1))) &
+                .is_on_or_between(study_start_date - days(7), study_start_date - days(1))) &
                 (appointments.seen_date == appointments.start_date)
                 ).exists_for_patient()
                 )
-appointments.app_curr_week = (appointments.where(
-                (appointments.start_date.is_during(INTERVAL)) &
+dataset.app_curr_week = (appointments.where(
+                (appointments.start_date.is_on_or_between(study_start_date, study_end_date)) &
                 (appointments.seen_date == appointments.start_date)
                 ).exists_for_patient()
                 )
 
-measures_to_add["follow_up_app"] = (appointments.where(
-                                    appointments.app_prev_week & appointments.app_curr_week)
-                                    .exists_for_patient())
+#dataset.follow_up_app = appointments.app_prev_week & appointments.app_curr_week
 
 # Number of vaccinations during interval, all and for flu and covid
-measures_to_add['vax_app'] = (vaccinations.where(vaccinations
+dataset.vax_app = (vaccinations.where(vaccinations
                                       .date
-                                      .is_during(INTERVAL))
+                                      .is_on_or_between(study_start_date, study_end_date))
                                       .count_for_patient())
-measures_to_add['vax_app_flu'] = (vaccinations.where(
+dataset.vax_app_flu = (vaccinations.where(
     vaccinations.target_disease.is_in(['INFLUENZA']) &
-    vaccinations.date.is_during(INTERVAL))
+    vaccinations.date.is_on_or_between(study_start_date, study_end_date))
     .count_for_patient())
-measures_to_add['vax_app_covid'] = (vaccinations.where(
+dataset.vax_app_covid = (vaccinations.where(
     vaccinations.target_disease.is_in(['SARS-2 CORONAVIRUS']) &
-    vaccinations.date.is_during(INTERVAL))
+    vaccinations.date.is_on_or_between(study_start_date, study_end_date))
     .count_for_patient())
 
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-measures_to_add['secondary_referral'] = (opa_cost.where(opa_cost
+dataset.secondary_referral = (opa_cost.where(opa_cost
                                                         .referral_request_received_date
-                                                        .is_during(INTERVAL))
+                                                        .is_on_or_between(study_start_date, study_end_date))
                                                         .count_for_patient())
 
 # Count number of appointments with cancelled/waiting status during interval
@@ -375,7 +372,7 @@ app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = (appointments.where((appointments.status == status_code) &
                     (appointments.start_date
-                    .is_during(INTERVAL))
+                    .is_on_or_between(study_start_date, study_end_date))
                     )).count_for_patient()
 
 # Adding rate of analgesic, antidepressant or antibiotic prescribing
@@ -389,7 +386,7 @@ for medication in med_dict.keys():
                                                      .is_in(med_dict[medication]))
                                                      & (clinical_events
                                                         .date
-                                                        .is_during(INTERVAL)))
+                                                        .is_on_or_between(study_start_date, study_end_date)))
                                                      ).count_for_patient()
     else:
         measures_to_add[medication] = (medications.where((medications
@@ -397,7 +394,7 @@ for medication in med_dict.keys():
                                                      .is_in(med_dict[medication]))
                                                      & (medications
                                                         .date
-                                                        .is_during(INTERVAL)))
+                                                        .is_on_or_between(study_start_date, study_end_date)))
                                                      ).count_for_patient()
     # Aggregate the analgesic subtypes into a single, broader analgesic measure
     if medication.startswith('analgesic'):
@@ -412,46 +409,13 @@ for reason in app_reason_dict.keys():
                                     .is_in(app_reason_dict[reason]))
                                     & (clinical_events
                                         .date
-                                        .is_during(INTERVAL))
+                                        .is_on_or_between(study_start_date, study_end_date))
                                         )
             )
     measures_to_add[reason] = (event.where(event.date.is_in(valid_appointments.start_date))
                        .count_for_patient()
                 )
 
-# Defining measures ---
-measures.define_defaults(
-    denominator= was_female_or_male & age_filter & was_alive & 
+dataset.define_population(was_female_or_male & age_filter & was_alive & 
                 was_registered & has_deprivation_index & has_region & 
-                prior_registration,
-    group_by={
-        "age": age_group,
-        "sex": patients.sex,
-        "ethnicity": ethnicity,
-        "imd_quintile": imd_quintile,
-        "carehome": carehome,
-        "region": region,
-        "rur_urb_class": rur_urb_class,
-        "practice_pseudo_id": practice_id,
-        "comorbid_chronic_resp": comorbid_chronic_resp,
-        "comorbid_copd": comorbid_copd,
-        "comorbid_asthma": comorbid_asthma,
-        "comorbid_dm": comorbid_dm,
-        "comorbid_htn": comorbid_htn,
-        "comorbid_depres": comorbid_depres,
-        "comorbid_mh": comorbid_mh,
-        "comorbid_neuro": comorbid_neuro,
-        "comorbid_immuno": comorbid_immuno,
-        "vax_flu_12m": vax_status['INFLUENZA'],
-        "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
-        "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
-    },
-    intervals=weeks(6).starting_on(study_start_date),
-)
-
-# Adding measures
-for measure in measures_to_add.keys():
-    measures.define_measure(
-        name=measure,
-        numerator=measures_to_add[measure],
-    )
+                prior_registration)
