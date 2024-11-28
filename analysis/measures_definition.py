@@ -76,7 +76,6 @@ med_dict = create_codelist_dict(med_dict)
 prescription_dict = {key: med_dict[key] for key in ["opioid_oral", "chest_abx", "chest_abx"]}
 # double coded of chest_Abx to match indication_dict for a loop later down
 
-
 # Co-morbidity codelists:
 comorbid_dict = {
     "chronic_resp": "codelists/nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv",
@@ -401,8 +400,8 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
                     .is_during(INTERVAL))
                     )).count_for_patient()
 
-# Adding rate of analgesic, antidepressant or antibiotic prescribing
-measures_to_add['analgesic_pres'] = 0
+# Adding rate of opioid, antidepressant or antibiotic prescribing
+measures_to_add['opioid_pres'] = 0
 # Count the number of prescriptions for each drug type, iteratively
 for medication in med_dict.keys():
     # Antidepressants codelist uses snomedct, so use clinical events instead of medications table
@@ -422,10 +421,10 @@ for medication in med_dict.keys():
                                                         .date
                                                         .is_during(INTERVAL)))
                                                      ).count_for_patient()
-    # Aggregate the analgesic subtypes into a single, broader analgesic measure
-    if medication.startswith('analgesic'):
-        measures_to_add['analgesic_pres'] += measures_to_add[medication]
-        # Drop the analgesic subtype measures
+    # Aggregate the opioid subtypes into a single, broader opioid measure
+    if medication.startswith('opioid'):
+        measures_to_add['opioid_pres'] += measures_to_add[medication]
+        # Drop the opioid subtype measures
         measures_to_add.pop(medication)
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
