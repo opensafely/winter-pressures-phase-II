@@ -79,13 +79,22 @@ for (disease in c("comorbid_chronic_resp", "comorbid_copd", "comorbid_asthma")) 
   lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) plot_trends_by_facet(measures, vax, filter_col = disease))
 }
 
-#Plot comorbid trends by age
+# Plot comorbid trends by age
 comorbid_any <- c("comorbid_chronic_resp","comorbid_copd", "comorbid_asthma", "comorbid_dm", "comorbid_htn", "comorbid_depres", "comorbid_mh", "comorbid_neuro", "comorbid_immuno")
 lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid))
 
-#Plot comorbid trends by imd
+# Plot comorbid trends by imd
 lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid, facet_col = "imd_quintile"))
 
+# Plot prescription/indication trends
+index <- which(colnames(measures) == "age")
+subgroups <- colnames(measures)[index:length(colnames(measures))]
+subgroups <- c(subgroups, "interval_start")
+back_pain_df <- measures %>%
+  filter(measure == "back_pain" | measure == "back_pain_opioid") %>%
+  group_by(across(all_of(subgroups))) %>%
+  summarise(back_pain_opioid_prop = n())
+# HERE need to develop the division
 # Create plots for different practice characteristics
 for(col in colnames(practice_measures)[5:length(practice_measures)]){
   df <- summarise(group_by(practice_measures, interval_start, !!sym(col)), total_app=(sum(numerator)/sum(list_size_raw))*1000)
