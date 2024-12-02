@@ -8,7 +8,7 @@ from ehrql.tables.tpp import (
     appointments,
     vaccinations
 )
-
+from queries import *
 def create_codelist_dict(dic: dict) -> dict:
     '''
     Create a dicionary of codelists, so that queries can be run iteratively on
@@ -331,21 +331,7 @@ measures_to_add['all_appointments_in_interval'] = (appointments.where(appointmen
                             .count_for_patient())
 # Number of follow-up appointments:
 
-appointments.app_prev_week = (appointments.where(
-                (appointments.start_date
-                .is_on_or_between(INTERVAL.start_date - days(7), INTERVAL.start_date - days(1))) &
-                (appointments.seen_date == appointments.start_date)
-                ).exists_for_patient()
-                )
-appointments.app_curr_week = (appointments.where(
-                (appointments.start_date.is_during(INTERVAL)) &
-                (appointments.seen_date == appointments.start_date)
-                ).exists_for_patient()
-                )
-
-measures_to_add["follow_up_app"] = (appointments.where(
-                                    appointments.app_prev_week & appointments.app_curr_week)
-                                    .exists_for_patient())
+measures_to_add["follow_up_app"] = follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = (vaccinations.where(vaccinations
@@ -364,10 +350,7 @@ measures_to_add['vax_app_covid'] = (vaccinations.where(
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-measures_to_add['secondary_referral'] = (opa_cost.where(opa_cost
-                                                        .referral_request_received_date
-                                                        .is_during(INTERVAL))
-                                                        .count_for_patient())
+measures_to_add['secondary_referral'] = secondary_referral(INTERVAL.start_date, INTERVAL.end_date)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Cancelled by Unit','Waiting']

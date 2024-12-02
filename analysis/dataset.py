@@ -9,6 +9,8 @@ from ehrql.tables.tpp import (
     vaccinations
 )
 
+from queries import *
+
 def create_codelist_dict(dic: dict) -> dict:
     '''
     Create a dicionary of codelists, so that queries can be run iteratively on
@@ -133,7 +135,7 @@ dataset.carehome = addresses.for_patient_on(study_start_date).care_home_is_poten
 
 # Defining interval events for reusability in later queries
 interval_events = clinical_events.where(clinical_events
-                                        .date.is_during(INTERVAL))
+                                        .date.is_on_or_between(study_start_date, study_end_date))
 
 # Patient urban-rural classification
 dataset.rur_urb_class = (addresses
@@ -328,23 +330,9 @@ dataset.appointments_in_interval = (valid_appointments.where(valid_appointments.
 dataset.all_appointments_in_interval = (appointments.where(appointments.start_date
                             .is_on_or_between(study_start_date, study_end_date))
                             .count_for_patient())
+
 # Number of follow-up appointments:
-
-appointments.app_prev_week = (appointments.where(
-                (appointments.start_date
-                .is_on_or_between(study_start_date - days(7), study_start_date - days(1))) &
-                (appointments.seen_date == appointments.start_date)
-                ).exists_for_patient()
-                )
-appointments.app_curr_week = (appointments.where(
-                (appointments.start_date.is_on_or_between(study_start_date, study_end_date)) &
-                (appointments.seen_date == appointments.start_date)
-                ).exists_for_patient()
-                )
-
-dataset.follow_up_app = (appointments.where(
-                                    appointments.app_prev_week & appointments.app_curr_week)
-                                    .exists_for_patient())
+dataset.follow_up_app = follow_up(study_start_date, study_end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
 dataset.vax_app = (vaccinations.where(vaccinations
@@ -363,10 +351,7 @@ dataset.vax_app_covid = (vaccinations.where(
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-dataset.secondary_referral = (opa_cost.where(opa_cost
-                                                        .referral_request_received_date
-                                                        .is_on_or_between(study_start_date, study_end_date))
-                                                        .count_for_patient())
+dataset.secondary_referral = secondary_referral(study_start_date, study_end_date)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Cancelled by Unit','Waiting']
@@ -383,26 +368,28 @@ measures_to_add['analgesic_pres'] = 0
 for medication in med_dict.keys():
     # Antidepressants codelist uses snomedct, so use clinical events instead of medications table
     if medication == "antidepressant_pres":
-        measures_to_add[medication] = (clinical_events.where((clinical_events
+        med_query1 = (clinical_events.where((clinical_events
                                                      .snomedct_code
                                                      .is_in(med_dict[medication]))
                                                      & (clinical_events
                                                         .date
                                                         .is_on_or_between(study_start_date, study_end_date)))
                                                      ).count_for_patient()
+        dataset.add_column(medication, med_query1)
     else:
-        measures_to_add[medication] = (medications.where((medications
+        med_query2 = (medications.where((medications
                                                      .dmd_code
                                                      .is_in(med_dict[medication]))
                                                      & (medications
                                                         .date
                                                         .is_on_or_between(study_start_date, study_end_date)))
                                                      ).count_for_patient()
+        dataset.add_column(medication, med_query2)
     # Aggregate the analgesic subtypes into a single, broader analgesic measure
-    if medication.startswith('analgesic'):
-        measures_to_add['analgesic_pres'] += measures_to_add[medication]
-        # Drop the analgesic subtype measures
-        measures_to_add.pop(medication)
+#    if medication.startswith('analgesic'):
+#        measures_to_add['analgesic_pres'] += measures_to_add[medication]
+#        # Drop the analgesic subtype measures
+#        measures_to_add.pop(medication)
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
@@ -414,9 +401,10 @@ for reason in app_reason_dict.keys():
                                         .is_on_or_between(study_start_date, study_end_date))
                                         )
             )
-    measures_to_add[reason] = (event.where(event.date.is_in(valid_appointments.start_date))
+    reason_query = (event.where(event.date.is_in(valid_appointments.start_date))
                        .count_for_patient()
                 )
+    dataset.add_column(reason, reason_query)
 
 dataset.define_population(was_female_or_male & age_filter & was_alive & 
                 was_registered & has_deprivation_index & has_region & 
