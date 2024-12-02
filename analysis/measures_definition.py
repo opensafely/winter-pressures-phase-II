@@ -449,7 +449,7 @@ measures.define_defaults(
         "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
         "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
     },
-    intervals=weeks(6).starting_on(study_start_date),
+    intervals=weeks(1).starting_on(study_start_date),
 )
 
 # Adding measures
