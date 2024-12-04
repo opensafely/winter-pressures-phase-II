@@ -127,7 +127,7 @@ age_group = case(
     when((age >= 5) & (age < 12)).then("primary-school"),
     when((age >= 12) & (age < 18)).then("secondary-school"),
     when((age >= 18) & (age < 40)).then("adult_over40"),
-    when((age >= 40) & (age <65)).then("adult_over65"),
+    when((age >= 40) & (age < 65)).then("adult_over65"),
     when((age >= 65) & (age < 80)).then("adult_over80"),
     when((age >= 80) & (age < 111)).then("adult_over80")
 )
