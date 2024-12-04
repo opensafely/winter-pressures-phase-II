@@ -320,30 +320,17 @@ measures_to_add = {}
 valid_appointments = create_valid_appointments()
 
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = (valid_appointments.where(valid_appointments.start_date
-                            .is_during(INTERVAL))
-                            .count_for_patient())
+measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=True)
+measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
 
-measures_to_add['all_appointments_in_interval'] = (appointments.where(appointments.start_date
-                            .is_during(INTERVAL))
-                            .count_for_patient())
 # Number of follow-up appointments:
 
 measures_to_add["follow_up_app"] = follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
-measures_to_add['vax_app'] = (vaccinations.where(vaccinations
-                                      .date
-                                      .is_during(INTERVAL))
-                                      .count_for_patient())
-measures_to_add['vax_app_flu'] = (vaccinations.where(
-    vaccinations.target_disease.is_in(['INFLUENZA']) &
-    vaccinations.date.is_during(INTERVAL))
-    .count_for_patient())
-measures_to_add['vax_app_covid'] = (vaccinations.where(
-    vaccinations.target_disease.is_in(['SARS-2 CORONAVIRUS']) &
-    vaccinations.date.is_during(INTERVAL))
-    .count_for_patient())
+measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['vax_app_flu'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date, ['INFLUENZA'])
+measures_to_add['vax_app_covid'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date, ['SARS-2 CORONAVIRUS'])
 
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 

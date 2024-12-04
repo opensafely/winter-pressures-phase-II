@@ -55,3 +55,37 @@ def reason_for_app(interval_start, interval_end, reason, valid_appointments):
                        .count_for_patient()
                 )
     return result
+
+def count_appointments_in_interval(interval_start, interval_end, valid_appointments, valid_only=True):
+    """
+    Counts the number of appointments during the interval.
+    Args:
+        valid_only: If True, only counts valid appointments.
+    Returns:
+        The count of appointments per patient.
+    """
+    if valid_only:
+        chosen_appointments = valid_appointments
+    else:
+        chosen_appointments = appointments
+    return chosen_appointments.where(
+            chosen_appointments.start_date.is_on_or_between(interval_start, interval_end)
+            ).count_for_patient()
+
+def count_vaccinations(interval_start, interval_end, target_disease=None):
+    """
+    Counts vaccinations during the interval, optionally filtered by target disease.
+    Args:
+        target_disease: A list of diseases to filter by (e.g., 'INFLUENZA', 'SARS-2 CORONAVIRUS').
+    Returns:
+        The count of vaccinations per patient.
+    """
+    filtered_vaccinations = vaccinations.where(
+        vaccinations.date.is_on_or_between(interval_start, interval_end)
+    )
+    if target_disease:
+        filtered_vaccinations = filtered_vaccinations.where(
+            vaccinations.target_disease.is_in(target_disease)
+        )
+    return filtered_vaccinations.count_for_patient()
+

@@ -320,30 +320,16 @@ measures_to_add = {}
 # because incomplete appointments may have been coded with extreme dates (e.g. 9999)
 valid_appointments = create_valid_appointments()
 # Number of appointments in interval
-dataset.appointments_in_interval = (valid_appointments.where(valid_appointments.start_date
-                            .is_on_or_between(study_start_date, study_end_date))
-                            .count_for_patient())
-
-dataset.all_appointments_in_interval = (appointments.where(appointments.start_date
-                            .is_on_or_between(study_start_date, study_end_date))
-                            .count_for_patient())
+dataset.appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=True)
+dataset.all_appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=False)
 
 # Number of follow-up appointments:
 dataset.follow_up_app = follow_up(study_start_date, study_end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
-dataset.vax_app = (vaccinations.where(vaccinations
-                                      .date
-                                      .is_on_or_between(study_start_date, study_end_date))
-                                      .count_for_patient())
-dataset.vax_app_flu = (vaccinations.where(
-    vaccinations.target_disease.is_in(['INFLUENZA']) &
-    vaccinations.date.is_on_or_between(study_start_date, study_end_date))
-    .count_for_patient())
-dataset.vax_app_covid = (vaccinations.where(
-    vaccinations.target_disease.is_in(['SARS-2 CORONAVIRUS']) &
-    vaccinations.date.is_on_or_between(study_start_date, study_end_date))
-    .count_for_patient())
+dataset.vax_app = count_vaccinations(study_start_date, study_end_date)
+dataset.vax_app_flu = count_vaccinations(study_start_date, study_end_date, ['INFLUENZA'])
+dataset.vax_app_covid = count_vaccinations(study_start_date, study_end_date, ['SARS-2 CORONAVIRUS'])
 
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
