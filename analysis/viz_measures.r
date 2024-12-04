@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dplyr)
 library(glue)
+library(rlang)
 
 measures <- read.csv('output/patient_measures/processed_measures.csv.gz')
 practice_measures <- read.csv('output/practice_measures/practice_measures.csv.gz')
@@ -24,12 +25,15 @@ subgroups <- c(subgroups, "interval_start", "interval_end")
 numerators <- c("back_pain_opioid", "chest_inf_abx", "chest_inf_abx")
 denominators <- c("back_pain", "chest_inf", "pneum")
 
-x <- mapply(function(numerator, denominator){
-  measures_df <- data.frame()
+
+df_list <- Map(function(numerator, denominator){
+  numerator <- sym(numerator)
+  denominator <- sym(denominator)
+  #measures_df <- data.frame()
   tmp_df <- measures %>%
     filter(measure == numerator | measure == denominator) %>%
     group_by(across(all_of(subgroups))) %>%
-    summarise(new_measure = glue("prop_{numerator}"), 
+    summarise(new_measure = ("prop_{numerator}"), 
               measure = measure,
               numerator = numerator[measure == numerator],
               denominator = numerator [measure == denominator],
@@ -37,9 +41,10 @@ x <- mapply(function(numerator, denominator){
     mutate(ratio = ifelse(is.na(ratio), 0, ratio)) %>%
     select(- measure)%>%
     rename(measure = new_measure)
-  measures_df <- bind_rows(measures_df, tmp_df)
-  return(measures_df)
+  #measures_df <- bind_rows(measures_df, tmp_df)
+  return(tmp_df)
 }, numerators, denominators)
+
 
 back_pain_df <- measures %>%
   filter(measure == "back_pain_opioid" | measure == "back_pain") %>%
