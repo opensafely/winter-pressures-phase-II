@@ -317,10 +317,8 @@ comorbid_immuno = (
 measures_to_add = {}
 # Valid appointments are those where start_date == seen_date
 # because incomplete appointments may have been coded with extreme dates (e.g. 9999)
-valid_appointments = (appointments.where((appointments
-                                            .start_date) ==
-                                            (appointments
-                                             .seen_date)))
+valid_appointments = create_valid_appointments()
+
 # Number of appointments in interval
 measures_to_add['appointments_in_interval'] = (valid_appointments.where(valid_appointments.start_date
                             .is_during(INTERVAL))
@@ -390,18 +388,8 @@ for medication in med_dict.keys():
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
-    event = (clinical_events.where((clinical_events
-                                    .snomedct_code
-                                    .is_in(app_reason_dict[reason]))
-                                    & (clinical_events
-                                        .date
-                                        .is_during(INTERVAL))
-                                        )
-            )
-    measures_to_add[reason] = (event.where(event.date.is_in(valid_appointments.start_date))
-                       .count_for_patient()
-                )
-
+    measures_to_add[reason] = reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+    
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 
