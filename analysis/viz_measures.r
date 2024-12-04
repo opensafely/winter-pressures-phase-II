@@ -1,7 +1,6 @@
 library(ggplot2)
 library(dplyr)
 library(glue)
-library(rlang)
 
 measures <- read.csv('output/patient_measures/processed_measures.csv.gz')
 practice_measures <- read.csv('output/practice_measures/practice_measures.csv.gz')
@@ -16,50 +15,6 @@ measures <- filter(measures, measure != 'all_appointments_in_interval')
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 total_app_df <- summarise(group_by(measures, interval_start, measure), numerator = sum(numerator), 
                 denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
-
-# Create measure of appointments for reason X with prescription [numerator]/ all appointments for reason X [denominator]
-index <- which(colnames(measures) == "age")
-subgroups <- colnames(measures)[index:length(colnames(measures))]
-subgroups <- c(subgroups, "interval_start", "interval_end")
-
-numerators <- c("back_pain_opioid", "chest_inf_abx", "chest_inf_abx")
-denominators <- c("back_pain", "chest_inf", "pneum")
-
-
-df_list <- Map(function(numerator, denominator){
-  numerator <- sym(numerator)
-  denominator <- sym(denominator)
-  #measures_df <- data.frame()
-  tmp_df <- measures %>%
-    filter(measure == numerator | measure == denominator) %>%
-    group_by(across(all_of(subgroups))) %>%
-    summarise(new_measure = ("prop_{numerator}"), 
-              measure = measure,
-              numerator = numerator[measure == numerator],
-              denominator = numerator [measure == denominator],
-              ratio = numerator/denominator)%>%
-    mutate(ratio = ifelse(is.na(ratio), 0, ratio)) %>%
-    select(- measure)%>%
-    rename(measure = new_measure)
-  #measures_df <- bind_rows(measures_df, tmp_df)
-  return(tmp_df)
-}, numerators, denominators)
-
-
-back_pain_df <- measures %>%
-  filter(measure == "back_pain_opioid" | measure == "back_pain") %>%
-  group_by(across(all_of(subgroups))) %>%
-  summarise(new_measure = "prop_opioid_back_pain", 
-            measure = measure,
-            numerator = numerator[measure == "back_pain_opioid"],
-            denominator = numerator [measure == "back_pain"],
-            ratio = numerator/denominator)%>%
-  mutate(ratio = ifelse(is.na(ratio), 0, ratio)) %>%
-  select(- measure)%>%
-  rename(measure = new_measure)
-
-tmp<- bind_rows(measures, back_pain_df)
-
 
 # Create a list of data frames
 data_frames <- list(all_appnt_df = all_appnt_df, total_app_df = total_app_df)
@@ -131,6 +86,15 @@ lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid)
 # Plot comorbid trends by imd
 lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid, facet_col = "imd_quintile"))
 
+# Plot prescription/indication trends
+index <- which(colnames(measures) == "age")
+subgroups <- colnames(measures)[index:length(colnames(measures))]
+subgroups <- c(subgroups, "interval_start")
+back_pain_df <- measures %>%
+  filter(measure == "back_pain" | measure == "back_pain_opioid") %>%
+  group_by(across(all_of(subgroups))) %>%
+  summarise(back_pain_opioid_prop = n())
+# HERE need to develop the division
 # Create plots for different practice characteristics
 for(col in colnames(practice_measures)[5:length(practice_measures)]){
   df <- summarise(group_by(practice_measures, interval_start, !!sym(col)), total_app=(sum(numerator)/sum(list_size_raw))*1000)
