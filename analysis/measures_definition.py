@@ -344,7 +344,7 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
 # Count prescriptions and add to measures
-measures_to_add.update(count_prescriptions(study_start_date, study_end_date, med_dict))
+measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
