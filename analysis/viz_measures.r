@@ -24,7 +24,7 @@ subgroups <- c(subgroups, "interval_start", "interval_end")
 numerators <- c("back_pain_opioid", "chest_inf_abx", "chest_inf_abx")
 denominators <- c("back_pain", "chest_inf", "pneum")
 
-"""mapply(function(numerator, denominator){
+x <- mapply(function(numerator, denominator){
   measures_df <- data.frame()
   tmp_df <- measures %>%
     filter(measure == numerator | measure == denominator) %>%
@@ -34,12 +34,13 @@ denominators <- c("back_pain", "chest_inf", "pneum")
               numerator = numerator[measure == numerator],
               denominator = numerator [measure == denominator],
               ratio = numerator/denominator)%>%
+    mutate(ratio = ifelse(is.na(ratio), 0, ratio)) %>%
     select(- measure)%>%
     rename(measure = new_measure)
   measures_df <- bind_rows(measures_df, tmp_df)
   return(measures_df)
 }, numerators, denominators)
-"""
+
 back_pain_df <- measures %>%
   filter(measure == "back_pain_opioid" | measure == "back_pain") %>%
   group_by(across(all_of(subgroups))) %>%
@@ -48,6 +49,7 @@ back_pain_df <- measures %>%
             numerator = numerator[measure == "back_pain_opioid"],
             denominator = numerator [measure == "back_pain"],
             ratio = numerator/denominator)%>%
+  mutate(ratio = ifelse(is.na(ratio), 0, ratio)) %>%
   select(- measure)%>%
   rename(measure = new_measure)
 
