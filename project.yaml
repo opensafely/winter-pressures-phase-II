@@ -7,7 +7,7 @@ actions:
   generate_measures:
     run: ehrql:v1 generate-measures --output output/patient_measures/winter_pressure_measures.csv.gz analysis/measures_definition.py
     outputs:
-      moderately_sensitive:
+      highly_sensitive:
         dataset: output/patient_measures/winter_pressure_measures.csv.gz
   generate_app_measures:
     run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py
