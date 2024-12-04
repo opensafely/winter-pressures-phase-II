@@ -19,6 +19,7 @@ measures['rur_urb_class'].replace(
      6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
      8: 'Rural village and dispersed in a sparse setting'},
     inplace=True)
+measures['rur_urb_class'].fillna("Unknown", inplace = True)
 measures.to_csv("output/patient_measures/processed_measures.csv.gz")
 
 # Create practice-characteristics dataframe
