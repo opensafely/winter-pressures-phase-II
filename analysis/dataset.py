@@ -340,39 +340,13 @@ dataset.secondary_referral = secondary_referral(study_start_date, study_end_date
 app_status_code = ['Cancelled by Unit','Waiting']
 app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
-    measures_to_add[status_measure] = (appointments.where((appointments.status == status_code) &
-                    (appointments.start_date
-                    .is_on_or_between(study_start_date, study_end_date))
-                    )).count_for_patient()
+    status_count = count_appointments_by_status(study_start_date, study_end_date, status_code)
+    dataset.add_column(status_measure, status_count)
 
-# Adding rate of analgesic, antidepressant or antibiotic prescribing
-measures_to_add['analgesic_pres'] = 0
-# Count the number of prescriptions for each drug type, iteratively
-for medication in med_dict.keys():
-    # Antidepressants codelist uses snomedct, so use clinical events instead of medications table
-    if medication == "antidepressant_pres":
-        med_query1 = (clinical_events.where((clinical_events
-                                                     .snomedct_code
-                                                     .is_in(med_dict[medication]))
-                                                     & (clinical_events
-                                                        .date
-                                                        .is_on_or_between(study_start_date, study_end_date)))
-                                                     ).count_for_patient()
-        dataset.add_column(medication, med_query1)
-    else:
-        med_query2 = (medications.where((medications
-                                                     .dmd_code
-                                                     .is_in(med_dict[medication]))
-                                                     & (medications
-                                                        .date
-                                                        .is_on_or_between(study_start_date, study_end_date)))
-                                                     ).count_for_patient()
-        dataset.add_column(medication, med_query2)
-    # Aggregate the analgesic subtypes into a single, broader analgesic measure
-#    if medication.startswith('analgesic'):
-#        measures_to_add['analgesic_pres'] += measures_to_add[medication]
-#        # Drop the analgesic subtype measures
-#        measures_to_add.pop(medication)
+# Count prescriptions
+prescription_counts = count_prescriptions(study_start_date, study_end_date, med_dict)
+for prescription in prescription_counts.keys():
+    dataset.add_column(prescription, prescription_counts[prescription])
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():

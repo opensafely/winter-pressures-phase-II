@@ -341,42 +341,15 @@ measures_to_add['secondary_referral'] = secondary_referral(INTERVAL.start_date, 
 app_status_code = ['Cancelled by Unit','Waiting']
 app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
-    measures_to_add[status_measure] = (appointments.where((appointments.status == status_code) &
-                    (appointments.start_date
-                    .is_during(INTERVAL))
-                    )).count_for_patient()
+    measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
-# Adding rate of analgesic, antidepressant or antibiotic prescribing
-measures_to_add['analgesic_pres'] = 0
-# Count the number of prescriptions for each drug type, iteratively
-for medication in med_dict.keys():
-    # Antidepressants codelist uses snomedct, so use clinical events instead of medications table
-    if medication == "antidepressant_pres":
-        measures_to_add[medication] = (clinical_events.where((clinical_events
-                                                     .snomedct_code
-                                                     .is_in(med_dict[medication]))
-                                                     & (clinical_events
-                                                        .date
-                                                        .is_during(INTERVAL)))
-                                                     ).count_for_patient()
-    else:
-        measures_to_add[medication] = (medications.where((medications
-                                                     .dmd_code
-                                                     .is_in(med_dict[medication]))
-                                                     & (medications
-                                                        .date
-                                                        .is_during(INTERVAL)))
-                                                     ).count_for_patient()
-    # Aggregate the analgesic subtypes into a single, broader analgesic measure
-    if medication.startswith('analgesic'):
-        measures_to_add['analgesic_pres'] += measures_to_add[medication]
-        # Drop the analgesic subtype measures
-        measures_to_add.pop(medication)
+# Count prescriptions and add to measures
+measures_to_add.update(count_prescriptions(study_start_date, study_end_date, med_dict))
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
     measures_to_add[reason] = reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
-    
+
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 

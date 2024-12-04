@@ -89,3 +89,53 @@ def count_vaccinations(interval_start, interval_end, target_disease=None):
         )
     return filtered_vaccinations.count_for_patient()
 
+def count_appointments_by_status(interval_start, interval_end, status_code):
+    """
+    Counts appointments with a specific status during the interval.
+    Args:
+        status_code: The status code to filter appointments by (e.g., 'Cancelled by Unit').
+    Returns:
+        The count of appointments per patient with the specified status.
+    """
+    return appointments.where(
+        (appointments.status == status_code)
+        & appointments.start_date.is_on_or_between(interval_start, interval_end)
+    ).count_for_patient()
+
+def count_prescriptions(interval_start, interval_end, med_dict):
+    """
+    Counts prescriptions for each drug category and aggregates analgesic subtypes.
+    Args:
+        med_dict: Dictionary mapping drug categories to their corresponding codes.
+    Returns:
+        A dictionary of prescription counts per patient.
+    """
+    measures = {}
+    analgesic_total = 0  # For aggregating analgesic subtypes
+
+    for medication, codes in med_dict.items():
+        if medication == "antidepressant_pres":
+            # Use clinical_events for antidepressants
+            measure_count = clinical_events.where(
+                (clinical_events.snomedct_code.is_in(codes))
+                & clinical_events.date.is_on_or_between(interval_start, interval_end)
+            ).count_for_patient()
+        else:
+            # Use medications for other drugs
+            measure_count = medications.where(
+                (medications.dmd_code.is_in(codes))
+                & medications.date.is_on_or_between(interval_start, interval_end)
+            ).count_for_patient()
+
+        measures[medication] = measure_count
+
+        # If it's an analgesic subtype, add to the total and remove its subtype measure
+        if medication.startswith('analgesic'):
+            analgesic_total += measure_count
+            del measures[medication]
+
+    # Add the aggregated analgesic measure
+    measures['analgesic_pres'] = analgesic_total
+
+    return measures
+
