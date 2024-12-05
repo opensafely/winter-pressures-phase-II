@@ -32,7 +32,7 @@ practice_df = (
         numerator=("numerator", "sum"),
         list_size=("denominator", "sum"),
         count_female=("sex", lambda x: (x == "female").sum()),
-        count_over_65=("age", lambda x: ((x == "retired") | (x == "elderly")).sum()),
+        count_over_65=("age", lambda x: ((x == "adult<80") | (x == "adult>80")).sum()),
         count_under_5=("age", lambda x: (x == "preschool").sum()),
         median_imd=("imd_quintile", "median"),
         count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),

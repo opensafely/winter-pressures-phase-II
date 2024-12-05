@@ -29,7 +29,7 @@ measures.configure_disclosure_control(enabled=False)
 
 # Date specifications
 study_start_date = "2022-01-03"
-study_reg_date = "2021-01-03"
+study_reg_date = "2021-10-03"
 
 # Demogragic codelists
 ethnicity = codelist_from_csv(
@@ -40,24 +40,41 @@ ethnicity = codelist_from_csv(
 
 # Appointment reasons codelist:
 app_reason_dict = {
-    "flu_app": "codelists/opensafely-acute-respiratory-illness-primary-care.csv",
+    "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist 
+    "pneum_broad": "codelists/bristol-pneumonia.csv",
     "neurological_app": "codelists/ons-neurological-disorders.csv",
     "sick_notes_app": "codelists/opensafely-sick-notes-snomed.csv"
 }
 app_reason_dict = create_codelist_dict(app_reason_dict)
 
+# Append additional appointment reasons with SNOMED codes (no codelists); more specific top- usgae codes 
+app_reason_dict["back_pain"] = ['279039007', '161891005', '161894002', '278860009', '279040009']
+# Top usage codes for chest infection, without indication viral or bacterial. Search terms: respiratory infection | respiratory tract infection.
+# Pneumonia excluded for specificity to conditions which may not neccessairly trigger Abx
+app_reason_dict["chest_inf"] = ['50417007', '54150009', '195742007', '54398005', '448739000']
+# Top pneumonia specific codes
+app_reason_dict["pneum"] = ['233604007', '385093006', '312342009', '425464007', '278516003']
+
+indication_dict = {"back_pain_opioid": app_reason_dict["back_pain"], 
+                   "chest_inf_abx": app_reason_dict["chest_inf"],
+                   "pneum_abx": app_reason_dict["pneum"]}
+
 # Medications codelists:
 med_dict ={
     "antidepressant_pres":"codelists/bristol-antidepressants-snomedct.csv",
     "antibiotic_pres":"codelists/opensafely-antibacterials.csv",
-    "analgesic_nasal":"codelists/opensafely-opioid-containing-medicines-buccal-nasal-and-oromucosal-excluding-drugs-for-substance-misuse-dmd.csv",
-    "analgesic_inhale":"codelists/opensafely-opioid-containing-medicines-inhalation-excluding-drugs-for-substance-misuse-dmd.csv",
-    "analgesic_oral":"codelists/opensafely-opioid-containing-medicines-oral-excluding-drugs-for-substance-misuse-dmd.csv",
-    "analgesic_parental":"codelists/opensafely-opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd.csv",
-    "analgesic_rectal":"codelists/opensafely-opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd.csv",
-    "analgesic_transdermal":"codelists/opensafely-opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd.csv",
+    "opioid_nasal":"codelists/opensafely-opioid-containing-medicines-buccal-nasal-and-oromucosal-excluding-drugs-for-substance-misuse-dmd.csv",
+    "opioid_inhale":"codelists/opensafely-opioid-containing-medicines-inhalation-excluding-drugs-for-substance-misuse-dmd.csv",
+    "opioid_oral":"codelists/opensafely-opioid-containing-medicines-oral-excluding-drugs-for-substance-misuse-dmd.csv",
+    "opioid_parental":"codelists/opensafely-opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd.csv",
+    "opioid_rectal":"codelists/opensafely-opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd.csv",
+    "opioid_transdermal":"codelists/opensafely-opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd.csv",
+    "chest_abx": "codelists/user-arinat-chest-abx-dmd.csv"
 }
 med_dict = create_codelist_dict(med_dict)
+
+prescription_dict = {key: med_dict[key] for key in ["opioid_oral", "chest_abx", "chest_abx"]}
+# double coded of chest_Abx to match indication_dict for a loop later down
 
 # Co-morbidity codelists:
 comorbid_dict = {
@@ -93,7 +110,7 @@ was_alive = (
 
 # Registered throughout the interval period (vs at the begining)
 was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
-# Been registered at a practice for 365 days before the study
+# Been registered at a practice for 90 days before the study
 prior_registration = practice_registrations.spanning(study_reg_date, study_start_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
@@ -107,10 +124,12 @@ has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice
 age = age_at_interval_start
 age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
-    when((age >= 5) & (age <18)).then("school"),
-    when((age >= 18) & (age < 65)).then("adult"),
-    when((age >= 65) & (age < 80)).then("retired"),
-    when((age >= 80) & (age < 111)).then("elderly"),
+    when((age >= 5) & (age < 12)).then("primary-school"),
+    when((age >= 12) & (age < 18)).then("secondary-school"),
+    when((age >= 18) & (age < 40)).then("adult<40"),
+    when((age >= 40) & (age < 65)).then("adult<65"),
+    when((age >= 65) & (age < 80)).then("adult<80"),
+    when((age >= 80) & (age < 111)).then("adult>80")
 )
 
 # Ethnicity
@@ -381,8 +400,8 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
                     .is_during(INTERVAL))
                     )).count_for_patient()
 
-# Adding rate of analgesic, antidepressant or antibiotic prescribing
-measures_to_add['analgesic_pres'] = 0
+# Adding rate of opioid, antidepressant or antibiotic prescribing
+measures_to_add['opioid_pres'] = 0
 # Count the number of prescriptions for each drug type, iteratively
 for medication in med_dict.keys():
     # Antidepressants codelist uses snomedct, so use clinical events instead of medications table
@@ -402,10 +421,10 @@ for medication in med_dict.keys():
                                                         .date
                                                         .is_during(INTERVAL)))
                                                      ).count_for_patient()
-    # Aggregate the analgesic subtypes into a single, broader analgesic measure
-    if medication.startswith('analgesic'):
-        measures_to_add['analgesic_pres'] += measures_to_add[medication]
-        # Drop the analgesic subtype measures
+    # Aggregate the opioid subtypes into a single, broader opioid measure
+    if medication.startswith('opioid'):
+        measures_to_add['opioid_pres'] += measures_to_add[medication]
+        # Drop the opioid subtype measures
         measures_to_add.pop(medication)
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
@@ -421,6 +440,23 @@ for reason in app_reason_dict.keys():
     measures_to_add[reason] = (event.where(event.date.is_in(valid_appointments.start_date))
                        .count_for_patient()
                 )
+
+# Adding appointments with indication & prescription 
+for indication, prescription in zip (indication_dict.keys(), prescription_dict.keys()) :
+    event = (clinical_events.where((clinical_events
+                                    .snomedct_code
+                                    .is_in(indication_dict[indication]))
+                                    & (clinical_events
+                                        .date
+                                        .is_during(INTERVAL))
+                                        )
+            )
+    prescription = (medications.where((medications.dmd_code.is_in(prescription_dict[prescription]))
+                                    & (medications.date.is_during(INTERVAL)))
+                    )
+    measures_to_add[indication] = ((event.where((event.date.is_in(valid_appointments.start_date))
+                                            & (event.date.is_in(prescription.date))))
+                                            .count_for_patient())
 
 # Defining measures ---
 measures.define_defaults(

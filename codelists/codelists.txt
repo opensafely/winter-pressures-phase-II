@@ -1,5 +1,6 @@
 opensafely/ethnicity/2020-04-27
 opensafely/acute-respiratory-illness-primary-care/30f1c6ca
+bristol/pneumonia/44622d57
 opensafely/sick-notes-snomed/0f8ffb90
 ons/neurological-disorders/54fabb61
 opensafely/antibacterials/26390d85
@@ -10,6 +11,7 @@ opensafely/opioid-containing-medicines-parenteral-excluding-drugs-for-substance-
 opensafely/opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd/3c95c0c4
 opensafely/opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd/23864d8f
 bristol/antidepressants-snomedct/677f55d2
+user/arinat/chest-abx-dmd/7ad5239d
 nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127
 nhsd-primary-care-domain-refsets/copd_cod/20210127
 nhsd-primary-care-domain-refsets/copdres_cod/20200812

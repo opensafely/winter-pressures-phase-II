@@ -79,11 +79,11 @@ for (disease in c("comorbid_chronic_resp", "comorbid_copd", "comorbid_asthma")) 
   lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) plot_trends_by_facet(measures, vax, filter_col = disease))
 }
 
-#Plot comorbid trends by age
+# Plot comorbid trends by age
 comorbid_any <- c("comorbid_chronic_resp","comorbid_copd", "comorbid_asthma", "comorbid_dm", "comorbid_htn", "comorbid_depres", "comorbid_mh", "comorbid_neuro", "comorbid_immuno")
 lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid))
 
-#Plot comorbid trends by imd
+# Plot comorbid trends by imd
 lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid, facet_col = "imd_quintile"))
 
 # Create plots for different practice characteristics

@@ -12,6 +12,12 @@
       "downloaded_at": "2024-09-26 12:33:18.658872Z",
       "sha": "059df7a11e9429127190acc3c57f5836611034f9"
     },
+    "bristol-pneumonia.csv": {
+      "id": "bristol/pneumonia/44622d57",
+      "url": "https://www.opencodelists.org/codelist/bristol/pneumonia/44622d57/",
+      "downloaded_at": "2024-11-22 18:25:26.685379Z",
+      "sha": "6e24f2ee0f80855b5c322af2911795fb0385ad02"
+    },
     "opensafely-sick-notes-snomed.csv": {
       "id": "opensafely/sick-notes-snomed/0f8ffb90",
       "url": "https://www.opencodelists.org/codelist/opensafely/sick-notes-snomed/0f8ffb90/",
@@ -71,6 +77,12 @@
       "url": "https://www.opencodelists.org/codelist/bristol/antidepressants-snomedct/677f55d2/",
       "downloaded_at": "2024-09-26 12:33:19.201921Z",
       "sha": "e79f8e54a2548b07a50487b1974020dc9ef00020"
+    },
+    "user-arinat-chest-abx-dmd.csv": {
+      "id": "user/arinat/chest-abx-dmd/7ad5239d",
+      "url": "https://www.opencodelists.org/codelist/user/arinat/chest-abx-dmd/7ad5239d/",
+      "downloaded_at": "2024-11-22 17:59:32.300041Z",
+      "sha": "408565ecbc50893e36ef7d5c8bfb134ed7a4f589"
     },
     "nhsd-primary-care-domain-refsets-crdatrisk1_cod.csv": {
       "id": "nhsd-primary-care-domain-refsets/crdatrisk1_cod/20210127",
