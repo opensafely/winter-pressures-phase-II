@@ -40,8 +40,8 @@ ethnicity = codelist_from_csv(
 
 # Appointment reasons codelist:
 app_reason_dict = {
-    "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist 
-    "pneum_broad": "codelists/bristol-pneumonia.csv",
+    "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist - misses many pneumonia codes
+    "pneum_broad": "codelists/bristol-pneumonia.csv", # pneumonia specific codelist to compensate for above
     "neurological_app": "codelists/ons-neurological-disorders.csv",
     "sick_notes_app": "codelists/opensafely-sick-notes-snomed.csv"
 }
