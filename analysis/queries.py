@@ -15,17 +15,41 @@ study_reg_date = "2021-01-14"
 study_end_date = "2022-01-21"
 
 def create_valid_appointments():
+    '''
+    Filters the appointments table to only contain appointments
+    where start_date == seen_date
+    No args
+    Returns:
+        Filtered appointment table
+    '''
     return (appointments.where((appointments.start_date) ==
                         (appointments.seen_date)))
     
-def secondary_referral(interval_start, interval_end): 
+# Note that all below measures use intervals as arguments
+def count_secondary_referral(interval_start, interval_end): 
+    '''
+    Counts the number of secondary care referrals. Outpatient appointments 
+    data is provided via the NHS Secondary Uses Service.
+    No args
+    Returns:
+        Count of secondary referrals in interval
+    '''
     secondary_referral_count = (opa_cost.where(opa_cost
                     .referral_request_received_date
                     .is_on_or_between(interval_start, interval_end))
                     .count_for_patient())
     return secondary_referral_count
 
-def follow_up(interval_start, interval_end):
+def count_follow_up(interval_start, interval_end):
+    '''
+    Counts the number of patients who had a follow up appointment,
+    defined as a patient who had an appointment in the current interval,
+    and the an appointment in the week prior to the interval.
+    No args
+    Returns:
+        Count of number of patients who had a follow up appointment 
+        in the interval
+    '''
     appointments.app_prev_week = (appointments.where(
                 (appointments.start_date
                 .is_on_or_between(interval_start - days(7), interval_start - days(1))) &
@@ -42,7 +66,16 @@ def follow_up(interval_start, interval_end):
                         .exists_for_patient())
     return follow_up
 
-def reason_for_app(interval_start, interval_end, reason, valid_appointments):
+def count_reason_for_app(interval_start, interval_end, reason, valid_appointments):
+    '''
+    Counts the number of appointments for different clinical events,
+    where reason and event are assumed to be linked if they have the same date
+    Args:
+        reason: clinical event that could be linked to appointment
+        valid_appointments: filtered appointments table where seen == start date
+    Returns:
+        Count of number of appointments for each reason
+    '''
     event = (clinical_events.where((clinical_events
                                     .snomedct_code
                                     .is_in(reason))

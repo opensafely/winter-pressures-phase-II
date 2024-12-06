@@ -324,7 +324,7 @@ dataset.appointments_in_interval = count_appointments_in_interval(study_start_da
 dataset.all_appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=False)
 
 # Number of follow-up appointments:
-dataset.follow_up_app = follow_up(study_start_date, study_end_date)
+dataset.follow_up_app = count_follow_up(study_start_date, study_end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
 dataset.vax_app = count_vaccinations(study_start_date, study_end_date)
@@ -334,7 +334,7 @@ dataset.vax_app_covid = count_vaccinations(study_start_date, study_end_date, ['S
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-dataset.secondary_referral = secondary_referral(study_start_date, study_end_date)
+dataset.secondary_referral = count_secondary_referral(study_start_date, study_end_date)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Cancelled by Unit','Waiting']
@@ -350,7 +350,7 @@ for prescription in prescription_counts.keys():
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
-    result = reason_for_app(study_start_date, study_end_date, app_reason_dict[reason], valid_appointments)
+    result = count_reason_for_app(study_start_date, study_end_date, app_reason_dict[reason], valid_appointments)
     dataset.add_column(reason, result)
 
 dataset.define_population(was_female_or_male & age_filter & was_alive & 

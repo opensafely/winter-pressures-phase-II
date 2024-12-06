@@ -325,7 +325,7 @@ measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval
 
 # Number of follow-up appointments:
 
-measures_to_add["follow_up_app"] = follow_up(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
@@ -335,7 +335,7 @@ measures_to_add['vax_app_covid'] = count_vaccinations(INTERVAL.start_date, INTER
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-measures_to_add['secondary_referral'] = secondary_referral(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['secondary_referral'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Cancelled by Unit','Waiting']
@@ -348,7 +348,7 @@ measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_dat
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
-    measures_to_add[reason] = reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+    measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
 
 # Defining measures ---
 measures.define_defaults(
