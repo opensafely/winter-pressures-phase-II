@@ -18,7 +18,7 @@ measures.configure_disclosure_control(enabled=False)
 
 # Date specifications
 study_start_date = "2022-01-03"
-study_reg_date = "2021-01-03"
+study_reg_date = "2021-10-03"
 
 # exclusion criteria ---
 
@@ -35,7 +35,7 @@ was_alive = (
 
 # Registered throughout the interval period (vs at the begining)
 was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
-# Been registered at a practice for 365 days before the study
+# Been registered at a practice for 90 days before the study
 prior_registration = practice_registrations.spanning(study_reg_date, study_start_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
@@ -49,10 +49,12 @@ has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice
 age = age_at_interval_start
 age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
-    when((age >= 5) & (age <18)).then("school"),
-    when((age >= 18) & (age < 65)).then("adult"),
-    when((age >= 65) & (age < 80)).then("retired"),
-    when((age >= 80) & (age < 111)).then("elderly"),
+    when((age >= 5) & (age < 12)).then("primary-school"),
+    when((age >= 12) & (age < 18)).then("secondary-school"),
+    when((age >= 18) & (age < 40)).then("adult<40"),
+    when((age >= 40) & (age < 65)).then("adult<65"),
+    when((age >= 65) & (age < 80)).then("adult<80"),
+    when((age >= 80) & (age < 111)).then("adult>80")
 )
 
 # Ethnicity
@@ -295,6 +297,23 @@ measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_dat
 for reason in app_reason_dict.keys():
     measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
 
+# Adding appointments with indication & prescription 
+for indication, prescription in zip (indication_dict.keys(), prescription_dict.keys()) :
+    event = (clinical_events.where((clinical_events
+                                    .snomedct_code
+                                    .is_in(indication_dict[indication]))
+                                    & (clinical_events
+                                        .date
+                                        .is_during(INTERVAL))
+                                        )
+            )
+    prescription = (medications.where((medications.dmd_code.is_in(prescription_dict[prescription]))
+                                    & (medications.date.is_during(INTERVAL)))
+                    )
+    measures_to_add[indication] = ((event.where((event.date.is_in(valid_appointments.start_date))
+                                            & (event.date.is_in(prescription.date))))
+                                            .count_for_patient())
+
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 
@@ -322,7 +341,7 @@ measures.define_defaults(
         "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
         "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
     },
-    intervals=weeks(6).starting_on(study_start_date),
+    intervals=weeks(1).starting_on(study_start_date),
 )
 
 # Adding measures

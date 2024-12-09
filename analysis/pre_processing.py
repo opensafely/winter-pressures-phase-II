@@ -20,6 +20,31 @@ measures['rur_urb_class'].replace(
      8: 'Rural village and dispersed in a sparse setting'},
     inplace=True)
 measures['rur_urb_class'].fillna("Unknown", inplace = True)
+
+# Create measure where: numerator = appt for disease X with prescription, denominator = appt for disease X
+numerators = ["back_pain_opioid", "chest_inf_abx", "chest_inf_abx"]
+denominators = ["back_pain", "chest_inf", "pneum"]
+
+# List of column names to match the numerator-denominator pairs by
+index = measures.columns.get_loc("age")
+subgroups = list(measures.columns[index : ])
+subgroups = subgroups + ["interval_start" , "interval_end"]
+
+for numerator, denominator in zip(numerators, denominators):
+
+    tmp_df = measures[measures['measure'].isin([numerator, denominator])]
+    tmp_df = (tmp_df.groupby(subgroups)
+              .apply(lambda group: pd.Series({
+                  'measure': f'prop_{numerator}',
+                  'numerator': group.loc[group['measure'] == numerator, 'numerator'].iloc[0],
+                  'denominator': group.loc[group['measure'] == denominator, 'numerator'].iloc[0],
+                  'ratio': group.loc[group['measure'] == numerator, 'numerator'].iloc[0] / 
+                           group.loc[group['measure'] == denominator, 'numerator'].iloc[0]
+              }))
+              .reset_index())
+    measures = pd.concat([measures, tmp_df], ignore_index=True)
+
+# Save processed file
 measures.to_csv("output/patient_measures/processed_measures.csv.gz")
 
 # Create practice-characteristics dataframe
@@ -32,7 +57,7 @@ practice_df = (
         numerator=("numerator", "sum"),
         list_size=("denominator", "sum"),
         count_female=("sex", lambda x: (x == "female").sum()),
-        count_over_65=("age", lambda x: ((x == "retired") | (x == "elderly")).sum()),
+        count_over_65=("age", lambda x: ((x == "adult<80") | (x == "adult>80")).sum()),
         count_under_5=("age", lambda x: (x == "preschool").sum()),
         median_imd=("imd_quintile", "median"),
         count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),
