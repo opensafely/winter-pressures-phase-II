@@ -144,7 +144,7 @@ def count_prescriptions(interval_start, interval_end, med_dict):
         A dictionary of prescription counts per patient.
     """
     measures = {}
-    analgesic_total = 0  # For aggregating analgesic subtypes
+    opioid_total = 0  # For aggregating analgesic subtypes
 
     for medication, codes in med_dict.items():
         if medication == "antidepressant_pres":
@@ -163,12 +163,12 @@ def count_prescriptions(interval_start, interval_end, med_dict):
         measures[medication] = measure_count
 
         # If it's an analgesic subtype, add to the total and remove its subtype measure
-        if medication.startswith('analgesic'):
-            analgesic_total += measure_count
+        if medication.startswith('opioid'):
+            opioid_total += measure_count
             del measures[medication]
 
     # Add the aggregated analgesic measure
-    measures['analgesic_pres'] = analgesic_total
+    measures['opioid_pres'] = opioid_total
 
     return measures
 
