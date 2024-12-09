@@ -297,6 +297,11 @@ for reason in app_reason_dict.keys():
     result = count_reason_for_app(study_start_date, study_end_date, app_reason_dict[reason], valid_appointments)
     dataset.add_column(reason, result)
 
+# Count prescriptions for each indication
+indication_counts = appointments_with_indication_and_prescription(study_start_date, study_end_date, indication_dict, prescription_dict, valid_appointments)
+for indication in indication_counts.keys():
+    dataset.add_column(indication, indication_counts[indication])
+
 dataset.define_population(was_female_or_male & age_filter & was_alive & 
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration)

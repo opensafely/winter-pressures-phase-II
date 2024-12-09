@@ -172,3 +172,32 @@ def count_prescriptions(interval_start, interval_end, med_dict):
 
     return measures
 
+def appointments_with_indication_and_prescription(interval_start, interval_end, indication_dict, prescription_dict, valid_appointments):
+    """
+    Calculate appointments with an indication and a corresponding prescription.
+    
+    Parameters:
+        indication_dict: Dictionary mapping indications to their respective clinical codes.
+        prescription_dict: Dictionary mapping prescription types to their respective medication codes.
+        valid_appointments: Dataframe or table of valid appointments.
+        
+    Returns:
+        A dictionary with indication keys and counts of appointments matching the criteria.
+    """
+    measures = {}
+
+    for indication, prescription in zip(indication_dict.keys(), prescription_dict.keys()):
+        # Filter clinical events by indication
+        event = (clinical_events.where((clinical_events.snomedct_code.is_in(indication_dict[indication])) &
+                                       (clinical_events.date.is_on_or_between(interval_start, interval_end))))
+
+        # Filter medications by prescription
+        prescription_events = (medications.where((medications.dmd_code.is_in(prescription_dict[prescription])) &
+                                                 (medications.date.is_on_or_between(interval_start, interval_end))))
+
+        # Count appointments that match both criteria
+        measures[indication] = (event.where((event.date.is_in(valid_appointments.start_date)) &
+                                            (event.date.is_in(prescription_events.date)))
+                                .count_for_patient())
+    
+    return measures

@@ -297,22 +297,8 @@ measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_dat
 for reason in app_reason_dict.keys():
     measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
 
-# Adding appointments with indication & prescription 
-for indication, prescription in zip (indication_dict.keys(), prescription_dict.keys()) :
-    event = (clinical_events.where((clinical_events
-                                    .snomedct_code
-                                    .is_in(indication_dict[indication]))
-                                    & (clinical_events
-                                        .date
-                                        .is_during(INTERVAL))
-                                        )
-            )
-    prescription = (medications.where((medications.dmd_code.is_in(prescription_dict[prescription]))
-                                    & (medications.date.is_during(INTERVAL)))
-                    )
-    measures_to_add[indication] = ((event.where((event.date.is_in(valid_appointments.start_date))
-                                            & (event.date.is_in(prescription.date))))
-                                            .count_for_patient())
+# Count appointments with an indication and prescription
+measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
 
 # Defining measures ---
 measures.define_defaults(
