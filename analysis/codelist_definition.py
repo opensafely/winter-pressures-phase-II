@@ -24,11 +24,24 @@ ethnicity = codelist_from_csv(
 
 # Appointment reasons codelist:
 app_reason_dict = {
-    "flu_app": "codelists/opensafely-acute-respiratory-illness-primary-care.csv",
+    "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist - misses many pneumonia codes
+    "pneum_broad": "codelists/bristol-pneumonia.csv", # pneumonia specific codelist to compensate for above
     "neurological_app": "codelists/ons-neurological-disorders.csv",
     "sick_notes_app": "codelists/opensafely-sick-notes-snomed.csv"
 }
 app_reason_dict = create_codelist_dict(app_reason_dict)
+
+# Append additional appointment reasons with SNOMED codes (no codelists); more specific top- usgae codes 
+app_reason_dict["back_pain"] = ['279039007', '161891005', '161894002', '278860009', '279040009']
+# Top usage codes for chest infection, without indication viral or bacterial. Search terms: respiratory infection | respiratory tract infection.
+# Pneumonia excluded for specificity to conditions which may not neccessairly trigger Abx
+app_reason_dict["chest_inf"] = ['50417007', '54150009', '195742007', '54398005', '448739000']
+# Top pneumonia specific codes
+app_reason_dict["pneum"] = ['233604007', '385093006', '312342009', '425464007', '278516003']
+
+indication_dict = {"back_pain_opioid": app_reason_dict["back_pain"], 
+                   "chest_inf_abx": app_reason_dict["chest_inf"],
+                   "pneum_abx": app_reason_dict["pneum"]}
 
 # Medications codelists:
 med_dict ={
@@ -40,8 +53,13 @@ med_dict ={
     "analgesic_parental":"codelists/opensafely-opioid-containing-medicines-parenteral-excluding-drugs-for-substance-misuse-dmd.csv",
     "analgesic_rectal":"codelists/opensafely-opioid-containing-medicines-rectal-excluding-drugs-for-substance-misuse-dmd.csv",
     "analgesic_transdermal":"codelists/opensafely-opioid-containing-medicines-transdermal-excluding-drugs-for-substance-misuse-dmd.csv",
+    "chest_abx": "codelists/user-arinat-chest-abx-dmd.csv"
 }
 med_dict = create_codelist_dict(med_dict)
+
+prescription_dict = {"opioid_oral": med_dict["analgesic_oral"], 
+                     "chest_abx1": med_dict["chest_abx"], 
+                     "chest_abx2": med_dict["chest_abx"]}
 
 # Co-morbidity codelists:
 comorbid_dict = {
