@@ -57,8 +57,9 @@ med_dict ={
 }
 med_dict = create_codelist_dict(med_dict)
 
-prescription_dict = {key: med_dict[key] for key in ["opioid_oral", "chest_abx", "chest_abx"]}
-# double coded of chest_Abx to match indication_dict for a loop later down
+prescription_dict = {"opioid_oral": med_dict["opioid_oral"], 
+                     "chest_abx1": med_dict["chest_abx"], 
+                     "chest_abx2": med_dict["chest_abx"]}
 
 # Co-morbidity codelists:
 comorbid_dict = {
