@@ -106,160 +106,19 @@ for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL']:
                                         .exists_for_patient())
 
 # Co-morbidity
-#region
-# Chronic resp disease (no resolution codelist). True if disease developed before interval start, else False.
-comorbid_chronic_resp = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["chronic_resp"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .exists_for_patient()
-)
+# Check if patient had a resolvable condition in the interval
+comorbid_copd = check_resolved_condition(comorbid_dict["copd"], comorbid_dict["copd_res"], INTERVAL.start_date)
+comorbid_asthma = check_resolved_condition(comorbid_dict["asthma"], comorbid_dict["asthma_res"], INTERVAL.start_date)
+comorbid_dm = check_resolved_condition(comorbid_dict["diabetes"], comorbid_dict["diabetes_res"], INTERVAL.start_date)
+comorbid_htn = check_resolved_condition(comorbid_dict["htn"], comorbid_dict["htn_res"], INTERVAL.start_date)
+comorbid_depres = check_resolved_condition(comorbid_dict["depres"], comorbid_dict["depres_res"], INTERVAL.start_date)
 
-# COPD (with resolution codelist). 
-## Last COPD diagnosis date before interval start
-comorbid_copd_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .date
-)
+# Check if patient had an unresolvable (chronic) condition in the interval
+comorbid_chronic_resp = check_chronic_condition(comorbid_dict["chronic_resp"], INTERVAL.start_date)
+comorbid_mh = check_chronic_condition(comorbid_dict["mental_health"], INTERVAL.start_date)
+comorbid_neuro = check_chronic_condition(comorbid_dict["neuro"], INTERVAL.start_date)
+comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.start_date)
 
-# Last COPD resolution date before interval start
-comorbid_copd_res_date_last = ( 
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["copd_res"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .date
-)
-
-## True if COPD developed before interval start & never resolved OR resolved but recurred before the interval; else False
-comorbid_copd = (
-    comorbid_copd_date_last.is_not_null() & 
-    (comorbid_copd_res_date_last.is_null() | (comorbid_copd_res_date_last < comorbid_copd_date_last))
-).when_null_then(False)
-
-# Asthma (with resolution codelist).
-## Last asthma diagnosis date before interval start
-comorbid_asthma_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .date
-)
-
-## Last asthma resolution date before interval start
-comorbid_asthma_res_date_last = ( 
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["asthma_res"]) &
-        clinical_events.date.is_on_or_before(INTERVAL.start_date))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .date
-)
-
-## True if asthma developed before interval start & never resolved OR resolved but recurred before the interval; else False
-comorbid_asthma = (
-    comorbid_asthma_date_last.is_not_null() & 
-    (comorbid_asthma_res_date_last.is_null() | (comorbid_asthma_res_date_last < comorbid_asthma_date_last))
-).when_null_then(False)
-
-# Diabetes (with resolution codelist)
-## Last diabetes diagnosis date before interval start
-comorbid_dm_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["diabetes"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .sort_by(clinical_events.date)
-                          .last_for_patient()
-                          .date
-)
-
-## Last diabetes resolution date before interval start
-comorbid_dm_res_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["diabetes_res"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .sort_by(clinical_events.date)
-                          .last_for_patient()
-                          .date
-)
-
-## True if diabetes developed before interval start & never resolved OR resolved but recurred before the interval start; else False
-comorbid_dm = (
-    comorbid_dm_date_last.is_not_null() &
-    (comorbid_dm_res_date_last.is_null() | (comorbid_dm_res_date_last < comorbid_dm_date_last))
-).when_null_then(False)
-
-# Hypertension (with resolution codelist)
-## Last hypertension diagnosis date before interval start
-comorbid_htn_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["htn"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .sort_by(clinical_events.date)
-                          .last_for_patient()
-                          .date
-)
-
-## Last hypertension resolution date before interval start
-comorbid_htn_res_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["htn_res"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .sort_by(clinical_events.date)
-                          .last_for_patient()
-                          .date
-)
-
-## True if hypertension developed before interval start & never resolved OR resolved but recurred before the interval start; else False
-comorbid_htn = (
-    comorbid_htn_date_last.is_not_null() &
-    (comorbid_htn_res_date_last.is_null() | (comorbid_htn_res_date_last < comorbid_htn_date_last))
-).when_null_then(False)
-
-# Depression (with resolution codelist)
-## Last depression diagnosis date before interval start
-comorbid_depres_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["depres"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .sort_by(clinical_events.date)
-                          .last_for_patient()
-                          .date
-)
-
-## Last depression resolution date before interval start
-comorbid_depres_res_date_last = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["depres_res"]) &
-                          clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .sort_by(clinical_events.date)
-                          .last_for_patient()
-                          .date
-)
-
-## True if depression developed before interval start & never resolved OR resolved but recurred before the interval start; else False
-comorbid_depres = (
-    comorbid_depres_date_last.is_not_null() &
-    (comorbid_depres_res_date_last.is_null() | (comorbid_depres_res_date_last < comorbid_depres_date_last))
-).when_null_then(False)
-
-# Chronic mental health disease (no resolution codelist). True if disease developed before interval start; else False
-comorbid_mh = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["mental_health"])
-                          & clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .exists_for_patient()
-)
-
-# Chronic neurological disease (no resolution codelist). True if disease developed before interval start; else False
-comorbid_neuro = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["neuro"])
-                          & clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .exists_for_patient()
-)
-
-# Immunosupression (no resolution codelist). True if disease developed before interval start; else False
-comorbid_immuno = (
-    clinical_events.where(clinical_events.snomedct_code.is_in(comorbid_dict["immuno_sup"])
-                          & clinical_events.date.is_on_or_before(INTERVAL.start_date))
-                          .exists_for_patient()
-)
-#endregion
 # Measures ---
 measures_to_add = {}
 # Valid appointments are those where start_date == seen_date

@@ -203,3 +203,50 @@ def appointments_with_indication_and_prescription(interval_start, interval_end, 
                                 .count_for_patient())
     
     return measures
+
+def check_chronic_condition(codelist, interval_start):
+    """
+    Checks if a chronic condition exists before the interval start.
+    These are chronic so resolved codes are unavailable.
+    Args:
+        codelist: Codelist for chronic condition
+    Returns:
+        Binary indicator of whether the code exists for the patient
+    """
+    return clinical_events.where(
+        clinical_events.snomedct_code.is_in(codelist) &
+        clinical_events.date.is_on_or_before(interval_start)
+    ).exists_for_patient()
+
+def get_last_event_date(codelist, interval_start):
+    """
+    Gets the last event date for a condition before the interval start.
+    Args:
+        codelist: Codelist for condition
+    Returns:
+        Date of last entry for that code for a patient
+    """
+    return clinical_events.where(
+        clinical_events.snomedct_code.is_in(codelist) &
+        clinical_events.date.is_on_or_before(interval_start)
+    ).sort_by(clinical_events.date).last_for_patient().date
+
+def check_resolved_condition(diagnosis_codelist, resolution_codelist, interval_start):
+    """
+    Checks if a condition developed before the interval start and has not resolved.
+    Args:
+        diagnosis_codelist: Diagnosis codelist for condition
+        resolution_codelist: Resolution codelist for condition
+    Returns:
+        Binary indicator of whether the patient has the unresolved condition
+    """
+    last_diagnosis_date = get_last_event_date(diagnosis_codelist, interval_start)
+    last_resolution_date = get_last_event_date(resolution_codelist, interval_start)
+
+    return (
+        last_diagnosis_date.is_not_null() &
+        (
+            last_resolution_date.is_null() | 
+            (last_resolution_date < last_diagnosis_date)
+        )
+    ).when_null_then(False)
