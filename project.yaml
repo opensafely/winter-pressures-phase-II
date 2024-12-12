@@ -45,4 +45,9 @@ actions:
       moderately_sensitive:
         app_figures: output/*/*.png
         total_measures: output/total_measures/*.csv
+  generate_test_data:
+    run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/test.csv
 
