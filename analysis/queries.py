@@ -149,12 +149,14 @@ def count_prescriptions(interval_start, interval_end, med_dict):
     for medication, codes in med_dict.items():
         if medication == "antidepressant_pres":
             # Use clinical_events for antidepressants
+            # because antidepressant codelist uses SNOMED
             measure_count = clinical_events.where(
                 (clinical_events.snomedct_code.is_in(codes))
                 & clinical_events.date.is_on_or_between(interval_start, interval_end)
             ).count_for_patient()
         else:
-            # Use medications for other drugs
+            # Use medications for other drugs (mostly analgesics)
+            # because their codelists use dmd
             measure_count = medications.where(
                 (medications.dmd_code.is_in(codes))
                 & medications.date.is_on_or_between(interval_start, interval_end)
