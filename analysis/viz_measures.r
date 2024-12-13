@@ -2,8 +2,8 @@ library(ggplot2)
 library(dplyr)
 library(glue)
 
-measures <- read.csv('output/patient_measures/processed_measures.csv.gz')
-practice_measures <- read.csv('output/practice_measures/practice_measures.csv.gz')
+measures <- read.csv('output/patient_measures/processed_patient_measures.csv.gz')
+practice_measures <- read.csv('output/practice_measures/processed_practice_measures.csv.gz')
 
 # Format data
 measures$interval_start <- as.Date(measures$interval_start)
