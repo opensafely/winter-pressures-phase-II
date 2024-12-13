@@ -89,35 +89,10 @@ rur_urb_class = (addresses
                  .rural_urban_classification)
 
 # Practice data taken at the start of the interval
-# practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
-#               .practice_pseudo_id)
+practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
+               .practice_pseudo_id)
 region = (practice_registrations.for_patient_on(INTERVAL.start_date)
           .practice_nuts1_region_name)
-
-# Vaccination against flu or covid in the last 12 months
-vax_status = {}
-for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL']:
-    vax_status[disease] = (vaccinations.where((vaccinations
-                                        .target_disease
-                                        .is_in([disease])) &
-                                        vaccinations
-                                        .date
-                                        .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date))
-                                        .exists_for_patient())
-
-# Co-morbidity
-# Check if patient had a resolvable condition in the interval
-comorbid_copd = check_resolved_condition(comorbid_dict["copd"], comorbid_dict["copd_res"], INTERVAL.start_date)
-comorbid_asthma = check_resolved_condition(comorbid_dict["asthma"], comorbid_dict["asthma_res"], INTERVAL.start_date)
-comorbid_dm = check_resolved_condition(comorbid_dict["diabetes"], comorbid_dict["diabetes_res"], INTERVAL.start_date)
-comorbid_htn = check_resolved_condition(comorbid_dict["htn"], comorbid_dict["htn_res"], INTERVAL.start_date)
-comorbid_depres = check_resolved_condition(comorbid_dict["depres"], comorbid_dict["depres_res"], INTERVAL.start_date)
-
-# Check if patient had an unresolvable (chronic) condition in the interval
-comorbid_chronic_resp = check_chronic_condition(comorbid_dict["chronic_resp"], INTERVAL.start_date)
-comorbid_mh = check_chronic_condition(comorbid_dict["mental_health"], INTERVAL.start_date)
-comorbid_neuro = check_chronic_condition(comorbid_dict["neuro"], INTERVAL.start_date)
-comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.start_date)
 
 # Measures ---
 measures_to_add = {}
@@ -172,19 +147,7 @@ measures.define_defaults(
         "carehome": carehome,
         "region": region,
         "rur_urb_class": rur_urb_class,
-        #"practice_pseudo_id": practice_id,
-        "comorbid_chronic_resp": comorbid_chronic_resp,
-        "comorbid_copd": comorbid_copd,
-        "comorbid_asthma": comorbid_asthma,
-        "comorbid_dm": comorbid_dm,
-        "comorbid_htn": comorbid_htn,
-        "comorbid_depres": comorbid_depres,
-        "comorbid_mh": comorbid_mh,
-        "comorbid_neuro": comorbid_neuro,
-        "comorbid_immuno": comorbid_immuno,
-        "vax_flu_12m": vax_status['INFLUENZA'],
-        "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
-        "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
+        "practice_pseudo_id": practice_id
     },
     intervals=weeks(1).starting_on(study_start_date),
 )
