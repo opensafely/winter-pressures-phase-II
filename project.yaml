@@ -5,7 +5,7 @@ expectations:
 
 actions:
   generate_patient_measures:
-    run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/measures_definition.py
+    run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/wp_patient_measures_def.py
     outputs:
       highly_sensitive:
         dataset: output/patient_measures/patient_measures.csv.gz
