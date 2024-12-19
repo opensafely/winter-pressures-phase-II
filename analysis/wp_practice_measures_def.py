@@ -127,7 +127,7 @@ app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
-# Configuration based on CLI arg. Skip these measures if --drop_measures flag was not called in action
+# Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
 if drop_measures == False:
 
     # Count prescriptions and add to measures
