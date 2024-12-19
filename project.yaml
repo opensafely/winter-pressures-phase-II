@@ -4,16 +4,31 @@ expectations:
   population_size: 1000
 
 actions:
-  generate_patient_measures:
-    run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/wp_patient_measures_def.py
+  # generate_patient_measures:
+  #   run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/wp_patient_measures_def.py
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/patient_measures/patient_measures.csv.gz
+  generate_practice_measures_drop_follow_up:
+    run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_drop_follow_up.csv.gz analysis/wp_practice_measures_def.py -- --drop_follow_up
     outputs:
       highly_sensitive:
-        dataset: output/patient_measures/patient_measures.csv.gz
-  generate_practice_measures_drop_measures:
-    run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_drop_measures.csv.gz analysis/wp_practice_measures_def.py -- --drop_measures
+        dataset: output/practice_measures/practice_measures_drop_follow_up.csv.gz
+  generate_practice_measures_drop_reason:
+    run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_drop_reason.csv.gz analysis/wp_practice_measures_def.py -- --drop_reason
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_drop_measures.csv.gz
+        dataset: output/practice_measures/practice_measures_drop_reason.csv.gz
+  generate_practice_measures_drop_prescriptions:
+    run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_drop_prescriptions.csv.gz analysis/wp_practice_measures_def.py -- --drop_prescriptions
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_drop_prescriptions.csv.gz
+  generate_practice_measures_drop_indicat_prescript:
+    run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_drop_indicat_prescript.csv.gz analysis/wp_practice_measures_def.py -- --drop_indicat_prescript
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_drop_indicat_prescript.csv.gz
   generate_practice_measures:
     run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures.csv.gz analysis/wp_practice_measures_def.py
     outputs:
