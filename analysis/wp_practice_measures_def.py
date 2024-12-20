@@ -19,12 +19,12 @@ measures.configure_disclosure_control(enabled=False)
 # Configuration
 import argparse
 parser = argparse.ArgumentParser() # Instantiate parser
-parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
+# parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
 parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included") 
 parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
 parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
 args = parser.parse_args() # Stores arguments in 'args'
-drop_follow_up = args.drop_follow_up # extracts arguments
+# drop_follow_up = args.drop_follow_up # extracts arguments
 drop_indicat_prescript = args.drop_indicat_prescript
 drop_prescriptions = args.drop_prescriptions
 drop_reason = args.drop_reason
@@ -117,6 +117,9 @@ valid_appointments = create_valid_appointments()
 measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=True)
 measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
 
+# Number of follow-up appointments:
+measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
+
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['vax_app_flu'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date, ['INFLUENZA'])
@@ -134,11 +137,6 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
 # Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
-if drop_follow_up == False:
-
-    # Number of follow-up appointments:
-    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
-
 if drop_indicat_prescript == False:
 
     # Count appointments with an indication and prescription
@@ -164,13 +162,13 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        #"age": age_group,
-        #"sex": patients.sex,
+        "age": age_group,
+        "sex": patients.sex,
         #"ethnicity": ethnicity,
-        #"imd_quintile": imd_quintile,
-        #"carehome": carehome,
-        #"region": region,
-        #"rur_urb_class": rur_urb_class,
+        "imd_quintile": imd_quintile,
+        "carehome": carehome,
+        "region": region,
+        "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
     },
     intervals=weeks(1).starting_on(study_start_date),

@@ -16,6 +16,19 @@ measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
+# Configuration
+import argparse
+parser = argparse.ArgumentParser() # Instantiate parser
+# parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
+parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included") 
+parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
+parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
+args = parser.parse_args() # Stores arguments in 'args'
+# drop_follow_up = args.drop_follow_up # extracts arguments
+drop_indicat_prescript = args.drop_indicat_prescript
+drop_prescriptions = args.drop_prescriptions
+drop_reason = args.drop_reason
+
 # Date specifications
 study_start_date = "2022-01-03"
 study_reg_date = "2021-10-03"
@@ -130,7 +143,6 @@ measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INT
 measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
 
 # Number of follow-up appointments:
-
 measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
@@ -149,15 +161,27 @@ app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
-# Count prescriptions and add to measures
-measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
-# Adding reason for appointment (inferred from appointment and reason being on the same day)
-for reason in app_reason_dict.keys():
-    measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+# Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
 
-# Count appointments with an indication and prescription
-measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
+if drop_indicat_prescript == False:
+
+    # Count appointments with an indication and prescription
+    measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
+
+
+if drop_prescriptions == False:
+
+    # Count prescriptions and add to measures
+    measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
+
+
+if drop_reason == False:
+
+    # Adding reason for appointment (inferred from appointment and reason being on the same day)
+    for reason in app_reason_dict.keys():
+        measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+
 
 # Defining measures ---
 measures.define_defaults(
