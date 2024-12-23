@@ -4,11 +4,11 @@ expectations:
   population_size: 1000
 
 actions:
-  #generate_patient_measures:
-  #  run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/wp_patient_measures_def.py -- --drop_reason --drop_prescriptions --drop_indicat_prescript
-  #  outputs:
-  #     highly_sensitive:
-  #       dataset: output/patient_measures/patient_measures.csv.gz
+  generate_patient_measures:
+    run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/wp_patient_measures_def.py -- --drop_reason --drop_prescriptions --drop_indicat_prescript
+    outputs:
+       highly_sensitive:
+         dataset: output/patient_measures/patient_measures.csv.gz
   #generate_practice_measures_keep_follow_up:
   #  run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_keep_follow_up.csv.gz analysis/wp_practice_measures_def.py -- --drop_reason --drop_prescriptions --drop_indicat_prescript
   #  outputs:
