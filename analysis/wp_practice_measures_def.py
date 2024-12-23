@@ -168,8 +168,8 @@ measures.define_defaults(
         #"ethnicity": ethnicity,
         #"imd_quintile": imd_quintile,
         #"carehome": carehome,
-        #"region": region,
-        #"rur_urb_class": rur_urb_class,
+        "region": region,
+        "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
     },
     intervals=weeks(1).starting_on(study_start_date),
