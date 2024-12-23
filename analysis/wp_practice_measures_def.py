@@ -166,8 +166,8 @@ measures.define_defaults(
         #"age": age_group,
         "sex": patients.sex,
         #"ethnicity": ethnicity,
-        #"imd_quintile": imd_quintile,
-        #"carehome": carehome,
+        "imd_quintile": imd_quintile,
+        "carehome": carehome,
         "region": region,
         "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
