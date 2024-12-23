@@ -64,10 +64,10 @@ age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
     when((age >= 5) & (age < 12)).then("primary-school"),
     when((age >= 12) & (age < 18)).then("secondary-school"),
-    when((age >= 18) & (age < 40)).then("adult<40"),
-    when((age >= 40) & (age < 65)).then("adult<65"),
-    when((age >= 65) & (age < 80)).then("adult<80"),
-    when((age >= 80) & (age < 111)).then("adult>80")
+    when((age >= 18) & (age < 40)).then("adult-under40"),
+    when((age >= 40) & (age < 65)).then("adult-under65"),
+    when((age >= 65) & (age < 80)).then("adult-under80"),
+    when((age >= 80) & (age < 111)).then("adult-80plus")
 )
 
 # Ethnicity
@@ -166,10 +166,10 @@ measures.define_defaults(
         "age": age_group,
         "sex": patients.sex,
         #"ethnicity": ethnicity,
-        #"imd_quintile": imd_quintile,
-        #"carehome": carehome,
-        #"region": region,
-        #"rur_urb_class": rur_urb_class,
+        "imd_quintile": imd_quintile,
+        "carehome": carehome,
+        "region": region,
+        "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
     },
     intervals=weeks(1).starting_on(study_start_date),
