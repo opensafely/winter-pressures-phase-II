@@ -163,13 +163,13 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        #"age": age_group,
-        #"sex": patients.sex,
+        "age": age_group,
+        "sex": patients.sex,
         #"ethnicity": ethnicity,
-        #"imd_quintile": imd_quintile,
-        #"carehome": carehome,
-        #"region": region,
-        #"rur_urb_class": rur_urb_class,
+        "imd_quintile": imd_quintile,
+        "carehome": carehome,
+        "region": region,
+        "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
     },
     intervals=weeks(1).starting_on(study_start_date),
