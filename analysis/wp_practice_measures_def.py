@@ -163,7 +163,7 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        "age": age_group,
+        #"age": age_group,
         "sex": patients.sex,
         #"ethnicity": ethnicity,
         #"imd_quintile": imd_quintile,
