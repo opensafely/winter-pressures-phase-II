@@ -66,8 +66,8 @@ age_group = case(
     when((age >= 12) & (age < 18)).then("secondary-school"),
     when((age >= 18) & (age < 40)).then("adult-under40"),
     when((age >= 40) & (age < 65)).then("adult-under65"),
-    when((age >= 65) & (age < 80)).then("adult-under80"),
-    when((age >= 80) & (age < 111)).then("adult-80plus")
+    when((age >= 65) & (age < 80)).then("adult<80"),
+    when((age >= 80) & (age < 111)).then("adult>80plus")
 )
 
 # Ethnicity
