@@ -19,19 +19,17 @@ measures.configure_disclosure_control(enabled=False)
 # Configuration
 import argparse
 parser = argparse.ArgumentParser() # Instantiate parser
-# parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
-parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included") 
+parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included") # Add flags
 parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
 parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
 args = parser.parse_args() # Stores arguments in 'args'
-# drop_follow_up = args.drop_follow_up # extracts arguments
 drop_indicat_prescript = args.drop_indicat_prescript
 drop_prescriptions = args.drop_prescriptions
 drop_reason = args.drop_reason
 
 # Date specifications
-study_start_date = "2022-01-03"
-study_reg_date = "2021-10-03"
+study_start_date = "2022-01-01"
+study_reg_date = "2021-10-01"
 
 # exclusion criteria ---
 
@@ -71,12 +69,12 @@ age_group = case(
 )
 
 # Ethnicity
-# ethnicity = (
-#    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
-#    .sort_by(clinical_events.date)
-#    .last_for_patient()
-#    .ctv3_code.to_category(ethnicity)
-#)
+ethnicity = (
+    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .ctv3_code.to_category(ethnicity)
+)
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
@@ -191,7 +189,7 @@ measures.define_defaults(
     group_by={
         "age": age_group,
         "sex": patients.sex,
-        #"ethnicity": ethnicity,
+        "ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
         "carehome": carehome,
         "region": region,
@@ -210,7 +208,7 @@ measures.define_defaults(
         "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
         "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
     },
-    intervals=weeks(1).starting_on(study_start_date),
+    intervals=weeks(52).starting_on(study_start_date),
 )
 
 # Adding measures
