@@ -187,7 +187,7 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        "age": age_group,
+        #"age": age_group,
         "sex": patients.sex,
         "ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
@@ -208,7 +208,7 @@ measures.define_defaults(
         "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
         "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
     },
-    intervals=weeks(52).starting_on(study_start_date),
+    intervals=weeks(1).starting_on(study_start_date),
 )
 
 # Adding measures
