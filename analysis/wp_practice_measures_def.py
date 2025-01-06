@@ -62,19 +62,19 @@ age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
     when((age >= 5) & (age < 12)).then("primary-school"),
     when((age >= 12) & (age < 18)).then("secondary-school"),
-    when((age >= 18) & (age < 40)).then("adult-under40"),
-    when((age >= 40) & (age < 65)).then("adult-under65"),
-    when((age >= 65) & (age < 80)).then("adult-under80"),
-    when((age >= 80) & (age < 111)).then("adult-80plus")
+    when((age >= 18) & (age < 40)).then("adult<40"),
+    when((age >= 40) & (age < 65)).then("adult<65"),
+    when((age >= 65) & (age < 80)).then("adult<80"),
+    when((age >= 80) & (age < 111)).then("adult>80")
 )
 
 # Ethnicity
-ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
-)
+#ethnicity = (
+#    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+#    .sort_by(clinical_events.date)
+#    .last_for_patient()
+#    .ctv3_code.to_category(ethnicity)
+#)
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
@@ -162,14 +162,14 @@ measures.define_defaults(
     group_by={
         "age": age_group,
         "sex": patients.sex,
-        "ethnicity": ethnicity,
+        #"ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
         "carehome": carehome,
         "region": region,
         "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
     },
-    intervals=weeks(52).starting_on(study_start_date),
+    intervals=weeks(1).starting_on(study_start_date),
 )
 
 # Adding measures
