@@ -60,12 +60,12 @@ has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice
 age = age_at_interval_start
 age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
-    when((age >= 5) & (age < 12)).then("primary-school"),
-    when((age >= 12) & (age < 18)).then("secondary-school"),
-    when((age >= 18) & (age < 40)).then("adult<40"),
-    when((age >= 40) & (age < 65)).then("adult<65"),
-    when((age >= 65) & (age < 80)).then("adult<80"),
-    when((age >= 80) & (age < 111)).then("adult>80")
+    when((age >= 5) & (age < 12)).then("primary_school"),
+    when((age >= 12) & (age < 18)).then("secondary_school"),
+    when((age >= 18) & (age < 40)).then("adult_under_40"),
+    when((age >= 40) & (age < 65)).then("adult_under_65"),
+    when((age >= 65) & (age < 80)).then("adult_under_80"),
+    when((age >= 80) & (age < 111)).then("adult_over_80")
 )
 
 # Ethnicity
