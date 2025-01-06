@@ -70,11 +70,11 @@ age_group = case(
 
 # Ethnicity
 #ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
-)
+#    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+#    .sort_by(clinical_events.date)
+#    .last_for_patient()
+#    .ctv3_code.to_category(ethnicity)
+#)
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
