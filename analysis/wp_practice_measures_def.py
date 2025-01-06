@@ -69,12 +69,12 @@ age_group = case(
 )
 
 # Ethnicity
-#ethnicity = (
-#    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
-#    .sort_by(clinical_events.date)
-#    .last_for_patient()
-#    .ctv3_code.to_category(ethnicity)
-#)
+ethnicity = (
+    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+    .sort_by(clinical_events.date)
+    .last_for_patient()
+    .ctv3_code.to_category(ethnicity)
+)
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
@@ -160,9 +160,9 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        "age": age_group,
+        #"age": age_group,
         "sex": patients.sex,
-        #"ethnicity": ethnicity,
+        "ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
         "carehome": carehome,
         "region": region,
