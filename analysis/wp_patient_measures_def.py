@@ -19,10 +19,12 @@ measures.configure_disclosure_control(enabled=False)
 # Configuration
 import argparse
 parser = argparse.ArgumentParser() # Instantiate parser
-parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included") # Add flags
+parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
+parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included")
 parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
 parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
 args = parser.parse_args() # Stores arguments in 'args'
+drop_follow_up = args.drop_follow_up # extracts arguments
 drop_indicat_prescript = args.drop_indicat_prescript
 drop_prescriptions = args.drop_prescriptions
 drop_reason = args.drop_reason
@@ -60,12 +62,12 @@ has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice
 age = age_at_interval_start
 age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
-    when((age >= 5) & (age < 12)).then("primary-school"),
-    when((age >= 12) & (age < 18)).then("secondary-school"),
-    when((age >= 18) & (age < 40)).then("adult-under40"),
-    when((age >= 40) & (age < 65)).then("adult-under65"),
-    when((age >= 65) & (age < 80)).then("adult-under80"),
-    when((age >= 80) & (age < 111)).then("adult-80plus")
+    when((age >= 5) & (age < 12)).then("primary_school"),
+    when((age >= 12) & (age < 18)).then("secondary_school"),
+    when((age >= 18) & (age < 40)).then("adult_under_40"),
+    when((age >= 40) & (age < 65)).then("adult_under_65"),
+    when((age >= 65) & (age < 80)).then("adult_under_80"),
+    when((age >= 80) & (age < 111)).then("adult_over_80")
 )
 
 # Ethnicity
@@ -140,9 +142,6 @@ valid_appointments = create_valid_appointments()
 measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=True)
 measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
 
-# Number of follow-up appointments:
-measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
-
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['vax_app_flu'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date, ['INFLUENZA'])
@@ -161,6 +160,9 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 
 
 # Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
+if drop_follow_up == False:
+    # Number of follow-up appointments:
+    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 if drop_indicat_prescript == False:
 
@@ -187,7 +189,7 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        #"age": age_group,
+        "age": age_group,
         "sex": patients.sex,
         "ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
