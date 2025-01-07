@@ -3,7 +3,7 @@ from scipy import stats
 import numpy as np
 
 # Date specifications
-study_start_date = "2022-01-03"
+study_start_date = "2022-01-01"
 
 # Load and format data
 measures = pd.read_csv("output/patient_measures/patient_measures.csv.gz")
@@ -66,7 +66,7 @@ practice_df = (
         numerator=("numerator", "sum"),
         list_size=("denominator", "sum"),
         count_female=("sex", lambda x: (x == "female").sum()),
-        count_over_65=("age", lambda x: ((x == "adult-under80") | (x == "adult-80plus")).sum()),
+        count_over_65=("age", lambda x: ((x == "adult_under_80") | (x == "adult_over_80")).sum()),
         count_under_5=("age", lambda x: (x == "preschool").sum()),
         median_imd=("imd_quintile", "median"),
         #count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),

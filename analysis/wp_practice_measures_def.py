@@ -19,11 +19,13 @@ measures.configure_disclosure_control(enabled=False)
 # Configuration
 import argparse
 parser = argparse.ArgumentParser() # Instantiate parser
-parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included") # Add flags
+parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
+parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included")
 parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
 parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
 args = parser.parse_args() # Stores arguments in 'args'
-drop_indicat_prescript = args.drop_indicat_prescript # extracts arguments
+drop_follow_up = args.drop_follow_up # extracts arguments
+drop_indicat_prescript = args.drop_indicat_prescript
 drop_prescriptions = args.drop_prescriptions
 drop_reason = args.drop_reason
 
@@ -69,12 +71,12 @@ age_group = case(
 )
 
 # Ethnicity
-ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
-)
+#ethnicity = (
+#    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+#    .sort_by(clinical_events.date)
+#    .last_for_patient()
+#    .ctv3_code.to_category(ethnicity)
+#)
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
@@ -135,6 +137,10 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
 # Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
+if drop_follow_up == False:
+    # Number of follow-up appointments:
+    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
+
 if drop_indicat_prescript == False:
 
     # Count appointments with an indication and prescription
@@ -162,7 +168,7 @@ measures.define_defaults(
     group_by={
         #"age": age_group,
         "sex": patients.sex,
-        "ethnicity": ethnicity,
+        #"ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
         "carehome": carehome,
         "region": region,
