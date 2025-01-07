@@ -1,10 +1,9 @@
 from datetime import datetime, timedelta
 
-# Define the start and end dates
+# Study start and end dates (10 year period)
 start_date = datetime(2015, 1, 1)
 end_date = datetime(2025, 1, 1)
 
-# Initialize empty lists to store start and end dates
 start_dates = []
 end_dates = []
 
