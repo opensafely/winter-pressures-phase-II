@@ -39,12 +39,11 @@ numerators['start_seen_same_interval'] = (appointments.where((appointments
                                                               (appointments
                                                                .seen_date
                                                                .is_during(INTERVAL))))
-numerators['start_seen_same_day'] = (appointments.where((appointments
-                                            .start_date) ==
-                                            (appointments
-                                             .seen_date)
+numerators['start_seen_same_day'] = (numerators['start_exists'].where(
+                                            (appointments.start_date) ==
+                                            (appointments.seen_date)
                                              )
-                                             )
+                                    )
 numerators['start_seen_same_week'] = (appointments.where((appointments
                                             .start_date
                                             .is_during(INTERVAL)) &
