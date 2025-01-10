@@ -45,12 +45,18 @@ actions:
   #   outputs:
   #     moderately_sensitive:
   #       app_figures: output/appointments/*.png
-  # generate_app_summary:
-  #   run: python:latest analysis/appointments/app_summary.py
-  #   needs: [generate_app_measures]
-  #   outputs:
-  #     moderately_sensitive:
-  #       app_table: output/appointments/app_summary.csv
+  generate_app_summary:
+     run: python:latest analysis/appointments/app_summary.py
+     needs: [generate_app_measures]
+     outputs:
+       moderately_sensitive:
+         app_table: output/appointments/app_summary.csv
+  generate_app_pivot_table:
+      run: r:latest analysis/appointments/app_pivot_table.r
+      needs: [generate_app_measures, generate_app_summary]
+      outputs:
+        moderately_sensitive:
+          app_pivot_table: output/appointments/status_summary.csv
   # generate_pre_processing:
   #   run: python:latest analysis/pre_processing.py 
   #       --output output/practice_measures/processed_practice_measures.csv.gz
