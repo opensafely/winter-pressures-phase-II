@@ -33,28 +33,6 @@ numerators['seen_exists'] = appointments.where(appointments
 statuses = ['Booked', 'Arrived', 'Did Not Attend', 'In Progress', 'Finished',
  'Requested', 'Blocked', 'Visit', 'Waiting', 'Cancelled by Patient','Cancelled by Unit',
   'Cancelled by Other Service', 'No Access Visit', 'Cancelled Due To Death', 'Patient Walked Out']
-""""
-numerators['seen_different_week'] = numerators['start_exists'].where(
-                    (numerators['start_exists']
-                     .seen_date
-                     .is_before(INTERVAL.start_date)
-                     ) |
-                     (numerators['start_exists']
-                      .seen_date
-                      .is_after(INTERVAL.end_date)
-                      )
-                     )
-numerators['start_different_week'] = numerators['seen_exists'].where(
-                    (numerators['seen_exists']
-                     .start_date
-                     .is_before(INTERVAL.start_date)
-                     ) |
-                     (numerators['seen_exists']
-                      .start_date
-                      .is_after(INTERVAL.end_date)
-                      )
-                     )
-"""
 numerators['start_seen_same_interval'] = (appointments.where((appointments
                                                               .start_date
                                                               .is_during(INTERVAL)) &
@@ -83,27 +61,12 @@ numerators['start_seen_same_month'] = (appointments.where((appointments
                                               .is_on_or_between((appointments.start_date + days(1)), (appointments.start_date + months (1))))
                                              )
                                              )
-""""
-numerators['start_and_reasonable_seen'] = (appointments.where((appointments
-                                            .start_date
-                                            .is_during(INTERVAL)) &
-                                            (appointments
-                                             .seen_date
-                                             .is_on_or_between("2001-01-01", "2025-01-01"))
-                                             )
-                                             )
-numerators['seen_and_reasonable_start'] = (appointments.where((appointments
-                                            .seen_date
-                                            .is_during(INTERVAL)) &
-                                            (appointments
-                                             .start_date
-                                             .is_on_or_between("2001-01-01", "2025-01-01"))
-                                             )
-                                             )
-"""
 numerators['no_status'] = numerators['start_exists'].where(numerators['start_exists']
                                              .status
-                                             .is_not_in(statuses)) #should we use status is null
+                                             .is_not_in(statuses))
+numerators['null_status'] = numerators['start_exists'].where(numerators['start_exists']
+                                             .status
+                                             .is_null())
 numerators['null_start'] = numerators['seen_exists'].where(numerators['seen_exists']
                                                  .start_date
                                                  .is_null())
@@ -116,15 +79,21 @@ numerators['booked_no_start'] = (appointments.where((appointments.
                                                      (appointments.
                                                       start_date.
                                                       is_null())))
-numerators['proxy_null_start'] = numerators['seen_exists'].except_where(numerators['seen_exists']
+numerators['proxy_null_start'] = numerators['seen_exists'].except_where((numerators['seen_exists']
                                                  .start_date
-                                                 .is_on_or_between("2001-01-01", "2025-01-01")) # will this also not pick out NULL start date, not only proxy NULL
-numerators['proxy_null_seen'] = numerators['start_exists'].except_where(numerators['start_exists']
+                                                 .is_on_or_between("2001-01-01", "2025-01-01")) &
+                                                 (numerators['seen_exists']
+                                                  .start_date
+                                                  .is_null())
+                                                 )
+numerators['proxy_null_seen'] = numerators['start_exists'].except_where((numerators['start_exists']
                                                  .seen_date
-                                                 .is_on_or_between("2001-01-01", "2025-01-01")) # same
-categs = [#'start_and_reasonable_seen',
-          #'seen_and_reasonable_start',
-          'null_start',
+                                                 .is_on_or_between("2001-01-01", "2025-01-01")) &
+                                                 (numerators['start_exists']
+                                                 .seen_date
+                                                 .is_null())
+                                                 )
+categs = ['null_start',
           'null_seen']
 
 # Creating numerators for each start-seen-status combination
@@ -134,10 +103,16 @@ for categ in categs:
                                         .status
                                         .is_in([status])
                                         )
+
+app_status = {}
+for status in statuses:
+    app_status[f"{status}"] = appointments.status.is_in([status]).count_for_patient()
+
 # Defining measures ---
 measures.define_defaults(
     denominator= was_registered,
     intervals=weeks(6).starting_on("2022-01-03"),
+    group_by= {app_status},
 )
 # Adding measures
 for numerator in numerators.keys():
