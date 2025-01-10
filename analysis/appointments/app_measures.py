@@ -1,4 +1,4 @@
-from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
+from ehrql import case, codelist_from_csv, create_dataset, days, weeks, months, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
     addresses,
@@ -72,15 +72,15 @@ numerators['start_seen_same_week'] = (appointments.where((appointments
                                             .is_during(INTERVAL)) &
                                             (appointments
                                              .seen_date
-                                             .is_during(INTERVAL)) # plus seven
+                                             .is_on_or_between((appointments.start_date + days (1)), (appointments.start_date + days(7))))
                                              )
                                              )
 numerators['start_seen_same_month'] = (appointments.where((appointments
                                             .start_date
                                             .is_during(INTERVAL)) &
                                             (appointments
-                                             .seen_date
-                                             .is_during(INTERVAL)) # plus month
+                                              .seen_date
+                                              .is_on_or_between((appointments.start_date + days(1)), (appointments.start_date + months (1))))
                                              )
                                              )
 """"
