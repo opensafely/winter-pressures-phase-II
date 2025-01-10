@@ -93,26 +93,27 @@ numerators['proxy_null_seen'] = numerators['start_exists'].except_where((numerat
                                                  .seen_date
                                                  .is_null())
                                                  )
-categs = ['null_start',
-          'null_seen']
 
-# Creating numerators for each start-seen-status combination
-for categ in categs:
+# Creating status numerators 
+for numerator in list(numerators.keys()):
     for status in statuses:
-        numerators[f"{categ}_{status.replace(' ','')}"] = numerators[categ].where(numerators[categ]
+        numerators[f"{numerator}_{status.replace(' ','')}"] = numerators[numerator].where(numerators[numerator]
                                         .status
                                         .is_in([status])
                                         )
 
+# Attempting to group by status
 app_status = {}
 for status in statuses:
-    app_status[f"{status}"] = appointments.status.is_in([status]).count_for_patient()
+    app_status[f"{status.replace(' ', '')}"] = appointments.status.is_in([status])
+
+booked = (appointments.status.is_in(["Booked"]))
 
 # Defining measures ---
 measures.define_defaults(
     denominator= was_registered,
     intervals=weeks(6).starting_on("2022-01-03"),
-    group_by= {app_status},
+    #group_by= {"Booked": booked},
 )
 # Adding measures
 for numerator in numerators.keys():
