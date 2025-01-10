@@ -33,32 +33,24 @@ numerators['seen_exists'] = appointments.where(appointments
 statuses = ['Booked', 'Arrived', 'Did Not Attend', 'In Progress', 'Finished',
  'Requested', 'Blocked', 'Visit', 'Waiting', 'Cancelled by Patient','Cancelled by Unit',
   'Cancelled by Other Service', 'No Access Visit', 'Cancelled Due To Death', 'Patient Walked Out']
-numerators['start_seen_same_interval'] = (appointments.where((appointments
-                                                              .start_date
-                                                              .is_during(INTERVAL)) &
-                                                              (appointments
+numerators['start_seen_same_interval'] = numerators['start_exists'].where((appointments
                                                                .seen_date
-                                                               .is_during(INTERVAL))))
+                                                               .is_during(INTERVAL)))
 numerators['start_seen_same_day'] = (numerators['start_exists'].where(
                                             (appointments.start_date) ==
                                             (appointments.seen_date)
                                              )
                                     )
-numerators['start_seen_same_week'] = (appointments.where((appointments
+numerators['start_seen_same_week'] = numerators['start_exists'].where((appointments
                                             .start_date
                                             .is_during(INTERVAL)) &
                                             (appointments
                                              .seen_date
                                              .is_on_or_between((appointments.start_date + days (1)), (appointments.start_date + days(7))))
                                              )
-                                             )
-numerators['start_seen_same_month'] = (appointments.where((appointments
-                                            .start_date
-                                            .is_during(INTERVAL)) &
-                                            (appointments
+numerators['start_seen_same_month'] = numerators['start_exists'].where((appointments
                                               .seen_date
                                               .is_on_or_between((appointments.start_date + days(1)), (appointments.start_date + months (1))))
-                                             )
                                              )
 numerators['no_status'] = numerators['start_exists'].where(numerators['start_exists']
                                              .status
@@ -93,27 +85,21 @@ numerators['proxy_null_seen'] = numerators['start_exists'].except_where((numerat
                                                  .is_null())
                                                  )
 
-# Creating status numerators 
+# Creating status-specific measures
 for numerator in list(numerators.keys()):
     for status in statuses:
+        # Change name of measure to remove whitespace
         numerators[f"{numerator}_{status.replace(' ','')}"] = numerators[numerator].where(numerators[numerator]
                                         .status
                                         .is_in([status])
                                         )
 
-# Attempting to group by status
-app_status = {}
-for status in statuses:
-    app_status[f"{status.replace(' ', '')}"] = appointments.status.is_in([status])
-
-booked = (appointments.status.is_in(["Booked"]))
-
 # Defining measures ---
 measures.define_defaults(
     denominator= was_registered,
     intervals=weeks(6).starting_on("2022-01-03"),
-    #group_by= {"Booked": booked},
 )
+
 # Adding measures
 for numerator in numerators.keys():
     measures.define_measure(
