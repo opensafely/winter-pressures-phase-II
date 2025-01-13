@@ -1,4 +1,4 @@
-from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
+from ehrql import case, codelist_from_csv, create_dataset, days, weeks, months, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
     addresses,
@@ -8,11 +8,16 @@ from ehrql.tables.tpp import (
     appointments,
     vaccinations
 )
+import argparse
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
 measures.configure_dummy_data(population_size=100)
 measures.configure_disclosure_control(enabled=False)
+parser = argparse.ArgumentParser()
+parser.add_argument("--start_intv", help="Start date for the analysis")
+args = parser.parse_args()
+start_intv = args.start_intv
 
 # Registered throughout the interval period (vs at the begining)
 was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
@@ -33,85 +38,73 @@ numerators['seen_exists'] = appointments.where(appointments
 statuses = ['Booked', 'Arrived', 'Did Not Attend', 'In Progress', 'Finished',
  'Requested', 'Blocked', 'Visit', 'Waiting', 'Cancelled by Patient','Cancelled by Unit',
   'Cancelled by Other Service', 'No Access Visit', 'Cancelled Due To Death', 'Patient Walked Out']
-numerators['seen_different_week'] = numerators['start_exists'].where(
-                    (numerators['start_exists']
-                     .seen_date
-                     .is_before(INTERVAL.start_date)
-                     ) |
-                     (numerators['start_exists']
-                      .seen_date
-                      .is_after(INTERVAL.end_date)
-                      )
-                     )
-numerators['start_different_week'] = numerators['seen_exists'].where(
-                    (numerators['seen_exists']
-                     .start_date
-                     .is_before(INTERVAL.start_date)
-                     ) |
-                     (numerators['seen_exists']
-                      .start_date
-                      .is_after(INTERVAL.end_date)
-                      )
-                     )
-numerators['start_seen_same_day'] = (appointments.where((appointments
-                                            .start_date) ==
-                                            (appointments
-                                             .seen_date)
+numerators['start_seen_same_interval'] = numerators['start_exists'].where((appointments
+                                                               .seen_date
+                                                               .is_during(INTERVAL)))
+numerators['start_seen_same_day'] = (numerators['start_exists'].where(
+                                            (appointments.start_date) ==
+                                            (appointments.seen_date)
                                              )
-                                             )
-numerators['start_seen_same_week'] = (appointments.where((appointments
+                                    )
+numerators['start_seen_same_week'] = numerators['start_exists'].where((appointments
                                             .start_date
                                             .is_during(INTERVAL)) &
                                             (appointments
                                              .seen_date
-                                             .is_during(INTERVAL))
+                                             .is_on_or_between((appointments.start_date + days (1)), (appointments.start_date + days(7))))
                                              )
-                                             )
-numerators['start_and_reasonable_seen'] = (appointments.where((appointments
-                                            .start_date
-                                            .is_during(INTERVAL)) &
-                                            (appointments
-                                             .seen_date
-                                             .is_on_or_between("2001-01-01", "2025-01-01"))
-                                             )
-                                             )
-numerators['seen_and_reasonable_start'] = (appointments.where((appointments
-                                            .seen_date
-                                            .is_during(INTERVAL)) &
-                                            (appointments
-                                             .start_date
-                                             .is_on_or_between("2001-01-01", "2025-01-01"))
-                                             )
+numerators['start_seen_same_month'] = numerators['start_exists'].where((appointments
+                                              .seen_date
+                                              .is_on_or_between((appointments.start_date + days(1)), (appointments.start_date + months (1))))
                                              )
 numerators['no_status'] = numerators['start_exists'].where(numerators['start_exists']
                                              .status
                                              .is_not_in(statuses))
+numerators['null_status'] = numerators['start_exists'].where(numerators['start_exists']
+                                             .status
+                                             .is_null())
 numerators['null_start'] = numerators['seen_exists'].where(numerators['seen_exists']
                                                  .start_date
                                                  .is_null())
 numerators['null_seen'] = numerators['start_exists'].where(numerators['start_exists']
                                                  .seen_date
                                                  .is_null())
-numerators['proxy_null_start'] = numerators['seen_exists'].except_where(numerators['seen_exists']
+numerators['booked_no_start'] = (appointments.where((appointments.
+                                                     booked_date.
+                                                     is_during(INTERVAL)) & 
+                                                     (appointments.
+                                                      start_date.
+                                                      is_null())))
+numerators['proxy_null_start'] = numerators['seen_exists'].except_where((numerators['seen_exists']
                                                  .start_date
-                                                 .is_on_or_between("2001-01-01", "2025-01-01"))
-numerators['proxy_null_seen'] = numerators['start_exists'].except_where(numerators['start_exists']
+                                                 .is_on_or_between("2001-01-01", "2025-01-01")) &
+                                                 (numerators['seen_exists']
+                                                  .start_date
+                                                  .is_null())
+                                                 )
+numerators['proxy_null_seen'] = numerators['start_exists'].except_where((numerators['start_exists']
                                                  .seen_date
-                                                 .is_on_or_between("2001-01-01", "2025-01-01"))
-categs = ['start_and_reasonable_seen','seen_and_reasonable_start','null_start','null_seen']
+                                                 .is_on_or_between("2001-01-01", "2025-01-01")) &
+                                                 (numerators['start_exists']
+                                                 .seen_date
+                                                 .is_null())
+                                                 )
 
-# Creating numerators for each start-seen-status combination
-for categ in categs:
+# Creating status-specific measures
+for numerator in list(numerators.keys()):
     for status in statuses:
-        numerators[f"{categ}_{status.replace(' ','')}"] = numerators[categ].where(numerators[categ]
+        # Change name of measure to remove whitespace
+        numerators[f"{numerator}_{status.replace(' ','')}"] = numerators[numerator].where(numerators[numerator]
                                         .status
                                         .is_in([status])
                                         )
+
 # Defining measures ---
 measures.define_defaults(
     denominator= was_registered,
-    intervals=weeks(6).starting_on("2022-01-03"),
+    intervals=months(1).starting_on(start_intv),
 )
+
 # Adding measures
 for numerator in numerators.keys():
     measures.define_measure(
