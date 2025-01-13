@@ -34,26 +34,34 @@ actions:
     outputs:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures.csv.gz
-  generate_app_measures:
-     run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py
+  generate_app_measures_intv_1:
+     run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py -- --start_intv 2023-07-01
      outputs:
        moderately_sensitive:
-         dataset: output/appointments/app_measures.csv
+         dataset: output/appointments/app_measures_1.csv
+  generate_app_measures_intv_2:
+     run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py -- --start_intv 2023-12-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_2.csv
+  generate_app_measures_intv_3:
+    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py -- --start_intv 2018-07-01
+    outputs:
+      moderately_sensitive:
+        dataset: output/appointments/app_measures_3.csv
+  generate_app_measures_intv_4:
+    run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py -- --start_intv 2018-12-01
+    outputs:
+      moderately_sensitive:
+        dataset: output/appointments/app_measures_4.csv
   # generate_app_viz:
   #   run: r:latest analysis/appointments/app_viz.r
   #   needs: [generate_app_measures]
   #   outputs:
   #     moderately_sensitive:
   #       app_figures: output/appointments/*.png
-  generate_app_summary:
-     run: python:latest analysis/appointments/app_summary.py
-     needs: [generate_app_measures]
-     outputs:
-       moderately_sensitive:
-         app_table: output/appointments/app_summary.csv
   generate_app_pivot_table:
       run: r:latest analysis/appointments/app_pivot_table.r
-      needs: [generate_app_measures, generate_app_summary]
       outputs:
         moderately_sensitive:
           app_pivot_table: output/appointments/status_summary.csv

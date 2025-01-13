@@ -8,11 +8,16 @@ from ehrql.tables.tpp import (
     appointments,
     vaccinations
 )
+import argparse
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
 measures.configure_dummy_data(population_size=100)
 measures.configure_disclosure_control(enabled=False)
+parser = argparse.ArgumentParser()
+parser.add_argument("--start_intv", help="Start date for the analysis")
+args = parser.parse_args()
+start_intv = args.start_intv
 
 # Registered throughout the interval period (vs at the begining)
 was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
@@ -97,7 +102,7 @@ for numerator in list(numerators.keys()):
 # Defining measures ---
 measures.define_defaults(
     denominator= was_registered,
-    intervals=weeks(6).starting_on("2022-01-03"),
+    intervals=months(1).starting_on(start_intv),
 )
 
 # Adding measures
