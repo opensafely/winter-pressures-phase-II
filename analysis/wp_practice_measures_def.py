@@ -19,9 +19,8 @@ measures.configure_disclosure_control(enabled=False)
 
 # Date specifications
 study_start_date = "2022-01-01"
-study_reg_date = "2021-10-01"
 
-# exclusion criteria ---
+# Exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
 age_at_interval_start = patients.age_on(INTERVAL.start_date)
@@ -34,10 +33,8 @@ was_alive = (
     patients.date_of_death.is_null()
 )
 
-# Registered throughout the interval period (vs at the begining)
-was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
-# Been registered at a practice for 90 days before the study
-prior_registration = practice_registrations.spanning(study_reg_date, study_start_date).exists_for_patient()
+# Registered throughout the interval period and 90 days before
+was_registered = practice_registrations.spanning((INTERVAL.start_date - days(90)), INTERVAL.end_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
 was_female_or_male = patients.sex.is_in(["female", "male"])
@@ -151,8 +148,7 @@ if drop_reason == False:
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 
-                was_registered & has_deprivation_index & has_region & 
-                prior_registration,
+                was_registered & has_deprivation_index & has_region,
     group_by={
         #"age": age_group,
         "sex": patients.sex,
