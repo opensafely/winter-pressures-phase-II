@@ -10,24 +10,12 @@ from ehrql.tables.tpp import (
 )
 from queries import *
 from codelist_definition import *
+from wp_config_setup import *
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
-
-# Configuration
-import argparse
-parser = argparse.ArgumentParser() # Instantiate parser
-parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
-parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included")
-parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
-parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
-args = parser.parse_args() # Stores arguments in 'args'
-drop_follow_up = args.drop_follow_up # extracts arguments
-drop_indicat_prescript = args.drop_indicat_prescript
-drop_prescriptions = args.drop_prescriptions
-drop_reason = args.drop_reason
 
 # Date specifications
 study_start_date = "2022-01-01"
