@@ -7,11 +7,18 @@ study_start_date = "2022-01-01"
 
 # Load and format data
 measures = pd.read_csv("output/patient_measures/patient_measures.csv.gz")
+practice_df = pd.read_csv("output/practice_measures/practice_measures.csv.gz")
+
+# Impute temporarily missing columns (age, ethnicity)
+for df in [measures, practice_df]:
+    df['age'] = np.random.randint(0, 110, len(df))
+    df['ethnicity'] = np.random.randint(1, 5, len(df))
+
 # Reformat ethnicity data
-# measures['ethnicity'].replace(
-#    {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
-#    inplace=True)
-# measures['ethnicity'].fillna('Not Stated', inplace=True)
+measures['ethnicity'].replace(
+  {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
+  inplace=True)
+measures['ethnicity'].fillna('Not Stated', inplace=True)
 # Reformat rur_urb column
 measures['rur_urb_class'].replace(
     {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
@@ -47,9 +54,6 @@ for numerator, denominator in zip(numerators, denominators):
 # Save processed file
 measures.to_csv("output/patient_measures/processed_patient_measures.csv.gz")
 
-# Create practice-characteristics dataframe
-practice_df = pd.read_csv("output/practice_measures/practice_measures.csv.gz")
-
 # Reformat rur_urb column
 practice_df['rur_urb_class'].replace(
     {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
@@ -69,7 +73,7 @@ practice_df = (
         count_over_65=("age", lambda x: ((x == "adult_under_80") | (x == "adult_over_80")).sum()),
         count_under_5=("age", lambda x: (x == "preschool").sum()),
         median_imd=("imd_quintile", "median"),
-        #count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),
+        count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),
         mode_rur_urb=("rur_urb_class", lambda x: stats.mode(x).mode[0]),
     )
     .reset_index()
@@ -77,10 +81,10 @@ practice_df = (
 
 # Convert counts to percentages
 cols_to_convert = ["count_female", "count_over_65", "count_under_5"
-                   #, "count_ethnic"
+                   , "count_ethnic"
                    ]
 new_cols = ["pct_female", "pct_ovr_65", "pct_und_5"
-            #, "pct_ethnic"
+            , "pct_ethnic"
             ]
 for index in range(0, len(cols_to_convert)):
     practice_df[new_cols[index]] = (
