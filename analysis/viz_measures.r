@@ -5,14 +5,19 @@ library(glue)
 measures <- read.csv('output/patient_measures/processed_patient_measures.csv.gz')
 practice_measures <- read.csv('output/practice_measures/processed_practice_measures.csv.gz')
 
-# Format data
+# --- Plotting unstratified appointment and measures data ----------------------------------------------
+
+# all_appt_df = all appointments, including those where start_date != seen_date
+# removing stratification by groupby criteria
 measures$interval_start <- as.Date(measures$interval_start)
+practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 all_appnt_df <- filter(measures, measure == 'all_appointments_in_interval')
 all_appnt_df <- summarise(group_by(all_appnt_df, interval_start, measure), numerator = sum(numerator), 
                 denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
 
+# total_app_df = total instances of each measure in interval using valid appointments (start_date == seen_date),
+# removing stratification by groupby criteria
 measures <- filter(measures, measure != 'all_appointments_in_interval')
-practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 total_app_df <- summarise(group_by(measures, interval_start, measure), numerator = sum(numerator), 
                 denominator = sum(denominator), total_app=(sum(numerator)/sum(denominator))*1000)
 
@@ -30,16 +35,19 @@ for (df_name in names(data_frames)) {
 }
 write.csv(total_app_df, "output/total_measures/total_app_df.csv")
 
+# --- Plotting stratified appointment and measures data ------------------------------------------------
+
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
 for(col in colnames(measures)[8:(length(measures) - 1)]){
   df <- summarise(group_by(measures, interval_start, !!sym(col)), total_app=(sum(numerator)/sum(denominator))*1000)
-  patient_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
-    geom_line() +  # Add line
-    geom_point() +  # Add markers
-    labs(title = glue("Apps Over Time by {col}"), x = "Time Interval", 
-    y = "Appointments per 1000 people", color = col)
-  ggsave(glue("output/patient_measures/{col}_plot.png"), plot = patient_plot)
+  write.csv(df, glue("output/patient_measures/{col}_df.csv"))
+  #patient_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
+  #  geom_line() +  # Add line
+  #  geom_point() +  # Add markers
+  #  labs(title = glue("Apps Over Time by {col}"), x = "Time Interval", 
+  #  y = "Appointments per 1000 people", color = col)
+  #ggsave(glue("output/patient_measures/{col}_plot.png"), plot = patient_plot)
 }
 
 # Function that plots timetrends for patient charcteristics (col_name), facted by another characteristics, & can be filtered to only some population
@@ -52,23 +60,24 @@ plot_trends_by_facet <- function (df, main_col, facet_col = "age", filter_col = 
   }
 
   df <- df %>%
-  group_by(interval_start, !!facet, !!col) %>%
-  summarise(app_rate = sum(numerator)/ (sum(denominator)*1000), .groups = "drop")
+    group_by(interval_start, !!facet, !!col) %>%
+    summarise(app_rate = sum(numerator)/ (sum(denominator)*1000), .groups = "drop")
 
-  plot_by_facet <- ggplot(df, aes(x = interval_start, y = app_rate, color = !!col)) +
-  geom_line() +
-  geom_point() +
-  facet_wrap (as.formula(paste("~", rlang::as_name(facet))), scales = "free_y") +
-  labs(title = glue("Apps Over Time by {main_col}, by {facet_col}, limited to {filter_col}"), x = "Time Interval", y = "Appointments per 1000", color = main_col) +
-  theme_light() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  write.csv(df, glue("output/patient_measures/{main_col}_plot_by_{facet_col}_filter_{filter_col}.csv"))
+  #plot_by_facet <- ggplot(df, aes(x = interval_start, y = app_rate, color = !!col)) +
+  #geom_line() +
+  #geom_point() +
+  #facet_wrap (as.formula(paste("~", rlang::as_name(facet))), scales = "free_y") +
+  #labs(title = glue("Apps Over Time by {main_col}, by {facet_col}, limited to {filter_col}"), x = "Time Interval", y = "Appointments per 1000", color = main_col) +
+  #theme_light() +
+  #theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
     
 
-  if(is.null(filter_col)){
-  ggsave(glue("output/patient_measures/{main_col}_plot_by_{facet_col}_filter_by_NULL.png"), plot = plot_by_facet)
-  } else {
-  ggsave(glue("output/patient_measures/{main_col}_plot_by_{facet_col}_filter_{filter_col}.png"), plot = plot_by_facet)
-  }
+  #if(is.null(filter_col)){
+  #ggsave(glue("output/patient_measures/{main_col}_plot_by_{facet_col}_filter_by_NULL.png"), plot = plot_by_facet)
+  #} else {
+  #ggsave(glue("output/patient_measures/{main_col}_plot_by_{facet_col}_filter_{filter_col}.png"), plot = plot_by_facet)
+  #}
 }
 
 # Plot vax trends by age, no filter
@@ -89,11 +98,11 @@ lapply(comorbid_any, function(comorbid) plot_trends_by_facet(measures, comorbid,
 # Create plots for different practice characteristics
 for(col in colnames(practice_measures)[5:length(practice_measures)]){
   df <- summarise(group_by(practice_measures, interval_start, !!sym(col)), total_app=(sum(numerator)/sum(list_size_raw))*1000)
-  print(head(df))
-  practice_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
-    geom_line() +  # Add line
-    geom_point() +  # Add markers
-    labs(title = glue("Apps Over Time by {col}"), x = "Time Interval",
-    y = "Appointments per 1000 people", color = col)
-  ggsave(glue("output/practice_measures/{col}_plot.png"), plot = practice_plot)
+  write.csv(df, glue("output/practice_measures/{col}_df.csv"))
+  #practice_plot <- ggplot(df, aes(x = interval_start, y = total_app, color = factor(!!sym(col)))) +
+  #  geom_line() +  # Add line
+  #  geom_point() +  # Add markers
+  #  labs(title = glue("Apps Over Time by {col}"), x = "Time Interval",
+  #  y = "Appointments per 1000 people", color = col)
+  #ggsave(glue("output/practice_measures/{col}_plot.png"), plot = practice_plot)
 }
