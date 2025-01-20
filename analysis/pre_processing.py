@@ -92,7 +92,7 @@ for index in range(0, len(cols_to_convert)):
     )
 
 # Create column for numeric list size, used in standardization of rates
-practice_df['list_size_raw'] = practice_df['list_size']
+practice_df['denominator'] = practice_df['list_size']
 # Convert other numeric cols to quintiles
 new_cols.append("list_size")
 for col in new_cols:
