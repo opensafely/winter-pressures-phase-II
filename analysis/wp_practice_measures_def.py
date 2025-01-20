@@ -173,7 +173,7 @@ measures.define_defaults(
         "rur_urb_class": rur_urb_class,
         "practice_pseudo_id": practice_id
     },
-    intervals=weeks(1).starting_on(study_start_date),
+    intervals=weeks(2).starting_on(study_start_date),
 )
 
 # Adding measures

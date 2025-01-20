@@ -65,7 +65,7 @@ practice_df['rur_urb_class'].fillna("Unknown", inplace = True)
 
 # Group measures by practice, using aggregate functions of interest
 practice_df = (
-    practice_df.groupby(["practice_pseudo_id", "interval_start"])
+    practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"])
     .agg(
         numerator=("numerator", "sum"),
         list_size=("denominator", "sum"),
