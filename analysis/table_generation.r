@@ -49,7 +49,7 @@ aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, fold
     group_by(across(all_of(group_vars))) %>%
     summarise(numerator_total = sum(numerator), denominator_total = sum(denominator), measure_rate_per_1000=(sum(numerator)/sum(denominator))*1000, .groups = 'drop')
 
-  write.csv(df, glue("output/{folder}/{main_col}_by_{facet_col}_filter_by_{filter_col}.csv"))
+  write.csv(df, glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}.csv"))
 }
 
 # --- Aggregating unstratified appointment and measures data ----------------------------------------------
