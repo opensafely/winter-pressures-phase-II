@@ -109,13 +109,11 @@ region = (practice_registrations.for_patient_on(INTERVAL.start_date)
 
 # Measures ---
 measures_to_add = {}
-# Valid appointments are those where start_date == seen_date
-# because incomplete appointments may have been coded with extreme dates (e.g. 9999)
+# Valid appointments are those where seen date is in interval
 valid_appointments = create_valid_appointments()
 
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=True)
-measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
+measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of follow-up appointments:
 measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)

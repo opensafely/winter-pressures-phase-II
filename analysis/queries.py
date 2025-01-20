@@ -89,20 +89,14 @@ def count_reason_for_app(interval_start, interval_end, reason, valid_appointment
                 )
     return result
 
-def count_appointments_in_interval(interval_start, interval_end, valid_appointments, valid_only=True):
+def count_appointments_in_interval(interval_start, interval_end):
     """
-    Counts the number of appointments during the interval.
-    Args:
-        valid_only: If True, only counts valid appointments.
+    Counts the number of appointments during the interval using seen date.
     Returns:
         The count of appointments per patient.
     """
-    if valid_only:
-        chosen_appointments = valid_appointments
-    else:
-        chosen_appointments = appointments
-    return chosen_appointments.where(
-            chosen_appointments.start_date.is_on_or_between(interval_start, interval_end)
+    return appointments.where(
+            appointments.seen_date.is_on_or_between(interval_start, interval_end)
             ).count_for_patient()
 
 def count_vaccinations(interval_start, interval_end, target_disease=None):
