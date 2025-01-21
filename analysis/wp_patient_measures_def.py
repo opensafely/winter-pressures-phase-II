@@ -10,30 +10,17 @@ from ehrql.tables.tpp import (
 )
 from queries import *
 from codelist_definition import *
+from wp_config_setup import *
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
-# Configuration
-import argparse
-parser = argparse.ArgumentParser() # Instantiate parser
-parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
-parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included")
-parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
-parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
-args = parser.parse_args() # Stores arguments in 'args'
-drop_follow_up = args.drop_follow_up # extracts arguments
-drop_indicat_prescript = args.drop_indicat_prescript
-drop_prescriptions = args.drop_prescriptions
-drop_reason = args.drop_reason
-
 # Date specifications
 study_start_date = "2022-01-01"
-study_reg_date = "2021-10-01"
 
-# exclusion criteria ---
+# Exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
 age_at_interval_start = patients.age_on(INTERVAL.start_date)
@@ -46,10 +33,8 @@ was_alive = (
     patients.date_of_death.is_null()
 )
 
-# Registered throughout the interval period (vs at the begining)
-was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
-# Been registered at a practice for 90 days before the study
-prior_registration = practice_registrations.spanning(study_reg_date, study_start_date).exists_for_patient()
+# Registered throughout the interval period and 90 days before
+was_registered = practice_registrations.spanning((INTERVAL.start_date - days(90)), INTERVAL.end_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
 was_female_or_male = patients.sex.is_in(["female", "male"])
@@ -186,8 +171,7 @@ if drop_reason == False:
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 
-                was_registered & has_deprivation_index & has_region & 
-                prior_registration,
+                was_registered & has_deprivation_index & has_region,
     group_by={
         "age": age_group,
         "sex": patients.sex,
