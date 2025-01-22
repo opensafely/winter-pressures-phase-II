@@ -66,12 +66,11 @@ actions:
         patient_measure: output/patient_measures/processed_patient_measures.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table.csv
-  generate_table_generation:
+  generate_tables:
     run: r:latest analysis/table_generation.r
     needs: [generate_pre_processing]
     outputs:
       moderately_sensitive:
-        app_figures: output/*/*.png
         total_measures: output/total_measures/*.csv
         practice_measures: output/practice_measures/*.csv
         patient_measures: output/patient_measures/*.csv

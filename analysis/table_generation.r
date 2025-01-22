@@ -1,5 +1,5 @@
 # TODO: 
-# Output a few representative plots for practice measures
+# Output a few decile plots for practice measures
 
 library(ggplot2)
 library(dplyr)

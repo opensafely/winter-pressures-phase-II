@@ -1,6 +1,9 @@
+# TODO:
+# Remove age and ethnicity imputation when unblocked by tech
 import pandas as pd
 from scipy import stats
 import numpy as np
+import argparse
 
 # Date specifications
 study_start_date = "2022-01-01"
@@ -11,7 +14,10 @@ practice_df = pd.read_csv("output/practice_measures/practice_measures.csv.gz")
 
 # Impute temporarily missing columns (age, ethnicity)
 for df in [measures, practice_df]:
-    df['age'] = np.random.randint(0, 110, len(df))
+    df['age'] = np.random.choice(
+        np.array(["preschool", "primary_school", "secondary_school", "adult_under_40", 
+                "adult_under_65", "adult_under_80", "adult_over_80"]), 
+                len(df))
     df['ethnicity'] = np.random.randint(1, 5, len(df))
 
 # Reformat ethnicity data
