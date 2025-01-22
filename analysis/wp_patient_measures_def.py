@@ -119,13 +119,11 @@ comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.
 
 # Measures ---
 measures_to_add = {}
-# Valid appointments are those where start_date == seen_date
-# because incomplete appointments may have been coded with extreme dates (e.g. 9999)
+# Valid appointments are those where seen_date is in interval
 valid_appointments = create_valid_appointments()
 
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=True)
-measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
+measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
@@ -194,7 +192,7 @@ measures.define_defaults(
         "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
         "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
     },
-    intervals=weeks(1).starting_on(study_start_date),
+    intervals=weeks(2).starting_on(study_start_date),
 )
 
 # Adding measures
