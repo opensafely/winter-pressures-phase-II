@@ -34,26 +34,26 @@ actions:
     outputs:
       moderately_sensitive:
         dataset: output/appointments/app_measures_4.csv
-  generate_pre_processing:
-    run: python:latest analysis/pre_processing.py 
-        --output output/practice_measures/processed_practice_measures.csv.gz
-        --output output/patient_measures/processed_patient_measures.csv.gz
-        --output output/patient_measures/frequency_table.csv
-    needs: [generate_patient_measures, generate_practice_measures]
-    outputs:
-      highly_sensitive:
-        practice_measure: output/practice_measures/processed_practice_measures.csv.gz
-        patient_measure: output/patient_measures/processed_patient_measures.csv.gz
-      moderately_sensitive:
-        frequency_table: output/patient_measures/frequency_table.csv
-  generate_tables:
-    run: r:latest analysis/table_generation.r
-    needs: [generate_pre_processing]
-    outputs:
-      moderately_sensitive:
-        total_measures: output/total_measures/*.csv
-        practice_measures: output/practice_measures/*.csv
-        patient_measures: output/patient_measures/*.csv
+  # generate_pre_processing:
+  #   run: python:latest analysis/pre_processing.py 
+  #       --output output/practice_measures/processed_practice_measures.csv.gz
+  #       --output output/patient_measures/processed_patient_measures.csv.gz
+  #       --output output/patient_measures/frequency_table.csv
+  #   needs: [generate_patient_measures, generate_practice_measures]
+  #   outputs:
+  #     highly_sensitive:
+  #       practice_measure: output/practice_measures/processed_practice_measures.csv.gz
+  #       patient_measure: output/patient_measures/processed_patient_measures.csv.gz
+  #     moderately_sensitive:
+  #       frequency_table: output/patient_measures/frequency_table.csv
+  # generate_tables:
+  #   run: r:latest analysis/table_generation.r
+  #   needs: [generate_pre_processing]
+  #   outputs:
+  #     moderately_sensitive:
+  #       total_measures: output/total_measures/*.csv
+  #       practice_measures: output/practice_measures/*.csv
+  #       patient_measures: output/patient_measures/*.csv
   # generate_test_data:
   #   run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #   outputs:
