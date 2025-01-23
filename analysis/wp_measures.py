@@ -17,9 +17,6 @@ measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
-# Date specifications
-study_start_date = "2022-01-01"
-
 # Exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
@@ -189,7 +186,7 @@ if patient_measures == True:
             "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
             "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
         },
-        intervals=weeks(1).starting_on(study_start_date),
+        intervals=weeks(1).starting_on(start_intv),
     )
 
 if practice_measures == True:
@@ -207,7 +204,7 @@ if practice_measures == True:
             "rur_urb_class": rur_urb_class,
             "practice_pseudo_id": practice_id
         },
-        intervals=weeks(1).starting_on(study_start_date),
+        intervals=weeks(1).starting_on(start_intv),
     )
 
 # Adding measures

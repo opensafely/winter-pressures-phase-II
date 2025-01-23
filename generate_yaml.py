@@ -7,14 +7,13 @@ expectations:
   population_size: 1000
 
 actions:
-
 """
 
 # --- YAML MEASURES BODY ----
 from datetime import datetime, timedelta
 
 # Generate annual start days for the study period: August 2016 -  31 July 2024
-start_date = datetime.strptime('31-07-2024', '%d-%m-%Y')
+start_date = datetime.strptime('2024-07-31', '%Y-%m-%d') - timedelta(weeks=52)
 
 # Subtract 52 weeks until we reach August 2016
 dates = []
@@ -22,7 +21,7 @@ current_date = start_date
 
 # Loop to subtract 52 weeks (1 year) in each iteration
 while current_date.year > 2016 or (current_date.year == 2016 and current_date.month > 7):
-    dates.append(current_date.strftime('%d-%m-%Y'))
+    dates.append(current_date.strftime('%Y-%m-%d'))
     current_date -= timedelta(weeks=52)
 
 # Start with the earliest date
@@ -38,7 +37,7 @@ yaml_template = """
       --output output/{flag}/{flag}_{date}.csv.gz
       --
       --{flag}
-      --start_intv "{date}"
+      --start_intv {date}
     outputs:
       highly_sensitive:
         dataset: output/{flag}/{flag}_{date}.csv.gz
@@ -61,16 +60,19 @@ yaml_appt_report = """
      outputs:
        moderately_sensitive:
          dataset: output/appointments/app_measures_1.csv
+  
   generate_app_measures_intv_2:
      run: ehrql:v1 generate-measures --output output/appointments/app_measures_2.csv analysis/appointments/app_measures.py -- --start_intv 2023-12-01
      outputs:
        moderately_sensitive:
          dataset: output/appointments/app_measures_2.csv
+  
   generate_app_measures_intv_3:
     run: ehrql:v1 generate-measures --output output/appointments/app_measures_3.csv analysis/appointments/app_measures.py -- --start_intv 2018-07-01
     outputs:
       moderately_sensitive:
         dataset: output/appointments/app_measures_3.csv
+  
   generate_app_measures_intv_4:
     run: ehrql:v1 generate-measures --output output/appointments/app_measures_4.csv analysis/appointments/app_measures.py -- --start_intv 2018-12-01
     outputs:
@@ -112,7 +114,6 @@ yaml_processing = """
 
 # --- Combine scripts and print file ---
 yaml = yaml_header + yaml_body + yaml_appt_report
-print(yaml)
-# Save to a file
-# with open("project.yaml", "w") as file:
-#     file.write(yamll)
+
+with open("project.yaml", "w") as file:
+     file.write(yaml)
