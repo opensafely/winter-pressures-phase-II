@@ -125,6 +125,9 @@ valid_appointments = create_valid_appointments()
 # Number of appointments in interval
 measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
 
+# Number of follow-up appointments in interval
+measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
+
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['vax_app_flu'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date, ['INFLUENZA'])
@@ -142,23 +145,17 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
 
-# Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
+# Configuration based on CLI arg. Add these measures if --add_measure flag called
 
-if drop_follow_up == False:
-    # Number of follow-up appointments:
-    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
-
-if drop_indicat_prescript == False:
+if add_indicat_prescript == True:
     # Count appointments with an indication and prescription
     measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
 
-
-if drop_prescriptions == False:
+if add_prescriptions == True:
     # Count prescriptions and add to measures
     measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
-
-if drop_reason == False:
+if add_reason == True:
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
@@ -192,7 +189,7 @@ if patient_measures == True:
             "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
             "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
         },
-        intervals=weeks(2).starting_on(study_start_date),
+        intervals=weeks(1).starting_on(study_start_date),
     )
 
 if practice_measures == True:
@@ -210,7 +207,7 @@ if practice_measures == True:
             "rur_urb_class": rur_urb_class,
             "practice_pseudo_id": practice_id
         },
-        intervals=weeks(2).starting_on(study_start_date),
+        intervals=weeks(1).starting_on(study_start_date),
     )
 
 # Adding measures

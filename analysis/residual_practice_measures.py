@@ -119,24 +119,21 @@ app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
-# Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
-if drop_follow_up == False:
-    # Number of follow-up appointments:
-    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
+# Configuration based on CLI arg. Skip these measures if --add_measures flag was called in action
 
-if drop_indicat_prescript == False:
+if add_indicat_prescript == True:
 
     # Count appointments with an indication and prescription
     measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
 
 
-if drop_prescriptions == False:
+if add_prescriptions == True:
 
     # Count prescriptions and add to measures
     measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
 
-if drop_reason == False:
+if add_reason == True:
 
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
