@@ -87,8 +87,8 @@ rur_urb_class = (addresses
                  .rural_urban_classification)
 
 # Practice data taken at the start of the interval
-# practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
-#               .practice_pseudo_id)
+practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
+               .practice_pseudo_id)
 region = (practice_registrations.for_patient_on(INTERVAL.start_date)
           .practice_nuts1_region_name)
 
@@ -143,57 +143,75 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 
 
 # Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
+
 if drop_follow_up == False:
     # Number of follow-up appointments:
     measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 if drop_indicat_prescript == False:
-
     # Count appointments with an indication and prescription
     measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
 
 
 if drop_prescriptions == False:
-
     # Count prescriptions and add to measures
     measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
 
 if drop_reason == False:
-
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
 
 
 # Defining measures ---
-measures.define_defaults(
-    denominator= was_female_or_male & age_filter & was_alive & 
-                was_registered & has_deprivation_index & has_region,
-    group_by={
-        "age": age_group,
-        "sex": patients.sex,
-        "ethnicity": ethnicity,
-        "imd_quintile": imd_quintile,
-        "carehome": carehome,
-        "region": region,
-        "rur_urb_class": rur_urb_class,
-        #"practice_pseudo_id": practice_id,
-        "comorbid_chronic_resp": comorbid_chronic_resp,
-        "comorbid_copd": comorbid_copd,
-        "comorbid_asthma": comorbid_asthma,
-        "comorbid_dm": comorbid_dm,
-        "comorbid_htn": comorbid_htn,
-        "comorbid_depres": comorbid_depres,
-        "comorbid_mh": comorbid_mh,
-        "comorbid_neuro": comorbid_neuro,
-        "comorbid_immuno": comorbid_immuno,
-        "vax_flu_12m": vax_status['INFLUENZA'],
-        "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
-        "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
-    },
-    intervals=weeks(2).starting_on(study_start_date),
-)
+
+if patient_measures == True:
+    # Run patient script if patient flag called
+    measures.define_defaults(
+        denominator= was_female_or_male & age_filter & was_alive & 
+                    was_registered & has_deprivation_index & has_region,
+        group_by={
+            "age": age_group,
+            "sex": patients.sex,
+            "ethnicity": ethnicity,
+            "imd_quintile": imd_quintile,
+            "carehome": carehome,
+            "region": region,
+            "rur_urb_class": rur_urb_class,
+            "comorbid_chronic_resp": comorbid_chronic_resp,
+            "comorbid_copd": comorbid_copd,
+            "comorbid_asthma": comorbid_asthma,
+            "comorbid_dm": comorbid_dm,
+            "comorbid_htn": comorbid_htn,
+            "comorbid_depres": comorbid_depres,
+            "comorbid_mh": comorbid_mh,
+            "comorbid_neuro": comorbid_neuro,
+            "comorbid_immuno": comorbid_immuno,
+            "vax_flu_12m": vax_status['INFLUENZA'],
+            "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
+            "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
+        },
+        intervals=weeks(2).starting_on(study_start_date),
+    )
+
+if practice_measures == True:
+    # Run practice script if practice flag called
+    measures.define_defaults(
+        denominator= was_female_or_male & age_filter & was_alive & 
+                    was_registered & has_deprivation_index & has_region,
+        group_by={
+            #"age": age_group,
+            "sex": patients.sex,
+            #"ethnicity": ethnicity,
+            "imd_quintile": imd_quintile,
+            "carehome": carehome,
+            "region": region,
+            "rur_urb_class": rur_urb_class,
+            "practice_pseudo_id": practice_id
+        },
+        intervals=weeks(2).starting_on(study_start_date),
+    )
 
 # Adding measures
 for measure in measures_to_add.keys():
