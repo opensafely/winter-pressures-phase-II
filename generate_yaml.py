@@ -54,31 +54,46 @@ for flag in flags:
 needs_list = ", ".join(all_needs)
 
 # --- YAML APPT REPORT ---
-yaml_appt_report = """
-  generate_app_measures_intv_1:
-     run: ehrql:v1 generate-measures --output output/appointments/app_measures_1.csv analysis/appointments/app_measures.py -- --start_intv 2023-07-01
+yaml_appt_report = ""
+
+appt_dates = {
+    1: datetime.strptime("2023-07-01", "%Y-%m-%d").date(),
+    2: datetime.strptime("2023-12-01", "%Y-%m-%d").date(),
+    3: datetime.strptime("2018-07-01", "%Y-%m-%d").date(),
+    4: datetime.strptime("2018-12-01", "%Y-%m-%d").date()
+}
+
+appt_needs = []
+
+yaml_appt_template = """
+  generate_app_measures_intv_{key}:
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_{key}.csv 
+      -- 
+      --start_intv {appt_date}
      outputs:
        moderately_sensitive:
-         dataset: output/appointments/app_measures_1.csv
-  
-  generate_app_measures_intv_2:
-     run: ehrql:v1 generate-measures --output output/appointments/app_measures_2.csv analysis/appointments/app_measures.py -- --start_intv 2023-12-01
+         dataset: output/appointments/app_measures_{key}.csv
+ """ 
+
+for key, value in appt_dates.items():
+    yaml_appt_report += yaml_appt_template.format(key = key, appt_date = value)
+    appt_needs.append(f"generate_app_measures_intv_{key}")
+
+appt_list = ", ".join(appt_needs)
+
+yaml_appt_processing_template = """
+  generate_app_processing:
+     run: r:latest analysis/appointments/app_processing.r
+     needs: [{appt_list}]
      outputs:
        moderately_sensitive:
-         dataset: output/appointments/app_measures_2.csv
-  
-  generate_app_measures_intv_3:
-    run: ehrql:v1 generate-measures --output output/appointments/app_measures_3.csv analysis/appointments/app_measures.py -- --start_intv 2018-07-01
-    outputs:
-      moderately_sensitive:
-        dataset: output/appointments/app_measures_3.csv
-  
-  generate_app_measures_intv_4:
-    run: ehrql:v1 generate-measures --output output/appointments/app_measures_4.csv analysis/appointments/app_measures.py -- --start_intv 2018-12-01
-    outputs:
-      moderately_sensitive:
-        dataset: output/appointments/app_measures_4.csv
+         table_rounded: output/appointments/app_measures_rounded_*.csv
+         table_pivot: output/appointments/app_pivot_table_*.csv
 """
+yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
+
+yaml_appt_report = yaml_appt_report + yaml_appt_processing
 
 # --- YAML FILE PROCESSING ---
 yaml_processing = """
@@ -116,4 +131,4 @@ yaml_processing = """
 yaml = yaml_header + yaml_body + yaml_appt_report
 
 with open("project.yaml", "w") as file:
-     file.write(yaml)
+       file.write(yaml)

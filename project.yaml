@@ -167,25 +167,45 @@ actions:
         dataset: output/practice_measures/practice_measures_2023-08-02.csv.gz
 
   generate_app_measures_intv_1:
-     run: ehrql:v1 generate-measures --output output/appointments/app_measures_1.csv analysis/appointments/app_measures.py -- --start_intv 2023-07-01
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_1.csv 
+      -- 
+      --start_intv 2023-07-01
      outputs:
        moderately_sensitive:
          dataset: output/appointments/app_measures_1.csv
-  
+ 
   generate_app_measures_intv_2:
-     run: ehrql:v1 generate-measures --output output/appointments/app_measures_2.csv analysis/appointments/app_measures.py -- --start_intv 2023-12-01
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_2.csv 
+      -- 
+      --start_intv 2023-12-01
      outputs:
        moderately_sensitive:
          dataset: output/appointments/app_measures_2.csv
-  
+ 
   generate_app_measures_intv_3:
-    run: ehrql:v1 generate-measures --output output/appointments/app_measures_3.csv analysis/appointments/app_measures.py -- --start_intv 2018-07-01
-    outputs:
-      moderately_sensitive:
-        dataset: output/appointments/app_measures_3.csv
-  
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_3.csv 
+      -- 
+      --start_intv 2018-07-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_3.csv
+ 
   generate_app_measures_intv_4:
-    run: ehrql:v1 generate-measures --output output/appointments/app_measures_4.csv analysis/appointments/app_measures.py -- --start_intv 2018-12-01
-    outputs:
-      moderately_sensitive:
-        dataset: output/appointments/app_measures_4.csv
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_4.csv 
+      -- 
+      --start_intv 2018-12-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_4.csv
+ 
+  generate_app_processing:
+     run: r:latest analysis/appointments/app_processing.r
+     needs: [generate_app_measures_intv_1, generate_app_measures_intv_2, generate_app_measures_intv_3, generate_app_measures_intv_4]
+     outputs:
+       moderately_sensitive:
+         table_rounded: output/appointments/app_measures_rounded_*.csv
+         table_pivot: output/appointments/app_pivot_table_*.csv
