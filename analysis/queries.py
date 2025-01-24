@@ -9,11 +9,6 @@ from ehrql.tables.tpp import (
     vaccinations
 )
 
-# Date specifications
-study_start_date = "2022-01-14"
-study_reg_date = "2021-01-14"
-study_end_date = "2022-01-21"
-
 def create_valid_appointments():
     '''
     Filters the appointments table to only contain appointments
