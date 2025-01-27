@@ -47,9 +47,6 @@ numerators['start_seen_same_day'] = (numerators['start_exists'].where(
                                              )
                                     )
 numerators['start_seen_same_week'] = numerators['start_exists'].where((appointments
-                                            .start_date
-                                            .is_during(INTERVAL)) &
-                                            (appointments
                                              .seen_date
                                              .is_on_or_between((appointments.start_date + days (1)), (appointments.start_date + days(7))))
                                              )
@@ -77,14 +74,14 @@ numerators['booked_no_start'] = (appointments.where((appointments.
                                                       is_null())))
 numerators['proxy_null_start'] = numerators['seen_exists'].except_where((numerators['seen_exists']
                                                  .start_date
-                                                 .is_on_or_between("2001-01-01", "2025-01-01")) &
+                                                 .is_on_or_between("2001-01-01", "2025-01-01")) |
                                                  (numerators['seen_exists']
                                                   .start_date
                                                   .is_null())
                                                  )
 numerators['proxy_null_seen'] = numerators['start_exists'].except_where((numerators['start_exists']
                                                  .seen_date
-                                                 .is_on_or_between("2001-01-01", "2025-01-01")) &
+                                                 .is_on_or_between("2001-01-01", "2025-01-01")) |
                                                  (numerators['start_exists']
                                                  .seen_date
                                                  .is_null())
