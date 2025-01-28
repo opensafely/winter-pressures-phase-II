@@ -117,7 +117,7 @@ comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.
 # Measures ---
 measures_to_add = {}
 # Valid appointments are those where seen_date is in interval
-valid_appointments = create_valid_appointments()
+valid_appointments = create_valid_appointments(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of appointments in interval
 measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
@@ -186,7 +186,7 @@ if patient_measures == True:
             "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
             "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
         },
-        intervals=weeks(1).starting_on(start_intv),
+        intervals=weeks(52).starting_on(start_intv),
     )
 
 if practice_measures == True:
@@ -195,16 +195,16 @@ if practice_measures == True:
         denominator= was_female_or_male & age_filter & was_alive & 
                     was_registered & has_deprivation_index & has_region,
         group_by={
-            #"age": age_group,
+            "age": age_group,
             "sex": patients.sex,
-            #"ethnicity": ethnicity,
+            "ethnicity": ethnicity,
             "imd_quintile": imd_quintile,
             "carehome": carehome,
             "region": region,
             "rur_urb_class": rur_urb_class,
             "practice_pseudo_id": practice_id
         },
-        intervals=weeks(1).starting_on(start_intv),
+        intervals=weeks(52).starting_on(start_intv),
     )
 
 # Adding measures

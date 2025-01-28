@@ -123,7 +123,8 @@ dataset.comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], s
 measures_to_add = {}
 # Valid appointments are those where start_date == seen_date
 # because incomplete appointments may have been coded with extreme dates (e.g. 9999)
-valid_appointments = create_valid_appointments()
+valid_appointments = create_valid_appointments(study_start_date, study_end_date)
+
 # Number of appointments in interval
 dataset.appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=True)
 dataset.all_appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=False)
