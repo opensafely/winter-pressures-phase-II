@@ -1,6 +1,5 @@
 # TODO:
 # Process each interval of measures data
-# Move generate_annual_dates to another file
 # Move frequency table generation to table_generation.r since it requires the intervals to be connected up
 # Remove age and ethnicity imputation when unblocked by tech
 import pandas as pd
@@ -9,32 +8,9 @@ import numpy as np
 import argparse
 from datetime import datetime, timedelta
 import os
+from utils import generate_annual_dates
+
 # Date specifications
-def generate_annual_dates(start_year, end_date):
-    """
-    Generates a list of annual start dates from the start year to the end date.
-    
-    Args:
-        start_year: The starting year for the dates.
-        end_date: The end date for the dates.
-        
-    Returns:
-        A list of annual start dates in 'YYYY-MM-DD' format.
-    """
-    # Generate annual start days for the study period: August 2016 -  31 July 2024
-    start_date = datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=52)
-
-    # Subtract 52 weeks until we reach August 2016
-    dates = []
-    current_date = start_date
-
-    # Loop to subtract 52 weeks (1 year) in each iteration
-    while current_date.year > start_year or (current_date.year == start_year and current_date.month > 7):
-        dates.append(current_date.strftime('%Y-%m-%d'))
-        current_date -= timedelta(weeks=52)
-
-    dates.reverse()
-    return dates
 
 dates = generate_annual_dates(2016, '2024-07-31')
 flags = ["patient_measures", "practice_measures"]
@@ -43,12 +19,8 @@ study_start_date = "2022-01-01"
 # Load and format data for each interval
 for date in dates:
 
-    import os
-    print(os.listdir('output/practice_measures/'))
-
-
     # Load data for each interval and each flag
-    #measures = pd.read_csv(f"output/patient_measures/comorbid_asthma_by_age_filter_for_none.csv")
+    measures = pd.read_csv(f"output/patient_measures/patient_measures_{date}.csv.gz")
     practice_df = pd.read_csv(f"output/practice_measures/practice_measures_{date}.csv.gz")
 
     # Impute temporarily missing columns (age, ethnicity)
