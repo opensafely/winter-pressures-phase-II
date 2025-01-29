@@ -104,14 +104,14 @@ yaml_processing = """
         patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table_test.csv
-  generate_tables:
-    run: r:latest analysis/table_generation.r
-    needs: [generate_pre_processing]
-    outputs:
-      moderately_sensitive:
-        total_measures: output/total_measures/*.csv
-        practice_measures: output/practice_measures/*.csv
-        patient_measures: output/patient_measures/*.csv
+  #generate_tables:
+  #  run: r:latest analysis/table_generation.r
+  #  needs: [generate_pre_processing]
+  #  outputs:
+  #    moderately_sensitive:
+  #      total_measures: output/total_measures/*.csv
+  #      practice_measures: output/practice_measures/*.csv
+  #      patient_measures: output/patient_measures/*.csv
 """
 yaml_processing = yaml_processing.format(needs_list = needs_list)
 
