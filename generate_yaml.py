@@ -1,3 +1,7 @@
+# TODO:
+# Move generate_annual_dates to a queries.py
+from datetime import datetime, timedelta
+
 # --- YAML HEADER ---
 
 yaml_header = """
@@ -10,22 +14,33 @@ actions:
 """
 
 # --- YAML MEASURES BODY ----
-from datetime import datetime, timedelta
+def generate_annual_dates(start_year, end_date):
+    """
+    Generates a list of annual start dates from the start year to the end date.
+    
+    Args:
+        start_year: The starting year for the dates.
+        end_date: The end date for the dates.
+        
+    Returns:
+        A list of annual start dates in 'YYYY-MM-DD' format.
+    """
+    # Generate annual start days for the study period: August 2016 -  31 July 2024
+    start_date = datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=52)
 
-# Generate annual start days for the study period: August 2016 -  31 July 2024
-start_date = datetime.strptime('2024-07-31', '%Y-%m-%d') - timedelta(weeks=52)
+    # Subtract 52 weeks until we reach August 2016
+    dates = []
+    current_date = start_date
 
-# Subtract 52 weeks until we reach August 2016
-dates = []
-current_date = start_date
+    # Loop to subtract 52 weeks (1 year) in each iteration
+    while current_date.year > start_year or (current_date.year == start_year and current_date.month > 7):
+        dates.append(current_date.strftime('%Y-%m-%d'))
+        current_date -= timedelta(weeks=52)
 
-# Loop to subtract 52 weeks (1 year) in each iteration
-while current_date.year > 2016 or (current_date.year == 2016 and current_date.month > 7):
-    dates.append(current_date.strftime('%Y-%m-%d'))
-    current_date -= timedelta(weeks=52)
+    dates.reverse()
+    return dates
 
-# Start with the earliest date
-dates.reverse()
+dates = generate_annual_dates(2016, '2024-07-31')
 
 # Patient and practice measures flags to loop
 flags = ["patient_measures", "practice_measures"]
@@ -126,9 +141,8 @@ yaml_processing = """
   #     highly_sensitive:
   #       dataset: output/patient_measures/test.csv
 
-
 # --- Combine scripts and print file ---
-yaml = yaml_header + yaml_body + yaml_appt_report
+yaml = yaml_header + yaml_body + yaml_appt_report + yaml_processing
 
 with open("project.yaml", "w") as file:
        file.write(yaml)
