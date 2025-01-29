@@ -91,19 +91,19 @@ yaml_processing = """
     needs: [{needs_list}]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures_*.csv.gz
-        patient_measure: output/patient_measures/proc_patient_measures_*.csv.gz
-      #moderately_sensitive:
-      #  frequency_table: output/patient_measures/frequency_table.
+        practice_measure: output/practice_measures/proc_practice_measures.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table.csv
   generate_pre_processing_test:
     run: python:latest analysis/pre_processing.py --test
     needs: [generate_patient_measures_2016-08-10, generate_practice_measures_2016-08-10]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures_2016-08-10.csv.gz
-        patient_measure: output/patient_measures/proc_patient_measures_2016-08-10.csv.gz
-      #moderately_sensitive:
-      #  frequency_table: output/patient_measures/frequency_table.csv
+        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table_test.csv
   generate_tables:
     run: r:latest analysis/table_generation.r
     needs: [generate_pre_processing]
