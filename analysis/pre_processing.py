@@ -1,5 +1,4 @@
 # TODO:
-# Process each interval of measures data
 # Move frequency table generation to table_generation.r since it requires the intervals to be connected up
 # Remove age and ethnicity imputation when unblocked by tech
 import pandas as pd
@@ -9,6 +8,12 @@ import argparse
 from datetime import datetime, timedelta
 import os
 from utils import generate_annual_dates
+
+# Parse arguments for testing
+parser = argparse.ArgumentParser()
+parser.add_argument("--test", action="store_true", help="Run the script for only one interval")
+args = parser.parse_args()
+test = args.test
 
 # Date specifications
 
@@ -121,7 +126,8 @@ for date in dates:
     practice_df.to_csv(f"output/practice_measures/proc_practice_measures_{date}.csv.gz")
 
     del measures, practice_df
-    if date == '2016-08-10':
+
+    if test == True:
         break
 
     '''

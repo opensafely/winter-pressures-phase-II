@@ -1,6 +1,5 @@
-# TODO:
-# Move generate_annual_dates to a queries.py
 from datetime import datetime, timedelta
+from analysis.utils import generate_annual_dates
 
 # --- YAML HEADER ---
 
@@ -14,31 +13,6 @@ actions:
 """
 
 # --- YAML MEASURES BODY ----
-def generate_annual_dates(start_year, end_date):
-    """
-    Generates a list of annual start dates from the start year to the end date.
-    
-    Args:
-        start_year: The starting year for the dates.
-        end_date: The end date for the dates.
-        
-    Returns:
-        A list of annual start dates in 'YYYY-MM-DD' format.
-    """
-    # Generate annual start days for the study period: August 2016 -  31 July 2024
-    start_date = datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=52)
-
-    # Subtract 52 weeks until we reach August 2016
-    dates = []
-    current_date = start_date
-
-    # Loop to subtract 52 weeks (1 year) in each iteration
-    while current_date.year > start_year or (current_date.year == start_year and current_date.month > 7):
-        dates.append(current_date.strftime('%Y-%m-%d'))
-        current_date -= timedelta(weeks=52)
-
-    dates.reverse()
-    return dates
 
 dates = generate_annual_dates(2016, '2024-07-31')
 
@@ -113,17 +87,23 @@ yaml_appt_report = yaml_appt_report + yaml_appt_processing
 # --- YAML FILE PROCESSING ---
 yaml_processing = """
   generate_pre_processing:
-    run: python:latest analysis/pre_processing.py 
-        --output output/practice_measures/processed_practice_measures.csv.gz
-        --output output/patient_measures/processed_patient_measures.csv.gz
-        --output output/patient_measures/frequency_table.csv
-    needs: [generate_patient_measures, generate_practice_measures]
+    run: python:latest analysis/pre_processing.py
+    needs: [{needs_list}]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/processed_practice_measures.csv.gz
-        patient_measure: output/patient_measures/processed_patient_measures.csv.gz
-      moderately_sensitive:
-        frequency_table: output/patient_measures/frequency_table.csv
+        practice_measure: output/practice_measures/proc_practice_measures_*.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures_*.csv.gz
+      #moderately_sensitive:
+      #  frequency_table: output/patient_measures/frequency_table.
+  generate_pre_processing_test:
+    run: python:latest analysis/pre_processing.py --test
+    needs: [generate_patient_measures_2016-08-10, generate_practice_measures_2016-08-10]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures_2016-08-10.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures_2016-08-10.csv.gz
+      #moderately_sensitive:
+      #  frequency_table: output/patient_measures/frequency_table.csv
   generate_tables:
     run: r:latest analysis/table_generation.r
     needs: [generate_pre_processing]
@@ -133,6 +113,7 @@ yaml_processing = """
         practice_measures: output/practice_measures/*.csv
         patient_measures: output/patient_measures/*.csv
 """
+yaml_processing = yaml_processing.format(needs_list = needs_list)
 
 # --- YAML TESTING ---
   # generate_test_data:
