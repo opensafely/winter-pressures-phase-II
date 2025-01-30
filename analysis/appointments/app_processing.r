@@ -27,7 +27,12 @@ for (i in seq_along(paths)) {
   
   # Round to midpoint 6 and save
   rounded_df <- df %>% 
-    mutate(across(c(ratio,numerator,denominator), roundmid_any))
+    mutate(across(c(ratio,numerator,denominator), roundmid_any))%>%
+    mutate(ratio = numerator / denominator)%>%
+    rename(
+      midpoint_rounded_numerator = numerator,
+      midpoint_rounded_denominator = denominator
+    )
   write_csv(rounded_df, glue("output/appointments/app_measures_rounded_{i}.csv"))
 
   # Split by status
@@ -44,6 +49,9 @@ for (i in seq_along(paths)) {
     select(- c(interval_end, ratio))
   
   status_df <- df %>%
+    rename(
+      numerator = midpoint_rounded_numerator,
+      denominator = midpoint_rounded_denominator) %>%
     pivot_wider(names_from = status, values_from = numerator)
   
   write_csv(status_df, glue("output/appointments/app_pivot_table_{i}.csv"))

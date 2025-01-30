@@ -9,16 +9,15 @@ from ehrql.tables.tpp import (
     vaccinations
 )
 
-def create_valid_appointments():
+def create_valid_appointments(interval_start, interval_end):
     '''
     Filters the appointments table to only contain appointments
-    where start_date == seen_date
+    where seen date is within the interval.
     No args
     Returns:
         Filtered appointment table
     '''
-    return (appointments.where((appointments.start_date) ==
-                        (appointments.seen_date)))
+    return appointments.where(appointments.seen_date.is_on_or_between(interval_start, interval_end))
     
 # Note that all below measures use intervals as arguments
 def count_secondary_referral(interval_start, interval_end): 
