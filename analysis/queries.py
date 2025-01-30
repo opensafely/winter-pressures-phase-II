@@ -1,3 +1,6 @@
+# TODO:
+# Potentially refactor to use classes when time available
+
 from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
@@ -34,27 +37,24 @@ def count_secondary_referral(interval_start, interval_end):
                     .count_for_patient())
     return secondary_referral_count
 
-def count_follow_up(interval_start, interval_end):
+def count_follow_up(interval_start, valid_appointments):
     '''
     Counts the number of patients who had a follow up appointment,
     defined as a patient who had an appointment in the current interval,
     and the an appointment in the week prior to the interval.
-    No args
+    Args:
+        valid_appointments: appointments table with seen date in interval
     Returns:
         Count of number of patients who had a follow up appointment 
         in the interval
     '''
     appointments.app_prev_week = (appointments.where(
-                (appointments.start_date
-                .is_on_or_between(interval_start - days(7), interval_start - days(1))) &
-                (appointments.seen_date == appointments.start_date)
+                (appointments.seen_date
+                .is_on_or_between(interval_start - days(7), interval_start - days(1)))
                 ).exists_for_patient()
                 )
-    appointments.app_curr_week = (appointments.where(
-                (appointments.start_date.is_on_or_between(interval_start, interval_end)) &
-                (appointments.seen_date == appointments.start_date)
-                ).exists_for_patient()
-                )
+    appointments.app_curr_week = valid_appointments.exists_for_patient()
+
     follow_up = (appointments.where(
                         appointments.app_prev_week & appointments.app_curr_week)
                         .exists_for_patient())
@@ -66,7 +66,7 @@ def count_reason_for_app(interval_start, interval_end, reason, valid_appointment
     where reason and event are assumed to be linked if they have the same date
     Args:
         reason: clinical event that could be linked to appointment
-        valid_appointments: filtered appointments table where seen == start date
+        valid_appointments: appointments with seen date in interval
     Returns:
         Count of number of appointments for each reason
     '''
@@ -83,15 +83,27 @@ def count_reason_for_app(interval_start, interval_end, reason, valid_appointment
                 )
     return result
 
-def count_appointments_in_interval(interval_start, interval_end):
+def count_seen_in_interval(valid_appointments):
     """
     Counts the number of appointments during the interval using seen date.
+    Args:
+        valid_appointments: Appointments with seen date in the interval.
+    Returns:
+        The count of appointments per patient.
+    """
+    return valid_appointments.count_for_patient()
+
+def count_start_in_interval(interval_start, interval_end):
+    """
+    Counts the number of appointments during the interval using start date.
+    Args:
+        valid_appointments: Appointments with start date in the interval.
     Returns:
         The count of appointments per patient.
     """
     return appointments.where(
-            appointments.seen_date.is_on_or_between(interval_start, interval_end)
-            ).count_for_patient()
+        appointments.start_date.is_on_or_between(interval_start, interval_end)
+    ).count_for_patient()
 
 def count_vaccinations(interval_start, interval_end, target_disease=None):
     """
@@ -169,7 +181,7 @@ def appointments_with_indication_and_prescription(interval_start, interval_end, 
     Parameters:
         indication_dict: Dictionary mapping indications to their respective clinical codes.
         prescription_dict: Dictionary mapping prescription types to their respective medication codes.
-        valid_appointments: Dataframe or table of valid appointments.
+        valid_appointments: Appointments with seen date in the interval.
         
     Returns:
         A dictionary with indication keys and counts of appointments matching the criteria.
