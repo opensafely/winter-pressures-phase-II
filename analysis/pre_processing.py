@@ -1,4 +1,5 @@
 # TODO:
+# Decide what to do with commented out indic X presc section as its not currently being used
 # Remove age and ethnicity imputation when unblocked by tech
 import pandas as pd
 from scipy import stats
@@ -24,84 +25,78 @@ study_start_date = dates[0]
 
 # -------- Load and concatenate measures ----------------------------------
 
-measures_dict = {}
+patient_df_dict = {}
 practice_df_dict = {}
 
 # Load and format data for each interval
 for date in dates:
 
     # Load data for each interval and each flag
-    measures_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}.csv.gz")
+    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}.csv.gz")
     practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}.csv.gz")
     
 # Concatenate all DataFrames into one
-measures = pd.concat(measures_dict.values(), ignore_index=True)
+patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
 practice_df = pd.concat(practice_df_dict.values(), ignore_index=True)
-del measures_dict, practice_df_dict
+del patient_df_dict, practice_df_dict
 
-# -------- Patient measures processing ----------------------------------
-
-# Impute temporarily missing columns (age, ethnicity)
-for df in [measures, practice_df]:
+# -------- Shared processing -------------------------------------------
+for df in [patient_df, practice_df]:
+    # Impute temporarily missing columns (age, ethnicity)
     df['age'] = np.random.choice(
         np.array(["preschool", "primary_school", "secondary_school", "adult_under_40", 
                 "adult_under_65", "adult_under_80", "adult_over_80"]), 
                 len(df))
     df['ethnicity'] = np.random.randint(1, 5, len(df))
 
-# Reformat ethnicity data
-measures['ethnicity'].replace(
-{1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
-inplace=True)
-measures['ethnicity'].fillna('Not Stated', inplace=True)
-# Reformat rur_urb column
-measures['rur_urb_class'].replace(
-    {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
-    4: 'Urban city and town in a sparse setting', 5: 'Rural town and fringe',
-    6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
-    8: 'Rural village and dispersed in a sparse setting'},
-    inplace=True)
-measures['rur_urb_class'].fillna("Unknown", inplace = True)
+    # Reformat rur_urb column
+    df['rur_urb_class'].replace(
+        {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
+        4: 'Urban city and town in a sparse setting', 5: 'Rural town and fringe',
+        6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
+        8: 'Rural village and dispersed in a sparse setting'},
+        inplace=True)
+    df['rur_urb_class'].fillna("Unknown", inplace = True)
+
+    # Reformat ethnicity data
+    df['ethnicity'].replace(
+        {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
+        inplace=True)
+    df['ethnicity'].fillna('Not Stated', inplace=True)
+
+# -------- Patient measures processing ----------------------------------
 
 # Create measure where: numerator = appt for disease X with prescription, denominator = appt for disease X
-numerators = ["back_pain_opioid", "chest_inf_abx", "chest_inf_abx"]
-denominators = ["back_pain", "chest_inf", "pneum"]
+#numerators = ["back_pain_opioid", "chest_inf_abx", "chest_inf_abx"]
+#denominators = ["back_pain", "chest_inf", "pneum"]
 
 # List of column names to match the numerator-denominator pairs by
-index = measures.columns.get_loc("age")
-subgroups = list(measures.columns[index : ])
-subgroups = subgroups + ["interval_start" , "interval_end"]
+#index = patient_df.columns.get_loc("age")
+#subgroups = list(patient_df.columns[index : ])
+#subgroups = subgroups + ["interval_start" , "interval_end"]
 
-for numerator, denominator in zip(numerators, denominators):
-
-    tmp_df = measures[measures['measure'].isin([numerator, denominator])]
-    tmp_df = (tmp_df.groupby(subgroups)
-            .apply(lambda group: pd.Series({
-                'measure': f'prop_{numerator}',
-                'numerator': group.loc[group['measure'] == numerator, 'numerator'].iloc[0],
-                'denominator': group.loc[group['measure'] == denominator, 'numerator'].iloc[0],
-                'ratio': group.loc[group['measure'] == numerator, 'numerator'].iloc[0] / 
-                        group.loc[group['measure'] == denominator, 'numerator'].iloc[0]
-            }))
-            .reset_index(drop=True))
-    measures = pd.concat([measures, tmp_df], ignore_index=True)
+#for numerator, denominator in zip(numerators, denominators):
+#
+#    tmp_df = patient_df[patient_df['measure'].isin([numerator, denominator])]
+#    breakpoint()
+#    tmp_df = (tmp_df.groupby(subgroups)
+#            .apply(lambda group: pd.Series({
+#                'measure': f'prop_{numerator}',
+#                'numerator': group.loc[group['measure'] == numerator, 'numerator'].iloc[0],
+#                'denominator': group.loc[group['measure'] == denominator, 'numerator'].iloc[0],
+#                'ratio': group.loc[group['measure'] == numerator, 'numerator'].iloc[0] / 
+#                        group.loc[group['measure'] == denominator, 'numerator'].iloc[0]
+#            }))
+#            .reset_index(drop=True))
+#    patient_df = pd.concat([patient_df, tmp_df], ignore_index=True)
 
 # Save processed file
 if test:
-    measures.to_csv(f"output/patient_measures/proc_patient_measures_test.csv.gz")
+    patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test.csv.gz")
 else:
-    measures.to_csv(f"output/patient_measures/proc_patient_measures.csv.gz")
+    patient_df.to_csv(f"output/patient_measures/proc_patient_measures.csv.gz")
 
 # -------- Practice measures processing ----------------------------------
-
-# Reformat rur_urb column
-practice_df['rur_urb_class'].replace(
-    {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
-    4: 'Urban city and town in a sparse setting', 5: 'Rural town and fringe',
-    6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
-    8: 'Rural village and dispersed in a sparse setting'},
-    inplace=True)
-practice_df['rur_urb_class'].fillna("Unknown", inplace = True)
 
 # Group measures by practice, using aggregate functions of interest
 practice_df = (
@@ -151,16 +146,16 @@ del practice_df
 # -------- Frequency table generation ----------------------------------
 
 # Create frequency table
-measures_at_start = measures[(measures['interval_start'] == study_start_date) & (measures['measure'] == 'appointments_in_interval')]
+patient_df_at_start = patient_df[(patient_df['interval_start'] == study_start_date) & (patient_df['measure'] == 'appointments_in_interval')]
 # Extract demographic variables
-table_one_vars = measures.columns[measures.columns.get_loc('denominator') + 1:]
+table_one_vars = patient_df.columns[patient_df.columns.get_loc('denominator') + 1:]
 table_one = {}
 # Iterate over all the demographic variables we want in table one
 for var in table_one_vars:
     # Create an binary matrix composed of indicator variables representing the categorical value for each group (M)
     # Multiply this matrix by the vector of denominators representing the size of the given group (d)
     # Sum to get the total denominator value from all the groups (t = Sum(M x d))
-    table_one[var] = pd.get_dummies(measures_at_start[var]).multiply(measures_at_start['denominator'], axis=0).sum().reset_index()
+    table_one[var] = pd.get_dummies(patient_df_at_start[var]).multiply(patient_df_at_start['denominator'], axis=0).sum().reset_index()
     table_one[var].columns = ['value', 'count']
     table_one[var]['prop'] = table_one[var]['count']/table_one[var]['count'].sum()
 
