@@ -10,6 +10,7 @@ parser.add_argument("--practice_measures", action= 'store_true', help = "Sets me
 
 # Configuration for interval date input
 parser.add_argument("--start_intv", help="Interval start date")
+parser.add_argument("--test", action= 'store_true', help = "Sets lowest time intervals for lightweight testing")
 
 args = parser.parse_args() # Stores arguments in 'args'
 
@@ -20,3 +21,4 @@ add_reason = args.add_reason
 patient_measures = args.patient_measures
 practice_measures = args.practice_measures
 start_intv = args.start_intv
+test = args.test

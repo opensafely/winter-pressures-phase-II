@@ -16,6 +16,10 @@ from wp_config_setup import *
 measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
+if test == True:
+    NUM_WEEKS = 1
+else:
+    NUM_WEEKS = 52
 
 # Exclusion criteria ---
 
@@ -120,10 +124,11 @@ measures_to_add = {}
 valid_appointments = create_valid_appointments(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['seen_in_interval'] = count_seen_in_interval(valid_appointments)
+measures_to_add['start_in_interval'] = count_start_in_interval(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of follow-up appointments in interval
-measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, valid_appointments)
 
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
@@ -186,7 +191,7 @@ if patient_measures == True:
             "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
             "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
         },
-        intervals=weeks(52).starting_on(start_intv),
+        intervals=weeks(NUM_WEEKS).starting_on(start_intv),
     )
 
 if practice_measures == True:
@@ -204,7 +209,7 @@ if practice_measures == True:
             "rur_urb_class": rur_urb_class,
             "practice_pseudo_id": practice_id
         },
-        intervals=weeks(52).starting_on(start_intv),
+        intervals=weeks(NUM_WEEKS).starting_on(start_intv),
     )
 
 # Adding measures

@@ -8,18 +8,15 @@ import argparse
 from datetime import datetime, timedelta
 import os
 from utils import generate_annual_dates
-
-# Parse arguments for testing
-parser = argparse.ArgumentParser()
-parser.add_argument("--test", action="store_true", help="Run the script for only one interval")
-args = parser.parse_args()
-test = args.test
+from wp_config_setup import *
 
 # -------- Set up variables ----------------------------------
-if test:
+if test == True:
     dates = ["2016-08-10"]
+    suffix = "_test"
 else:
     dates = generate_annual_dates(2016, '2024-07-31')
+    suffix = ""
 flags = ["patient_measures", "practice_measures"]
 study_start_date = dates[0]
 
@@ -32,8 +29,8 @@ practice_df_dict = {}
 for date in dates:
 
     # Load data for each interval and each flag
-    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}.csv.gz")
-    practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}.csv.gz")
+    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz")
+    practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz")
     
 # Concatenate all DataFrames into one
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
@@ -146,7 +143,7 @@ del practice_df
 # -------- Frequency table generation ----------------------------------
 
 # Create frequency table
-patient_df_at_start = patient_df[(patient_df['interval_start'] == study_start_date) & (patient_df['measure'] == 'appointments_in_interval')]
+patient_df_at_start = patient_df[(patient_df['interval_start'] == study_start_date) & (patient_df['measure'] == 'seen_in_interval')]
 # Extract demographic variables
 table_one_vars = patient_df.columns[patient_df.columns.get_loc('denominator') + 1:]
 table_one = {}
@@ -174,8 +171,5 @@ for key, df in table_one.items():
 result_df = pd.concat(formatted_list, axis=0, ignore_index=True)
 
 # Save processed file
-if test:
-    result_df.to_csv('output/patient_measures/frequency_table_test.csv', index=False)
-else:
-    result_df.to_csv('output/patient_measures/frequency_table.csv', index=False)
+result_df.to_csv(f'output/patient_measures/frequency_table{suffix}.csv', index=False)
 
