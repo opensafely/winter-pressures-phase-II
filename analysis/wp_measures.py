@@ -171,7 +171,7 @@ if patient_measures == True:
         denominator= was_female_or_male & age_filter & was_alive & 
                     was_registered & has_deprivation_index & has_region,
         group_by={
-            "age": age_group,
+            #"age": age_group,
             "sex": patients.sex,
             "ethnicity": ethnicity,
             "imd_quintile": imd_quintile,
@@ -200,9 +200,9 @@ if practice_measures == True:
         denominator= was_female_or_male & age_filter & was_alive & 
                     was_registered & has_deprivation_index & has_region,
         group_by={
-            "age": age_group,
+            #"age": age_group,
             "sex": patients.sex,
-            "ethnicity": ethnicity,
+            #"ethnicity": ethnicity,
             "imd_quintile": imd_quintile,
             "carehome": carehome,
             "region": region,
