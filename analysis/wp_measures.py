@@ -202,7 +202,7 @@ if practice_measures == True:
         group_by={
             #"age": age_group,
             "sex": patients.sex,
-            #"ethnicity": ethnicity,
+            "ethnicity": ethnicity,
             "imd_quintile": imd_quintile,
             "carehome": carehome,
             "region": region,
