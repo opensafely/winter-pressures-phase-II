@@ -10,30 +10,17 @@ from ehrql.tables.tpp import (
 )
 from queries import *
 from codelist_definition import *
+from wp_config_setup import *
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
-# Configuration
-import argparse
-parser = argparse.ArgumentParser() # Instantiate parser
-parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
-parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included")
-parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
-parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
-args = parser.parse_args() # Stores arguments in 'args'
-drop_follow_up = args.drop_follow_up # extracts arguments
-drop_indicat_prescript = args.drop_indicat_prescript
-drop_prescriptions = args.drop_prescriptions
-drop_reason = args.drop_reason
-
 # Date specifications
 study_start_date = "2022-01-01"
-study_reg_date = "2021-10-01"
 
-# exclusion criteria ---
+# Exclusion criteria ---
 
 # Age 0 - 110 (as per WP2)
 age_at_interval_start = patients.age_on(INTERVAL.start_date)
@@ -46,10 +33,8 @@ was_alive = (
     patients.date_of_death.is_null()
 )
 
-# Registered throughout the interval period (vs at the begining)
-was_registered = practice_registrations.spanning(INTERVAL.start_date, INTERVAL.end_date).exists_for_patient()
-# Been registered at a practice for 90 days before the study
-prior_registration = practice_registrations.spanning(study_reg_date, study_start_date).exists_for_patient()
+# Registered throughout the interval period and 90 days before
+was_registered = practice_registrations.spanning((INTERVAL.start_date - days(90)), INTERVAL.end_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
 was_female_or_male = patients.sex.is_in(["female", "male"])
@@ -71,12 +56,12 @@ age_group = case(
 )
 
 # Ethnicity
-ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
-    .sort_by(clinical_events.date)
-    .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
-)
+#ethnicity = (
+#    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+#    .sort_by(clinical_events.date)
+#    .last_for_patient()
+#    .ctv3_code.to_category(ethnicity)
+#)
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
@@ -102,45 +87,21 @@ rur_urb_class = (addresses
                  .rural_urban_classification)
 
 # Practice data taken at the start of the interval
-# practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
-#               .practice_pseudo_id)
+practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
+               .practice_pseudo_id)
 region = (practice_registrations.for_patient_on(INTERVAL.start_date)
           .practice_nuts1_region_name)
 
-# Vaccination against flu or covid in the last 12 months
-vax_status = {}
-for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL']:
-    vax_status[disease] = (vaccinations.where((vaccinations
-                                        .target_disease
-                                        .is_in([disease])) &
-                                        vaccinations
-                                        .date
-                                        .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date))
-                                        .exists_for_patient())
-
-# Co-morbidity
-# Check if patient had a resolvable condition in the interval
-comorbid_copd = check_resolved_condition(comorbid_dict["copd"], comorbid_dict["copd_res"], INTERVAL.start_date)
-comorbid_asthma = check_resolved_condition(comorbid_dict["asthma"], comorbid_dict["asthma_res"], INTERVAL.start_date)
-comorbid_dm = check_resolved_condition(comorbid_dict["diabetes"], comorbid_dict["diabetes_res"], INTERVAL.start_date)
-comorbid_htn = check_resolved_condition(comorbid_dict["htn"], comorbid_dict["htn_res"], INTERVAL.start_date)
-comorbid_depres = check_resolved_condition(comorbid_dict["depres"], comorbid_dict["depres_res"], INTERVAL.start_date)
-
-# Check if patient had an unresolvable (chronic) condition in the interval
-comorbid_chronic_resp = check_chronic_condition(comorbid_dict["chronic_resp"], INTERVAL.start_date)
-comorbid_mh = check_chronic_condition(comorbid_dict["mental_health"], INTERVAL.start_date)
-comorbid_neuro = check_chronic_condition(comorbid_dict["neuro"], INTERVAL.start_date)
-comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.start_date)
-
 # Measures ---
 measures_to_add = {}
-# Valid appointments are those where start_date == seen_date
-# because incomplete appointments may have been coded with extreme dates (e.g. 9999)
+# Valid appointments are those where seen date is in interval
 valid_appointments = create_valid_appointments()
 
 # Number of appointments in interval
-measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=True)
-measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
+measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
+
+# Number of follow-up appointments:
+measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
 measures_to_add['vax_app'] = count_vaccinations(INTERVAL.start_date, INTERVAL.end_date)
@@ -158,25 +119,21 @@ app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
+# Configuration based on CLI arg. Skip these measures if --add_measures flag was called in action
 
-# Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
-if drop_follow_up == False:
-    # Number of follow-up appointments:
-    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
-
-if drop_indicat_prescript == False:
+if add_indicat_prescript == True:
 
     # Count appointments with an indication and prescription
     measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
 
 
-if drop_prescriptions == False:
+if add_prescriptions == True:
 
     # Count prescriptions and add to measures
     measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
 
-if drop_reason == False:
+if add_reason == True:
 
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
@@ -186,31 +143,18 @@ if drop_reason == False:
 # Defining measures ---
 measures.define_defaults(
     denominator= was_female_or_male & age_filter & was_alive & 
-                was_registered & has_deprivation_index & has_region & 
-                prior_registration,
+                was_registered & has_deprivation_index & has_region,
     group_by={
-        "age": age_group,
+        #"age": age_group,
         "sex": patients.sex,
-        "ethnicity": ethnicity,
+        #"ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
         "carehome": carehome,
         "region": region,
         "rur_urb_class": rur_urb_class,
-        #"practice_pseudo_id": practice_id,
-        "comorbid_chronic_resp": comorbid_chronic_resp,
-        "comorbid_copd": comorbid_copd,
-        "comorbid_asthma": comorbid_asthma,
-        "comorbid_dm": comorbid_dm,
-        "comorbid_htn": comorbid_htn,
-        "comorbid_depres": comorbid_depres,
-        "comorbid_mh": comorbid_mh,
-        "comorbid_neuro": comorbid_neuro,
-        "comorbid_immuno": comorbid_immuno,
-        "vax_flu_12m": vax_status['INFLUENZA'],
-        "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
-        "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
+        "practice_pseudo_id": practice_id
     },
-    intervals=weeks(1).starting_on(study_start_date),
+    intervals=weeks(2).starting_on(study_start_date),
 )
 
 # Adding measures

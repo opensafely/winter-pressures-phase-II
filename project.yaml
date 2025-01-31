@@ -1,78 +1,264 @@
-version: "3.0"
+
+version: '3.0'
 
 expectations:
   population_size: 1000
 
 actions:
-  generate_patient_measures:
-    run: ehrql:v1 generate-measures --output output/patient_measures/patient_measures.csv.gz analysis/wp_patient_measures_def.py -- --drop_reason --drop_prescriptions --drop_indicat_prescript
-    outputs:
-       highly_sensitive:
-         dataset: output/patient_measures/patient_measures.csv.gz
-  #generate_practice_measures_keep_follow_up:
-  #  run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_keep_follow_up.csv.gz analysis/wp_practice_measures_def.py -- --drop_reason --drop_prescriptions --drop_indicat_prescript
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_keep_follow_up.csv.gz
-  #generate_practice_measures_keep_reason:
-  #  run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_keep_reason.csv.gz analysis/wp_practice_measures_def.py -- --drop_follow_up --drop_prescriptions --drop_indicat_prescript
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_keep_reason.csv.gz
-  #generate_practice_measures_keep_prescriptions:
-  #  run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_keep_prescriptions.csv.gz analysis/wp_practice_measures_def.py -- --drop_follow_up --drop_reason --drop_indicat_prescript
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_keep_prescriptions.csv.gz
-  #generate_practice_measures_keep_indicat_prescript:
-  #  run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures_keep_indicat_prescript.csv.gz analysis/wp_practice_measures_def.py -- --drop_follow_up --drop_reason --drop_prescriptions
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_keep_indicat_prescript.csv.gz
-  generate_practice_measures:
-    run: ehrql:v1 generate-measures --output output/practice_measures/practice_measures.csv.gz analysis/wp_practice_measures_def.py -- --drop_reason --drop_prescriptions --drop_indicat_prescript
+
+  generate_patient_measures_2016-08-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2016-08-10.csv.gz
+      --
+      --patient_measures
+      --start_intv 2016-08-10
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures.csv.gz
-  # generate_app_measures:
-  #   run: ehrql:v1 generate-measures --output output/appointments/app_measures.csv analysis/appointments/app_measures.py
-  #   outputs:
-  #     moderately_sensitive:
-  #       dataset: output/appointments/app_measures.csv
-  # generate_app_viz:
-  #   run: r:latest analysis/appointments/app_viz.r
-  #   needs: [generate_app_measures]
-  #   outputs:
-  #     moderately_sensitive:
-  #       app_figures: output/appointments/*.png
-  # generate_app_summary:
-  #   run: python:latest analysis/appointments/app_summary.py
-  #   needs: [generate_app_measures]
-  #   outputs:
-  #     moderately_sensitive:
-  #       app_table: output/appointments/app_summary.csv
-  # generate_pre_processing:
-  #   run: python:latest analysis/pre_processing.py 
-  #       --output output/practice_measures/processed_practice_measures.csv.gz
-  #       --output output/patient_measures/processed_patient_measures.csv.gz
-  #       --output output/patient_measures/frequency_table.csv
-  #   needs: [generate_patient_measures, generate_practice_measures]
-  #   outputs:
-  #     highly_sensitive:
-  #       practice_measure: output/practice_measures/processed_practice_measures.csv.gz
-  #       patient_measure: output/patient_measures/processed_patient_measures.csv.gz
-  #     moderately_sensitive:
-  #       frequency_table: output/patient_measures/frequency_table.csv
-  # generate_measures_viz:
-  #   run: r:latest analysis/viz_measures.r
-  #   needs: [generate_pre_processing]
-  #   outputs:
-  #     moderately_sensitive:
-  #       app_figures: output/*/*.png
-  #       total_measures: output/total_measures/*.csv
+        dataset: output/patient_measures/patient_measures_2016-08-10.csv.gz
+
+  generate_patient_measures_2017-08-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2017-08-09.csv.gz
+      --
+      --patient_measures
+      --start_intv 2017-08-09
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2017-08-09.csv.gz
+
+  generate_patient_measures_2018-08-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2018-08-08.csv.gz
+      --
+      --patient_measures
+      --start_intv 2018-08-08
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2018-08-08.csv.gz
+
+  generate_patient_measures_2019-08-07:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2019-08-07.csv.gz
+      --
+      --patient_measures
+      --start_intv 2019-08-07
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2019-08-07.csv.gz
+
+  generate_patient_measures_2020-08-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2020-08-05.csv.gz
+      --
+      --patient_measures
+      --start_intv 2020-08-05
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2020-08-05.csv.gz
+
+  generate_patient_measures_2021-08-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2021-08-04.csv.gz
+      --
+      --patient_measures
+      --start_intv 2021-08-04
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2021-08-04.csv.gz
+
+  generate_patient_measures_2022-08-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2022-08-03.csv.gz
+      --
+      --patient_measures
+      --start_intv 2022-08-03
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2022-08-03.csv.gz
+
+  generate_patient_measures_2023-08-02:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2023-08-02.csv.gz
+      --
+      --patient_measures
+      --start_intv 2023-08-02
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2023-08-02.csv.gz
+
+  generate_practice_measures_2016-08-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2016-08-10.csv.gz
+      --
+      --practice_measures
+      --start_intv 2016-08-10
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2016-08-10.csv.gz
+
+  generate_practice_measures_2017-08-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2017-08-09.csv.gz
+      --
+      --practice_measures
+      --start_intv 2017-08-09
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2017-08-09.csv.gz
+
+  generate_practice_measures_2018-08-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2018-08-08.csv.gz
+      --
+      --practice_measures
+      --start_intv 2018-08-08
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2018-08-08.csv.gz
+
+  generate_practice_measures_2019-08-07:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2019-08-07.csv.gz
+      --
+      --practice_measures
+      --start_intv 2019-08-07
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2019-08-07.csv.gz
+
+  generate_practice_measures_2020-08-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2020-08-05.csv.gz
+      --
+      --practice_measures
+      --start_intv 2020-08-05
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2020-08-05.csv.gz
+
+  generate_practice_measures_2021-08-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2021-08-04.csv.gz
+      --
+      --practice_measures
+      --start_intv 2021-08-04
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2021-08-04.csv.gz
+
+  generate_practice_measures_2022-08-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2022-08-03.csv.gz
+      --
+      --practice_measures
+      --start_intv 2022-08-03
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2022-08-03.csv.gz
+
+  generate_practice_measures_2023-08-02:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2023-08-02.csv.gz
+      --
+      --practice_measures
+      --start_intv 2023-08-02
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2023-08-02.csv.gz
+
+  generate_app_measures_intv_1:
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_1.csv 
+      -- 
+      --start_intv 2023-07-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_1.csv
+ 
+  generate_app_measures_intv_2:
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_2.csv 
+      -- 
+      --start_intv 2023-12-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_2.csv
+ 
+  generate_app_measures_intv_3:
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_3.csv 
+      -- 
+      --start_intv 2018-07-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_3.csv
+ 
+  generate_app_measures_intv_4:
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_4.csv 
+      -- 
+      --start_intv 2018-12-01
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_4.csv
+ 
+  generate_app_processing:
+     run: r:latest analysis/appointments/app_processing.r
+     needs: [generate_app_measures_intv_1, generate_app_measures_intv_2, generate_app_measures_intv_3, generate_app_measures_intv_4]
+     outputs:
+       moderately_sensitive:
+         table_rounded: output/appointments/app_measures_rounded_*.csv
+         table_pivot: output/appointments/app_pivot_table_*.csv
+
+  generate_pre_processing:
+    run: python:latest analysis/pre_processing.py
+    needs: [generate_patient_measures_2016-08-10, generate_patient_measures_2017-08-09, generate_patient_measures_2018-08-08, generate_patient_measures_2019-08-07, generate_patient_measures_2020-08-05, generate_patient_measures_2021-08-04, generate_patient_measures_2022-08-03, generate_patient_measures_2023-08-02, generate_practice_measures_2016-08-10, generate_practice_measures_2017-08-09, generate_practice_measures_2018-08-08, generate_practice_measures_2019-08-07, generate_practice_measures_2020-08-05, generate_practice_measures_2021-08-04, generate_practice_measures_2022-08-03, generate_practice_measures_2023-08-02]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table.csv
+  #generate_tables:
+  #  run: r:latest analysis/table_generation.r
+  #  needs: [generate_pre_processing]
+  #  outputs:
+  #    moderately_sensitive:
+  #      total_measures: output/total_measures/*.csv
+  #      practice_measures: output/practice_measures/*.csv
+  #      patient_measures: output/patient_measures/*.csv
+
+  generate_patient_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+      --
+      --patient_measures
+      --start_intv 2016-08-10
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+  generate_practice_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+      --
+      --practice_measures
+      --start_intv 2016-08-10
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+  generate_pre_processing_test:
+    run: python:latest analysis/pre_processing.py --test
+    needs: [generate_patient_measures_test, generate_practice_measures_test]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table_test.csv
   # generate_test_data:
   #   run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #   outputs:
   #     highly_sensitive:
   #       dataset: output/patient_measures/test.csv
-
