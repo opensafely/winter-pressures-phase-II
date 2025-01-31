@@ -12,7 +12,7 @@ from ehrql.tables.tpp import (
     vaccinations
 )
 
-def create_valid_appointments(interval_start, interval_end):
+def create_seen_appts_in_interval(interval_start, interval_end):
     '''
     Filters the appointments table to only contain appointments
     where seen date is within the interval.
@@ -37,13 +37,13 @@ def count_secondary_referral(interval_start, interval_end):
                     .count_for_patient())
     return secondary_referral_count
 
-def count_follow_up(interval_start, valid_appointments):
+def count_follow_up(interval_start, seen_appts_in_interval):
     '''
     Counts the number of patients who had a follow up appointment,
     defined as a patient who had an appointment in the current interval,
     and the an appointment in the week prior to the interval.
     Args:
-        valid_appointments: appointments table with seen date in interval
+        seen_appts_in_interval: appointments table with seen date in interval
     Returns:
         Count of number of patients who had a follow up appointment 
         in the interval
@@ -53,20 +53,20 @@ def count_follow_up(interval_start, valid_appointments):
                 .is_on_or_between(interval_start - days(7), interval_start - days(1)))
                 ).exists_for_patient()
                 )
-    appointments.app_curr_week = valid_appointments.exists_for_patient()
+    appointments.app_curr_week = seen_appts_in_interval.exists_for_patient()
 
     follow_up = (appointments.where(
                         appointments.app_prev_week & appointments.app_curr_week)
                         .exists_for_patient())
     return follow_up
 
-def count_reason_for_app(interval_start, interval_end, reason, valid_appointments):
+def count_reason_for_app(interval_start, interval_end, reason, seen_appts_in_interval):
     '''
     Counts the number of appointments for different clinical events,
     where reason and event are assumed to be linked if they have the same date
     Args:
         reason: clinical event that could be linked to appointment
-        valid_appointments: appointments with seen date in interval
+        seen_appts_in_interval: appointments with seen date in interval
     Returns:
         Count of number of appointments for each reason
     '''
@@ -78,26 +78,26 @@ def count_reason_for_app(interval_start, interval_end, reason, valid_appointment
                                         .is_on_or_between(interval_start, interval_end))
                                         )
             )
-    result = (event.where(event.date.is_in(valid_appointments.start_date))
+    result = (event.where(event.date.is_in(seen_appts_in_interval.start_date))
                        .count_for_patient()
                 )
     return result
 
-def count_seen_in_interval(valid_appointments):
+def count_seen_in_interval(seen_appts_in_interval):
     """
     Counts the number of appointments during the interval using seen date.
     Args:
-        valid_appointments: Appointments with seen date in the interval.
+        seen_appts_in_interval: Appointments with seen date in the interval.
     Returns:
         The count of appointments per patient.
     """
-    return valid_appointments.count_for_patient()
+    return seen_appts_in_interval.count_for_patient()
 
 def count_start_in_interval(interval_start, interval_end):
     """
     Counts the number of appointments during the interval using start date.
     Args:
-        valid_appointments: Appointments with start date in the interval.
+        seen_appts_in_interval: Appointments with start date in the interval.
     Returns:
         The count of appointments per patient.
     """
@@ -174,14 +174,14 @@ def count_prescriptions(interval_start, interval_end, med_dict):
 
     return measures
 
-def appointments_with_indication_and_prescription(interval_start, interval_end, indication_dict, prescription_dict, valid_appointments):
+def appointments_with_indication_and_prescription(interval_start, interval_end, indication_dict, prescription_dict, seen_appts_in_interval):
     """
     Calculate appointments with an indication and a corresponding prescription.
     
     Parameters:
         indication_dict: Dictionary mapping indications to their respective clinical codes.
         prescription_dict: Dictionary mapping prescription types to their respective medication codes.
-        valid_appointments: Appointments with seen date in the interval.
+        seen_appts_in_interval: Appointments with seen date in the interval.
         
     Returns:
         A dictionary with indication keys and counts of appointments matching the criteria.
@@ -198,7 +198,7 @@ def appointments_with_indication_and_prescription(interval_start, interval_end, 
                                                  (medications.date.is_on_or_between(interval_start, interval_end))))
 
         # Count appointments that match both criteria
-        measures[indication] = (event.where((event.date.is_in(valid_appointments.start_date)) &
+        measures[indication] = (event.where((event.date.is_in(seen_appts_in_interval.start_date)) &
                                             (event.date.is_in(prescription_events.date)))
                                 .count_for_patient())
     

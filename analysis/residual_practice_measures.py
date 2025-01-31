@@ -95,7 +95,7 @@ region = (practice_registrations.for_patient_on(INTERVAL.start_date)
 # Measures ---
 measures_to_add = {}
 # Valid appointments are those where seen date is in interval
-valid_appointments = create_valid_appointments()
+seen_appts_in_interval = create_seen_appts_in_interval()
 
 # Number of appointments in interval
 measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date)
@@ -124,7 +124,7 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 if add_indicat_prescript == True:
 
     # Count appointments with an indication and prescription
-    measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
+    measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, seen_appts_in_interval))
 
 
 if add_prescriptions == True:
@@ -137,7 +137,7 @@ if add_reason == True:
 
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
-        measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+        measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], seen_appts_in_interval)
 
 
 # Defining measures ---

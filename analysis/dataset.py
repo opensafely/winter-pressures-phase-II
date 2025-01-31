@@ -123,14 +123,14 @@ dataset.comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], s
 measures_to_add = {}
 # Valid appointments are those where start_date == seen_date
 # because incomplete appointments may have been coded with extreme dates (e.g. 9999)
-valid_appointments = create_valid_appointments(study_start_date, study_end_date)
+seen_appts_in_interval = create_seen_appts_in_interval(study_start_date, study_end_date)
 
 # Number of appointments in interval
-dataset.appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=True)
-dataset.all_appointments_in_interval = count_appointments_in_interval(study_start_date, study_end_date, valid_appointments, valid_only=False)
+dataset.seen_in_interval = count_seen_in_interval(seen_appts_in_interval)
+dataset.start_in_interval = count_start_in_interval(study_start_date, study_end_date)
 
 # Number of follow-up appointments:
-dataset.follow_up_app = count_follow_up(study_start_date, study_end_date)
+dataset.follow_up_app = count_follow_up(study_start_date, seen_appts_in_interval)
 
 # Number of vaccinations during interval, all and for flu and covid
 dataset.vax_app = count_vaccinations(study_start_date, study_end_date)
@@ -156,11 +156,11 @@ for prescription in prescription_counts.keys():
 
 # Adding reason for appointment (inferred from appointment and reason being on the same day)
 for reason in app_reason_dict.keys():
-    result = count_reason_for_app(study_start_date, study_end_date, app_reason_dict[reason], valid_appointments)
+    result = count_reason_for_app(study_start_date, study_end_date, app_reason_dict[reason], seen_appts_in_interval)
     dataset.add_column(reason, result)
 
 # Count prescriptions for each indication
-indication_counts = appointments_with_indication_and_prescription(study_start_date, study_end_date, indication_dict, prescription_dict, valid_appointments)
+indication_counts = appointments_with_indication_and_prescription(study_start_date, study_end_date, indication_dict, prescription_dict, seen_appts_in_interval)
 for indication in indication_counts.keys():
     dataset.add_column(indication, indication_counts[indication])
 
