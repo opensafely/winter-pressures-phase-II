@@ -137,11 +137,11 @@ yaml_test = '''
         patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table_test.csv
-  # generate_test_data:
-  #   run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
-  #   outputs:
-  #     highly_sensitive:
-  #       dataset: output/patient_measures/test.csv
+  generate_test_data:
+    run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/test.csv
 '''
 # --- Combine scripts and print file ---
 yaml = yaml_header + yaml_body + yaml_appt_report + yaml_processing + yaml_test
