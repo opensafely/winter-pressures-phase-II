@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+from analysis.utils import generate_annual_dates
+
 # --- YAML HEADER ---
 
 yaml_header = """
@@ -10,22 +13,8 @@ actions:
 """
 
 # --- YAML MEASURES BODY ----
-from datetime import datetime, timedelta
 
-# Generate annual start days for the study period: August 2016 -  31 July 2024
-start_date = datetime.strptime('2024-07-31', '%Y-%m-%d') - timedelta(weeks=52)
-
-# Subtract 52 weeks until we reach August 2016
-dates = []
-current_date = start_date
-
-# Loop to subtract 52 weeks (1 year) in each iteration
-while current_date.year > 2016 or (current_date.year == 2016 and current_date.month > 7):
-    dates.append(current_date.strftime('%Y-%m-%d'))
-    current_date -= timedelta(weeks=52)
-
-# Start with the earliest date
-dates.reverse()
+dates = generate_annual_dates(2016, '2024-07-31')
 
 # Patient and practice measures flags to loop
 flags = ["patient_measures", "practice_measures"]
@@ -98,37 +87,64 @@ yaml_appt_report = yaml_appt_report + yaml_appt_processing
 # --- YAML FILE PROCESSING ---
 yaml_processing = """
   generate_pre_processing:
-    run: python:latest analysis/pre_processing.py 
-        --output output/practice_measures/processed_practice_measures.csv.gz
-        --output output/patient_measures/processed_patient_measures.csv.gz
-        --output output/patient_measures/frequency_table.csv
-    needs: [generate_patient_measures, generate_practice_measures]
+    run: python:latest analysis/pre_processing.py
+    needs: [{needs_list}]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/processed_practice_measures.csv.gz
-        patient_measure: output/patient_measures/processed_patient_measures.csv.gz
+        practice_measure: output/practice_measures/proc_practice_measures.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table.csv
-  generate_tables:
-    run: r:latest analysis/table_generation.r
-    needs: [generate_pre_processing]
-    outputs:
-      moderately_sensitive:
-        total_measures: output/total_measures/*.csv
-        practice_measures: output/practice_measures/*.csv
-        patient_measures: output/patient_measures/*.csv
+  #generate_tables:
+  #  run: r:latest analysis/table_generation.r
+  #  needs: [generate_pre_processing]
+  #  outputs:
+  #    moderately_sensitive:
+  #      total_measures: output/total_measures/*.csv
+  #      practice_measures: output/practice_measures/*.csv
+  #      patient_measures: output/patient_measures/*.csv
 """
+yaml_processing = yaml_processing.format(needs_list = needs_list)
 
 # --- YAML TESTING ---
+yaml_test = '''
+  generate_patient_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+      --
+      --patient_measures
+      --start_intv 2016-08-10
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+  generate_practice_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+      --
+      --practice_measures
+      --start_intv 2016-08-10
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+  generate_pre_processing_test:
+    run: python:latest analysis/pre_processing.py --test
+    needs: [generate_patient_measures_test, generate_practice_measures_test]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table_test.csv
   # generate_test_data:
   #   run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #   outputs:
   #     highly_sensitive:
   #       dataset: output/patient_measures/test.csv
-
-
+'''
 # --- Combine scripts and print file ---
-yaml = yaml_header + yaml_body + yaml_appt_report
+yaml = yaml_header + yaml_body + yaml_appt_report + yaml_processing + yaml_test
 
 with open("project.yaml", "w") as file:
        file.write(yaml)

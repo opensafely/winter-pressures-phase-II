@@ -1,4 +1,5 @@
 # TODO: 
+# Output unstratified and univariate stratified plots to find interesting ones
 # Output a few decile plots for practice measures
 
 library(ggplot2)
