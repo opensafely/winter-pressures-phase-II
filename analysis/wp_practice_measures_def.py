@@ -16,9 +16,22 @@ measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 
+# Configuration
+import argparse
+parser = argparse.ArgumentParser() # Instantiate parser
+parser.add_argument("--drop_follow_up", action = 'store_true', help = "Drops follow_up if flag is added to action, otherwise all measures included") # Add flags
+parser.add_argument("--drop_indicat_prescript", action = 'store_true', help = "Drops indicat/prescript if flag is added to action, otherwise all measures included")
+parser.add_argument("--drop_prescriptions", action = 'store_true', help = "Drops prescriptions if flag is added to action, otherwise all measures included") 
+parser.add_argument("--drop_reason", action = 'store_true', help = "Drops reason if flag is added to action, otherwise all measures included") 
+args = parser.parse_args() # Stores arguments in 'args'
+drop_follow_up = args.drop_follow_up # extracts arguments
+drop_indicat_prescript = args.drop_indicat_prescript
+drop_prescriptions = args.drop_prescriptions
+drop_reason = args.drop_reason
+
 # Date specifications
-study_start_date = "2022-01-03"
-study_reg_date = "2021-10-03"
+study_start_date = "2022-01-01"
+study_reg_date = "2021-10-01"
 
 # exclusion criteria ---
 
@@ -49,16 +62,16 @@ has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice
 age = age_at_interval_start
 age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
-    when((age >= 5) & (age < 12)).then("primary-school"),
-    when((age >= 12) & (age < 18)).then("secondary-school"),
-    when((age >= 18) & (age < 40)).then("adult<40"),
-    when((age >= 40) & (age < 65)).then("adult<65"),
-    when((age >= 65) & (age < 80)).then("adult<80"),
-    when((age >= 80) & (age < 111)).then("adult>80")
+    when((age >= 5) & (age < 12)).then("primary_school"),
+    when((age >= 12) & (age < 18)).then("secondary_school"),
+    when((age >= 18) & (age < 40)).then("adult_under_40"),
+    when((age >= 40) & (age < 65)).then("adult_under_65"),
+    when((age >= 65) & (age < 80)).then("adult_under_80"),
+    when((age >= 80) & (age < 111)).then("adult_over_80")
 )
 
 # Ethnicity
-# ethnicity = (
+#ethnicity = (
 #    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
 #    .sort_by(clinical_events.date)
 #    .last_for_patient()
@@ -105,7 +118,6 @@ measures_to_add['appointments_in_interval'] = count_appointments_in_interval(INT
 measures_to_add['all_appointments_in_interval'] = count_appointments_in_interval(INTERVAL.start_date, INTERVAL.end_date, valid_appointments, valid_only=False)
 
 # Number of follow-up appointments:
-
 measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of vaccinations during interval, all and for flu and covid
@@ -124,15 +136,29 @@ app_status_measure = ['cancelled_app', 'waiting_app']
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
-# Count prescriptions and add to measures
-measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
+# Configuration based on CLI arg. Skip these measures if --drop_measures flag was called in action
+if drop_follow_up == False:
+    # Number of follow-up appointments:
+    measures_to_add["follow_up_app"] = count_follow_up(INTERVAL.start_date, INTERVAL.end_date)
 
-# Adding reason for appointment (inferred from appointment and reason being on the same day)
-for reason in app_reason_dict.keys():
-    measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+if drop_indicat_prescript == False:
 
-# Count appointments with an indication and prescription
-measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
+    # Count appointments with an indication and prescription
+    measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, valid_appointments))
+
+
+if drop_prescriptions == False:
+
+    # Count prescriptions and add to measures
+    measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
+
+
+if drop_reason == False:
+
+    # Adding reason for appointment (inferred from appointment and reason being on the same day)
+    for reason in app_reason_dict.keys():
+        measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], valid_appointments)
+
 
 # Defining measures ---
 measures.define_defaults(
@@ -140,7 +166,7 @@ measures.define_defaults(
                 was_registered & has_deprivation_index & has_region & 
                 prior_registration,
     group_by={
-        "age": age_group,
+        #"age": age_group,
         "sex": patients.sex,
         #"ethnicity": ethnicity,
         "imd_quintile": imd_quintile,
