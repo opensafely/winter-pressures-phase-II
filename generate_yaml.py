@@ -21,15 +21,15 @@ flags = ["patient_measures", "practice_measures"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_template = """
-  generate_{flag}_{date}:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}/{flag}_{date}.csv.gz
-      --
-      --{flag}
-      --start_intv {date}
-    outputs:
-      highly_sensitive:
-        dataset: output/{flag}/{flag}_{date}.csv.gz
+  #generate_{flag}_{date}:
+  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #    --output output/{flag}/{flag}_{date}.csv.gz
+  #    --
+  #    --{flag}
+  #    --start_intv {date}
+  #  outputs:
+  #    highly_sensitive:
+  #      dataset: output/{flag}/{flag}_{date}.csv.gz
 """
 
 yaml_body = ""
@@ -86,15 +86,15 @@ yaml_appt_report = yaml_appt_report + yaml_appt_processing
 
 # --- YAML FILE PROCESSING ---
 yaml_processing = """
-  generate_pre_processing:
-    run: python:latest analysis/pre_processing.py
-    needs: [{needs_list}]
-    outputs:
-      highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures.csv.gz
-        patient_measure: output/patient_measures/proc_patient_measures.csv.gz
-      moderately_sensitive:
-        frequency_table: output/patient_measures/frequency_table.csv
+  #generate_pre_processing:
+  #  run: python:latest analysis/pre_processing.py
+  #  needs: [{needs_list}]
+  #  outputs:
+  #    highly_sensitive:
+  #      practice_measure: output/practice_measures/proc_practice_measures.csv.gz
+  #      patient_measure: output/patient_measures/proc_patient_measures.csv.gz
+  #    moderately_sensitive:
+  #      frequency_table: output/patient_measures/frequency_table.csv
   #generate_tables:
   #  run: r:latest analysis/table_generation.r
   #  needs: [generate_pre_processing]
@@ -128,20 +128,20 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
-  generate_pre_processing_test:
-    run: python:latest analysis/pre_processing.py --test
-    needs: [generate_patient_measures_test, generate_practice_measures_test]
-    outputs:
-      highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
-        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
-      moderately_sensitive:
-        frequency_table: output/patient_measures/frequency_table_test.csv
-  generate_test_data:
-    run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/test.csv
+  #generate_pre_processing_test:
+  #  run: python:latest analysis/pre_processing.py --test
+  #  needs: [generate_patient_measures_test, generate_practice_measures_test]
+  #  outputs:
+  #    highly_sensitive:
+  #      practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+  #      patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
+  #    moderately_sensitive:
+  #      frequency_table: output/patient_measures/frequency_table_test.csv
+  #generate_test_data:
+  #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
+  #  outputs:
+  #    highly_sensitive:
+  #      dataset: output/patient_measures/test.csv
 '''
 # --- Combine scripts and print file ---
 yaml = yaml_header + yaml_body + yaml_appt_report + yaml_processing + yaml_test
