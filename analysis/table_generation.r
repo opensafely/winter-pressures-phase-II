@@ -10,7 +10,7 @@ library(optparse)
 
 # Define option list
 option_list <- list(
-  make_option("--test", action = "store_true", default = TRUE, 
+  make_option("--test", action = "store_true", default = FALSE, 
               help = "Uses test data instead of full data")
 )
 # Parse arguments
@@ -23,7 +23,7 @@ if (opt$test) {
   suffix <- ""
 }
 
-measures <- read.csv(glue('output/patient_measures/proc_patient_measures{sufix}.csv.gz'))
+measures <- read.csv(glue('output/patient_measures/proc_patient_measures{suffix}.csv.gz'))
 practice_measures <- read.csv(glue('output/practice_measures/proc_practice_measures{suffix}.csv.gz'))
 
 # ------------ Functions -----------------------------------------------------------
