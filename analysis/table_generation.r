@@ -1,13 +1,32 @@
 # TODO: 
-# Output unstratified and univariate stratified plots to find interesting ones
 # Output a few decile plots for practice measures
+
+# ------------ Configuration -----------------------------------------------------------
 
 library(ggplot2)
 library(dplyr)
 library(glue)
+library(optparse)
 
-measures <- read.csv('output/patient_measures/proc_patient_measures_test.csv.gz')
-practice_measures <- read.csv('output/practice_measures/proc_practice_measures_test.csv.gz')
+# Define option list
+option_list <- list(
+  make_option("--test", action = "store_true", default = TRUE, 
+              help = "Uses test data instead of full data")
+)
+# Parse arguments
+opt <- parse_args(OptionParser(option_list = option_list))
+if (opt$test) {
+  print("Using test data")
+  suffix <- "_test"
+} else {
+  print("Using full data")
+  suffix <- ""
+}
+
+measures <- read.csv(glue('output/patient_measures/proc_patient_measures{sufix}.csv.gz'))
+practice_measures <- read.csv(glue('output/practice_measures/proc_practice_measures{suffix}.csv.gz'))
+
+# ------------ Functions -----------------------------------------------------------
 
 aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, folder) {
 
@@ -52,7 +71,6 @@ aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, fold
   write.csv(df, glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}.csv"))
 }
 
-# Function that plots the aggregated data
 plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder) {
   # Plots aggregated data
   # Args:

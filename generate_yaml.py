@@ -1,3 +1,18 @@
+# TODO:
+# Uncomment the actions once the job server works again
+
+"""
+Description: 
+- This script generates the YAML file for the project.
+- It iteratively generates measures for each combination of patient/practice measures and interval date.
+
+Usage:
+- python generate_yaml.py
+
+Output:
+- project.yaml
+"""
+
 from datetime import datetime, timedelta
 from analysis.utils import generate_annual_dates
 
@@ -128,15 +143,15 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
-  #generate_pre_processing_test:
-  #  run: python:latest analysis/pre_processing.py --test
-  #  needs: [generate_patient_measures_test, generate_practice_measures_test]
-  #  outputs:
-  #    highly_sensitive:
-  #      practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
-  #      patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
-  #    moderately_sensitive:
-  #      frequency_table: output/patient_measures/frequency_table_test.csv
+  generate_pre_processing_test:
+    run: python:latest analysis/pre_processing.py --test
+    needs: [generate_patient_measures_test, generate_practice_measures_test]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table_test.csv
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:
