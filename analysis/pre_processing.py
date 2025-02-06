@@ -1,6 +1,5 @@
 # TODO:
 # Decide what to do with commented out indic X presc section as its not currently being used
-# Remove age and ethnicity imputation when unblocked by tech
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -39,12 +38,6 @@ del patient_df_dict, practice_df_dict
 
 # -------- Shared processing -------------------------------------------
 for df in [patient_df, practice_df]:
-    # Impute temporarily missing columns (age, ethnicity)
-    df['age'] = np.random.choice(
-        np.array(["preschool", "primary_school", "secondary_school", "adult_under_40", 
-                "adult_under_65", "adult_under_80", "adult_over_80"]), 
-                len(df))
-    df['ethnicity'] = np.random.randint(1, 5, len(df))
 
     # Reformat rur_urb column
     df['rur_urb_class'].replace(
