@@ -17,7 +17,7 @@ measures = create_measures()
 measures.configure_dummy_data(population_size=1000)
 measures.configure_disclosure_control(enabled=False)
 if test == True:
-    NUM_WEEKS = 1
+    NUM_WEEKS = 2
 else:
     NUM_WEEKS = 52
 
@@ -171,25 +171,25 @@ if patient_measures == True:
         denominator= was_female_or_male & age_filter & was_alive & 
                     was_registered & has_deprivation_index & has_region,
         group_by={
-            #"age": age_group,
-            #"sex": patients.sex,
-            #"ethnicity": ethnicity,
-            #"imd_quintile": imd_quintile,
-            #"carehome": carehome,
-            #"region": region,
-            #"rur_urb_class": rur_urb_class,
-            #"comorbid_chronic_resp": comorbid_chronic_resp,
-            #"comorbid_copd": comorbid_copd,
-            #"comorbid_asthma": comorbid_asthma,
-            #"comorbid_dm": comorbid_dm,
-            #"comorbid_htn": comorbid_htn,
-            #"comorbid_depres": comorbid_depres,
-            #"comorbid_mh": comorbid_mh,
-            #"comorbid_neuro": comorbid_neuro,
-            #"comorbid_immuno": comorbid_immuno,
-            #"vax_flu_12m": vax_status['INFLUENZA'],
-            #"vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
-            #"vax_pneum_12m": vax_status['PNEUMOCOCCAL']
+            "age": age_group,
+            "sex": patients.sex,
+            "ethnicity": ethnicity,
+            "imd_quintile": imd_quintile,
+            "carehome": carehome,
+            "region": region,
+            "rur_urb_class": rur_urb_class,
+            "comorbid_chronic_resp": comorbid_chronic_resp,
+            "comorbid_copd": comorbid_copd,
+            "comorbid_asthma": comorbid_asthma,
+            "comorbid_dm": comorbid_dm,
+            "comorbid_htn": comorbid_htn,
+            "comorbid_depres": comorbid_depres,
+            "comorbid_mh": comorbid_mh,
+            "comorbid_neuro": comorbid_neuro,
+            "comorbid_immuno": comorbid_immuno,
+            "vax_flu_12m": vax_status['INFLUENZA'],
+            "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
+            "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
         },
         intervals=weeks(NUM_WEEKS).starting_on(start_intv),
     )
@@ -200,13 +200,13 @@ if practice_measures == True:
         denominator= was_female_or_male & age_filter & was_alive & 
                     was_registered & has_deprivation_index & has_region,
         group_by={
-            #"age": age_group,
-            #"sex": patients.sex,
-            #"ethnicity": ethnicity,
-            #"imd_quintile": imd_quintile,
-            #"carehome": carehome,
-            #"region": region,
-            #"rur_urb_class": rur_urb_class,
+            "age": age_group,
+            "sex": patients.sex,
+            "ethnicity": ethnicity,
+            "imd_quintile": imd_quintile,
+            "carehome": carehome,
+            "region": region,
+            "rur_urb_class": rur_urb_class,
             "practice_pseudo_id": practice_id
         },
         intervals=weeks(NUM_WEEKS).starting_on(start_intv),
