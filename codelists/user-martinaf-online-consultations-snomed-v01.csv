@@ -1,0 +1,19 @@
+code,term
+1068881000000101,eConsultation via online application
+1090371000000106,Referral to remote triage and advice service
+185320006,Encounter by computer link
+325871000000103,Remote consultation encounter type
+325901000000103,Remote non-verbal consultation encounter type
+325911000000101,Consultation via multimedia encounter type
+325951000000102,Remote assessment encounter type
+325981000000108,Remote non-verbal assessment encounter type
+325991000000105,Assessment via multimedia encounter type
+384131000000101,Remote encounter type
+401271004,E-mail sent to patient
+448337001,Telemedicine consultation with patient
+699249000,Alert received from telehealth monitoring system
+719407002,Remote non-verbal consultation
+763184009,Telepractice consultation
+854891000000104,Telehealth encounter type
+868184008,Telemedicine consultation with provider
+978871000000104,Consultation via multimedia

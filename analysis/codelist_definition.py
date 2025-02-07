@@ -22,6 +22,9 @@ ethnicity = codelist_from_csv(
     category_column="Grouping_6",
 )
 
+# Online consult types codelist:
+online_consult = codelist_from_csv("codelists/user-martinaf-online-consultations-snomed-v01.csv", column="code")
+
 # Appointment reasons codelist:
 app_reason_dict = {
     "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist - misses many pneumonia codes
