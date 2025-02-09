@@ -6,165 +6,165 @@ expectations:
 
 actions:
 
-  #generate_patient_measures_2016-08-10:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2016-08-10.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2016-08-10
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2016-08-10.csv.gz
+  generate_patient_measures_2016-08-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2016-08-10.csv.gz
+      --
+      --patient_measures
+      --start_intv 2016-08-10
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2016-08-10.csv.gz
 
-  #generate_patient_measures_2017-08-09:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2017-08-09.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2017-08-09
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2017-08-09.csv.gz
+  generate_patient_measures_2017-08-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2017-08-09.csv.gz
+      --
+      --patient_measures
+      --start_intv 2017-08-09
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2017-08-09.csv.gz
 
-  #generate_patient_measures_2018-08-08:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2018-08-08.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2018-08-08
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2018-08-08.csv.gz
+  generate_patient_measures_2018-08-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2018-08-08.csv.gz
+      --
+      --patient_measures
+      --start_intv 2018-08-08
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2018-08-08.csv.gz
 
-  #generate_patient_measures_2019-08-07:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2019-08-07.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2019-08-07
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2019-08-07.csv.gz
+  generate_patient_measures_2019-08-07:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2019-08-07.csv.gz
+      --
+      --patient_measures
+      --start_intv 2019-08-07
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2019-08-07.csv.gz
 
-  #generate_patient_measures_2020-08-05:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2020-08-05.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2020-08-05
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2020-08-05.csv.gz
+  generate_patient_measures_2020-08-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2020-08-05.csv.gz
+      --
+      --patient_measures
+      --start_intv 2020-08-05
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2020-08-05.csv.gz
 
-  #generate_patient_measures_2021-08-04:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2021-08-04.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2021-08-04
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2021-08-04.csv.gz
+  generate_patient_measures_2021-08-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2021-08-04.csv.gz
+      --
+      --patient_measures
+      --start_intv 2021-08-04
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2021-08-04.csv.gz
 
-  #generate_patient_measures_2022-08-03:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2022-08-03.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2022-08-03
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2022-08-03.csv.gz
+  generate_patient_measures_2022-08-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2022-08-03.csv.gz
+      --
+      --patient_measures
+      --start_intv 2022-08-03
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2022-08-03.csv.gz
 
-  #generate_patient_measures_2023-08-02:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/patient_measures/patient_measures_2023-08-02.csv.gz
-  #    --
-  #    --patient_measures
-  #    --start_intv 2023-08-02
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/patient_measures_2023-08-02.csv.gz
+  generate_patient_measures_2023-08-02:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/patient_measures/patient_measures_2023-08-02.csv.gz
+      --
+      --patient_measures
+      --start_intv 2023-08-02
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_2023-08-02.csv.gz
 
-  #generate_practice_measures_2016-08-10:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2016-08-10.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2016-08-10
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2016-08-10.csv.gz
+  generate_practice_measures_2016-08-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2016-08-10.csv.gz
+      --
+      --practice_measures
+      --start_intv 2016-08-10
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2016-08-10.csv.gz
 
-  #generate_practice_measures_2017-08-09:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2017-08-09.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2017-08-09
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2017-08-09.csv.gz
+  generate_practice_measures_2017-08-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2017-08-09.csv.gz
+      --
+      --practice_measures
+      --start_intv 2017-08-09
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2017-08-09.csv.gz
 
-  #generate_practice_measures_2018-08-08:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2018-08-08.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2018-08-08
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2018-08-08.csv.gz
+  generate_practice_measures_2018-08-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2018-08-08.csv.gz
+      --
+      --practice_measures
+      --start_intv 2018-08-08
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2018-08-08.csv.gz
 
-  #generate_practice_measures_2019-08-07:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2019-08-07.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2019-08-07
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2019-08-07.csv.gz
+  generate_practice_measures_2019-08-07:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2019-08-07.csv.gz
+      --
+      --practice_measures
+      --start_intv 2019-08-07
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2019-08-07.csv.gz
 
-  #generate_practice_measures_2020-08-05:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2020-08-05.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2020-08-05
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2020-08-05.csv.gz
+  generate_practice_measures_2020-08-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2020-08-05.csv.gz
+      --
+      --practice_measures
+      --start_intv 2020-08-05
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2020-08-05.csv.gz
 
-  #generate_practice_measures_2021-08-04:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2021-08-04.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2021-08-04
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2021-08-04.csv.gz
+  generate_practice_measures_2021-08-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2021-08-04.csv.gz
+      --
+      --practice_measures
+      --start_intv 2021-08-04
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2021-08-04.csv.gz
 
-  #generate_practice_measures_2022-08-03:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2022-08-03.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2022-08-03
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2022-08-03.csv.gz
+  generate_practice_measures_2022-08-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2022-08-03.csv.gz
+      --
+      --practice_measures
+      --start_intv 2022-08-03
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2022-08-03.csv.gz
 
-  #generate_practice_measures_2023-08-02:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/practice_measures/practice_measures_2023-08-02.csv.gz
-  #    --
-  #    --practice_measures
-  #    --start_intv 2023-08-02
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/practice_measures/practice_measures_2023-08-02.csv.gz
+  generate_practice_measures_2023-08-02:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_2023-08-02.csv.gz
+      --
+      --practice_measures
+      --start_intv 2023-08-02
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_2023-08-02.csv.gz
 
   generate_app_measures_intv_1:
      run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
