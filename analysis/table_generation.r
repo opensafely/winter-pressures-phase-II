@@ -28,7 +28,7 @@ practice_measures <- read.csv(glue('output/practice_measures/proc_practice_measu
 
 # ------------ Functions -----------------------------------------------------------
 
-aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, folder) {
+aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, folder, suffix) {
 
   # Aggregates timetrends for patient charcteristics (col_name), faceted by another characteristics, & can be filtered to only some population
   # Args:
@@ -68,10 +68,10 @@ aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, fold
     group_by(across(all_of(group_vars))) %>%
     summarise(numerator_total = sum(numerator), denominator_total = sum(denominator), measure_rate_per_1000=(sum(numerator)/sum(denominator))*1000, .groups = 'drop')
 
-  write.csv(df, glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}.csv"))
+  write.csv(df, glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 }
 
-plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder) {
+plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, suffix) {
   # Plots aggregated data
   # Args:
   #  df: dataframe to be plotted
@@ -94,7 +94,7 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder) {
   }
 
   # Load data
-  df <- read.csv(glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}.csv"))
+  df <- read.csv(glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 
   # Plot
   p <- ggplot(df, aes(x=interval_start, y=measure_rate_per_1000, color=measure, group=measure)) +
@@ -108,7 +108,7 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder) {
     p <- p + facet_wrap(reformulate(main_col))
   }
   # Save plot
-  ggsave(glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}.png"), plot=p)
+  ggsave(glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"), plot=p)
 }
 
 # --- Aggregating unstratified appointment and measures data ----------------------------------------------
@@ -119,8 +119,8 @@ practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
 # total_app_df = total instances of each measure in interval using valid appointments (start_date == seen_date),
 # removing stratification by groupby criteria
-aggregate_trends_by_facet(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "total_measures")
-plot_aggregated_data(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "total_measures")
+aggregate_trends_by_facet(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "total_measures", suffix)
+plot_aggregated_data(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "total_measures", suffix)
 
 # --- Aggregating measures stratified by patient characteristics ------------------------------------------------
 
@@ -129,15 +129,15 @@ plot_aggregated_data(measures, main_col = NULL, facet_col = NULL, filter_col = N
 
 start_index = which(names(measures) == "numerator") + 1
 for(col in colnames(measures)[start_index:(length(measures) - 1)]){
-  aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures")
-  plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures")
+  aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures", suffix)
+  plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures", suffix)
 }
 
 # --- Aggregating measures stratified by practice characteristics ------------------------------------------------
 start_index = which(names(practice_measures) == "numerator") + 1
 for(col in colnames(practice_measures)[start_index:(length(practice_measures) - 1)]){
-  aggregate_trends_by_facet(practice_measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "practice_measures")
-  plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "practice_measures")
+  aggregate_trends_by_facet(practice_measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "practice_measures", suffix)
+  plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "practice_measures", suffix)
 }
 
 # --- Aggregating measures stratified by vax status and comorbidities ------------------------------------------------

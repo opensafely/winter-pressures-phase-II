@@ -101,15 +101,15 @@ yaml_appt_report = yaml_appt_report + yaml_appt_processing
 
 # --- YAML FILE PROCESSING ---
 yaml_processing = """
-  #generate_pre_processing:
-  #  run: python:latest analysis/pre_processing.py
-  #  needs: [{needs_list}]
-  #  outputs:
-  #    highly_sensitive:
-  #      practice_measure: output/practice_measures/proc_practice_measures.csv.gz
-  #      patient_measure: output/patient_measures/proc_patient_measures.csv.gz
-  #    moderately_sensitive:
-  #      frequency_table: output/patient_measures/frequency_table.csv
+  generate_pre_processing:
+    run: python:latest analysis/pre_processing.py
+    needs: [{needs_list}]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures.csv.gz
+        patient_measure: output/patient_measures/proc_patient_measures.csv.gz
+      moderately_sensitive:
+        frequency_table: output/patient_measures/frequency_table.csv
   generate_tables:
     run: r:latest analysis/table_generation.r
     needs: [generate_pre_processing]
@@ -155,6 +155,17 @@ yaml_test = '''
         patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table_test.csv
+  generate_tables_test:
+    run: r:latest analysis/table_generation.r --test
+    needs: [generate_pre_processing_test]
+    outputs:
+      moderately_sensitive:
+        total_measures_tables_test: output/total_measures/plots/*_test.csv
+        practice_measures_tables_test: output/practice_measures/plots/*_test.csv
+        patient_measures_tables_test: output/patient_measures/plots/*_test.csv
+        total_measures_plots_test: output/total_measures/plots/*_test.png
+        practice_measures_plots_test: output/practice_measures/plots/*_test.png
+        patient_measures_plots_test: output/patient_measures/plots/*_test.png
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:
