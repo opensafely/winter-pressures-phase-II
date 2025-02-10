@@ -6,7 +6,8 @@ from ehrql.tables.tpp import (
     clinical_events,
     practice_registrations,
     appointments,
-    vaccinations
+    vaccinations,
+    emergency_care_attendances
 )
 
 from queries import *
@@ -128,6 +129,14 @@ seen_appts_in_interval = create_seen_appts_in_interval(study_start_date, study_e
 # Number of appointments in interval
 dataset.seen_in_interval = count_seen_in_interval(seen_appts_in_interval)
 dataset.start_in_interval = count_start_in_interval(study_start_date, study_end_date)
+
+# Count number of consultations in interval
+dataset.online_consult = count_clinical_consultations(online_consult, study_start_date, study_end_date)
+dataset.call_from_patient = count_clinical_consultations('25691000000103',study_start_date, study_end_date)
+dataset.call_from_gp = count_clinical_consultations('24671000000101',study_start_date, study_end_date)
+dataset.GP_ooh_admin = count_clinical_consultations('401165003',study_start_date, study_end_date)
+dataset.tele_consult = count_clinical_consultations('386472008',study_start_date, study_end_date)
+dataset.emergency_care = count_emergency_care_attendance(study_start_date, study_end_date)
 
 # Number of follow-up appointments:
 dataset.follow_up_app = count_follow_up(study_start_date, seen_appts_in_interval)

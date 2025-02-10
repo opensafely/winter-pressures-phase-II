@@ -6,7 +6,8 @@ from ehrql.tables.tpp import (
     clinical_events,
     practice_registrations,
     appointments,
-    vaccinations
+    vaccinations,
+    emergency_care_attendances
 )
 from queries import *
 from codelist_definition import *
@@ -21,7 +22,7 @@ if test == True:
 else:
     NUM_WEEKS = 52
 
-# Exclusion criteria ---
+#  ---------------------- Inclusion criteria --------------------------------
 
 # Age 0 - 110 (as per WP2)
 age_at_interval_start = patients.age_on(INTERVAL.start_date)
@@ -42,7 +43,7 @@ was_female_or_male = patients.sex.is_in(["female", "male"])
 has_deprivation_index = addresses.for_patient_on(INTERVAL.start_date).imd_rounded.is_not_null()
 has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice_nuts1_region_name.is_not_null()
 
-# Patient characteristics ---
+# ---------------------- Patient subgroups --------------------------------
 
 # Age subgroups
 age = age_at_interval_start
@@ -118,10 +119,19 @@ comorbid_mh = check_chronic_condition(comorbid_dict["mental_health"], INTERVAL.s
 comorbid_neuro = check_chronic_condition(comorbid_dict["neuro"], INTERVAL.start_date)
 comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.start_date)
 
-# Measures ---
+# ---------------------- Measures --------------------------------
+
 measures_to_add = {}
 # Valid appointments are those where seen_date is in interval
 seen_appts_in_interval = create_seen_appts_in_interval(INTERVAL.start_date, INTERVAL.end_date)
+
+# Count number of consultations in interval
+measures_to_add['online_consult'] = count_clinical_consultations(online_consult, INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['call_from_patient'] = count_clinical_consultations('25691000000103',INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['call_from_gp'] = count_clinical_consultations('24671000000101',INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['GP_ooh_admin'] = count_clinical_consultations('401165003',INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['tele_consult'] = count_clinical_consultations('386472008',INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['emergency_care'] = count_emergency_care_attendance(INTERVAL.start_date, INTERVAL.end_date)
 
 # Number of appointments in interval
 measures_to_add['seen_in_interval'] = count_seen_in_interval(seen_appts_in_interval)
@@ -141,8 +151,8 @@ measures_to_add['vax_app_covid'] = count_vaccinations(INTERVAL.start_date, INTER
 measures_to_add['secondary_referral'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date)
 
 # Count number of appointments with cancelled/waiting status during interval
-app_status_code = ['Cancelled by Unit','Waiting']
-app_status_measure = ['cancelled_app', 'waiting_app']
+app_status_code = ['Did Not Attend', 'Waiting', 'Cancelled by Patient', 'Cancelled by Unit']
+app_status_measure = [status.replace(" ", "") for status in app_status_code]
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
 
@@ -162,8 +172,7 @@ if add_reason == True:
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], seen_appts_in_interval)
 
-
-# Defining measures ---
+# ---------------------- Define measures --------------------------------
 
 if patient_measures == True:
     # Run patient script if patient flag called

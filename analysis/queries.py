@@ -9,7 +9,8 @@ from ehrql.tables.tpp import (
     clinical_events,
     practice_registrations,
     appointments,
-    vaccinations
+    vaccinations,
+    emergency_care_attendances
 )
 
 def create_seen_appts_in_interval(interval_start, interval_end):
@@ -250,3 +251,27 @@ def check_resolved_condition(diagnosis_codelist, resolution_codelist, interval_s
             (last_resolution_date < last_diagnosis_date)
         )
     ).when_null_then(False)
+
+def count_clinical_consultations(code, interval_start, interval_end):
+    """
+    Counts consultations during the interval.
+    Args:
+        code: Code or list of codes for interaction
+    Returns:
+        The count of consultations per patient.
+    """
+    if isinstance(code, str):
+        code = [code]
+    return clinical_events.where(clinical_events.snomedct_code.is_in(code)
+                                  & clinical_events.date.is_on_or_between(interval_start, interval_end)).count_for_patient()
+
+def count_emergency_care_attendance(interval_start, interval_end):
+    """
+    Counts emergency care attendances during the interval.
+    Returns:
+        The count of emergency care attendances per patient.
+    """
+    return emergency_care_attendances.where(emergency_care_attendances
+                                            .arrival_date
+                                            .is_on_or_between(interval_start, interval_end)
+                                            ).count_for_patient()

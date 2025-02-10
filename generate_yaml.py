@@ -36,15 +36,15 @@ flags = ["patient_measures", "practice_measures"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_template = """
-  #generate_{flag}_{date}:
-  #  run: ehrql:v1 generate-measures analysis/wp_measures.py
-  #    --output output/{flag}/{flag}_{date}.csv.gz
-  #    --
-  #    --{flag}
-  #    --start_intv {date}
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/{flag}/{flag}_{date}.csv.gz
+  generate_{flag}_{date}:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/{flag}/{flag}_{date}.csv.gz
+      --
+      --{flag}
+      --start_intv {date}
+    outputs:
+      highly_sensitive:
+        dataset: output/{flag}/{flag}_{date}.csv.gz
 """
 
 yaml_body = ""
