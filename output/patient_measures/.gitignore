@@ -6,3 +6,7 @@
 
 # Allow this .gitignore file
 !/.gitignore
+
+# Allow .gitkeep files to track empty folders
+!**/.gitkeep
+
