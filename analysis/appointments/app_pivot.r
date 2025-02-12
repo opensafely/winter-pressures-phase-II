@@ -1,13 +1,11 @@
-"""
-Description:
-This script reads in the four csv files containing the rounded midpoint values for the appointment measures, 
-combines them into a single dataframe, and then pivots the data so that the numerator or ratios values are in columns by status. 
+# Description:
+# This script reads in the four csv files containing the rounded midpoint values for the appointment measures, 
+# combines them into a single dataframe, and then pivots the data so that the numerator or ratios values are in columns by status. 
 
-Outputs:
-- app_measures_combined.csv: Combined dataframe of the four rounded midpoint csv files
-- app_pivot_counts.csv: Pivot table of the counts of numerator values by status
-- app_pivot_ratios.csv: Pivot table of the ratios of ratio values by status
-"""
+# Outputs:
+# - app_measures_combined.csv: Combined dataframe of the four rounded midpoint csv files
+# - app_pivot_counts.csv: Pivot table of the counts of numerator values by status
+# - app_pivot_ratios.csv: Pivot table of the ratios of ratio values by status
 
 library(tidyverse)
 library(glue)
@@ -42,13 +40,15 @@ df_pivot_counts <- df_pivot %>%
         rename(
             numerator = midpoint_rounded_numerator,
             denominator = midpoint_rounded_denominator,) %>%
-                pivot_wider(names_from = status, values_from = numerator)
+                pivot_wider(names_from = status, values_from = numerator) %>%
+                    rename(Total = "NA")
 
 # Select ratios and round to 5 decimal places
 df_pivot_ratios <- df_pivot %>%
     select(- c(interval_end, midpoint_rounded_numerator, midpoint_rounded_denominator)) %>%
         pivot_wider(names_from = status, values_from = ratio) %>%
-            mutate(across(-c(measure, interval_start), round, 5))
+            mutate(across(-c(measure, interval_start), round, 5)) %>%
+                rename(Total = "NA")
 
 write_csv(df_pivot_counts,"output/appointments/app_pivot_counts.csv")
 write_csv(df_pivot_ratios,"output/appointments/app_pivot_ratios.csv")
