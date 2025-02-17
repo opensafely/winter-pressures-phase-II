@@ -208,7 +208,6 @@ actions:
      outputs:
        moderately_sensitive:
          table_rounded: output/appointments/app_measures_rounded_*.csv
-         table_pivot: output/appointments/app_pivot_table_*.csv
 
   generate_pre_processing:
     run: python:latest analysis/pre_processing.py
