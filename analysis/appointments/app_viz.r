@@ -1,40 +1,35 @@
 library(ggplot2)
 library(dplyr)
 library(glue)
+library(reshape2)
 
 # Import appointments data
-appointments <- read.csv('output/appointments/app_measures.csv')
+appointments <- read.csv('output/appointments/app_pivot_counts.csv')
 appointments$interval_start <- as.Date(appointments$interval_start)
-appointments$interval_end <- as.Date(appointments$interval_end)
 
-# Grouping into broader completed/uncompleted appointment categories using mutate and case_when
-appointments <- appointments %>%
-  mutate(
-    category = case_when(
-      grepl("start_and_reasonable_seen_(DidNotAttend|Requested|Blocked|Waiting|CancelledbyPatient|CancelledbyUnit|CancelledbyOtherService|NoAccessVisit|CancelledDueToDeath)", measure) ~ "start_and_reasonable_seen_Uncompleted",
-      grepl("seen_and_reasonable_start_(DidNotAttend|Requested|Blocked|Waiting|CancelledbyPatient|CancelledbyUnit|CancelledbyOtherService|NoAccessVisit|CancelledDueToDeath)", measure) ~ "seen_and_reasonable_start_Uncompleted",
-      grepl("null_start_(DidNotAttend|Requested|Blocked|Waiting|CancelledbyPatient|CancelledbyUnit|CancelledbyOtherService|NoAccessVisit|CancelledDueToDeath)", measure) ~ "null_start_Uncompleted",
-      grepl("null_seen_(DidNotAttend|Requested|Blocked|Waiting|CancelledbyPatient|CancelledbyUnit|CancelledbyOtherService|NoAccessVisit|CancelledDueToDeath)", measure) ~ "null_seen_Uncompleted",
-      grepl("start_and_reasonable_seen_(Arrived|InProgress|Finished|Visit|PatientWalkedOut)", measure) ~ "start_and_reasonable_seen_Completed",
-      grepl("seen_and_reasonable_start_(Arrived|InProgress|Finished|Visit|PatientWalkedOut)", measure) ~ "seen_and_reasonable_start_Completed",
-      grepl("null_start_(Arrived|InProgress|Finished|Visit|PatientWalkedOut)", measure) ~ "null_start_Completed",
-      grepl("null_seen_(Arrived|InProgress|Finished|Visit|PatientWalkedOut)", measure) ~ "null_seen_Completed",
-      TRUE ~ measure
-    )
-  )
-
-# Creating the dataframe for the lineplot that only contains start-seen-status combinations
-start_seen_combos <- c("start_and_reasonable_seen_Uncompleted","seen_and_reasonable_start_Uncompleted",
-"null_start_Uncompleted","null_seen_Uncompleted","start_and_reasonable_seen_Completed","seen_and_reasonable_start_Completed",
-"null_start_Completed","null_seen_Completed")
-start_seen_combos_df <- appointments %>%
-  filter(category %in% start_seen_combos) %>%
-  group_by(interval_start, category) %>%
-  summarise(numerator = sum(numerator, na.rm = TRUE))  # Summing the numerator
-
-# Create line plot for each of status for each start-seen-status combination
-plot <- ggplot(start_seen_combos_df, aes(x=interval_start, y=numerator, group = category, color=category)) +
-    geom_line()+
-    geom_point()+
-    labs(x='Interval start date', y='Count', title='Start and seen statuses')
-ggsave(glue('output/appointments/start_seen_combos_frequencies.png'))
+# Heatmap
+# Filter out unnecessary columns
+intervals <- unique(appointments$interval_start)
+for (i in 1:length(intervals)) {
+  appointments_filtered <- appointments %>% filter(interval_start == intervals[i])
+  appointments_filtered <- appointments_filtered %>% select(-c(interval_start, denominator, Total))
+  # Reshape to long format
+  df_melted <- melt(appointments_filtered)
+  df_prop <- df_melted %>%
+    group_by(measure) %>%
+      mutate(prop = value / sum(value)) %>%
+       ungroup() %>%
+          mutate(prop_label = case_when(
+              prop > 0.001 ~ scales::percent(prop, accuracy = 0.001),  # Show proportion if > 0.001%
+              prop > 0     ~ "<0.001%",  # Label trace values
+              TRUE         ~ "0%"       # Ensure zeros display as "0%"
+            ))
+  ggplot(df_prop, aes(x = measure, y = variable, fill = prop)) +
+    geom_tile() +
+    scale_fill_gradient(low = "white", high = "red") +
+    geom_text(aes(label = prop_label), color = "black", size = 3) +
+    labs(title = glue("Measure vs. Appointment Status {intervals[i]}"), x = "Measure", y = "Status") +
+    theme(axis.text.x = element_text(angle = 15, vjust = 0.7))
+  # Save plot
+  ggsave(glue("output/appointments/app_heatmap_{i}.png"), width = 13, height = 6, dpi = 300)
+}
