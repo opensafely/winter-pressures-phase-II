@@ -8,37 +8,22 @@ from datetime import datetime, timedelta
 import os
 from utils import generate_annual_dates
 from wp_config_setup import *
+import resource
 
-# -------- Set up variables ----------------------------------
-if test == True:
-    dates = ["2016-08-10"]
-    suffix = "_test"
-else:
-    dates = generate_annual_dates(2016, '2024-07-31')
-    suffix = ""
-flags = ["patient_measures", "practice_measures"]
-study_start_date = dates[0]
+def log_memory_usage(label=""):
+    usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    print(f"usage at {label}: {usage} kb")  # In kilobytes on Linux, bytes on macOS
 
-# -------- Load and concatenate measures ----------------------------------
-
-patient_df_dict = {}
-practice_df_dict = {}
-
-# Load and format data for each interval
-for date in dates:
-
-    # Load data for each interval and each flag
-    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz")
-    practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz")
-    
-# Concatenate all DataFrames into one
-patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
-practice_df = pd.concat(practice_df_dict.values(), ignore_index=True)
-del patient_df_dict, practice_df_dict
-
-# -------- Shared processing -------------------------------------------
-for df in [patient_df, practice_df]:
-
+def replace_nums(df):
+    '''
+    Replaces numerical values with their corresponding string values for the following columns:
+    - Rural urban classification
+    - Ethnicity
+    Args:
+        df (pd.DataFrame): DataFrame to be processed
+    Returns:
+        pd.DataFrame: Processed DataFrame
+    '''
     # Reformat rur_urb column
     df['rur_urb_class'].replace(
         {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
@@ -54,39 +39,37 @@ for df in [patient_df, practice_df]:
         inplace=True)
     df['ethnicity'].fillna('Not Stated', inplace=True)
 
-# -------- Patient measures processing ----------------------------------
+    return df
 
-# Create measure where: numerator = appt for disease X with prescription, denominator = appt for disease X
-#numerators = ["back_pain_opioid", "chest_inf_abx", "chest_inf_abx"]
-#denominators = ["back_pain", "chest_inf", "pneum"]
-
-# List of column names to match the numerator-denominator pairs by
-#index = patient_df.columns.get_loc("age")
-#subgroups = list(patient_df.columns[index : ])
-#subgroups = subgroups + ["interval_start" , "interval_end"]
-
-#for numerator, denominator in zip(numerators, denominators):
-#
-#    tmp_df = patient_df[patient_df['measure'].isin([numerator, denominator])]
-#    breakpoint()
-#    tmp_df = (tmp_df.groupby(subgroups)
-#            .apply(lambda group: pd.Series({
-#                'measure': f'prop_{numerator}',
-#                'numerator': group.loc[group['measure'] == numerator, 'numerator'].iloc[0],
-#                'denominator': group.loc[group['measure'] == denominator, 'numerator'].iloc[0],
-#                'ratio': group.loc[group['measure'] == numerator, 'numerator'].iloc[0] / 
-#                        group.loc[group['measure'] == denominator, 'numerator'].iloc[0]
-#            }))
-#            .reset_index(drop=True))
-#    patient_df = pd.concat([patient_df, tmp_df], ignore_index=True)
-
-# Save processed file
-if test:
-    patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test.csv.gz")
+# -------- Set up variables ----------------------------------
+if test == True:
+    dates = ["2016-08-10"]
+    suffix = "_test"
 else:
-    patient_df.to_csv(f"output/patient_measures/proc_patient_measures.csv.gz")
+    dates = generate_annual_dates(2016, '2024-07-31')
+    suffix = ""
+flags = ["patient_measures", "practice_measures"]
+study_start_date = dates[0]
 
+log_memory_usage(label="Before loading data")
 # -------- Practice measures processing ----------------------------------
+practice_df_dict = {}
+
+# Load and format data for each interval
+for date in dates:
+
+    # Load data for each interval and each flag
+    practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz")
+    
+    # Concatenate all DataFrames into one
+    practice_df = pd.concat(practice_df_dict.values(), ignore_index=True)
+
+    log_memory_usage(label=f"After loading practice {date}")
+
+del practice_df_dict
+log_memory_usage(label=f"After deletion of practices_dict")
+# Replace numerical values with string values
+practice_df = replace_nums(practice_df)
 
 # Group measures by practice, using aggregate functions of interest
 practice_df = (
@@ -132,6 +115,56 @@ else:
     practice_df.to_csv(f"output/practice_measures/proc_practice_measures.csv.gz")
 
 del practice_df
+log_memory_usage(label=f"After deletion of practices_df")
+# -------- Patient measures processing ----------------------------------
+
+patient_df_dict = {}
+
+# Load and format data for each interval
+for date in dates:
+
+    # Load data for each interval and each flag
+    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz")
+        
+    # Concatenate all DataFrames into one
+    patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
+
+    log_memory_usage(label=f"After loading patient {date}")
+
+del patient_df_dict
+log_memory_usage(label=f"After deletion of practices_dict")
+# Replace numerical values with string values
+patient_df = replace_nums(patient_df)
+
+# Create measure where: numerator = appt for disease X with prescription, denominator = appt for disease X
+#numerators = ["back_pain_opioid", "chest_inf_abx", "chest_inf_abx"]
+#denominators = ["back_pain", "chest_inf", "pneum"]
+
+# List of column names to match the numerator-denominator pairs by
+#index = patient_df.columns.get_loc("age")
+#subgroups = list(patient_df.columns[index : ])
+#subgroups = subgroups + ["interval_start" , "interval_end"]
+
+#for numerator, denominator in zip(numerators, denominators):
+#
+#    tmp_df = patient_df[patient_df['measure'].isin([numerator, denominator])]
+#    breakpoint()
+#    tmp_df = (tmp_df.groupby(subgroups)
+#            .apply(lambda group: pd.Series({
+#                'measure': f'prop_{numerator}',
+#                'numerator': group.loc[group['measure'] == numerator, 'numerator'].iloc[0],
+#                'denominator': group.loc[group['measure'] == denominator, 'numerator'].iloc[0],
+#                'ratio': group.loc[group['measure'] == numerator, 'numerator'].iloc[0] / 
+#                        group.loc[group['measure'] == denominator, 'numerator'].iloc[0]
+#            }))
+#            .reset_index(drop=True))
+#    patient_df = pd.concat([patient_df, tmp_df], ignore_index=True)
+
+# Save processed file
+if test:
+    patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test.csv.gz")
+else:
+    patient_df.to_csv(f"output/patient_measures/proc_patient_measures.csv.gz")
 
 # -------- Frequency table generation ----------------------------------
 
