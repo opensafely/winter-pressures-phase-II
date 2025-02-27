@@ -16,4 +16,4 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@evansd/custom-actions-list
       with:
-        actions: generate_pre_processing, generate_tables
+        actions: generate_pre_processing generate_tables
