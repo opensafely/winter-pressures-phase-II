@@ -1,5 +1,5 @@
 # TODO:
-# Uncomment the actions once the job server works again
+# Add actions for patient and practice pre_processing files
 
 """
 Description: 
@@ -48,14 +48,19 @@ yaml_template = """
 """
 
 yaml_body = ""
-all_needs = []
+needs = {}
 
+# Iterate over flags
 for flag in flags:
-    for date in dates:
-        yaml_body += yaml_template.format(flag = flag, date = date)
-        all_needs.append(f"generate_{flag}_{date}")
+  needs[flag] = []
 
-needs_list = ", ".join(all_needs)
+  # Iterate over dates and generate yaml list of needs for each combination
+  for date in dates:
+    yaml_body += yaml_template.format(flag = flag, date = date)
+    needs[flag].append(f"generate_{flag}_{date}")
+
+  # Join list into string for each flag
+  needs[flag] = ", ".join(needs[flag])
 
 # --- YAML APPT REPORT ---
 yaml_appt_report = ""
@@ -101,18 +106,23 @@ yaml_appt_report = yaml_appt_report + yaml_appt_processing
 
 # --- YAML FILE PROCESSING ---
 yaml_processing = """
-  generate_pre_processing:
-    run: python:latest analysis/pre_processing.py
-    needs: [{needs_list}]
+  generate_pre_processing_practice:
+    run: python:latest analysis/pre_processing_practice.py
+    needs: [{needs_practice}]
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures.csv.gz
+  generate_pre_processing_patient:
+    run: python:latest analysis/pre_processing_patient.py
+    needs: [{needs_patient}]
+    outputs:
+      highly_sensitive:
         patient_measure: output/patient_measures/proc_patient_measures.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table.csv
   generate_tables:
     run: r:latest analysis/table_generation.r
-    needs: [generate_pre_processing]
+    needs: [generate_pre_processing_practice, generate_pre_processing_patient]
     outputs:
       moderately_sensitive:
         total_measures_tables: output/total_measures/plots/*.csv
@@ -122,7 +132,8 @@ yaml_processing = """
         practice_measures_plots: output/practice_measures/plots/*.png
         patient_measures_plots: output/patient_measures/plots/*.png
 """
-yaml_processing = yaml_processing.format(needs_list = needs_list)
+yaml_processing = yaml_processing.format(needs_practice = needs["practice_measures"], 
+                                         needs_patient = needs["patient_measures"])
 
 # --- YAML TESTING ---
 yaml_test = '''
@@ -146,18 +157,23 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
-  generate_pre_processing_test:
-    run: python:latest analysis/pre_processing.py --test
-    needs: [generate_patient_measures_test, generate_practice_measures_test]
+  generate_pre_processing_patient_test:
+    run: python:latest analysis/pre_processing_patient.py --test
+    needs: [generate_patient_measures_test]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
         patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
       moderately_sensitive:
         frequency_table: output/patient_measures/frequency_table_test.csv
+  generate_pre_processing_practice_test:
+    run: python:latest analysis/pre_processing_practice.py --test
+    needs: [generate_practice_measures_test]
+    outputs:
+      highly_sensitive:
+        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
   generate_tables_test:
     run: r:latest analysis/table_generation.r --test
-    needs: [generate_pre_processing_test]
+    needs: [generate_pre_processing_practice_test, generate_pre_processing_patient_test]
     outputs:
       moderately_sensitive:
         total_measures_tables_test: output/total_measures/plots/*_test.csv
