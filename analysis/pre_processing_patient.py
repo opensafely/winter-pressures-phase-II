@@ -29,12 +29,11 @@ for date in dates:
 
     # Load data for each interval and each flag
     patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz")
-        
-    # Concatenate all DataFrames into one
-    patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
 
     log_memory_usage(label=f"After loading patient {date}")
 
+# Concatenate all DataFrames into one
+patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
 del patient_df_dict
 log_memory_usage(label=f"After deletion of practices_dict")
 # Replace numerical values with string values
