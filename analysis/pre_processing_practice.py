@@ -46,14 +46,15 @@ for date in dates:
     "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
     }
     practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz",
-                                         true_values=["T"], false_values=["F"])
-    # print type of each column
-    print(practice_df_dict[date].dtypes)
-    # Concatenate all DataFrames into one
-    practice_df = pd.concat(practice_df_dict.values(), ignore_index=True)
+                                         dtype = dtype_dict, true_values=["T"], false_values=["F"])
 
     log_memory_usage(label=f"After loading practice {date}")
 
+# Concatenate all DataFrames into one
+practice_df = pd.concat(practice_df_dict.values(), ignore_index=True)
+# print type of each column
+print(f"Data types of input: {practice_df.dtypes}")
+log_memory_usage(label=f"Before deletion of practices_dict")
 del practice_df_dict
 log_memory_usage(label=f"After deletion of practices_dict")
 # Replace numerical values with string values
@@ -95,6 +96,8 @@ for col in new_cols:
     practice_df[col] = pd.qcut(practice_df[col], q=5, duplicates="drop")
 
 practice_df.drop(columns=cols_to_convert, inplace=True)
+
+print(f"Data types of output dataframe: {practice_df.dtypes}")
 
 # Save processed file
 if test:
