@@ -1,3 +1,6 @@
+#TODO:
+# Break processing into intervals
+# Split aggregation into chunk-based processing
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -26,14 +29,22 @@ patient_df_dict = {}
 
 # Load and format data for each interval
 for date in dates:
-
+    dtype_dict = {
+        'measure': 'category', 'interval_start' : 'category', 'interval_end' : 'category', 'ratio' : 'float32', 'numerator' : 'int64', 
+        'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 'imd_quintile' : 'int8', 'carehome' : 'category',
+        'region' : 'category', 'rur_urb_class' : 'object', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
+        'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_depres': 'bool',
+        'comorbid_mh': 'bool', 'comorbid_neuro': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
+        'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
+    }
     # Load data for each interval and each flag
-    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz")
-
+    patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz",
+                                        dtype=dtype_dict, true_values=["T"], false_values=["F"])
     log_memory_usage(label=f"After loading patient {date}")
 
 # Concatenate all DataFrames into one
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
+print(f"Data types of input: {patient_df.dtypes}")
 del patient_df_dict
 log_memory_usage(label=f"After deletion of practices_dict")
 # Replace numerical values with string values
