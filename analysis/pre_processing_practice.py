@@ -1,5 +1,6 @@
 # TODO:
-# Add datatype argument to read_csv if memory still fails
+# Break processing into intervals
+# Split aggregation into chunk-based processing
 import pandas as pd
 from scipy import stats
 import numpy as np
