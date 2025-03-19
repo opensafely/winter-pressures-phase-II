@@ -1,6 +1,4 @@
 # TODO:
-# Break processing into intervals
-# Split aggregation into chunk-based processing
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -8,6 +6,7 @@ import argparse
 from datetime import datetime, timedelta
 import os
 from utils import generate_annual_dates, log_memory_usage, replace_nums
+import pyarrow.feather as feather
 from wp_config_setup import *
 
 # -------- Set up variables ----------------------------------
@@ -39,11 +38,11 @@ for date in dates:
     "denominator": "int64",
     "age": "category",
     "sex": "category",
-    "ethnicity": "object", # nullable integer type (not 'I' not 'i')
+    "ethnicity": "object",
     "imd_quintile": "int8", # range of int8 is -128 to 127
     "carehome": "category",
     "region": "category",
-    "rur_urb_class": "object",
+    "rur_urb_class": "Int8", # nullable integer type (not 'I' not 'i')
     "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
     }
     practice_df_dict[date] = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz",
@@ -59,30 +58,32 @@ log_memory_usage(label=f"Before deletion of practices_dict")
 del practice_df_dict
 log_memory_usage(label=f"After deletion of practices_dict")
 # Replace numerical values with string values
-practice_df = replace_nums(practice_df)
+practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
+print(practice_df.head())
 
-# Group measures by practice, using aggregate functions of interest
+# Aggregate by practice and assign counts of each demographic group
 practice_df = (
-    practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"])
+    practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"]) #SHOULD THIS BE PER MEASURE??
     .agg(
         numerator=("numerator", "sum"),
         list_size=("denominator", "sum"),
-        count_female=("sex", lambda x: (x == "female").sum()),
-        count_over_65=("age", lambda x: ((x == "adult_under_80") | (x == "adult_over_80")).sum()),
-        count_under_5=("age", lambda x: (x == "preschool").sum()),
-        median_imd=("imd_quintile", "median"),
-        count_ethnic=("ethnicity", lambda x: (x != 'White').sum()),
-        mode_rur_urb=("rur_urb_class", lambda x: x.mode()),
+        count_female=("denominator", lambda x: x.loc[practice_df["sex"] == "female"].sum()),
+        count_over_65=("denominator", lambda x: x.loc[(practice_df["age"] == "adult_under_80") | (practice_df["age"] == "adult_over_80")].sum()),
+        count_under_5=("denominator", lambda x: x.loc[practice_df["age"] == "preschool"].sum()),
+        count_ethnic=("denominator", lambda x: x.loc[practice_df["ethnicity"] != 'White'].sum()),
+        count_low_imd=("denominator", lambda x: x.loc[practice_df["imd_quintile"] <= 2].sum()), # low imd is 1-2
+        count_rural=("denominator", lambda x: x.loc[practice_df["rur_urb_class"] >= 5].sum()), # rural is 5-8
+        count_carehome=("denominator", lambda x: x.loc[practice_df["carehome"] == True].sum())
     )
     .reset_index()
 )
 
-# Convert counts to percentages
+# Standardize counts for each practice characteristic by list size
 cols_to_convert = ["count_female", "count_over_65", "count_under_5"
-                , "count_ethnic"
+                , "count_ethnic", "count_low_imd", "count_rural"
                 ]
 new_cols = ["pct_female", "pct_ovr_65", "pct_und_5"
-            , "pct_ethnic"
+            , "pct_ethnic", "pct_low_imd", "pct_rural"
             ]
 for index in range(0, len(cols_to_convert)):
     practice_df[new_cols[index]] = (
@@ -94,7 +95,7 @@ practice_df['denominator'] = practice_df['list_size']
 # Convert other numeric cols to quintiles
 new_cols.append("list_size")
 for col in new_cols:
-    practice_df[col] = pd.qcut(practice_df[col], q=5, duplicates="drop")
+    practice_df[f'{col}_quint'] = pd.qcut(practice_df[col], q=5, duplicates="drop")
 
 practice_df.drop(columns=cols_to_convert, inplace=True)
 
@@ -102,7 +103,7 @@ print(f"Data types of output dataframe: {practice_df.dtypes}")
 
 # Save processed file
 if test:
-    practice_df.to_csv(f"output/practice_measures/proc_practice_measures_test.csv.gz")
+    feather.write_feather(practice_df, "output/practice_measures/proc_practice_measures_test.arrow")
 else:
-    practice_df.to_csv(f"output/practice_measures/proc_practice_measures.csv.gz")
+    feather.write_feather(practice_df, "output/practice_measures/proc_practice_measures.arrow")
 

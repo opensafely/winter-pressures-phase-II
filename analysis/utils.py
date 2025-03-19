@@ -41,7 +41,7 @@ def log_memory_usage(label=""):
     usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     print(f"usage at {label}: {usage} kb", flush=True)  # In kilobytes on Linux, bytes on macOS
 
-def replace_nums(df):
+def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
     '''
     Replaces numerical values with their corresponding string values for the following columns:
     - Rural urban classification
@@ -52,20 +52,24 @@ def replace_nums(df):
         pd.DataFrame: Processed DataFrame
     '''
     # Reformat rur_urb column
-    df['rur_urb_class'].replace(
-        {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
-        4: 'Urban city and town in a sparse setting', 5: 'Rural town and fringe',
-        6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
-        8: 'Rural village and dispersed in a sparse setting'},
-        inplace=True)
-    df['rur_urb_class'].fillna("Unknown", inplace = True)
-    #df['rur_urb_class'] = df['rur_urb_class'].astype('category')
+    if replace_rur_urb:
+        print('Replacing rur_urb')
+        df['rur_urb_class'].replace(
+            {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
+            4: 'Urban city and town in a sparse setting', 5: 'Rural town and fringe',
+            6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
+            8: 'Rural village and dispersed in a sparse setting'},
+            inplace=True)
+        df['rur_urb_class'].fillna("Unknown", inplace = True)
+        #df['rur_urb_class'] = df['rur_urb_class'].astype('category')
 
-    # Reformat ethnicity data
-    df['ethnicity'].replace(
-        {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
-        inplace=True)
-    df['ethnicity'].fillna('Not Stated', inplace=True)
-    #df['ethnicity'] = df['ethnicity'].astype('category')
+    if replace_ethnicity:
+        print('Replacing ethnicity')
+        # Reformat ethnicity data
+        df['ethnicity'].replace(
+            {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
+            inplace=True)
+        df['ethnicity'].fillna('Not Stated', inplace=True)
+        #df['ethnicity'] = df['ethnicity'].astype('category')
 
     return df
