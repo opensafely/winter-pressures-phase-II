@@ -18,6 +18,7 @@ if test == True:
 else:
     dates = generate_annual_dates(2016, '2024-07-31')
     suffix = ""
+flags = ["practice_measures"]
 study_start_date = dates[0]
 
 log_memory_usage(label="Before loading data")
@@ -36,23 +37,19 @@ for date in dates:
         'comorbid_mh': 'bool', 'comorbid_neuro': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
         'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
     }
-    # Load data for each interval
+    # Load data for each interval and each flag
     patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz",
                                         dtype=dtype_dict, true_values=["T"], false_values=["F"])
-    
-    # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
-    patient_df_dict[date]['rur_urb_class'] = patient_df_dict[date]['rur_urb_class'].apply(
-        lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
-        )
-    
-    # Aggregate by the demographic columns
-    patient_df_dict[date] = patient_df_dict[date].groupby(['measure', 'interval_start', 'interval_end', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
-                                                           'carehome', 'region', 'rur_urb_class'], as_index=False).agg(
+    log_memory_usage(label=f"After loading patient {date}")
+
+    # Aggregate by comorbidities
+    patient_df_dict[date] = patient_df_dict[date].groupby(['measure', 'interval_start', 'interval_end', 'age' , 'sex', 'ethnicity', 'imd_quintile',
+                                                           'comorbid_chronic_resp', 'comorbid_copd', 'comorbid_asthma', 'comorbid_dm', 'comorbid_htn', 
+                                                           'comorbid_depres', 'comorbid_mh', 'comorbid_neuro', 'comorbid_immuno', 'vax_flu_12m',
+                                                           'vax_covid_12m', 'vax_pneum_12m'], as_index=False).agg(
         numerator = ("numerator", "sum"),
         list_size=("denominator", "sum")
     ).reset_index()
-
-    log_memory_usage(label=f"After loading patient {date}")
 
 # Concatenate all DataFrames into one
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
