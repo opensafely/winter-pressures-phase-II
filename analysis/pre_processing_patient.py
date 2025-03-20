@@ -1,6 +1,7 @@
 #TODO:
-# Break processing into intervals
-# Split aggregation into chunk-based processing
+# Split into two outputs: 1) demographic-level 2) comoorbidity-level
+# Check if frequency table code at end needs updating
+# Change output to arrow files
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -48,7 +49,7 @@ print(f"Data types of input: {patient_df.dtypes}")
 del patient_df_dict
 log_memory_usage(label=f"After deletion of practices_dict")
 # Replace numerical values with string values
-patient_df = replace_nums(patient_df)
+patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
 
 # Save processed file
 if test:
