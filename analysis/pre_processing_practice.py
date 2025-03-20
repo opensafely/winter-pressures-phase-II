@@ -61,49 +61,71 @@ log_memory_usage(label=f"After deletion of practices_dict")
 practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
 print(practice_df.head())
 
-# Aggregate by practice and assign counts of each demographic group
+# Create boolean masks and multiply by denominator to get correct counts
+practice_df["denom_female"] = practice_df["denominator"] * (practice_df["sex"] == "female")
+practice_df["denom_over_65"] = practice_df["denominator"] * practice_df["age"].isin(["adult_under_80", "adult_over_80"])
+practice_df["denom_under_5"] = practice_df["denominator"] * (practice_df["age"] == "preschool")
+practice_df["denom_has_age"] = practice_df["denominator"] * practice_df["age"].notna()
+practice_df["denom_ethnic"] = practice_df["denominator"] * ((practice_df["ethnicity"] != "White") & practice_df["ethnicity"].notna())
+practice_df["denom_has_ethnicity"] = practice_df["denominator"] * practice_df["ethnicity"].notna()
+practice_df["denom_low_imd"] = practice_df["denominator"] * ((practice_df["imd_quintile"] <= 2) & practice_df["imd_quintile"].notna())
+practice_df["denom_has_imd"] = practice_df["denominator"] * practice_df["imd_quintile"].notna()
+practice_df["denom_rural"] = practice_df["denominator"] * ((practice_df["rur_urb_class"] >= 5) & practice_df["rur_urb_class"].notna())
+practice_df["denom_has_rural"] = practice_df["denominator"] * practice_df["rur_urb_class"].notna()
+practice_df["denom_carehome"] = practice_df["denominator"] * ((practice_df["carehome"] == True) & practice_df["carehome"].notna())
+practice_df["denom_has_carehome"] = practice_df["denominator"] * practice_df["carehome"].notna()
+
+# Perform efficient groupby and aggregation
 practice_df = (
-    practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"]) #SHOULD THIS BE PER MEASURE??
+    practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"])
     .agg(
         numerator=("numerator", "sum"),
         list_size=("denominator", "sum"),
-        count_female=("denominator", lambda x: x.loc[practice_df["sex"] == "female"].sum()),
-        count_over_65=("denominator", lambda x: x.loc[(practice_df["age"] == "adult_under_80") | (practice_df["age"] == "adult_over_80")].sum()),
-        count_under_5=("denominator", lambda x: x.loc[practice_df["age"] == "preschool"].sum()),
-        count_ethnic=("denominator", lambda x: x.loc[practice_df["ethnicity"] != 'White'].sum()),
-        count_low_imd=("denominator", lambda x: x.loc[practice_df["imd_quintile"] <= 2].sum()), # low imd is 1-2
-        count_rural=("denominator", lambda x: x.loc[practice_df["rur_urb_class"] >= 5].sum()), # rural is 5-8
-        count_carehome=("denominator", lambda x: x.loc[practice_df["carehome"] == True].sum())
+        count_female=("denom_female", "sum"),
+        count_over_65=("denom_over_65", "sum"),
+        count_under_5=("denom_under_5", "sum"),
+        count_has_age=("denom_has_age", "sum"),
+        count_ethnic=("denom_ethnic", "sum"),
+        count_has_ethnicity=("denom_has_ethnicity", "sum"),
+        count_low_imd=("denom_low_imd", "sum"),
+        count_has_imd=("denom_has_imd", "sum"),
+        count_rural=("denom_rural", "sum"),
+        count_has_rural=("denom_has_rural", "sum"),
+        count_carehome=("denom_carehome", "sum"),
+        count_has_carehome=("denom_has_carehome", "sum"),
     )
     .reset_index()
 )
 
+print(practice_df)
+
 # Standardize counts for each practice characteristic by list size
-cols_to_convert = ["count_female", "count_over_65", "count_under_5"
-                , "count_ethnic", "count_low_imd", "count_rural"
-                ]
-new_cols = ["pct_female", "pct_ovr_65", "pct_und_5"
-            , "pct_ethnic", "pct_low_imd", "pct_rural"
-            ]
-for index in range(0, len(cols_to_convert)):
-    practice_df[new_cols[index]] = (
-        practice_df[cols_to_convert[index]] / practice_df["list_size"]
-    )
+standardize_col = {
+    "count_female": "list_size",
+    "count_over_65": "count_has_age",
+    "count_under_5": "count_has_age",
+    "count_ethnic": "count_has_ethnicity",
+    "count_low_imd": "count_has_imd",
+    "count_rural": "count_has_rural",
+    "count_carehome": "count_has_carehome"
+}
+for col, denom in standardize_col.items():
+    # Standardize col by non-null total size of col
+    practice_df[col] = practice_df[col] / practice_df[denom]
+    # Convert other numeric cols to quintiles
+    practice_df[f'{col}_quint'] = pd.qcut(practice_df[col], q=5, duplicates="drop")
+    # Replace 'count' with 'pct' in column name
+    practice_df.rename(columns={col: col.replace("count", "pct")}, inplace=True)
 
 # Create column for numeric list size, used in standardization of rates
-practice_df['denominator'] = practice_df['list_size']
-# Convert other numeric cols to quintiles
-new_cols.append("list_size")
-for col in new_cols:
-    practice_df[f'{col}_quint'] = pd.qcut(practice_df[col], q=5, duplicates="drop")
-
-practice_df.drop(columns=cols_to_convert, inplace=True)
+practice_df['denominator'] = practice_df['list_size']    
+practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")
 
 print(f"Data types of output dataframe: {practice_df.dtypes}")
 
 # Save processed file
 if test:
-    feather.write_feather(practice_df, "output/practice_measures/proc_practice_measures_test.arrow")
+    practice_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
 else:
     feather.write_feather(practice_df, "output/practice_measures/proc_practice_measures.arrow")
 
