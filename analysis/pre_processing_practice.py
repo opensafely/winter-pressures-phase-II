@@ -25,6 +25,9 @@ log_memory_usage(label="Before loading data")
 
 # -------- Practice measures processing ----------------------------------
 
+# Initialize a list to store processed data
+proc_dataframes = []
+
 # Load and format data for each interval
 for date in dates:
 
@@ -115,10 +118,15 @@ for date in dates:
     practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")
 
     print(f"Data types of output dataframe: {practice_df.dtypes}")
+    proc_dataframes.append(practice_df)
+    del practice_df
+        
+# Save processed file
+proc_df = pd.concat(proc_dataframes)
+del proc_dataframes
 
-    # Save processed file
-    if test:
-        practice_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
-    else:
-        feather.write_feather(practice_df, f"output/practice_measures/proc_practice_measures_{date}.arrow")
+if test:
+    proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
+else:
+    feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures_{date}.arrow")
 
