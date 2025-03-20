@@ -111,7 +111,7 @@ yaml_processing = """
     needs: [{needs_practice}]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures.arrow
+        practice_measure: output/practice_measures/proc_practice_measures*.arrow
   generate_pre_processing_patient:
     run: python:latest analysis/pre_processing_patient.py
     needs: [{needs_patient}]
