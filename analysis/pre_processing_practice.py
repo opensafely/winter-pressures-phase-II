@@ -1,5 +1,4 @@
 # TODO:
-# Instead of loading all data at once, iterate over each date and process it
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -128,5 +127,5 @@ del proc_dataframes
 if test:
     proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
 else:
-    feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures_{date}.arrow")
+    feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
 
