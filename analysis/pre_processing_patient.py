@@ -44,35 +44,54 @@ for date in dates:
                                         dtype=dtype_dict, true_values=["T"], false_values=["F"])
     
     log_memory_usage(label=f"After loading patient {date}")
-    
-    # Here we tested if a smalled sample of the df allows to run without memory issues
-    # df = df.head(10)
-    # log_memory_usage(label=f"After slicing the df {date}")
-
+        
     # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
-    df['rur_urb_class'] = df['rur_urb_class'].apply(
+    patient_df_dict[date]['rur_urb_class'] = patient_df_dict[date]['rur_urb_class'].apply(
         lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
         )
-    
-    # Replace numerical values with string values
-    df = replace_nums(df, replace_ethnicity=True, replace_rur_urb=True)
+    # print type of each column
+    print(f"Data types of input: {patient_df_dict[date].dtypes}")
+    print(f"Before grouping shape: {patient_df_dict[date].shape}")
+    # count without 0 numerator
+    print(f"count without 0 numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'] > 0)].shape}")
+    # count without nan numerator
+    print(f"count without nan numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'].notna())].shape}")
+    # count without 0 list_size
+    print(f"count without 0 denominator: {patient_df_dict[date][(patient_df_dict[date]['denominator'] > 0)].shape}")
+    # count without nan list_size
+    print(f"count without nan denominator: {patient_df_dict[date][(patient_df_dict[date]['denominator'].notna())].shape}")
 
+    # Perform efficient groupby and aggregation
+    print('GROUPING AND AGGREGATING')
     # Aggregate by the demographic columns
-    df = df.groupby(['measure', 'interval_start', 'age', 'sex', 'ethnicity', 'imd_quintile', 
+    patient_df_dict[date] = patient_df_dict[date].groupby(['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
                                                            'carehome', 'region', 'rur_urb_class']).agg(
-        numerator = ('numerator', 'sum'),
-        denominator = ('denominator', 'sum')
-    )
-    
-    print(f"Data types of input: {df.dtypes}")
-    
-    patient_dataframes.append(df)
-    del df
-    log_memory_usage(label=f"After deletion of patient df")
+        numerator = ("numerator", "sum"),
+        list_size=("denominator", "sum")
+    ).reset_index()
 
-# Save processed file
-patient_df = pd.concat(patient_dataframes)
-del patient_dataframes
+    # count without 0 numerator
+    print(f"count without 0 numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'] > 0)].shape}")
+    # count without nan numerator
+    print(f"count without nan numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'].notna())].shape}")
+    # count without 0 list_size
+    print(f"count without 0 list_size: {patient_df_dict[date][(patient_df_dict[date]['list_size'] > 0)].shape}")
+    # count without nan list_size
+    print(f"count without nan list_size: {patient_df_dict[date][(patient_df_dict[date]['list_size'].notna())].shape}")
+    
+    # Drop rows with 0 list_size or nan list_size
+    patient_df_dict[date] = patient_df_dict[date][(patient_df_dict[date]['list_size'] > 0) & (patient_df_dict[date]['list_size'].notna())]
+    print(f"After grouping shape: {patient_df_dict[date].shape}")
+
+    print("After grouping:", patient_df_dict[date].shape)
+
+# Concatenate all DataFrames into one
+patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
+print(f"Data types of input: {patient_df.dtypes}")
+del patient_df_dict
+log_memory_usage(label=f"After deletion of practices_dict")
+# Replace numerical values with string values
+patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
 
 # Save processed file
 if test:
