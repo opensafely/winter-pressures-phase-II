@@ -74,5 +74,5 @@ del proc_dataframes
 if test:
     proc_df.to_csv("output/ungrouped_measures/proc_ungrouped_measures_test.csv.gz")
 else:
-    feather.write_feather(proc_df, f"output/ungrouped_measures/proc_ungrouped_measures_{date}.arrow")
+    feather.write_feather(proc_df, f"output/ungrouped_measures/proc_ungrouped_measures.arrow")
 
