@@ -58,7 +58,7 @@ for date in dates:
     df = replace_nums(df, replace_ethnicity=True, replace_rur_urb=True)
 
     # Aggregate by the demographic columns
-    df = df.groupby(['measure', 'interval_start', 'interval_end', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
+    df = df.groupby(['measure', 'interval_end', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
                                                            'carehome', 'region', 'rur_urb_class']).agg(
         numerator = ('numerator', 'sum'),
         denominator = ('denominator', 'sum')
