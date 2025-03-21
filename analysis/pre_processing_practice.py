@@ -53,10 +53,16 @@ for date in dates:
 
     # print type of each column
     print(f"Data types of input: {practice_df.dtypes}")
-
+    # number of unique values in each column
+    print(f"Number of unique values in each column: {practice_df.nunique()}")
+    proc_df = practice_df.head(1000)
+    if test:
+        proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
+    else:
+        feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
+'''    
     # Replace numerical values with string values
     practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
-    print(practice_df.head())
 
     # Create boolean masks and multiply by denominator to get correct counts
     practice_df["denom_female"] = practice_df["denominator"] * (practice_df["sex"] == "female")
@@ -72,6 +78,7 @@ for date in dates:
     practice_df["denom_carehome"] = practice_df["denominator"] * ((practice_df["carehome"] == True) & practice_df["carehome"].notna())
     practice_df["denom_has_carehome"] = practice_df["denominator"] * practice_df["carehome"].notna()
 
+    print(f"Before grouping shape: {practice_df.shape}")
     # Perform efficient groupby and aggregation
     practice_df = (
         practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"])
@@ -93,6 +100,8 @@ for date in dates:
         )
         .reset_index()
     )
+    print(f"After grouping shape: {practice_df.shape}")
+    print(f"After Number of unique values in each column: {practice_df.nunique()}")
 
     # Standardize counts for each practice characteristic by list size
     standardize_col = {
@@ -124,8 +133,4 @@ for date in dates:
 proc_df = pd.concat(proc_dataframes)
 del proc_dataframes
 
-if test:
-    proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
-else:
-    feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
-
+'''
