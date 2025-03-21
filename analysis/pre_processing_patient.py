@@ -42,6 +42,46 @@ for date in dates:
     patient_df_dict[date] = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz",
                                         dtype=dtype_dict, true_values=["T"], false_values=["F"])
     log_memory_usage(label=f"After loading patient {date}")
+        
+    # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
+    patient_df_dict[date]['rur_urb_class'] = patient_df_dict[date]['rur_urb_class'].apply(
+        lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
+        )
+    # print type of each column
+    print(f"Data types of input: {patient_df_dict[date].dtypes}")
+    print(f"Before grouping shape: {patient_df_dict[date].shape}")
+    # count without 0 numerator
+    print(f"count without 0 numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'] > 0)].shape}")
+    # count without nan numerator
+    print(f"count without nan numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'].notna())].shape}")
+    # count without 0 list_size
+    print(f"count without 0 denominator: {patient_df_dict[date][(patient_df_dict[date]['denominator'] > 0)].shape}")
+    # count without nan list_size
+    print(f"count without nan denominator: {patient_df_dict[date][(patient_df_dict[date]['denominator'].notna())].shape}")
+
+    # Perform efficient groupby and aggregation
+    print('GROUPING AND AGGREGATING')
+    # Aggregate by the demographic columns
+    patient_df_dict[date] = patient_df_dict[date].groupby(['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
+                                                           'carehome', 'region', 'rur_urb_class']).agg(
+        numerator = ("numerator", "sum"),
+        list_size=("denominator", "sum")
+    ).reset_index()
+
+    # count without 0 numerator
+    print(f"count without 0 numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'] > 0)].shape}")
+    # count without nan numerator
+    print(f"count without nan numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'].notna())].shape}")
+    # count without 0 list_size
+    print(f"count without 0 list_size: {patient_df_dict[date][(patient_df_dict[date]['list_size'] > 0)].shape}")
+    # count without nan list_size
+    print(f"count without nan list_size: {patient_df_dict[date][(patient_df_dict[date]['list_size'].notna())].shape}")
+    
+    # Drop rows with 0 list_size or nan list_size
+    patient_df_dict[date] = patient_df_dict[date][(patient_df_dict[date]['list_size'] > 0) & (patient_df_dict[date]['list_size'].notna())]
+    print(f"After grouping shape: {patient_df_dict[date].shape}")
+
+    print("After grouping:", patient_df_dict[date].shape)
 
 # Concatenate all DataFrames into one
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
@@ -58,7 +98,7 @@ else:
     patient_df.to_csv(f"output/patient_measures/proc_patient_measures.csv.gz")
 
 # -------- Frequency table generation ----------------------------------
-
+'''
 # Create frequency table
 patient_df_at_start = patient_df[(patient_df['interval_start'] == study_start_date) & (patient_df['measure'] == 'seen_in_interval')]
 # Extract demographic variables
@@ -89,3 +129,4 @@ result_df = pd.concat(formatted_list, axis=0, ignore_index=True)
 
 # Save processed file
 result_df.to_csv(f'output/patient_measures/frequency_table{suffix}.csv', index=False)
+'''

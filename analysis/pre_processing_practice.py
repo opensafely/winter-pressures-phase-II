@@ -51,17 +51,8 @@ for date in dates:
 
     log_memory_usage(label=f"After loading practice {date}")
 
-    # print type of each column
-    print(f"Data types of input: {practice_df.dtypes}")
     # number of unique values in each column
     print(f"Number of unique values in each column: {practice_df.nunique()}")
-    proc_df = practice_df.head(1000)
-    if test:
-        proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
-    else:
-        feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
-'''    
-    # Replace numerical values with string values
     practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
 
     # Create boolean masks and multiply by denominator to get correct counts
@@ -78,10 +69,22 @@ for date in dates:
     practice_df["denom_carehome"] = practice_df["denominator"] * ((practice_df["carehome"] == True) & practice_df["carehome"].notna())
     practice_df["denom_has_carehome"] = practice_df["denominator"] * practice_df["carehome"].notna()
 
+    # print type of each column
+    print(f"Data types of input: {practice_df.dtypes}")
     print(f"Before grouping shape: {practice_df.shape}")
+    # count without 0 numerator
+    print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}")
+    # count without nan numerator
+    print(f"count without nan numerator: {practice_df[(practice_df['numerator'].notna())].shape}")
+    # count without 0 list_size
+    print(f"count without 0 denominator: {practice_df[(practice_df['denominator'] > 0)].shape}")
+    # count without nan list_size
+    print(f"count without nan denominator: {practice_df[(practice_df['denominator'].notna())].shape}")
+
     # Perform efficient groupby and aggregation
+    print('GROUPING AND AGGREGATING')
     practice_df = (
-        practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"])
+        practice_df.groupby(["measure","interval_start","practice_pseudo_id"])
         .agg(
             numerator=("numerator", "sum"),
             list_size=("denominator", "sum"),
@@ -100,8 +103,18 @@ for date in dates:
         )
         .reset_index()
     )
+    # count without 0 numerator
+    print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}")
+    # count without nan numerator
+    print(f"count without nan numerator: {practice_df[(practice_df['numerator'].notna())].shape}")
+    # count without 0 list_size
+    print(f"count without 0 list_size: {practice_df[(practice_df['list_size'] > 0)].shape}")
+    # count without nan list_size
+    print(f"count without nan list_size: {practice_df[(practice_df['list_size'].notna())].shape}")
+
+    # Drop rows with 0 list_size or nan list_size
+    practice_df = practice_df[(practice_df['list_size'] > 0) & (practice_df['list_size'].notna())]
     print(f"After grouping shape: {practice_df.shape}")
-    print(f"After Number of unique values in each column: {practice_df.nunique()}")
 
     # Standardize counts for each practice characteristic by list size
     standardize_col = {
@@ -124,7 +137,7 @@ for date in dates:
     # Create column for numeric list size, used in standardization of rates
     practice_df['denominator'] = practice_df['list_size']    
     practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")
-
+    
     print(f"Data types of output dataframe: {practice_df.dtypes}")
     proc_dataframes.append(practice_df)
     del practice_df
@@ -133,4 +146,7 @@ for date in dates:
 proc_df = pd.concat(proc_dataframes)
 del proc_dataframes
 
-'''
+if test:
+    proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
+else:
+    feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
