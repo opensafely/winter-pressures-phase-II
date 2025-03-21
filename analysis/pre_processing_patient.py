@@ -50,19 +50,19 @@ for date in dates:
         lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
         )
     # print type of each column
-    print(f"Data types of input: {df.dtypes}")
-    print(f"Before grouping shape: {df.shape}")
+    print(f"Data types of input: {df.dtypes}", flush=True)
+    print(f"Before grouping shape: {df.shape}", flush=True)
     # count without 0 numerator
-    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}")
+    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
     # count without nan numerator
-    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}")
+    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}", flush=True)
     # count without 0 list_size
-    print(f"count without 0 denominator: {df[(df['denominator'] > 0)].shape}")
+    print(f"count without 0 denominator: {df[(df['denominator'] > 0)].shape}", flush=True)
     # count without nan list_size
-    print(f"count without nan denominator: {df[(df['denominator'].notna())].shape}")
+    print(f"count without nan denominator: {df[(df['denominator'].notna())].shape}", flush=True)
 
     # Perform efficient groupby and aggregation
-    print('GROUPING AND AGGREGATING')
+    print('GROUPING AND AGGREGATING', flush=True)
     # Aggregate by the demographic columns
     df = df.groupby(['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
                                                            'carehome', 'region', 'rur_urb_class']).agg(
@@ -71,19 +71,19 @@ for date in dates:
     ).reset_index()
 
     # count without 0 numerator
-    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}")
+    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
     # count without nan numerator
-    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}")
+    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}", flush=True)
     # count without 0 list_size
-    print(f"count without 0 list_size: {df[(df['list_size'] > 0)].shape}")
+    print(f"count without 0 list_size: {df[(df['list_size'] > 0)].shape}", flush=True)
     # count without nan list_size
-    print(f"count without nan list_size: {df[(df['list_size'].notna())].shape}")
+    print(f"count without nan list_size: {df[(df['list_size'].notna())].shape}", flush=True)
     
     # Drop rows with 0 list_size or nan list_size
     df = df[(df['list_size'] > 0) & (df['list_size'].notna())]
-    print(f"After grouping shape: {df.shape}")
+    print(f"After grouping shape: {df.shape}", flush=True)
 
-    print("After grouping:", df.shape)
+    print(f"After grouping: df.shape", flush=True)
 
     patient_dataframes.append(df)
     del(df)
@@ -92,7 +92,7 @@ for date in dates:
 # Save processed file
 patient_df = pd.concat(patient_dataframes)
 del patient_dataframes
-print(f"Data types of input: {patient_df.dtypes}")
+print(f"Data types of input: {patient_df.dtypes}", flush=True)
 log_memory_usage(label=f"After deletion of patient_dataframes")
 
 # Replace numerical values with string values

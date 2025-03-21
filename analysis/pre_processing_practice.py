@@ -53,7 +53,7 @@ for date in dates:
     log_memory_usage(label=f"After loading practice {date}")
 
     # number of unique values in each column
-    print(f"Number of unique values in each column: {practice_df.nunique()}")
+    print(f"Number of unique values in each column: {practice_df.nunique()}", flush=True)
     practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
 
     # Create boolean masks and multiply by denominator to get correct counts
@@ -71,19 +71,19 @@ for date in dates:
     practice_df["denom_has_carehome"] = practice_df["denominator"] * practice_df["carehome"].notna()
 
     # print type of each column
-    print(f"Data types of input: {practice_df.dtypes}")
-    print(f"Before grouping shape: {practice_df.shape}")
+    print(f"Data types of input: {practice_df.dtypes}", flush=True)
+    print(f"Before grouping shape: {practice_df.shape}", flush=True)
     # count without 0 numerator
-    print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}")
+    print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}", flush=True)
     # count without nan numerator
-    print(f"count without nan numerator: {practice_df[(practice_df['numerator'].notna())].shape}")
+    print(f"count without nan numerator: {practice_df[(practice_df['numerator'].notna())].shape}", flush=True)
     # count without 0 list_size
-    print(f"count without 0 denominator: {practice_df[(practice_df['denominator'] > 0)].shape}")
+    print(f"count without 0 denominator: {practice_df[(practice_df['denominator'] > 0)].shape}", flush=True)
     # count without nan list_size
-    print(f"count without nan denominator: {practice_df[(practice_df['denominator'].notna())].shape}")
+    print(f"count without nan denominator: {practice_df[(practice_df['denominator'].notna())].shape}", flush=True)
 
     # Perform efficient groupby and aggregation
-    print('GROUPING AND AGGREGATING')
+    print('GROUPING AND AGGREGATING', flush=True)
     practice_df = (
         practice_df.groupby(["measure","interval_start","practice_pseudo_id"])
         .agg(
@@ -106,17 +106,17 @@ for date in dates:
     )
 
     # count without 0 numerator
-    print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}")
+    print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}", flush=True)
     # count without nan numerator
-    print(f"count without nan numerator: {practice_df[(practice_df['numerator'].notna())].shape}")
+    print(f"count without nan numerator: {practice_df[(practice_df['numerator'].notna())].shape}", flush=True)
     # count without 0 list_size
-    print(f"count without 0 list_size: {practice_df[(practice_df['list_size'] > 0)].shape}")
+    print(f"count without 0 list_size: {practice_df[(practice_df['list_size'] > 0)].shape}", flush=True)
     # count without nan list_size
-    print(f"count without nan list_size: {practice_df[(practice_df['list_size'].notna())].shape}")
+    print(f"count without nan list_size: {practice_df[(practice_df['list_size'].notna())].shape}", flush=True)
 
     # Drop rows with 0 list_size or nan list_size
     practice_df = practice_df[(practice_df['list_size'] > 0) & (practice_df['list_size'].notna())]
-    print(f"After grouping shape: {practice_df.shape}")
+    print(f"After grouping shape: {practice_df.shape}", flush=True)
 
     # Standardize counts for each practice characteristic by list size
     standardize_col = {
@@ -138,9 +138,8 @@ for date in dates:
 
     # Create column for numeric list size, used in standardization of rates
     practice_df['denominator'] = practice_df['list_size']    
-    practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")
-
-    print(f"Data types of output dataframe: {practice_df.dtypes}")
+    practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")    
+    print(f"Data types of output dataframe: {practice_df.dtypes}", flush=True)
     proc_dataframes.append(practice_df)
     del practice_df
         
