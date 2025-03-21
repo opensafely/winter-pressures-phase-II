@@ -75,7 +75,7 @@ for date in dates:
 
     # Perform efficient groupby and aggregation
     practice_df = (
-        practice_df.groupby(["practice_pseudo_id", "interval_start", "measure"])
+        practice_df.groupby(["practice_pseudo_id", "interval_start", "interval_end", "measure"])
         .agg(
             numerator=("numerator", "sum"),
             list_size=("denominator", "sum"),

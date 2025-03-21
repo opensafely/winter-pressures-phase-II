@@ -1,5 +1,7 @@
 #TODO:
-# Check if frequency table code at end needs updating
+# Troubleshoot increasing processed_df size
+# Set up a seperate patient_comorbid processing
+# Update frequency table code at the end
 
 import pandas as pd
 from scipy import stats
