@@ -54,6 +54,11 @@ for date in dates:
     # print type of each column
     print(f"Data types of input: {df.dtypes}")
 
+    print(df.isna().sum())
+
+    df['numerator'] = df['numerator'].fillna(0)
+    df['denominator'] = df['denominator'].fillna(0)
+
     # Perform efficient groupby and aggregation
     df = (
         df.groupby(["measure", "interval_start", "interval_end"])
