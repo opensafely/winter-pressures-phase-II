@@ -55,6 +55,11 @@ for date in dates:
     print(f"Data types of input: {practice_df.dtypes}")
     # number of unique values in each column
     print(f"Number of unique values in each column: {practice_df.nunique()}")
+    proc_df = pd.DataFrame()
+    if test:
+        proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
+    else:
+        feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
 '''    
     # Replace numerical values with string values
     practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
@@ -128,8 +133,4 @@ for date in dates:
 proc_df = pd.concat(proc_dataframes)
 del proc_dataframes
 
-if test:
-    proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
-else:
-    feather.write_feather(proc_df, f"output/practice_measures/proc_practice_measures.arrow")
 '''
