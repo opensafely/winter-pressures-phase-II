@@ -56,7 +56,7 @@ for date in dates:
 
     # Perform efficient groupby and aggregation
     df = (
-        df.groupby(["measure", "interval_end"])
+        df.groupby(["measure", "interval_start"])
         .agg(
             numerator=("numerator", "sum"),
             list_size=("denominator", "sum"),
