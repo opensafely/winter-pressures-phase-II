@@ -55,7 +55,7 @@ for date in dates:
     print(f"Data types of input: {practice_df.dtypes}")
     # number of unique values in each column
     print(f"Number of unique values in each column: {practice_df.nunique()}")
-    proc_df = pd.DataFrame()
+    proc_df = practice_df.head(1000)
     if test:
         proc_df.to_csv("output/practice_measures/proc_practice_measures_test.csv.gz")
     else:
