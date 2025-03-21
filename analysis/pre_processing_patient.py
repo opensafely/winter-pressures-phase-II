@@ -46,50 +46,55 @@ for date in dates:
     log_memory_usage(label=f"After loading patient {date}")
         
     # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
-    patient_df_dict[date]['rur_urb_class'] = patient_df_dict[date]['rur_urb_class'].apply(
+    df['rur_urb_class'] = df['rur_urb_class'].apply(
         lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
         )
     # print type of each column
-    print(f"Data types of input: {patient_df_dict[date].dtypes}")
-    print(f"Before grouping shape: {patient_df_dict[date].shape}")
+    print(f"Data types of input: {df.dtypes}")
+    print(f"Before grouping shape: {df.shape}")
     # count without 0 numerator
-    print(f"count without 0 numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'] > 0)].shape}")
+    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}")
     # count without nan numerator
-    print(f"count without nan numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'].notna())].shape}")
+    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}")
     # count without 0 list_size
-    print(f"count without 0 denominator: {patient_df_dict[date][(patient_df_dict[date]['denominator'] > 0)].shape}")
+    print(f"count without 0 denominator: {df[(df['denominator'] > 0)].shape}")
     # count without nan list_size
-    print(f"count without nan denominator: {patient_df_dict[date][(patient_df_dict[date]['denominator'].notna())].shape}")
+    print(f"count without nan denominator: {df[(df['denominator'].notna())].shape}")
 
     # Perform efficient groupby and aggregation
     print('GROUPING AND AGGREGATING')
     # Aggregate by the demographic columns
-    patient_df_dict[date] = patient_df_dict[date].groupby(['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
+    df = df.groupby(['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
                                                            'carehome', 'region', 'rur_urb_class']).agg(
         numerator = ("numerator", "sum"),
         list_size=("denominator", "sum")
     ).reset_index()
 
     # count without 0 numerator
-    print(f"count without 0 numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'] > 0)].shape}")
+    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}")
     # count without nan numerator
-    print(f"count without nan numerator: {patient_df_dict[date][(patient_df_dict[date]['numerator'].notna())].shape}")
+    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}")
     # count without 0 list_size
-    print(f"count without 0 list_size: {patient_df_dict[date][(patient_df_dict[date]['list_size'] > 0)].shape}")
+    print(f"count without 0 list_size: {df[(df['list_size'] > 0)].shape}")
     # count without nan list_size
-    print(f"count without nan list_size: {patient_df_dict[date][(patient_df_dict[date]['list_size'].notna())].shape}")
+    print(f"count without nan list_size: {df[(df['list_size'].notna())].shape}")
     
     # Drop rows with 0 list_size or nan list_size
-    patient_df_dict[date] = patient_df_dict[date][(patient_df_dict[date]['list_size'] > 0) & (patient_df_dict[date]['list_size'].notna())]
-    print(f"After grouping shape: {patient_df_dict[date].shape}")
+    df = df[(df['list_size'] > 0) & (df['list_size'].notna())]
+    print(f"After grouping shape: {df.shape}")
 
-    print("After grouping:", patient_df_dict[date].shape)
+    print("After grouping:", df.shape)
 
-# Concatenate all DataFrames into one
-patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
+    patient_dataframes.append(df)
+    del(df)
+    log_memory_usage(label=f"After deletion of patient df")
+
+# Save processed file
+patient_df = pd.concat(patient_dataframes)
+del patient_dataframes
 print(f"Data types of input: {patient_df.dtypes}")
-del patient_df_dict
-log_memory_usage(label=f"After deletion of practices_dict")
+log_memory_usage(label=f"After deletion of patient_dataframes")
+
 # Replace numerical values with string values
 patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
 
@@ -97,7 +102,7 @@ patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=Tr
 if test:
     patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test.csv.gz")
 else:
-    feather.write_feather(patient_df, f"output/patient_measures/proc_patient_measures_{date}.arrow")
+    feather.write_feather(patient_df, f"output/patient_measures/proc_patient_measures.arrow")
 
 # -------- Frequency table generation ----------------------------------
 

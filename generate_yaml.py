@@ -177,8 +177,6 @@ yaml_test = '''
         patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table_test.csv
-      #moderately_sensitive:
-        #frequency_table: output/patient_measures/frequency_table_test.csv
   generate_pre_processing_practice_test:
     run: python:latest analysis/pre_processing_practice.py --test
     needs: [generate_practice_measures_test]
