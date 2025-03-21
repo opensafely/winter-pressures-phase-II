@@ -83,7 +83,7 @@ for date in dates:
     df = df[(df['list_size'] > 0) & (df['list_size'].notna())]
     print(f"After grouping shape: {df.shape}", flush=True)
 
-    print(f"After grouping: df.shape," flush=True)
+    print(f"After grouping: df.shape", flush=True)
 
     patient_dataframes.append(df)
     del(df)
