@@ -1,4 +1,5 @@
 # TODO:
+
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -103,6 +104,7 @@ for date in dates:
         )
         .reset_index()
     )
+
     # count without 0 numerator
     print(f"count without 0 numerator: {practice_df[(practice_df['numerator'] > 0)].shape}", flush=True)
     # count without nan numerator
@@ -136,8 +138,7 @@ for date in dates:
 
     # Create column for numeric list size, used in standardization of rates
     practice_df['denominator'] = practice_df['list_size']    
-    practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")
-    
+    practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")    
     print(f"Data types of output dataframe: {practice_df.dtypes}", flush=True)
     proc_dataframes.append(practice_df)
     del practice_df
