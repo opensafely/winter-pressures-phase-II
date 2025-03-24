@@ -34,8 +34,8 @@ for date in dates:
     dtype_dict = {
     "measure": "category",
     "interval_start": "category",
-    "interval_end": "category",
-    "ratio": "float32",
+    #"interval_end": "category",
+    #"ratio": "float32",
     "numerator": "int64",
     "denominator": "int64",
     "age": "category",
@@ -43,12 +43,14 @@ for date in dates:
     "ethnicity": "object",
     "imd_quintile": "int8", # range of int8 is -128 to 127
     "carehome": "category",
-    "region": "category",
+    #"region": "category",
     "rur_urb_class": "Int8", # nullable integer type (not 'I' not 'i')
     "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
     }
+    needed_cols = ['measure', 'interval_start', 'numerator', 'denominator', 'age', 'sex', 'ethnicity', 'imd_quintile', 'carehome',
+                   'rur_urb_class', 'practice_pseudo_id']
     practice_df = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz",
-                                         dtype = dtype_dict, true_values=["T"], false_values=["F"])
+                                         dtype = dtype_dict, true_values=["T"], false_values=["F"], usecols = needed_cols)
 
     log_memory_usage(label=f"After loading practice {date}")
 
