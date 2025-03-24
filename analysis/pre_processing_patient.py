@@ -32,16 +32,20 @@ patient_dataframes = []
 # Load and format data for each interval
 for date in dates:
     dtype_dict = {
-        'measure': 'category', 'interval_start' : 'category', 'interval_end' : 'category', 'ratio' : 'float32', 'numerator' : 'int64', 
+        'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
         'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 'imd_quintile' : 'int8', 'carehome' : 'category',
-        'region' : 'category', 'rur_urb_class' : 'object', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
-        'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_depres': 'bool',
-        'comorbid_mh': 'bool', 'comorbid_neuro': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
-        'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
+        'region' : 'category', 'rur_urb_class' : 'object', 
+        # 'ratio' : 'float32',
+        # 'interval_end' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
+        #'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_depres': 'bool',
+        #'comorbid_mh': 'bool', 'comorbid_neuro': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
+        #'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
     }
+    needed_cols = ['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
+                    'carehome', 'region', 'rur_urb_class', 'numerator', 'denominator']
     # Load data for each interval
     df = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz",
-                                        dtype=dtype_dict, true_values=["T"], false_values=["F"])
+                                        dtype=dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
     
     log_memory_usage(label=f"After loading patient {date}")
         
