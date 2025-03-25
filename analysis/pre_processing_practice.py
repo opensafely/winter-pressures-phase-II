@@ -34,21 +34,11 @@ for date in dates:
     dtype_dict = {
     "measure": "category",
     "interval_start": "category",
-    #"interval_end": "category",
-    #"ratio": "float32",
     "numerator": "int64",
     "denominator": "int64",
-    "age": "category",
-    "sex": "category",
-    "ethnicity": "object",
-    "imd_quintile": "int8", # range of int8 is -128 to 127
-    "carehome": "category",
-    #"region": "category",
-    "rur_urb_class": "Int8", # nullable integer type (not 'I' not 'i')
     "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
     }
-    needed_cols = ['measure', 'interval_start', 'numerator', 'denominator', 'age', 'sex', 'ethnicity', 'imd_quintile', 'carehome',
-                   'rur_urb_class', 'practice_pseudo_id']
+    needed_cols = ['measure', 'interval_start', 'numerator', 'denominator','practice_pseudo_id']
     practice_df = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz",
                                          dtype = dtype_dict, true_values=["T"], false_values=["F"], usecols = needed_cols)
 
@@ -56,21 +46,6 @@ for date in dates:
 
     # number of unique values in each column
     print(f"Number of unique values in each column: {practice_df.nunique()}", flush=True)
-    practice_df = replace_nums(practice_df, replace_ethnicity=True, replace_rur_urb=False)
-
-    # Create boolean masks and multiply by denominator to get correct counts
-    practice_df["denom_female"] = practice_df["denominator"] * (practice_df["sex"] == "female")
-    practice_df["denom_over_65"] = practice_df["denominator"] * practice_df["age"].isin(["adult_under_80", "adult_over_80"])
-    practice_df["denom_under_5"] = practice_df["denominator"] * (practice_df["age"] == "preschool")
-    practice_df["denom_has_age"] = practice_df["denominator"] * practice_df["age"].notna()
-    practice_df["denom_ethnic"] = practice_df["denominator"] * ((practice_df["ethnicity"] != "White") & practice_df["ethnicity"].notna())
-    practice_df["denom_has_ethnicity"] = practice_df["denominator"] * practice_df["ethnicity"].notna()
-    practice_df["denom_low_imd"] = practice_df["denominator"] * ((practice_df["imd_quintile"] <= 2) & practice_df["imd_quintile"].notna())
-    practice_df["denom_has_imd"] = practice_df["denominator"] * practice_df["imd_quintile"].notna()
-    practice_df["denom_rural"] = practice_df["denominator"] * ((practice_df["rur_urb_class"] >= 5) & practice_df["rur_urb_class"].notna())
-    practice_df["denom_has_rural"] = practice_df["denominator"] * practice_df["rur_urb_class"].notna()
-    practice_df["denom_carehome"] = practice_df["denominator"] * ((practice_df["carehome"] == True) & practice_df["carehome"].notna())
-    practice_df["denom_has_carehome"] = practice_df["denominator"] * practice_df["carehome"].notna()
 
     # print type of each column
     print(f"Data types of input: {practice_df.dtypes}", flush=True)
@@ -91,18 +66,6 @@ for date in dates:
         .agg(
             numerator=("numerator", "sum"),
             list_size=("denominator", "sum"),
-            count_female=("denom_female", "sum"),
-            count_over_65=("denom_over_65", "sum"),
-            count_under_5=("denom_under_5", "sum"),
-            count_has_age=("denom_has_age", "sum"),
-            count_ethnic=("denom_ethnic", "sum"),
-            count_has_ethnicity=("denom_has_ethnicity", "sum"),
-            count_low_imd=("denom_low_imd", "sum"),
-            count_has_imd=("denom_has_imd", "sum"),
-            count_rural=("denom_rural", "sum"),
-            count_has_rural=("denom_has_rural", "sum"),
-            count_carehome=("denom_carehome", "sum"),
-            count_has_carehome=("denom_has_carehome", "sum"),
         )
         .reset_index()
     )
@@ -119,28 +82,7 @@ for date in dates:
     # Drop rows with 0 list_size or nan list_size
     practice_df = practice_df[(practice_df['list_size'] > 0) & (practice_df['list_size'].notna())]
     print(f"After grouping shape: {practice_df.shape}", flush=True)
-
-    # Standardize counts for each practice characteristic by list size
-    standardize_col = {
-        "count_female": "list_size",
-        "count_over_65": "count_has_age",
-        "count_under_5": "count_has_age",
-        "count_ethnic": "count_has_ethnicity",
-        "count_low_imd": "count_has_imd",
-        "count_rural": "count_has_rural",
-        "count_carehome": "count_has_carehome"
-    }
-    for col, denom in standardize_col.items():
-        # Standardize col by non-null total size of col
-        practice_df[col] = practice_df[col] / practice_df[denom]
-        # Convert other numeric cols to quintiles
-        practice_df[f'{col}_quint'] = pd.qcut(practice_df[col], q=5, duplicates="drop")
-        # Replace 'count' with 'pct' in column name
-        practice_df.rename(columns={col: col.replace("count", "pct")}, inplace=True)
-
-    # Create column for numeric list size, used in standardization of rates
-    practice_df['denominator'] = practice_df['list_size']    
-    practice_df['list_size_quint'] = pd.qcut(practice_df['list_size'], q=5, duplicates="drop")    
+   
     print(f"Data types of output dataframe: {practice_df.dtypes}", flush=True)
     proc_dataframes.append(practice_df)
     del practice_df
