@@ -1,5 +1,3 @@
-# TODO:
-# Instead of loading all data at once, iterate over each date and process it
 import pandas as pd
 from scipy import stats
 import numpy as np
@@ -32,29 +30,30 @@ for date in dates:
 
     dtype_dict = {
     "measure": "category",
-    "interval_start": "category",
-    "interval_end": "category",
-    "ratio": "float32",
+    "interval_start": "object",
     "numerator": "int64",
     "denominator": "int64",
-    "age": "category",
-    "sex": "category",
-    "ethnicity": "object",
-    "imd_quintile": "int8", # range of int8 is -128 to 127
-    "carehome": "category",
-    "region": "category",
-    "rur_urb_class": "Int8", # nullable integer type (not 'I' not 'i')
-    "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
     }
+    
+    needed_cols = ['measure', 'interval_start', 'numerator', 'denominator']
+    
     df = pd.read_csv(f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz",
-                                         dtype = dtype_dict, true_values=["T"], false_values=["F"])
+                                         dtype = dtype_dict, true_values=["T"], false_values=["F"], usecols = needed_cols, parse_dates=["interval_start"])
 
-    log_memory_usage(label=f"After loading practice {date}")
+    df['interval_start'] = df['interval_start'].dt.normalize()
 
-    # print type of each column
-    print(f"Data types of input: {df.dtypes}")
+    log_memory_usage(label=f"After loading {date}")
 
-    # Perform efficient groupby and aggregation
+    # Print df info
+    print(f"Data types of input: {df.dtypes}", flush=True)
+    print(f"Before grouping shape: {df.shape}", flush=True)
+    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
+    print(f"count without 0 denominator: {df[(df['denominator'] > 0)].shape}", flush=True)
+
+    # Print time stamp
+    print('GROUPING AND AGGREGATING', flush=True)
+
+    # Perform groupby and aggregation
     df = (
         df.groupby(["measure", "interval_start"])
         .agg(
@@ -63,13 +62,20 @@ for date in dates:
         )
     )
 
-    print(f"Data types of output dataframe: {df.dtypes}")
+    # Print df aggregated info
+    print(f"Data types of output: {df.dtypes}", flush=True)
+    print(f"After grouping shape: {df.shape}", flush=True)
+    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
+    print(f"count without 0 list_size: {df[(df['list_size'] > 0)].shape}", flush=True)
+    
     proc_dataframes.append(df)
     del df
+    log_memory_usage(label=f"After deletion of patient df")
         
 # Save processed file
 proc_df = pd.concat(proc_dataframes)
 del proc_dataframes
+log_memory_usage(label=f"After deletion of patient_dataframes")
 
 if test:
     proc_df.to_csv("output/ungrouped_measures/proc_ungrouped_measures_test.csv.gz")

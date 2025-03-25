@@ -111,7 +111,7 @@ yaml_processing = """
     needs: [{needs_practice}]
     outputs:
       highly_sensitive:
-        ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures*.arrow
+        ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures.arrow
   generate_pre_processing_practice:
     run: python:latest analysis/pre_processing_practice.py
     needs: [{needs_practice}]
