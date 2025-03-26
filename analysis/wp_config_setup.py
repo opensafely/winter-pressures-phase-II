@@ -12,6 +12,9 @@ parser.add_argument("--practice_measures", action= 'store_true', help = "Sets me
 parser.add_argument("--start_intv", help="Interval start date")
 parser.add_argument("--test", action= 'store_true', help = "Sets lowest time intervals for lightweight testing")
 
+# Configuration for processing
+parser.add_argument("--comorbid", action = 'store_true', help = "Sets aggregation level to comorbidities")
+
 args = parser.parse_args() # Stores arguments in 'args'
 
 # Extract args
@@ -22,3 +25,4 @@ patient_measures = args.patient_measures
 practice_measures = args.practice_measures
 start_intv = args.start_intv
 test = args.test
+comorbid = args.comorbid

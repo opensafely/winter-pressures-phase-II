@@ -1,5 +1,4 @@
 #TODO:
-# Troubleshoot increasing processed_df size
 # Set up a seperate patient_comorbid processing
 # Update frequency table code at the end
 
@@ -31,30 +30,38 @@ patient_dataframes = []
 
 # Load and format data for each interval
 for date in dates:
-    dtype_dict = {
+    if comorbid:
+        dtype_dict = {
         'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
-        'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 'imd_quintile' : 'int8', 'carehome' : 'category',
-        'region' : 'category', 'rur_urb_class' : 'object', 
-        # 'ratio' : 'float32',
-        # 'interval_end' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
-        #'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_depres': 'bool',
-        #'comorbid_mh': 'bool', 'comorbid_neuro': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
-        #'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
-    }
-    needed_cols = ['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
-                    'carehome', 'region', 'rur_urb_class', 'numerator', 'denominator']
+        'denominator' : 'int64', 'age' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
+        'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
+        'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
+        #'comorbid_depres': 'bool', 'comorbid_mh': 'bool', 'comorbid_neuro': 'bool',
+        }    
+    else:
+        dtype_dict = {
+            'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
+            'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 'imd_quintile' : 'int8', 'carehome' : 'category',
+            'region' : 'category', 'rur_urb_class' : 'object', 
+        }
+    needed_cols = list(dtype_dict.keys())
     # Load data for each interval
     df = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz",
                                         dtype=dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
     
     log_memory_usage(label=f"After loading patient {date}")
         
-    # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
-    df['rur_urb_class'] = df['rur_urb_class'].apply(
-        lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
-        )
+    if not comorbid:
+        # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
+        df['rur_urb_class'] = df['rur_urb_class'].apply(
+            lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
+            )
     # print type of each column
     print(f"Data types of input: {df.dtypes}", flush=True)
+    # Count NaNs in each column
+    nan_counts = df.isna().sum()
+    # Print result
+    print(f"Number of NA's in each columns {nan_counts}", flush=True)
     print(f"Before grouping shape: {df.shape}", flush=True)
     # count without 0 numerator
     print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
@@ -68,8 +75,8 @@ for date in dates:
     # Perform efficient groupby and aggregation
     print('GROUPING AND AGGREGATING', flush=True)
     # Aggregate by the demographic columns
-    df = df.groupby(['measure', 'interval_start', 'age' , 'sex', 'ethnicity', 'imd_quintile', 
-                                                           'carehome', 'region', 'rur_urb_class']).agg(
+    groupby_cols = [col for col in needed_cols if col not in ['numerator', 'denominator']]
+    df = df.groupby(groupby_cols).agg(
         numerator = ("numerator", "sum"),
         list_size=("denominator", "sum")
     ).reset_index()
@@ -99,14 +106,18 @@ del patient_dataframes
 print(f"Data types of input: {patient_df.dtypes}", flush=True)
 log_memory_usage(label=f"After deletion of patient_dataframes")
 
-# Replace numerical values with string values
-patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
+if not comorbid:
+    # Replace numerical values with string values
+    patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
+    patient_file = ''
+else:
+    patient_file = '_comorbid'
 
 # Save processed file
 if test:
-    patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test.csv.gz")
+    patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test{patient_file}.csv.gz")
 else:
-    feather.write_feather(patient_df, f"output/patient_measures/proc_patient_measures.arrow")
+    feather.write_feather(patient_df, f"output/patient_measures/proc_patient_measures{patient_file}.arrow")
 
 # -------- Frequency table generation ----------------------------------
 

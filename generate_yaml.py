@@ -126,6 +126,14 @@ yaml_processing = """
         patient_measure: output/patient_measures/proc_patient_measures*.arrow
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
+  generate_pre_processing_patient_comorbid:
+    run: python:latest analysis/pre_processing_patient.py --comorbid
+    needs: [{needs_patient}]
+    outputs:
+      highly_sensitive:
+        patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
+      # moderately_sensitive:
+      #   frequency_table: output/patient_measures/frequency_table.csv
   #generate_tables:
   #  run: r:latest analysis/table_generation.r
   #  needs: [generate_pre_processing_practice, generate_pre_processing_patient]
@@ -177,6 +185,14 @@ yaml_test = '''
         patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table_test.csv
+  generate_pre_processing_patient_comorbid_test:
+    run: python:latest analysis/pre_processing_patient.py --test --comorbid
+    needs: [generate_patient_measures_test]
+    outputs:
+      highly_sensitive:
+        patient_measure: output/patient_measures/proc_patient_measures_test_comorbid.csv.gz
+      # moderately_sensitive:
+      #   frequency_table: output/patient_measures/frequency_table.csv
   generate_pre_processing_practice_test:
     run: python:latest analysis/pre_processing_practice.py --test
     needs: [generate_practice_measures_test]
