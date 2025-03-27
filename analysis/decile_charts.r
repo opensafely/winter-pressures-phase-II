@@ -5,6 +5,7 @@ library(dplyr)
 library(tidyr)
 library(glue)
 library(optparse)
+library(arrow)
 
 # Define option list
 option_list <- list(
@@ -16,12 +17,14 @@ opt <- parse_args(OptionParser(option_list = option_list))
 if (opt$test) {
   print("Using test data")
   suffix <- "_test"
+  practice_measures <- read.csv(glue('output/practice_measures/proc_practice_measures{suffix}.csv.gz'))
 } else {
   print("Using full data")
   suffix <- ""
-}
+  practice_measures <- as.data.frame(read_arrow("output/practice_measures/proc_practice_measures.arrow"))
+  }
 
-practice_measures <- read.csv(glue('output/practice_measures/proc_practice_measures{suffix}.csv.gz'))
+
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
 # ------------ Create decile charts -----------------------------------------------------------
