@@ -5,7 +5,7 @@ library(ggplot2)
 library(dplyr)
 library(glue)
 library(optparse)
-library (arrow)
+library(arrow)
 
 # Define option list
 option_list <- list(
@@ -77,7 +77,7 @@ aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, fold
     group_by(across(all_of(group_vars))) %>%
     summarise(numerator_total = sum(numerator), list_size_total = sum(list_size), measure_rate_per_1000=(sum(numerator)/sum(list_size))*1000, .groups = 'drop')
 
-  write.csv(df, glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
+  write.csv(df, glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 }
 
 plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, suffix) {
@@ -103,7 +103,7 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
   }
 
   # Load data
-  df <- read.csv(glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
+  df <- read.csv(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 
   # Plot
   p <- ggplot(df, aes(x=interval_start, y=measure_rate_per_1000, color=measure, group=measure)) +
@@ -117,7 +117,7 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
     p <- p + facet_wrap(reformulate(main_col))
   }
   # Save plot
-  ggsave(glue("output/{folder}/plots/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"), plot=p)
+  ggsave(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"), plot=p)
 }
 
 
@@ -133,7 +133,7 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
                 avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
                 IQR(measure_rate_per_1000), .groups = 'drop')
     
-    write.csv(stats_df, glue("output/{folder}/plots/summary_stats{suffix}.csv"))
+    write.csv(stats_df, glue("output/{folder}/summary_stats{suffix}.csv"))
   } else {
   stats_df<- df %>% 
     mutate(measure_rate_per_1000 = (numerator/ list_size)*1000) %>%
@@ -144,7 +144,7 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
               avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
               IQR(measure_rate_per_1000), .groups = 'drop')
   
-  write.csv(stats_df, glue("output/{folder}/plots/summary_stats_{main_col}_{suffix}.csv"))
+  write.csv(stats_df, glue("output/{folder}/summary_stats_{main_col}_{suffix}.csv"))
   }
   
 }

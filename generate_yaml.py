@@ -139,10 +139,10 @@ yaml_processing = """
     needs: [generate_pre_processing_ungrouped, generate_pre_processing_patient, generate_pre_processing_patient_comorbid]
     outputs:
      moderately_sensitive:
-       ungrouped_measures_tables: output/ungrouped_measures/plots/*.csv
-       ungrouped_measures_plots: output/ungrouped_measures/plots/*.png
-       #patient_measures_tables: output/patient_measures/plots/*.csv
-       #patient_measures_plots: output/patient_measures/plots/*.png
+       ungrouped_measures_tables: output/ungrouped_measures/*.csv
+       ungrouped_measures_plots: output/ungrouped_measures/*.png
+       #patient_measures_tables: output/patient_measures/*.csv
+       #patient_measures_plots: output/patient_measures/*.png
 """
 yaml_processing = yaml_processing.format(needs_practice = needs["practice_measures"], 
                                          needs_patient = needs["patient_measures"])
@@ -202,10 +202,10 @@ yaml_test = '''
    needs: [generate_pre_processing_ungrouped_test, generate_pre_processing_patient_test, generate_pre_processing_patient_comorbid_test]
    outputs:
      moderately_sensitive:
-       total_measures_tables_test: output/ungrouped_measures/plots/*_test.csv
-       total_measures_plots_test: output/ungrouped_measures/plots/*_test.png
-       #patient_measures_tables_test: output/patient_measures/plots/*_test.csv
-       #patient_measures_plots_test: output/patient_measures/plots/*_test.png
+       ungrouped_measures_tables_test: output/ungrouped_measures/*_test.csv
+       ungrouped_measures_plots_test: output/ungrouped_measures/*_test.png
+       #patient_measures_tables_test: output/patient_measures/*_test.csv
+       #patient_measures_plots_test: output/patient_measures/*_test.png
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:
