@@ -134,6 +134,14 @@ yaml_processing = """
         patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
+  generate_deciles_charts:
+    run: >
+      r:latest analysis/decile_charts.r
+    needs: [generate_pre_processing_practice]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*.png
+        deciles_table: output/practice_measures/decile_table.csv
   #generate_tables:
   #  run: r:latest analysis/table_generation.r
   #  needs: [generate_pre_processing_practice, generate_pre_processing_patient]
@@ -199,6 +207,14 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+  generate_deciles_charts_test:
+    run: >
+      r:latest analysis/decile_charts.r --test
+    needs: [generate_pre_processing_practice_test]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_test.png
+        deciles_table: output/practice_measures/decile_table_test.csv
   #generate_tables_test:
   #  run: r:latest analysis/table_generation.r --test
   #  needs: [generate_pre_processing_practice_test, generate_pre_processing_patient_test]
