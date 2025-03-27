@@ -133,7 +133,7 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
                 avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
                 IQR(measure_rate_per_1000), .groups = 'drop')
     
-    write.csv(stats_df, glue("output/{folder}/plots/summary_stats_{suffix}.csv"))
+    write.csv(stats_df, glue("output/{folder}/plots/summary_stats{suffix}.csv"))
   } else {
   stats_df<- df %>% 
     mutate(measure_rate_per_1000 = (numerator/ list_size)*1000) %>%
@@ -157,9 +157,9 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
 measures$interval_start <- as.Date(measures$interval_start)
 
 # --- Create ungrouped data and plots -----------------------------------------------------
-aggregate_trends_by_facet(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "total_measures", suffix)
-plot_aggregated_data(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "total_measures", suffix)
-calculate_stats(measures, main_col = NULL, folder = "total_measures", suffix)
+aggregate_trends_by_facet(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "ungrouped_measures", suffix)
+plot_aggregated_data(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "ungrouped_measures", suffix)
+calculate_stats(measures, main_col = NULL, folder = "ungrouped_measures", suffix)
 
 
 # --- Aggregating measures stratified by patient characteristics ------------------------------------------------
