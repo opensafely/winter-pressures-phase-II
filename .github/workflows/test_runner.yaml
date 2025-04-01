@@ -14,7 +14,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Test that the project is runnable
-      uses: opensafely-core/research-action@evansd/custom-actions-list
+      uses: opensafely-core/research-action@v2
       with:
         actions: generate_pre_processing_practice_test generate_pre_processing_patient_test generate_pre_processing_ungrouped_test generate_tables_test generate_deciles_charts_test
 
