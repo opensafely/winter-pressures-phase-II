@@ -58,11 +58,17 @@ write.csv(practice_deciles, glue("output/practice_measures/decile_table{suffix}.
 line_types <- c("d1" = "dashed", "d2" = "dashed", "d3" = "dashed", "d4" = "dashed", 
                 "d5" = "solid",  # Median (d5) gets a dashed line
                 "d6" = "dashed", "d7" = "dashed", "d8" = "dashed", "d9" = "dashed")
+# Define colors (d5 is red, others are black)
+line_colors <- c("d1" = "black", "d2" = "black", "d3" = "black", "d4" = "black", 
+                 "d5" = "red",  # d5 is red
+                 "d6" = "black", "d7" = "black", "d8" = "black", "d9" = "black")
+
 # Plot decile chart
 for (m in unique(practice_deciles$measure)) {
-  plot <- ggplot(filter(practice_deciles, measure == m), aes(x = interval_start, y = ratio, group = factor(decile),linetype = decile)) +
+  plot <- ggplot(filter(practice_deciles, measure == m), aes(x = interval_start, y = ratio, group = factor(decile),linetype = decile, color = decile)) +
     geom_line() +
     scale_linetype_manual(values = line_types) +  # Apply custom line types
+    scale_color_manual(values = line_colors) +  # Apply custom colors
     labs(title = "Decile Chart",
         x = "Interval",
         y = "Value") 
