@@ -134,6 +134,15 @@ yaml_processing = """
         patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
+  generate_tables:
+    run: r:latest analysis/table_generation.r
+    needs: [generate_pre_processing_ungrouped, generate_pre_processing_patient, generate_pre_processing_patient_comorbid]
+    outputs:
+     moderately_sensitive:
+       ungrouped_measures_tables: output/ungrouped_measures/*.csv
+       ungrouped_measures_plots: output/ungrouped_measures/*.png
+       #patient_measures_tables: output/patient_measures/*.csv
+       #patient_measures_plots: output/patient_measures/*.png
   generate_deciles_charts:
     run: >
       r:latest analysis/decile_charts.r
@@ -142,17 +151,6 @@ yaml_processing = """
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*.png
         deciles_table: output/practice_measures/decile_table.csv
-  #generate_tables:
-  #  run: r:latest analysis/table_generation.r
-  #  needs: [generate_pre_processing_practice, generate_pre_processing_patient]
-  #  outputs:
-  #    moderately_sensitive:
-  #      total_measures_tables: output/total_measures/plots/*.csv
-  #      practice_measures_tables: output/practice_measures/plots/*.csv
-  #      patient_measures_tables: output/patient_measures/plots/*.csv
-  #      total_measures_plots: output/total_measures/plots/*.png
-  #      practice_measures_plots: output/practice_measures/plots/*.png
-  #      patient_measures_plots: output/patient_measures/plots/*.png
 """
 yaml_processing = yaml_processing.format(needs_practice = needs["practice_measures"], 
                                          needs_patient = needs["patient_measures"])
@@ -207,6 +205,15 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+  generate_tables_test:
+   run: r:latest analysis/table_generation.r --test
+   needs: [generate_pre_processing_ungrouped_test, generate_pre_processing_patient_test, generate_pre_processing_patient_comorbid_test]
+   outputs:
+     moderately_sensitive:
+       ungrouped_measures_tables_test: output/ungrouped_measures/*_test.csv
+       ungrouped_measures_plots_test: output/ungrouped_measures/*_test.png
+       #patient_measures_tables_test: output/patient_measures/*_test.csv
+       #patient_measures_plots_test: output/patient_measures/*_test.png
   generate_deciles_charts_test:
     run: >
       r:latest analysis/decile_charts.r --test
@@ -215,17 +222,6 @@ yaml_test = '''
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_test.png
         deciles_table: output/practice_measures/decile_table_test.csv
-  #generate_tables_test:
-  #  run: r:latest analysis/table_generation.r --test
-  #  needs: [generate_pre_processing_practice_test, generate_pre_processing_patient_test]
-  #  outputs:
-  #    moderately_sensitive:
-  #      total_measures_tables_test: output/total_measures/plots/*_test.csv
-  #      practice_measures_tables_test: output/practice_measures/plots/*_test.csv
-  #      patient_measures_tables_test: output/patient_measures/plots/*_test.csv
-  #      total_measures_plots_test: output/total_measures/plots/*_test.png
-  #      practice_measures_plots_test: output/practice_measures/plots/*_test.png
-  #      patient_measures_plots_test: output/patient_measures/plots/*_test.png
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:
