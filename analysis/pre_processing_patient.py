@@ -1,5 +1,4 @@
 #TODO:
-# Set up a seperate patient_comorbid processing
 # Update frequency table code at the end
 
 import pandas as pd
