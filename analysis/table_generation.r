@@ -1,3 +1,4 @@
+# TODO:
 
 # ------------ Configuration -------------------------------------------------------
 
@@ -10,28 +11,35 @@ library(arrow)
 # Define option list
 option_list <- list(
   make_option("--test", action = "store_true", default = FALSE, 
-              help = "Uses test data instead of full data")
+              help = "Uses test data instead of full data"),
+  make_option("--comorbid", action = "store_true", default = FALSE,
+              help = "Uses comorbid data"),
+  make_option("--demograph", action = "store_true", default = FALSE,
+              help = "Uses demographic data")
 )
 # Parse arguments
 opt <- parse_args(OptionParser(option_list = option_list))
-if (opt$test) {
-  print("Using test data")
-  suffix <- "_test"
-} else {
-  print("Using full data")
-  suffix <- ""
-}
 
 # ------------- Read in files ------------------------------------------------------
 
 if (opt$test) {
-  measures <- read.csv("output/ungrouped_measures/proc_ungrouped_measures_test.csv.gz")
-  # measures <- read.csv("output/patient_measures/proc_patient_measures_test.csv.gz")
-  # measures <- read.csv("output/patient_measures/proc_patient_measures_test_comorbid.csv.gz")
-} else {
-  measures <- as.data.frame(read_arrow("output/ungrouped_measures/proc_ungrouped_measures.arrow"))
-  # measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures*.arrow"))
-  # measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_comorbid*.arrow"))
+  if (opt$comorbid) {
+    print("Using test comorbid data")
+    suffix <- "_comorbid_test"
+    measures <- read.csv("output/patient_measures/proc_patient_measures_test_comorbid.csv.gz")
+  } else if (opt$demograph) {
+    print("Using test demograph data")
+    suffix <- "_demograph_test"
+    measures <- read.csv("output/patient_measures/proc_patient_measures_test.csv.gz")
+  }
+} else if (opt$comorbid) {
+  print("Using full comorbid data")
+  suffix <- "_comorbid"
+  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_comorbid.arrow"))
+} else if (opt$demograph) {
+  print("Using test comorbid data")
+  suffix <- "_demograph"
+  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures.arrow"))
 }
 
 
@@ -106,7 +114,8 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
   df <- read.csv(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 
   # Plot
-  p <- ggplot(df, aes(x=interval_start, y=measure_rate_per_1000, color=measure, group=measure)) +
+  p <- ggplot(df, aes(x=interval_start, y=measure_rate_per_1000, 
+              color = factor(.data[[main_col]]), group = factor(.data[[main_col]]))) +
     geom_line() +
     geom_point() +
     labs(title=glue("{main_col} by {facet_col} for {filter_col}"), x="Interval Start", y="Rate per 1000")
@@ -114,10 +123,11 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
 
   # Facet by facet_col if present
   if (main_col != "total") {
-    p <- p + facet_wrap(reformulate(main_col))
+    p <- p + facet_wrap(vars(measure))
   }
   # Save plot
-  ggsave(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"), plot=p)
+  ggsave(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"),
+  plot = p, width = 20, height = 10, dpi = 400)
 }
 
 
@@ -156,23 +166,18 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
 # Changing date columns to date type
 measures$interval_start <- as.Date(measures$interval_start)
 
-# --- Create ungrouped data and plots -----------------------------------------------------
-aggregate_trends_by_facet(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "ungrouped_measures", suffix)
-plot_aggregated_data(measures, main_col = NULL, facet_col = NULL, filter_col = NULL, folder = "ungrouped_measures", suffix)
-calculate_stats(measures, main_col = NULL, folder = "ungrouped_measures", suffix)
-
-
 # --- Aggregating measures stratified by patient characteristics ------------------------------------------------
 
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
-
-# start_index = which(names(measures) == "numerator") + 1
-# for(col in colnames(measures)[start_index:(length(measures) - 1)]){
-#   aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures", suffix)
-#   plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures", suffix)
-#   calculate_stats(measures, main_col = col, folder = "patient_measures", suffix)
-# }
+print(head(measures))
+start_index = which(names(measures) == "interval_start") + 1
+end_index = which(names(measures) == "numerator") - 1
+for(col in colnames(measures)[start_index:end_index]){
+  aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
+  plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
+  #calculate_stats(measures, main_col = col, folder = "patient_measures", suffix)
+}
 
 # --- Aggregating measures stratified by vax status and comorbidities ------------------------------------------------
 
