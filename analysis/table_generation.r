@@ -112,18 +112,20 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
 
   # Load data
   df <- read.csv(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
-
+  df$interval_start <- as.Date(df$interval_start)
   # Plot
   p <- ggplot(df, aes(x=interval_start, y=measure_rate_per_1000, 
               color = factor(.data[[main_col]]), group = factor(.data[[main_col]]))) +
     geom_line() +
     geom_point() +
-    labs(title=glue("{main_col} by {facet_col} for {filter_col}"), x="Interval Start", y="Rate per 1000")
+    labs(title=glue("{main_col} by {facet_col} for {filter_col}"), x="Interval Start", y="Rate per 1000") +
+    scale_x_date(date_breaks = "1 year", date_labels = "%b %Y") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
   # Facet by facet_col if present
   if (main_col != "total") {
-    p <- p + facet_wrap(vars(measure))
+    p <- p + facet_wrap(vars(measure), scales = "free_y")
   }
   # Save plot
   ggsave(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"),
@@ -170,7 +172,6 @@ measures$interval_start <- as.Date(measures$interval_start)
 
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
-print(head(measures))
 start_index = which(names(measures) == "interval_start") + 1
 end_index = which(names(measures) == "numerator") - 1
 for(col in colnames(measures)[start_index:end_index]){
