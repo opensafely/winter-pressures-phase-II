@@ -55,7 +55,7 @@ if (opt$test) {
     suffix <- suffix %>% paste0("_test")
     
   } else {
-    practice_measures <- as.data.frame(read_arrow("output/practice_measures/proc_practice_measures.arrow")) %>%
+    practice_measures <- as.data.frame(read_feather("output/practice_measures/proc_practice_measures.arrow")) %>%
       mutate(rate_per_1000=(numerator/list_size)*1000)
   }
 }
