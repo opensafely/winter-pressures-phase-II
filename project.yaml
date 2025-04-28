@@ -203,7 +203,7 @@ actions:
          dataset: output/appointments/app_measures_4.csv
  
   generate_app_processing:
-     run: r:latest analysis/appointments/app_processing.r
+     run: r:v2 analysis/appointments/app_processing.r
      needs: [generate_app_measures_intv_1, generate_app_measures_intv_2, generate_app_measures_intv_3, generate_app_measures_intv_4]
      outputs:
        moderately_sensitive:
@@ -211,19 +211,19 @@ actions:
          table_pivot: output/appointments/app_pivot_table_*.csv
 
   generate_pre_processing_ungrouped:
-    run: python:latest analysis/pre_processing_ungrouped.py
+    run: python:v2 analysis/pre_processing_ungrouped.py
     needs: [generate_practice_measures_2016-08-10, generate_practice_measures_2017-08-09, generate_practice_measures_2018-08-08, generate_practice_measures_2019-08-07, generate_practice_measures_2020-08-05, generate_practice_measures_2021-08-04, generate_practice_measures_2022-08-03, generate_practice_measures_2023-08-02]
     outputs:
       highly_sensitive:
         ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures.arrow
   generate_pre_processing_practice:
-    run: python:latest analysis/pre_processing_practice.py
+    run: python:v2 analysis/pre_processing_practice.py
     needs: [generate_practice_measures_2016-08-10, generate_practice_measures_2017-08-09, generate_practice_measures_2018-08-08, generate_practice_measures_2019-08-07, generate_practice_measures_2020-08-05, generate_practice_measures_2021-08-04, generate_practice_measures_2022-08-03, generate_practice_measures_2023-08-02]
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures*.arrow
   generate_pre_processing_patient:
-    run: python:latest analysis/pre_processing_patient.py
+    run: python:v2 analysis/pre_processing_patient.py
     needs: [generate_patient_measures_2016-08-10, generate_patient_measures_2017-08-09, generate_patient_measures_2018-08-08, generate_patient_measures_2019-08-07, generate_patient_measures_2020-08-05, generate_patient_measures_2021-08-04, generate_patient_measures_2022-08-03, generate_patient_measures_2023-08-02]
     outputs:
       highly_sensitive:
@@ -231,35 +231,60 @@ actions:
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
   generate_pre_processing_patient_comorbid:
-    run: python:latest analysis/pre_processing_patient.py --comorbid
+    run: python:v2 analysis/pre_processing_patient.py --comorbid
     needs: [generate_patient_measures_2016-08-10, generate_patient_measures_2017-08-09, generate_patient_measures_2018-08-08, generate_patient_measures_2019-08-07, generate_patient_measures_2020-08-05, generate_patient_measures_2021-08-04, generate_patient_measures_2022-08-03, generate_patient_measures_2023-08-02]
     outputs:
       highly_sensitive:
         patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
+
+  # Normalization
+  generate_normalization:
+    run: python:v2 analysis/normalization.py
+    needs: [generate_pre_processing_practice]
+    outputs:
+      highly_sensitive:
+        RR_table: output/practice_measures/RR.arrow
+      moderately_sensitive:
+        seasonality_table: output/practice_measures/seasonality_results.csv
+        trend_table: output/practice_measures/trend_results.csv
+
+  # Visualisation
   generate_tables_patient:
-    run: r:latest analysis/table_generation.r --demograph
+    run: r:v2 analysis/table_generation.r --demograph
     needs: [generate_pre_processing_patient]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_demograph.csv
        patient_measures_plots: output/patient_measures/plots/*_demograph.png
   generate_tables_patient_comorbid:
-    run: r:latest analysis/table_generation.r --comorbid
+    run: r:v2 analysis/table_generation.r --comorbid
     needs: [generate_pre_processing_patient_comorbid]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_comorbid.csv
        patient_measures_plots: output/patient_measures/plots/*_comorbid.png
+
   generate_deciles_charts:
     run: >
-      r:latest analysis/decile_charts.r
+      r:v2 analysis/decile_charts.r
     needs: [generate_pre_processing_practice]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*.png
-        deciles_table: output/practice_measures/decile_table.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_raw.png
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_raw.csv.gz
+  generate_deciles_charts_RR:
+    run: >
+      r:v2 analysis/decile_charts.r --RR
+    needs: [generate_normalization]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_RR.png
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_RR.csv.gz
+
 
   generate_patient_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
@@ -282,13 +307,13 @@ actions:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
   generate_pre_processing_ungrouped_test:
-    run: python:latest analysis/pre_processing_ungrouped.py --test
+    run: python:v2 analysis/pre_processing_ungrouped.py --test
     needs: [generate_practice_measures_test]
     outputs:
       highly_sensitive:
         ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures_test.csv.gz
   generate_pre_processing_patient_test:
-    run: python:latest analysis/pre_processing_patient.py --test
+    run: python:v2 analysis/pre_processing_patient.py --test
     needs: [generate_patient_measures_test]
     outputs:
       highly_sensitive:
@@ -296,7 +321,7 @@ actions:
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table_test.csv
   generate_pre_processing_patient_comorbid_test:
-    run: python:latest analysis/pre_processing_patient.py --test --comorbid
+    run: python:v2 analysis/pre_processing_patient.py --test --comorbid
     needs: [generate_patient_measures_test]
     outputs:
       highly_sensitive:
@@ -304,33 +329,57 @@ actions:
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
   generate_pre_processing_practice_test:
-    run: python:latest analysis/pre_processing_practice.py --test
+    run: python:v2 analysis/pre_processing_practice.py --test
     needs: [generate_practice_measures_test]
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+
+  # Normalization
+  generate_normalization_test:
+    run: python:v2 analysis/normalization.py --test
+    needs: [generate_pre_processing_practice_test]
+    outputs:
+      highly_sensitive:
+        RR_table: output/practice_measures/RR_test.csv
+      moderately_sensitive:
+        seasonality_table: output/practice_measures/seasonality_results_test.csv
+        trend_table: output/practice_measures/trend_results_test.csv
+
+  # Visualisation
   generate_tables_patient_test:
-    run: r:latest analysis/table_generation.r --test --demograph
+    run: r:v2 analysis/table_generation.r --test --demograph
     needs: [generate_pre_processing_patient_test]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_demograph_test.csv
        patient_measures_plots: output/patient_measures/plots/*_demograph_test.png
   generate_tables_patient_comorbid_test:
-    run: r:latest analysis/table_generation.r --test --comorbid
+    run: r:v2 analysis/table_generation.r --test --comorbid
     needs: [generate_pre_processing_patient_comorbid_test]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_comorbid_test.csv
        patient_measures_plots: output/patient_measures/plots/*_comorbid_test.png
+  
   generate_deciles_charts_test:
     run: >
-      r:latest analysis/decile_charts.r --test
+      r:v2 analysis/decile_charts.r --test
     needs: [generate_pre_processing_practice_test]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_test.png
-        deciles_table: output/practice_measures/decile_table_test.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_raw_test.png
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_raw_test.csv.gz
+  generate_deciles_charts_RR_test:
+    run: >
+      r:v2 analysis/decile_charts.r --RR --test
+    needs: [generate_normalization_test]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_RR_test.png
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_RR_test.csv.gz
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:

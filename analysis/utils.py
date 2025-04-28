@@ -38,8 +38,10 @@ def log_memory_usage(label=""):
     Returns:
         Prints the memory usage in kilobytes to the action log.
     """
-    usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-    print(f"usage at {label}: {usage} kb", flush=True)  # In kilobytes on Linux, bytes on macOS
+    usage = (resource.getrusage(resource.RUSAGE_SELF).ru_maxrss) # In kilobytes
+    usage = usage / 1024  # Convert to MB
+    usage = round(usage, 2)  # Round to 2 decimal places
+    print(f"usage at {label}: {usage} mb", flush=True)  
 
 def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
     '''
