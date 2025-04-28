@@ -169,7 +169,8 @@ yaml_processing = """
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_raw.png
-        deciles_table: output/practice_measures/decile_table_*_raw.csv
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_raw.csv.gz
   generate_deciles_charts_RR:
     run: >
       r:v2 analysis/decile_charts.r --RR
@@ -177,7 +178,8 @@ yaml_processing = """
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_RR.png
-        deciles_table: output/practice_measures/decile_table_*_RR.csv
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_RR.csv.gz
 
 """
 yaml_processing = yaml_processing.format(needs_practice = needs["practice_measures"], 
@@ -268,7 +270,8 @@ yaml_test = '''
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_raw_test.png
-        deciles_table: output/practice_measures/decile_table_*_raw_test.csv
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_raw_test.csv.gz
   generate_deciles_charts_RR_test:
     run: >
       r:v2 analysis/decile_charts.r --RR --test
@@ -276,7 +279,8 @@ yaml_test = '''
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_RR_test.png
-        deciles_table: output/practice_measures/decile_table_*_RR_test.csv
+      highly_sensitive:
+        deciles_table: output/practice_measures/decile_table_RR_test.csv.gz
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:
