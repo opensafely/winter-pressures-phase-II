@@ -58,7 +58,7 @@ def compare_to_summer(row, max_year, min_year, max_year_issue, min_year_issue, d
         return row.rate_per_1000 / summer_value
     elif diff == 'Both':
         # Calculate both absolute and relative difference
-        return pd.Series({'rate_diff': row.rate_per_1000 - summer_value, 'rate_ratio': row.rate_per_1000 / summer_value})
+        return pd.Series({'rate_diff': row.rate_per_1000 - summer_value, 'RR': row.rate_per_1000 / summer_value})
 
 def test_difference(row, rate_df):
     '''
@@ -131,11 +131,14 @@ log_memory_usage(label="Before loading data")
 if test:
     # Generate simulated data
     # Parameters
-    measures = ['CancelledbyPatient', 'seen_in_interval', 'start_in_interval',
-       'tele_consult', 'vax_app', 'vax_app_covid', 'vax_app_flu']
+    measures = ['CancelledbyPatient', 'CancelledbyUnit', 'DidNotAttend',
+        'GP_ooh_admin', 'Waiting', 'call_from_gp', 'call_from_patient',
+        'emergency_care', 'follow_up_app', 'online_consult',
+        'secondary_referral', 'seen_in_interval', 'start_in_interval',
+        'tele_consult', 'vax_app', 'vax_app_covid', 'vax_app_flu']
 
     # Define sample values
-    practice_ids = range(1, 3)  # 3 practices
+    practice_ids = range(1, 10)  # 3 practices
     # Generate 4 years worth of data (pre, during, and post-pandemic covered)
     dates = pd.date_range(start=study_start_date, periods=(52*4), freq='7D').strftime('%Y-%m-%d')  
 
@@ -206,15 +209,15 @@ season_df = (
 # ----------------------- Seasonality analysis ----------------------------------
 
 # Calculate rate ratio at for all intervals
-practice_interval_df['rate_ratio'] = practice_interval_df.apply(compare_to_summer,
+practice_interval_df['RR'] = practice_interval_df.apply(compare_to_summer,
     axis=1,
     args=(max_year, min_year, max_year_issue, min_year_issue, 'Rel', season_df)
 )
 # Save rate ratios (essentially de-trended rates)
 if test:
-    practice_interval_df.to_csv('output/practice_measures/rate_ratios.csv')
+    practice_interval_df.to_csv('output/practice_measures/RR_test.csv')
 else:
-    feather.write_feather(practice_interval_df, 'output/practice_measures/rate_ratios.arrow')
+    feather.write_feather(practice_interval_df, 'output/practice_measures/RR.arrow')
 
 # Filter for summer and winter
 practice_interval_sum_win_df = practice_interval_df.loc[practice_interval_df['season'].isin(['Jun-Jul', 'Sep-Oct', 'Nov-Dec', 'Jan-Feb'])]
@@ -249,7 +252,7 @@ results.columns = ['_'.join(col).strip('_') for col in results.columns.values]
 # Aggregate practice results to measure-season level, and calculate the sum and count of significant results
 sum_win_df = practice_interval_sum_win_df.groupby(['measure', 'season']).agg({
     'rate_per_1000': ['mean', 'std'],
-    'rate_ratio': ['mean', 'std'],
+    'RR': ['mean', 'std'],
     'rate_diff': ['mean', 'std'],
 }).reset_index().round(2)
 # Fix column index
@@ -257,7 +260,10 @@ sum_win_df.columns = ['_'.join(col).strip('_') for col in sum_win_df.columns.val
 # Merge with the results df
 sum_win_df = sum_win_df.merge(results, on=['measure', 'season'], how='left')
 sum_win_df['signif_%'] = round((sum_win_df['signif_sum'] / sum_win_df['signif_count']) * 100, 2)
-sum_win_df.to_csv('output/practice_measures/seasonality_results.csv')
+if test:
+    sum_win_df.to_csv('output/practice_measures/seasonality_results_test.csv')
+else:
+    sum_win_df.to_csv('output/practice_measures/seasonality_results.csv')
 log_memory_usage(label="After practice-level testing data")
 
 # --------------- Describing long-term trend --------------------------------------------
@@ -273,12 +279,12 @@ for measure in measures:
     practice_interval_df.loc[mask, 'weeks_from_start'] = (
         practice_interval_df.loc[mask, 'interval_start'] - study_start_date
     ).dt.days / 7
-    res_SumBas = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'rate_ratio'])
+    res_SumBas = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'RR'])
     res_raw = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'rate_per_1000'])
     results_dict[measure] = {
         "slope_RR": res_SumBas.slope,
         "r_squared_RR": res_SumBas.rvalue**2,
-        "variance_RR": stats.variation(practice_interval_df.loc[mask, 'rate_ratio']),
+        "variance_RR": stats.variation(practice_interval_df.loc[mask, 'RR']),
         "slope_raw": res_raw.slope,
         "r_squared_raw": res_raw.rvalue**2,
         "variance_raw": stats.variation(practice_interval_df.loc[mask, 'rate_per_1000'])
@@ -287,7 +293,10 @@ for measure in measures:
 results_df = pd.DataFrame.from_dict(results_dict, orient='index')
 # Round results
 results_df = results_df.round(4)
-results_df.to_csv("output/practice_measures/trend_results.csv")
+if test:
+    results_df.to_csv("output/practice_measures/trend_results_test.csv")
+else:
+    results_df.to_csv("output/practice_measures/trend_results.csv")
 log_memory_usage(label="After trend analysis")
 
 
