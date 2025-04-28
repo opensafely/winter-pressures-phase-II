@@ -16,5 +16,5 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_normalization_test generate_deciles_chart_test generate_deciles_chart_RR_test
+        actions: generate_normalization_test generate_deciles_charts_test generate_deciles_charts_RR_test
 
