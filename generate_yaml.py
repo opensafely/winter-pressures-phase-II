@@ -93,7 +93,7 @@ appt_list = ", ".join(appt_needs)
 
 yaml_appt_processing_template = """
   generate_app_processing:
-     run: r:latest analysis/appointments/app_processing.r
+     run: r:v2 analysis/appointments/app_processing.r
      needs: [{appt_list}]
      outputs:
        moderately_sensitive:
@@ -104,22 +104,22 @@ yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
 
 yaml_appt_report = yaml_appt_report + yaml_appt_processing
 
-# --- YAML FILE PROCESSING ---
+# --- YAML FILE PROCESSING ---------------------------------------
 yaml_processing = """
   generate_pre_processing_ungrouped:
-    run: python:latest analysis/pre_processing_ungrouped.py
+    run: python:v2 analysis/pre_processing_ungrouped.py
     needs: [{needs_practice}]
     outputs:
       highly_sensitive:
         ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures.arrow
   generate_pre_processing_practice:
-    run: python:latest analysis/pre_processing_practice.py
+    run: python:v2 analysis/pre_processing_practice.py
     needs: [{needs_practice}]
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures*.arrow
   generate_pre_processing_patient:
-    run: python:latest analysis/pre_processing_patient.py
+    run: python:v2 analysis/pre_processing_patient.py
     needs: [{needs_patient}]
     outputs:
       highly_sensitive:
@@ -127,35 +127,58 @@ yaml_processing = """
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
   generate_pre_processing_patient_comorbid:
-    run: python:latest analysis/pre_processing_patient.py --comorbid
+    run: python:v2 analysis/pre_processing_patient.py --comorbid
     needs: [{needs_patient}]
     outputs:
       highly_sensitive:
         patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
+
+  # Normalization
+  generate_normalization:
+    run: python:v2 analysis/normalization.py
+    needs: [generate_pre_processing_practice]
+    outputs:
+      highly_sensitive:
+        RR_table: output/practice_measures/RR.arrow
+      moderately_sensitive:
+        seasonality_table: output/practice_measures/seasonality_results.csv
+        trend_table: output/practice_measures/trend_results.csv
+
+  # Visualisation
   generate_tables_patient:
-    run: r:latest analysis/table_generation.r --demograph
+    run: r:v2 analysis/table_generation.r --demograph
     needs: [generate_pre_processing_patient]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_demograph.csv
        patient_measures_plots: output/patient_measures/plots/*_demograph.png
   generate_tables_patient_comorbid:
-    run: r:latest analysis/table_generation.r --comorbid
+    run: r:v2 analysis/table_generation.r --comorbid
     needs: [generate_pre_processing_patient_comorbid]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_comorbid.csv
        patient_measures_plots: output/patient_measures/plots/*_comorbid.png
+
   generate_deciles_charts:
     run: >
-      r:latest analysis/decile_charts.r
+      r:v2 analysis/decile_charts.r
     needs: [generate_pre_processing_practice]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*.png
-        deciles_table: output/practice_measures/decile_table.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_raw.png
+        deciles_table: output/practice_measures/decile_table_*_raw.csv
+  generate_deciles_charts_RR:
+    run: >
+      r:v2 analysis/decile_charts.r --RR
+    needs: [generate_normalization]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_RR.png
+        deciles_table: output/practice_measures/decile_table_*_RR.csv
+
 """
 yaml_processing = yaml_processing.format(needs_practice = needs["practice_measures"], 
                                          needs_patient = needs["patient_measures"])
@@ -183,13 +206,13 @@ yaml_test = '''
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
   generate_pre_processing_ungrouped_test:
-    run: python:latest analysis/pre_processing_ungrouped.py --test
+    run: python:v2 analysis/pre_processing_ungrouped.py --test
     needs: [generate_practice_measures_test]
     outputs:
       highly_sensitive:
         ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures_test.csv.gz
   generate_pre_processing_patient_test:
-    run: python:latest analysis/pre_processing_patient.py --test
+    run: python:v2 analysis/pre_processing_patient.py --test
     needs: [generate_patient_measures_test]
     outputs:
       highly_sensitive:
@@ -197,7 +220,7 @@ yaml_test = '''
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table_test.csv
   generate_pre_processing_patient_comorbid_test:
-    run: python:latest analysis/pre_processing_patient.py --test --comorbid
+    run: python:v2 analysis/pre_processing_patient.py --test --comorbid
     needs: [generate_patient_measures_test]
     outputs:
       highly_sensitive:
@@ -205,33 +228,55 @@ yaml_test = '''
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
   generate_pre_processing_practice_test:
-    run: python:latest analysis/pre_processing_practice.py --test
+    run: python:v2 analysis/pre_processing_practice.py --test
     needs: [generate_practice_measures_test]
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+
+  # Normalization
+  generate_normalization_test:
+    run: python:v2 analysis/normalization.py --test
+    needs: [generate_pre_processing_practice_test]
+    outputs:
+      highly_sensitive:
+        RR_table: output/practice_measures/RR_test.csv
+      moderately_sensitive:
+        seasonality_table: output/practice_measures/seasonality_results_test.csv
+        trend_table: output/practice_measures/trend_results_test.csv
+
+  # Visualisation
   generate_tables_patient_test:
-    run: r:latest analysis/table_generation.r --test --demograph
+    run: r:v2 analysis/table_generation.r --test --demograph
     needs: [generate_pre_processing_patient_test]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_demograph_test.csv
        patient_measures_plots: output/patient_measures/plots/*_demograph_test.png
   generate_tables_patient_comorbid_test:
-    run: r:latest analysis/table_generation.r --test --comorbid
+    run: r:v2 analysis/table_generation.r --test --comorbid
     needs: [generate_pre_processing_patient_comorbid_test]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_comorbid_test.csv
        patient_measures_plots: output/patient_measures/plots/*_comorbid_test.png
+  
   generate_deciles_charts_test:
     run: >
-      r:latest analysis/decile_charts.r --test
+      r:v2 analysis/decile_charts.r --test
     needs: [generate_pre_processing_practice_test]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_test.png
-        deciles_table: output/practice_measures/decile_table_test.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_raw_test.png
+        deciles_table: output/practice_measures/decile_table_*_raw_test.csv
+  generate_deciles_charts_RR_test:
+    run: >
+      r:v2 analysis/decile_charts.r --RR --test
+    needs: [generate_normalization_test]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_RR_test.png
+        deciles_table: output/practice_measures/decile_table_*_RR_test.csv
   #generate_test_data:
   #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
   #  outputs:
