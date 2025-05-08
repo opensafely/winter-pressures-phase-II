@@ -15,7 +15,7 @@ def generate_annual_dates(start_year, end_date):
         end_date: The end date for the dates.
         
     Returns:
-        A list of start dates (52 weeks apart from each other) in 'YYYY-MM-DD' format.
+        A list of strings representing the annual start dates in 'YYYY-MM-DD' format.
     """
     # Generate annual start days for the study period: August 2016 -  31 July 2024
     start_date = datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=52)

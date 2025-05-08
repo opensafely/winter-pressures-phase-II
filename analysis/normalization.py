@@ -19,13 +19,17 @@ import pyarrow.feather as feather
 
 # -------- Load data ----------------------------------
 
+# Generate dates
+dates = generate_annual_dates(2016, '2024-07-31')
+date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
+
 if test == True:
-    study_start_date = datetime.strptime("2019-08-10", "%Y-%m-%d")
+    study_start_date = date_objects[3] # Later start date for testing
     suffix = "_test"
 else:
-    dates = generate_annual_dates(2016, '2024-07-31')
+    # Convert to datetime objects
     suffix = ""
-    study_start_date = dates[0]
+    study_start_date = date_objects[0]
 
 log_memory_usage(label="Before loading data")
 
