@@ -82,8 +82,11 @@ practice_deciles <- practice_measures %>%
   ungroup() %>%
   pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = "rate_per_1000")
 
-# save table
-write.csv(practice_deciles, glue("output/practice_measures/decile_table{suffix}.csv.gz"))
+# Save tables, generating a separate file for each measure
+for (measure in unique(practice_deciles$measure)) {
+  measure_data <- practice_deciles %>% filter(measure == !!measure)
+  write.csv(measure_data, glue("output/practice_measures/decile_tables/decile_table_{measure}{suffix}.csv.gz"))
+}
 
 # Define line types
 line_types <- c("d1" = "dashed", "d3" = "dashed",  
