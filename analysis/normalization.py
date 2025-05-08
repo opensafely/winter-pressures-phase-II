@@ -1,3 +1,7 @@
+# This script normalizes the practice measures data by calculating rate ratios and testing for seasonality.
+# It also performs a long-term trend analysis on the rate ratios and raw rates.
+# Option --test flag to run a lightweight test using simulated data
+
 #TODO:
 # 1. Check assumptions for poissoin
 # 2. Fix trend analysis

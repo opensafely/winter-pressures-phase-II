@@ -1,3 +1,9 @@
+# This script generates faceted line plots (not decile plots) for PATIENT measures data,
+# e.g. appts by age group, faceted by comoribidity status. Also generates the underlying tables for output release.
+# Option --test uses test data
+# Option --comorbid uses comorbid data
+# Option --demograph uses demographic data
+
 # ------------ Configuration -------------------------------------------------------
 
 library(ggplot2)

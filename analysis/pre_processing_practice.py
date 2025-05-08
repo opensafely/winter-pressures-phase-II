@@ -1,4 +1,5 @@
-# TODO:
+# This script process the raw measures output to generate practice-stratfied measures
+# Option --test flag to run a lightweight test with a single date
 
 import pandas as pd
 from scipy import stats

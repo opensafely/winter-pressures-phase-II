@@ -1,3 +1,6 @@
+# This script sets up the configuration for the analysis pipeline.
+# It includes the command-line argument options to customize the behaviour of each action.
+
 import argparse
 parser = argparse.ArgumentParser() # Instantiate parser
 

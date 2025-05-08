@@ -1,3 +1,8 @@
+# This script process the raw measures output to generate ungrouped measures 
+# i.e. no practice or patient stratification. Developed as a reserve option
+# due to memory issues when processing generating large, stratified datasets.
+# Option --test flag to run a lightweight test with a single date
+
 import pandas as pd
 from scipy import stats
 import numpy as np

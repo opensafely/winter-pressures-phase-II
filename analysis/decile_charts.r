@@ -1,3 +1,7 @@
+# This script generates decile charts for practice measures.
+# Option --test uses test data
+# Option --RR uses Rate Ratio data
+
 # ------------ Configuration -----------------------------------------------------------
 
 library(ggplot2)
