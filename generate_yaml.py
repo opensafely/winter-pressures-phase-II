@@ -98,7 +98,6 @@ yaml_appt_processing_template = """
      outputs:
        moderately_sensitive:
          table_rounded: output/appointments/app_measures_rounded_*.csv
-         table_pivot: output/appointments/app_pivot_table_*.csv
 """
 yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
 
@@ -134,6 +133,14 @@ yaml_processing = """
         patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
+
+  # Rounding
+  generate_rounding:
+    run: r:v2 analysis/round_measures.r
+    needs: [generate_pre_processing_ungrouped, generate_pre_processing_practice, generate_pre_processing_patient, generate_pre_processing_patient_comorbid]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/*/*midpoint6.arrow
 
   # Normalization
   generate_normalization:
@@ -235,6 +242,14 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
+
+  # Rounding
+  generate_rounding_test:
+    run: r:v2 analysis/round_measures.r --test
+    needs: [generate_pre_processing_ungrouped_test, generate_pre_processing_practice_test, generate_pre_processing_patient_test, generate_pre_processing_patient_comorbid_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/*/*midpoint6_test.csv.gz
 
   # Normalization
   generate_normalization_test:
