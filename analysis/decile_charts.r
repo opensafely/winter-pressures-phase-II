@@ -85,7 +85,7 @@ practice_deciles <- practice_measures %>%
 # Save tables, generating a separate file for each measure
 for (measure in unique(practice_deciles$measure)) {
   measure_data <- practice_deciles %>% filter(measure == !!measure)
-  write.csv(measure_data, glue("output/practice_measures/decile_tables/decile_table_{measure}{suffix}.csv.gz"))
+  write.csv(measure_data, glue("output/practice_measures/decile_tables/decile_table_{measure}{suffix}.csv"))
 }
 
 # Define line types
