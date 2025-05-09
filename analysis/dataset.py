@@ -1,3 +1,5 @@
+# This script creates a dataset definition copy of the measures definition for testing purposes
+
 from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (

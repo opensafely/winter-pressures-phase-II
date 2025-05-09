@@ -2,6 +2,9 @@
 
 library(tidyverse)
 library(glue)
+library(readr)
+library(dplyr)
+source("analysis/utils.r")
 
 statuses <- c('Booked', 'Arrived', 'DidNotAttend', 'InProgress', 'Finished',
               'Requested', 'Blocked', 'Visit', 'Waiting', 'CancelledbyPatient',
@@ -15,24 +18,17 @@ paths <- c(
   "output/appointments/app_measures_4.csv"
 )
 
-# A function to apply midpoint rounding as per OS documentation on disclosure control
-roundmid_any <- function(x, to=6){
-  ceiling(x/to)*to - (floor(to/2)*(x!=0))
-}
-
-# Apply midpoint 6 rounding, generate pivot tables
+# Loop over each appts file
 for (i in seq_along(paths)) {
-  
   df <- read_csv(paths[i])
-  
-  # Round to midpoint 6 and save
-  rounded_df <- df %>% 
-    mutate(across(c(ratio,numerator,denominator), roundmid_any))%>%
-    mutate(ratio = numerator / denominator)%>%
+  # Round and save the numerator and denominator columns
+  round_columns(df, cols_to_round = c('numerator', 'denominator')) %>%
+    # Recalculate ratio based on rounded values
+    mutate(ratio = numerator_midpoint6 / denominator_midpoint6) %>%
     rename(
-      midpoint_rounded_numerator = numerator,
-      midpoint_rounded_denominator = denominator
-    )
-  write_csv(rounded_df, glue("output/appointments/app_measures_rounded_{i}.csv"))
+      midpoint_rounded_numerator = numerator_midpoint6,
+      midpoint_rounded_denominator = denominator_midpoint6
+    ) %>%
+    # Save the rounded dataframe to a new CSV file
+    write_csv(glue("output/appointments/app_measures_rounded_{i}.csv"))
 }
-

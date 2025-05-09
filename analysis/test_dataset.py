@@ -1,3 +1,5 @@
+# This script is used to test the measures definition.
+
 from datetime import date
 from dataset import dataset
 

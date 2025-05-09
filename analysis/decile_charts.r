@@ -1,3 +1,7 @@
+# This script generates decile charts for practice measures.
+# Option --test uses test data
+# Option --RR uses Rate Ratio data
+
 # ------------ Configuration -----------------------------------------------------------
 
 library(ggplot2)
@@ -47,16 +51,16 @@ if (opt$test) {
   suffix <- suffix %>% paste0("_raw")
 
   if (opt$test) {
-    practice_measures <- read.csv(glue("output/practice_measures/proc_practice_measures_test.csv.gz"))
+    practice_measures <- read.csv("output/practice_measures/proc_practice_measures_midpoint6_test.csv.gz")
     # Generate simulated rate data (since dummy data contains too many 0's to graph)
-    practice_measures$numerator <- sample(1:100, nrow(practice_measures), replace = TRUE)  
-    practice_measures$list_size <- sample(101:200, nrow(practice_measures), replace = TRUE)  
-    practice_measures <- mutate(practice_measures, rate_per_1000=(numerator/list_size)*1000)
+    practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)  
+    practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)  
+    practice_measures <- mutate(practice_measures, rate_per_1000=(numerator_midpoint6/list_size_midpoint6)*1000)
     suffix <- suffix %>% paste0("_test")
     
   } else {
-    practice_measures <- as.data.frame(read_feather("output/practice_measures/proc_practice_measures.arrow")) %>%
-      mutate(rate_per_1000=(numerator/list_size)*1000)
+    practice_measures <- as.data.frame(read_feather("output/practice_measures/proc_practice_measures_midpoint6.arrow")) %>%
+      mutate(rate_per_1000=(numerator_midpoint6/list_size_midpoint6)*1000)
   }
 }
 
