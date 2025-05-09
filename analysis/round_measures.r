@@ -33,7 +33,7 @@ if (opt$test) {
   suffix <- ".arrow"
   read_file <- function(path) as.data.frame(read_feather(path))  # wrap in a function to add args
   write_file <- write_feather
-  comorbid_file <- "output/patient_measures/proc_patient_measures_comorbid.arrow"
+  comorbid_file <- "proc_patient_measures_comorbid.arrow"
 }
 
 
