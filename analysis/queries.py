@@ -1,5 +1,4 @@
-# TODO:
-# Potentially refactor to use classes when time available
+# This script contains the ehrql queries for measures definition and test dataset definition.
 
 from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients

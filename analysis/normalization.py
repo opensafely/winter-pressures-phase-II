@@ -3,12 +3,11 @@
 # Option --test flag to run a lightweight test using simulated data
 
 #TODO:
-# 1. Make .apply filtering more efficient
 # 1. Check assumptions for poissoin
-# 2. Add visualisation of rate ratios to deciles_chart.r
+# 2. Fix trend analysis
 
 import pandas as pd
-from utils import generate_annual_dates, log_memory_usage, replace_nums
+from utils import *
 import pyarrow.feather as feather
 from wp_config_setup import *
 import numpy as np
@@ -20,114 +19,17 @@ import pyarrow.feather as feather
 
 # -------- Load data ----------------------------------
 
+# Generate dates
+dates = generate_annual_dates(2016, '2024-07-31')
+date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
+
 if test == True:
-    study_start_date = datetime.strptime("2019-08-10", "%Y-%m-%d")
+    study_start_date = date_objects[3] # Later start date for testing
     suffix = "_test"
 else:
-    dates = generate_annual_dates(2016, '2024-07-31')
+    # Convert to datetime objects
     suffix = ""
-    study_start_date = dates[0]
-
-def compare_to_summer(row, max_year, min_year, max_year_issue, min_year_issue, diff, season_df):
-    '''
-    Calculates the difference between the rate and the summer baseline for a given measure and year.
-    Args:
-        row (pd.Series): Row of the DataFrame containing the measure, year, and rate.
-        max_year (int): Maximum year in the dataset.
-        min_year (int): Minimum year in the dataset.
-        max_year_issue (bool): Whether the latest year has no summer. Prev year summer used instead.
-        min_year_issue (bool): Whether the earliest year has no summer. Next year summer used instead.
-        diff (str): Type of difference to calculate ('Abs', 'Rel', 'Both').
-    Returns:
-        float: The difference between the rate and the summer baseline.
-    '''
-    year = row['year']
-    # Check if the year is the max or min year and if it has a summer
-    if (year == max_year) and (max_year_issue):
-        print(f'Interval {row.interval_start} does not have a summer for that year, using prev years')
-        year = year - 1
-    elif (year == min_year) and (min_year_issue):
-        print(f'Interval {row.interval_start} does not have a summer for that year, using next years')
-        year = year + 1
-    else:
-        print(f'Interval {row.interval_start} has a summer for that year')
-    # Get the summer value for the measure and year
-    summer_value = season_df.loc[(row['measure'], 'Jun-Jul', year)]['mean']
-    # Calculate rate normalized by summer baseline
-    if diff == 'Abs':
-        # Calculate absolute difference
-        return row.rate_per_1000 - summer_value
-    elif diff == 'Rel':
-        # Calculate relative difference
-        return row.rate_per_1000 / summer_value
-    elif diff == 'Both':
-        # Calculate both absolute and relative difference
-        return pd.Series({'rate_diff': row.rate_per_1000 - summer_value, 'RR': row.rate_per_1000 / summer_value})
-
-def test_difference(row, rate_df):
-    '''
-    Conducts a poisson means test comparing the summer and winter rates for a given measure, season and practice.
-    Args:
-        row (pd.Series): Row of the DataFrame containing the measure, season, and practice.
-        rate_df (pd.DataFrame): DataFrame containing the rate data. Should be interval-level.
-    Returns:
-        float: The p-value of the difference between summer and winter values.
-    '''
-    print(f"Testing difference for measure: {row['measure']}, season: {row['season']}, practice: {row['practice_pseudo_id']}")
-    if row['season'] == 'Jun-Jul':
-        print("Skipping summer-summer comparison")
-        return np.nan
-    # Extract the summer and winter values for the measure, season, and year
-    summer = rate_df.loc[
-        (rate_df['measure'] == row['measure']) &
-        (rate_df['season'] == 'Jun-Jul') &
-        (rate_df['practice_pseudo_id'] == row['practice_pseudo_id'])
-        ]
-    season = rate_df.loc[
-        (rate_df['measure'] == row['measure']) &
-        (rate_df['season'] == row['season']) &
-        (rate_df['practice_pseudo_id'] == row['practice_pseudo_id'])
-        ]
-    # Get the rates for summer and winter
-    vals_summer = summer['rate_per_1000']
-    vals_season = season['rate_per_1000']
-    
-    # Conduct poisson test
-    rate1 = round(vals_summer.sum())
-    intervals1 = len(vals_summer)
-    print(f"Rate summer: {rate1}, Intervals summer: {intervals1}")
-    rate2 = round(vals_season.sum())
-    intervals2 = len(vals_season)
-    print(f"Rate season: {rate2}, Intervals season: {intervals2}")
-    if intervals1 == 0 or intervals2 == 0:
-        print("One of the counts is zero, returning NaN")
-        return np.nan
-    result = stats.poisson_means_test(rate1, intervals1, rate2, intervals2, alternative='two-sided')
-
-    # Get the p-value
-    pval = result.pvalue
-
-    # Return significance at p < 0.05
-    return round(pval, 4)
-
-def get_season(month):
-    '''
-    Returns the season for a given month.
-    Args:
-        month (int): Month number (1-12).
-    Returns:
-        str: Season name (2 month period).
-    '''
-    if month in [9, 10]:
-        return 'Sep-Oct'
-    elif month in [11, 12]:
-        return 'Nov-Dec'
-    elif month in [1, 2]:
-        return 'Jan-Feb'
-    elif month in [6, 7]:
-        return 'Jun-Jul'
-    else:
-        return None  # Exclude non-winter months
+    study_start_date = date_objects[0]
 
 log_memory_usage(label="Before loading data")
 
@@ -158,13 +60,13 @@ if test:
                     'measure': measure,
                     'interval_start': date,
                     'practice_pseudo_id': practice_id,
-                    'numerator': np.round(np.random.uniform(0, 50), 1),  # float64
-                    'list_size': np.round(np.random.uniform(100, 1000), 1)  # float64
+                    'numerator_midpoint6': np.round(np.random.uniform(0, 50), 1),  # float64
+                    'list_size_midpoint6': np.round(np.random.uniform(100, 1000), 1)  # float64
                 })
         # Convert to DataFrame
     practice_interval_df = pd.DataFrame(rows)
 else:
-    practice_interval_df = feather.read_feather("output/practice_measures/proc_practice_measures.arrow")
+    practice_interval_df = feather.read_feather("output/practice_measures/proc_practice_measures_midpoint6.arrow")
 
 log_memory_usage(label="After loading data")
 
@@ -175,7 +77,7 @@ practice_interval_df['interval_start'] = pd.to_datetime(practice_interval_df['in
 # Extract year
 practice_interval_df['year'] = practice_interval_df['interval_start'].dt.year
 practice_interval_df['month'] = practice_interval_df['interval_start'].dt.month
-practice_interval_df['rate_per_1000'] = practice_interval_df['numerator'] / practice_interval_df['list_size'] * 1000
+practice_interval_df['rate_per_1000_midpoint6_derived'] = practice_interval_df['numerator_midpoint6'] / practice_interval_df['list_size_midpoint6'] * 1000
 pandemic_conditions = [
     practice_interval_df['interval_start'] < pd.to_datetime("2020-03-01"),
         (practice_interval_df['interval_start'] >= pd.to_datetime("2020-03-01")) & 
@@ -206,7 +108,7 @@ min_year_issue = practice_interval_df[practice_interval_df['year'] == min_year][
 # This is used as a reference for the rate ratio calculation
 season_df = practice_interval_df[practice_interval_df['season'].notnull()]
 season_df = (
-    season_df.groupby(['measure', 'season', 'year'])['rate_per_1000']
+    season_df.groupby(['measure', 'season', 'year'])['rate_per_1000_midpoint6_derived']
     .agg(['mean'])
 )
 
@@ -255,10 +157,11 @@ results.columns = ['_'.join(col).strip('_') for col in results.columns.values]
 
 # Aggregate practice results to measure-season level, and calculate the sum and count of significant results
 sum_win_df = practice_interval_sum_win_df.groupby(['measure', 'season']).agg({
-    'rate_per_1000': ['mean', 'std'],
+    'rate_per_1000_midpoint6_derived': ['mean', 'std'],
     'RR': ['mean', 'std'],
     'rate_diff': ['mean', 'std'],
 }).reset_index().round(2)
+
 # Fix column index
 sum_win_df.columns = ['_'.join(col).strip('_') for col in sum_win_df.columns.values]
 # Merge with the results df

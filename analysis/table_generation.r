@@ -1,4 +1,8 @@
-# TODO:
+# This script generates faceted line plots (not decile plots) for PATIENT measures data,
+# e.g. appts by age group, faceted by comoribidity status. Also generates the underlying tables for output release.
+# Option --test uses test data
+# Option --comorbid uses comorbid data
+# Option --demograph uses demographic data
 
 # ------------ Configuration -------------------------------------------------------
 
@@ -26,20 +30,20 @@ if (opt$test) {
   if (opt$comorbid) {
     print("Using test comorbid data")
     suffix <- "_comorbid_test"
-    measures <- read.csv("output/patient_measures/proc_patient_measures_test_comorbid.csv.gz")
+    measures <- read.csv("output/patient_measures/proc_patient_measures_comorbid_midpoint6_test.csv.gz")
   } else if (opt$demograph) {
     print("Using test demograph data")
     suffix <- "_demograph_test"
-    measures <- read.csv("output/patient_measures/proc_patient_measures_test.csv.gz")
+    measures <- read.csv("output/patient_measures/proc_patient_measures_midpoint6_test.csv.gz")
   }
 } else if (opt$comorbid) {
   print("Using full comorbid data")
   suffix <- "_comorbid"
-  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_comorbid.arrow"))
+  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_comorbid_midpoint6.arrow"))
 } else if (opt$demograph) {
   print("Using test comorbid data")
   suffix <- "_demograph"
-  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures.arrow"))
+  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_midpoint6.arrow"))
 }
 
 
@@ -83,7 +87,7 @@ aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, fold
   # Summarise by numerator, denominator, and calculate rate per 1000
   df <- df %>%
     group_by(across(all_of(group_vars))) %>%
-    summarise(numerator_total = sum(numerator), list_size_total = sum(list_size), measure_rate_per_1000=(sum(numerator)/sum(list_size))*1000, .groups = 'drop')
+    summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), measure_rate_per_1000=(sum(numerator_midpoint6)/sum(list_size_midpoint6))*1000, .groups = 'drop')
 
   write.csv(df, glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 }
@@ -137,10 +141,10 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
   
   if(is.null(main_col)){
     stats_df<- df %>% 
-      mutate(measure_rate_per_1000 = (numerator/ list_size)*1000) %>%
+      mutate(measure_rate_per_1000 = (numerator_midpoint6/ list_size_midpoint6)*1000) %>%
       group_by(measure) %>%
-      summarise(numerator_total = sum(numerator), list_size_total = sum(list_size), 
-                measure_rate_per_1000=(sum(numerator)/sum(list_size))*1000,
+      summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), 
+                measure_rate_per_1000=(sum(numerator_midpoint6)/sum(list_size_midpoint6))*1000,
                 min = min(measure_rate_per_1000), max= max(measure_rate_per_1000),
                 avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
                 IQR(measure_rate_per_1000), .groups = 'drop')
@@ -148,10 +152,10 @@ calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
     write.csv(stats_df, glue("output/{folder}/summary_stats{suffix}.csv"))
   } else {
   stats_df<- df %>% 
-    mutate(measure_rate_per_1000 = (numerator/ list_size)*1000) %>%
+    mutate(measure_rate_per_1000 = (numerator_midpoint6/ list_size_midpoint6)*1000) %>%
     group_by(measure, main_col) %>%
-    summarise(numerator_total = sum(numerator), list_size_total = sum(list_size), 
-              measure_rate_per_1000=(sum(numerator)/sum(list_size))*1000,
+    summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), 
+              measure_rate_per_1000=(sum(numerator_midpoint6)/sum(list_size_midpoint6))*1000,
               min = min(measure_rate_per_1000), max= max(measure_rate_per_1000),
               avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
               IQR(measure_rate_per_1000), .groups = 'drop')
@@ -173,7 +177,7 @@ measures$interval_start <- as.Date(measures$interval_start)
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
 start_index = which(names(measures) == "interval_start") + 1
-end_index = which(names(measures) == "numerator") - 1
+end_index = which(names(measures) == "numerator_midpoint6") - 1
 for(col in colnames(measures)[start_index:end_index]){
   aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
   plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)

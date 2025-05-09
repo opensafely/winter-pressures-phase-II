@@ -1,3 +1,8 @@
+# This script processes the raw measures output to generate patient-characteristic stratified measures
+# Option --comorbid flag to aggregate by comorbidities
+# Option --patient_measures flag to aggregate by demographics
+# Option --test flag to run a lightweight test with a single date
+
 #TODO:
 # Update frequency table code at the end
 

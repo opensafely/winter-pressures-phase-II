@@ -98,7 +98,6 @@ yaml_appt_processing_template = """
      outputs:
        moderately_sensitive:
          table_rounded: output/appointments/app_measures_rounded_*.csv
-         table_pivot: output/appointments/app_pivot_table_*.csv
 """
 yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
 
@@ -135,10 +134,18 @@ yaml_processing = """
       # moderately_sensitive:
       #   frequency_table: output/patient_measures/frequency_table.csv
 
+  # Rounding
+  generate_rounding:
+    run: r:v2 analysis/round_measures.r
+    needs: [generate_pre_processing_ungrouped, generate_pre_processing_practice, generate_pre_processing_patient, generate_pre_processing_patient_comorbid]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/*/*midpoint6.arrow
+
   # Normalization
   generate_normalization:
     run: python:v2 analysis/normalization.py
-    needs: [generate_pre_processing_practice]
+    needs: [generate_rounding]
     outputs:
       highly_sensitive:
         RR_table: output/practice_measures/RR.arrow
@@ -149,14 +156,14 @@ yaml_processing = """
   # Visualisation
   generate_tables_patient:
     run: r:v2 analysis/table_generation.r --demograph
-    needs: [generate_pre_processing_patient]
+    needs: [generate_rounding]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_demograph.csv
        patient_measures_plots: output/patient_measures/plots/*_demograph.png
   generate_tables_patient_comorbid:
     run: r:v2 analysis/table_generation.r --comorbid
-    needs: [generate_pre_processing_patient_comorbid]
+    needs: [generate_rounding]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_comorbid.csv
@@ -165,7 +172,7 @@ yaml_processing = """
   generate_deciles_charts:
     run: >
       r:v2 analysis/decile_charts.r
-    needs: [generate_pre_processing_practice]
+    needs: [generate_rounding]
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6.png
@@ -234,10 +241,18 @@ yaml_test = '''
       highly_sensitive:
         practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
 
+  # Rounding
+  generate_rounding_test:
+    run: r:v2 analysis/round_measures.r --test
+    needs: [generate_pre_processing_ungrouped_test, generate_pre_processing_practice_test, generate_pre_processing_patient_test, generate_pre_processing_patient_comorbid_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/*/*midpoint6_test.csv.gz
+
   # Normalization
   generate_normalization_test:
     run: python:v2 analysis/normalization.py --test
-    needs: [generate_pre_processing_practice_test]
+    needs: [generate_rounding_test]
     outputs:
       highly_sensitive:
         RR_table: output/practice_measures/RR_test.csv
@@ -248,14 +263,14 @@ yaml_test = '''
   # Visualisation
   generate_tables_patient_test:
     run: r:v2 analysis/table_generation.r --test --demograph
-    needs: [generate_pre_processing_patient_test]
+    needs: [generate_rounding_test]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_demograph_test.csv
        patient_measures_plots: output/patient_measures/plots/*_demograph_test.png
   generate_tables_patient_comorbid_test:
     run: r:v2 analysis/table_generation.r --test --comorbid
-    needs: [generate_pre_processing_patient_comorbid_test]
+    needs: [generate_rounding_test]
     outputs:
      moderately_sensitive:
        patient_measures_tables: output/patient_measures/plots/*_comorbid_test.csv
@@ -264,7 +279,7 @@ yaml_test = '''
   generate_deciles_charts_test:
     run: >
       r:v2 analysis/decile_charts.r --test
-    needs: [generate_pre_processing_practice_test]
+    needs: [generate_rounding_test]
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6_test.png

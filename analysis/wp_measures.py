@@ -1,3 +1,5 @@
+# This script defines the measures for the analysis pipeline.
+
 from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
