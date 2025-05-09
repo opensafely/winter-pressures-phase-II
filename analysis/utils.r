@@ -20,7 +20,14 @@ roundmid_any <- function(x, to = 6) {
 # Returns:
 #   Dataframe with specified columns rounded to the nearest multiple of 6
 round_columns <- function(df, cols_to_round) {
-    
+  print(colnames(df))
+  # print unique values in columns
+  for (col in cols_to_round) {
+    cat(glue::glue("Unique values in {col}:\n"))
+    print(typeof(df[[col]]))
+    print(unique(df[[col]]))
+    cat("\n")
+  }
   rounded_df <- df %>%
     # Select required columns and round their values
     mutate(across(all_of(cols_to_round), ~ roundmid_any(.x))) %>%
