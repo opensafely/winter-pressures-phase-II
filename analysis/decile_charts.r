@@ -16,7 +16,7 @@ option_list <- list(
   make_option("--test", action = "store_true", default = FALSE, 
               help = "Uses test data instead of full data"),
   make_option("--RR", action = "store_true", default = FALSE, 
-              help = "Uses RR instead of raw rate")
+              help = "Uses RR instead of rounded rate")
 )
 
 # Parse arguments
@@ -47,8 +47,8 @@ if (opt$test) {
   }
   
 } else {
-  print("Using raw rate data")
-  suffix <- suffix %>% paste0("_raw")
+  print("Using rounded rate data")
+  suffix <- suffix %>% paste0("_rate_mp6")
 
   if (opt$test) {
     practice_measures <- read.csv("output/practice_measures/proc_practice_measures_midpoint6_test.csv.gz")
@@ -86,8 +86,11 @@ practice_deciles <- practice_measures %>%
   ungroup() %>%
   pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = "rate_per_1000")
 
-# save table
-write.csv(practice_deciles, glue("output/practice_measures/decile_table{suffix}.csv.gz"))
+# Save tables, generating a separate file for each measure
+for (measure in unique(practice_deciles$measure)) {
+  measure_data <- practice_deciles %>% filter(measure == !!measure)
+  write.csv(measure_data, glue("output/practice_measures/decile_tables/decile_table_{measure}{suffix}.csv"))
+}
 
 # Define line types
 line_types <- c("d1" = "dashed", "d3" = "dashed",  
