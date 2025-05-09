@@ -1,3 +1,7 @@
+# This script normalizes the practice measures data by calculating rate ratios and testing for seasonality.
+# It also performs a long-term trend analysis on the rate ratios and rounded rates.
+# Option --test flag to run a lightweight test using simulated data
+
 #TODO:
 # 1. Make .apply filtering more efficient
 # 1. Check assumptions for poissoin
@@ -280,14 +284,14 @@ for measure in measures:
         practice_interval_df.loc[mask, 'interval_start'] - study_start_date
     ).dt.days / 7
     res_SumBas = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'RR'])
-    res_raw = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'rate_per_1000'])
+    res_rate_mp6 = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'rate_per_1000_midpoint6_derived'])
     results_dict[measure] = {
         "slope_RR": res_SumBas.slope,
         "r_squared_RR": res_SumBas.rvalue**2,
         "variance_RR": stats.variation(practice_interval_df.loc[mask, 'RR']),
-        "slope_raw": res_raw.slope,
-        "r_squared_raw": res_raw.rvalue**2,
-        "variance_raw": stats.variation(practice_interval_df.loc[mask, 'rate_per_1000'])
+        "slope_rate_mp6": res_rate_mp6.slope,
+        "r_squared_rate_mp6": res_rate_mp6.rvalue**2,
+        "variance_rate_mp6": stats.variation(practice_interval_df.loc[mask, 'rate_per_1000_midpoint6_derived'])
     }
 
 results_df = pd.DataFrame.from_dict(results_dict, orient='index')

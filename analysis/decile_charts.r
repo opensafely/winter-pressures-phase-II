@@ -12,7 +12,7 @@ option_list <- list(
   make_option("--test", action = "store_true", default = FALSE, 
               help = "Uses test data instead of full data"),
   make_option("--RR", action = "store_true", default = FALSE, 
-              help = "Uses RR instead of raw rate")
+              help = "Uses RR instead of rounded rate")
 )
 
 # Parse arguments
@@ -43,8 +43,8 @@ if (opt$test) {
   }
   
 } else {
-  print("Using raw rate data")
-  suffix <- suffix %>% paste0("_raw")
+  print("Using rounded rate data")
+  suffix <- suffix %>% paste0("_rate_mp6")
 
   if (opt$test) {
     practice_measures <- read.csv(glue("output/practice_measures/proc_practice_measures_test.csv.gz"))

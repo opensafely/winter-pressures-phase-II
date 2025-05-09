@@ -272,8 +272,8 @@ actions:
     needs: [generate_pre_processing_practice]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_raw.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_raw.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6.csv
   generate_deciles_charts_RR:
     run: >
       r:v2 analysis/decile_charts.r --RR
@@ -366,8 +366,8 @@ actions:
     needs: [generate_pre_processing_practice_test]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_raw_test.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_raw_test.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6_test.csv
   generate_deciles_charts_RR_test:
     run: >
       r:v2 analysis/decile_charts.r --RR --test
