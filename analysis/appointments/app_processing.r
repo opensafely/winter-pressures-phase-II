@@ -21,7 +21,6 @@ paths <- c(
 # Loop over each appts file
 for (i in seq_along(paths)) {
   df <- read_csv(paths[i])
-  print(df)
   # Round and save the numerator and denominator columns
   round_columns(df, cols_to_round = c('numerator', 'denominator')) %>%
     # Recalculate ratio based on rounded values
