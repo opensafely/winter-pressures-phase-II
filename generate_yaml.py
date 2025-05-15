@@ -32,7 +32,7 @@ actions:
 dates = generate_annual_dates(2016, '2025-03-31')
 
 # Patient and practice measures flags to loop
-flags = ["patient_measures", "practice_measures"]
+flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_template = """
@@ -192,26 +192,28 @@ yaml_processing = yaml_processing.format(needs_practice = needs["practice_measur
 
 # --- YAML TESTING ---
 yaml_test = '''
+  # ---------------------- TESTING --------------------------------------
+
   generate_patient_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+      --output output/patient_measures/patient_measures_{start_date}_test.csv.gz
       --
       --patient_measures
-      --start_intv 2016-08-10
+      --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+        dataset: output/patient_measures/patient_measures_{start_date}_test.csv.gz
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+      --output output/practice_measures/practice_measures_{start_date}_test.csv.gz
       --
       --practice_measures
-      --start_intv 2016-08-10
+      --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+        dataset: output/practice_measures/practice_measures_{start_date}_test.csv.gz
   generate_pre_processing_ungrouped_test:
     run: python:v2 analysis/pre_processing_ungrouped.py --test
     needs: [generate_practice_measures_test]
@@ -298,6 +300,8 @@ yaml_test = '''
   #    highly_sensitive:
   #      dataset: output/patient_measures/test.csv
 '''
+yaml_test = yaml_test.format(start_date = dates[0])
+
 # --- Combine scripts and print file ---
 yaml = yaml_header + yaml_body + yaml_appt_report + yaml_processing + yaml_test
 

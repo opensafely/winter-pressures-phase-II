@@ -3,6 +3,7 @@ import resource
 import pandas as pd
 import numpy as np
 from scipy import stats
+import pyarrow.feather as feather
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -182,3 +183,27 @@ def get_season(month):
         return 'Jun-Jul'
     else:
         return None  # Exclude non-winter months
+    
+def read_write(read_or_write, test, path, df = None, **kwargs):
+    """
+    Function to read or write a file based on the test flag.
+    Args:
+        df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
+        read_or_write (str): 'read' or 'write' to specify the operation.
+        test (bool): If True, use gzip compression for reading/writing. If false, use arrow format.
+        path (str): Path to the file.
+    Returns:
+        pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
+    """
+    if read_or_write == 'read':
+        if test:
+            df = pd.read_csv(path, compression='gzip', **kwargs)
+        else:
+            df = feather.read_feather(path, **kwargs)
+        return df
+
+    elif read_or_write == 'write':
+        if test:
+            df.to_csv(path, index=False, compression='gzip', **kwargs)
+        else:
+            feather.write_feather(df, path, **kwargs)

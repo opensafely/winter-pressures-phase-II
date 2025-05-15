@@ -1,10 +1,12 @@
 # This script processes the raw measures output to generate patient-characteristic stratified measures
-# Option --comorbid flag to aggregate by comorbidities
-# Option --patient_measures flag to aggregate by demographics
+# Option --comorbid_measures flag to aggregate by comorbidities
+# Option --demograph_measures flag to aggregate by demographics
+# Option --practice_measures flag to aggregate by practice
 # Option --test flag to run a lightweight test with a single date
 
 #TODO:
 # Update frequency table code at the end
+# Check rural urb class is defined properly
 
 import pandas as pd
 from scipy import stats
@@ -12,7 +14,7 @@ import numpy as np
 import argparse
 from datetime import datetime, timedelta
 import os
-from utils import generate_annual_dates, log_memory_usage, replace_nums
+from utils import *
 import pyarrow.feather as feather
 from wp_config_setup import *
 
@@ -30,32 +32,58 @@ log_memory_usage(label="Before loading data")
 
 # -------- Patient measures processing ----------------------------------
 
-patient_dataframes = []
+df_list = []
 
 # Load and format data for each interval
 for date in dates:
-    if comorbid:
+    if comorbid_measures:
+        print("Loading comorbid measures", flush=True)
+        # Define demographic col datatypes
         dtype_dict = {
         'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
         'denominator' : 'int64', 'age' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
         'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
         'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
-        #'comorbid_depres': 'bool', 'comorbid_mh': 'bool', 'comorbid_neuro': 'bool',
         }    
-    else:
+        input_path = f"output/comorbid_measures/comorbid_measures_{date}{suffix}"
+        output_path = "output/comorbid_measures/proc_comorbid_measures"
+
+    elif demograph_measures:
+        print("Loading demographic measures", flush=True)
+        # Define demographic col datatypes
         dtype_dict = {
             'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
-            'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 'imd_quintile' : 'int8', 'carehome' : 'category',
+            'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 
+            'ethnicity_sus': 'string', 'imd_quintile' : 'int8', 'carehome' : 'category',
             'region' : 'category', 'rur_urb_class' : 'object', 
         }
-    needed_cols = list(dtype_dict.keys())
-    # Load data for each interval
-    df = pd.read_csv(f"output/patient_measures/patient_measures_{date}{suffix}.csv.gz",
-                                        dtype=dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
+        input_path = f"output/demograph_measures/demograph_measures_{date}{suffix}.csv.gz"
+        output_path = "output/demograph_measures/proc_demograph_measures"
     
-    log_memory_usage(label=f"After loading patient {date}")
+    elif practice_measures:
+        print("Loading practice measures", flush=True)
         
-    if not comorbid:
+        dtype_dict = {
+        "measure": "category",
+        "interval_start": "category",
+        "numerator": "int64",
+        "denominator": "int64",
+        "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
+        }
+
+        needed_cols = ['measure', 'interval_start', 'numerator', 'denominator','practice_pseudo_id']
+        input_path = f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz"
+        output_path = "output/practice_measures/proc_practice_measures"
+
+    # Select columns to read
+    needed_cols = list(dtype_dict.keys())
+    # Read in measures
+    read_write(read_or_write = 'read', test = test, path = input_path, 
+                dtype=dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
+
+    log_memory_usage(label=f"After loading measures {date}")
+        
+    if demograph_measures:
         # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
         df['rur_urb_class'] = df['rur_urb_class'].apply(
             lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
@@ -78,12 +106,6 @@ for date in dates:
 
     # Perform efficient groupby and aggregation
     print('GROUPING AND AGGREGATING', flush=True)
-    # Aggregate by the demographic columns
-    groupby_cols = [col for col in needed_cols if col not in ['numerator', 'denominator']]
-    df = df.groupby(groupby_cols).agg(
-        numerator = ("numerator", "sum"),
-        list_size=("denominator", "sum")
-    ).reset_index()
 
     # count without 0 numerator
     print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
@@ -100,42 +122,36 @@ for date in dates:
 
     print(f"After grouping: df.shape", flush=True)
 
-    patient_dataframes.append(df)
+    df_list.append(df)
     del(df)
-    log_memory_usage(label=f"After deletion of patient df")
+    log_memory_usage(label=f"After deletion of df")
 
 # Save processed file
-patient_df = pd.concat(patient_dataframes)
-del patient_dataframes
-print(f"Data types of input: {patient_df.dtypes}", flush=True)
-log_memory_usage(label=f"After deletion of patient_dataframes")
+proc_df = pd.concat(df_list)
+del df_list
+print(f"Data types of input: {proc_df.dtypes}", flush=True)
+log_memory_usage(label=f"After deletion of dataframes")
 
-if not comorbid:
+if demograph_measures:
     # Replace numerical values with string values
-    patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
-    patient_file = ''
-else:
-    patient_file = '_comorbid'
-
+    proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
+    
 # Save processed file
-if test:
-    patient_df.to_csv(f"output/patient_measures/proc_patient_measures_test{patient_file}.csv.gz")
-else:
-    feather.write_feather(patient_df, f"output/patient_measures/proc_patient_measures{patient_file}.arrow")
+read_write(read_or_write = 'write', test = test, path = output_path)
 
 # -------- Frequency table generation ----------------------------------
 
 # # Create frequency table
-# patient_df_at_start = patient_df[(patient_df['interval_start'] == study_start_date) & (patient_df['measure'] == 'seen_in_interval')]
+# proc_df_at_start = proc_df[(proc_df['interval_start'] == study_start_date) & (proc_df['measure'] == 'seen_in_interval')]
 # # Extract demographic variables
-# table_one_vars = patient_df.columns[patient_df.columns.get_loc('denominator') + 1:]
+# table_one_vars = proc_df.columns[proc_df.columns.get_loc('denominator') + 1:]
 # table_one = {}
 # # Iterate over all the demographic variables we want in table one
 # for var in table_one_vars:
 #     # Create an binary matrix composed of indicator variables representing the categorical value for each group (M)
 #     # Multiply this matrix by the vector of denominators representing the size of the given group (d)
 #     # Sum to get the total denominator value from all the groups (t = Sum(M x d))
-#     table_one[var] = pd.get_dummies(patient_df_at_start[var]).multiply(patient_df_at_start['denominator'], axis=0).sum().reset_index()
+#     table_one[var] = pd.get_dummies(proc_df_at_start[var]).multiply(proc_df_at_start['denominator'], axis=0).sum().reset_index()
 #     table_one[var].columns = ['value', 'count']
 #     table_one[var]['prop'] = table_one[var]['count']/table_one[var]['count'].sum()
 

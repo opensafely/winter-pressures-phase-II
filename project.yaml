@@ -331,26 +331,28 @@ actions:
         deciles_table: output/practice_measures/decile_tables/decile_table_*_RR.csv
 
 
+  # ---------------------- TESTING --------------------------------------
+
   generate_patient_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+      --output output/patient_measures/patient_measures_2016-04-11_test.csv.gz
       --
       --patient_measures
-      --start_intv 2016-08-10
+      --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2016-08-10_test.csv.gz
+        dataset: output/patient_measures/patient_measures_2016-04-11_test.csv.gz
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+      --output output/practice_measures/practice_measures_2016-04-11_test.csv.gz
       --
       --practice_measures
-      --start_intv 2016-08-10
+      --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+        dataset: output/practice_measures/practice_measures_2016-04-11_test.csv.gz
   generate_pre_processing_ungrouped_test:
     run: python:v2 analysis/pre_processing_ungrouped.py --test
     needs: [generate_practice_measures_test]
