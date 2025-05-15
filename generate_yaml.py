@@ -29,7 +29,7 @@ actions:
 
 # --- YAML MEASURES BODY ----
 
-dates = generate_annual_dates(2016, '2024-07-31')
+dates = generate_annual_dates(2016, '2025-03-31')
 
 # Patient and practice measures flags to loop
 flags = ["patient_measures", "practice_measures"]
@@ -38,13 +38,13 @@ flags = ["patient_measures", "practice_measures"]
 yaml_template = """
   generate_{flag}_{date}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}/{flag}_{date}.csv.gz
+      --output output/{flag}/{flag}_{date}.arrow
       --
       --{flag}
       --start_intv {date}
     outputs:
       highly_sensitive:
-        dataset: output/{flag}/{flag}_{date}.csv.gz
+        dataset: output/{flag}/{flag}_{date}.arrow
 """
 
 yaml_body = ""

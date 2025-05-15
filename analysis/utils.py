@@ -17,15 +17,16 @@ def generate_annual_dates(start_year, end_date):
     Returns:
         A list of strings representing the annual start dates in 'YYYY-MM-DD' format.
     """
-    # Generate annual start days for the study period: August 2016 -  31 July 2024
-    start_date = datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=52)
+    # Generate annual start days for the study period: April 2016 - March 2025
+    start_date = datetime.strptime(end_date, '%Y-%m-%d')
 
-    # Subtract 52 weeks until we reach August 2016
+    # Subtract 52 weeks until we reach April 2016
     dates = []
     current_date = start_date
 
-    # Loop to subtract 52 weeks (1 year) in each iteration
-    while current_date.year > start_year or (current_date.year == start_year and current_date.month > 7):
+    # Loop to subtract 52 weeks (1 year) in each iteration until April of the start year
+    while current_date.year > start_year or (current_date.year == start_year and current_date.month >= 3):
+        print(f"Adding date: {current_date.strftime('%Y-%m-%d')}")
         dates.append(current_date.strftime('%Y-%m-%d'))
         current_date -= timedelta(weeks=52)
 
