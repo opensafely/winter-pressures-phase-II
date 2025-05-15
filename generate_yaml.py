@@ -27,7 +27,7 @@ expectations:
 actions:
 """
 
-# --- YAML MEASURES BODY ----
+# ------- YAML MEASURES --------------------------------------------
 
 dates = generate_annual_dates(2016, '2025-03-31')
 
@@ -35,7 +35,7 @@ dates = generate_annual_dates(2016, '2025-03-31')
 flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
-yaml_template = """
+yaml_measures_template = """
   generate_{flag}_{date}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
       --output output/{flag}/{flag}_{date}.arrow
@@ -47,7 +47,7 @@ yaml_template = """
         dataset: output/{flag}/{flag}_{date}.arrow
 """
 
-yaml_body = ""
+yaml_measures = ""
 needs = {}
 
 # Iterate over flags
@@ -56,13 +56,39 @@ for flag in flags:
 
   # Iterate over dates and generate yaml list of needs for each combination
   for date in dates:
-    yaml_body += yaml_template.format(flag = flag, date = date)
+    yaml_measures += yaml_measures_template.format(flag = flag, date = date)
     needs[flag].append(f"generate_{flag}_{date}")
 
   # Join list into string for each flag
   needs[flag] = ", ".join(needs[flag])
 
-# --- YAML APPT REPORT ---
+yaml_measures_test = '''
+  # --------------- TEST ACTIONS ------------------------------------------
+
+  generate_patient_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/patient_measures/patient_measures_{start_date}_test.csv.gz
+      --
+      --patient_measures
+      --start_intv {start_date}
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/patient_measures/patient_measures_{start_date}_test.csv.gz
+  generate_practice_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures/practice_measures_{start_date}_test.csv.gz
+      --
+      --practice_measures
+      --start_intv {start_date}
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures/practice_measures_{start_date}_test.csv.gz
+'''
+yaml_measures_test = yaml_measures_test.format(start_date = dates[0])
+
+# --------------- YAML APPT REPORT ------------------------------------------
 yaml_appt_report = ""
 
 appt_dates = {
@@ -104,206 +130,96 @@ yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
 yaml_appt_report = yaml_appt_report + yaml_appt_processing
 
 # --- YAML FILE PROCESSING ---------------------------------------
-yaml_processing = """
-  generate_pre_processing_ungrouped:
-    run: python:v2 analysis/pre_processing_ungrouped.py
-    needs: [{needs_practice}]
+yaml_processing_template = """
+  generate_pre_processing_practice{test_suffix}:
+    run: python:v2 analysis/pre_processing.py --practice_measures {test_flag}
+    needs: [{needs_practice_measures}]
     outputs:
       highly_sensitive:
-        ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures.arrow
-  generate_pre_processing_practice:
-    run: python:v2 analysis/pre_processing_practice.py
-    needs: [{needs_practice}]
+        measures: output/practice_measures/proc_practice_measures{test_suffix}{test_filetype}
+  generate_pre_processing_demograph:
+    run: python:v2 analysis/pre_processing.py --demograph_measures {test_flag}
+    needs: [{needs_demograph_measures}]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures*.arrow
-  generate_pre_processing_patient:
-    run: python:v2 analysis/pre_processing_patient.py
-    needs: [{needs_patient}]
+        measures: output/demograph_measures/proc_demograph_measures{test_suffix}{test_filetype}
+  generate_pre_processing_comorbid{test_suffix}:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures {test_flag}
+    needs: [{needs_comorbid_measures}]
     outputs:
       highly_sensitive:
-        patient_measure: output/patient_measures/proc_patient_measures*.arrow
-      # moderately_sensitive:
-      #   frequency_table: output/patient_measures/frequency_table.csv
-  generate_pre_processing_patient_comorbid:
-    run: python:v2 analysis/pre_processing_patient.py --comorbid
-    needs: [{needs_patient}]
-    outputs:
-      highly_sensitive:
-        patient_measure: output/patient_measures/proc_patient_measures_comorbid*.arrow
-      # moderately_sensitive:
-      #   frequency_table: output/patient_measures/frequency_table.csv
+        measures: output/comorbid_measures/proc_comorbid_measures{test_suffix}{test_filetype}
 
   # Rounding
-  generate_rounding:
-    run: r:v2 analysis/round_measures.r
-    needs: [generate_pre_processing_ungrouped, generate_pre_processing_practice, generate_pre_processing_patient, generate_pre_processing_patient_comorbid]
+  generate_rounding{test_suffix}:
+    run: r:v2 analysis/round_measures.r {test_flag}
+    needs: [generate_pre_processing_practice{test_suffix}, generate_pre_processing_demograph{test_suffix}, generate_pre_processing_comorbid{test_suffix}]
     outputs:
       highly_sensitive:
-        rounded_measures: output/*/*midpoint6.arrow
+        rounded_measures: output/*/*midpoint6{test_suffix}{test_filetype}
 
   # Normalization
-  generate_normalization:
-    run: python:v2 analysis/normalization.py
-    needs: [generate_rounding]
+  generate_normalization{test_suffix}:
+    run: python:v2 analysis/normalization.py {test_flag}
+    needs: [generate_rounding{test_suffix}]
     outputs:
       highly_sensitive:
-        RR_table: output/practice_measures/RR.arrow
+        RR_table: output/practice_measures/RR{test_suffix}{test_filetype}
       moderately_sensitive:
-        seasonality_table: output/practice_measures/seasonality_results.csv
-        trend_table: output/practice_measures/trend_results.csv
+        seasonality_table: output/practice_measures/seasonality_results{test_suffix}.csv
+        trend_table: output/practice_measures/trend_results{test_suffix}.csv
 
   # Visualisation
-  generate_tables_patient:
-    run: r:v2 analysis/table_generation.r --demograph
-    needs: [generate_rounding]
+  generate_tables_demograph{test_suffix}:
+    run: r:v2 analysis/table_generation.r --demograph_measures {test_flag}
+    needs: [generate_rounding{test_suffix}]
     outputs:
      moderately_sensitive:
-       patient_measures_tables: output/patient_measures/plots/*_demograph.csv
-       patient_measures_plots: output/patient_measures/plots/*_demograph.png
-  generate_tables_patient_comorbid:
-    run: r:v2 analysis/table_generation.r --comorbid
-    needs: [generate_rounding]
+       tables: output/demograph_measures/plots/*_demograph{test_suffix}.csv
+       plots: output/demograph_measures/plots/*_demograph{test_suffix}.png
+  generate_tables_comorbid{test_suffix}:
+    run: r:v2 analysis/table_generation.r --comorbid_measures {test_flag}
+    needs: [generate_rounding{test_suffix}]
     outputs:
      moderately_sensitive:
-       patient_measures_tables: output/patient_measures/plots/*_comorbid.csv
-       patient_measures_plots: output/patient_measures/plots/*_comorbid.png
+        tables: output/comorbid_measures/plots/*_comorbid{test_suffix}.csv
+        plots: output/comorbid_measures/plots/*_comorbid{test_suffix}.png
 
-  generate_deciles_charts:
+  generate_deciles_charts{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r
-    needs: [generate_rounding]
+      r:v2 analysis/decile_charts.r {test_flag}
+    needs: [generate_rounding{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6.csv
-  generate_deciles_charts_RR:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6{test_suffix}.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+  generate_deciles_charts_RR{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --RR
-    needs: [generate_normalization]
+      r:v2 analysis/decile_charts.r --RR {test_flag}
+    needs: [generate_normalization{test_suffix}]
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_RR.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_RR.csv
+        deciles_charts: output/practice_measures/plots/decile_chart_*_RR{test_suffix}.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_RR{test_suffix}.csv
 
 """
-yaml_processing = yaml_processing.format(needs_practice = needs["practice_measures"], 
-                                         needs_patient = needs["patient_measures"])
-
-# --- YAML TESTING ---
-yaml_test = '''
-  # ---------------------- TESTING --------------------------------------
-
-  generate_patient_measures_test:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/patient_measures/patient_measures_{start_date}_test.csv.gz
-      --
-      --patient_measures
-      --start_intv {start_date}
-      --test
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_{start_date}_test.csv.gz
-  generate_practice_measures_test:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_{start_date}_test.csv.gz
-      --
-      --practice_measures
-      --start_intv {start_date}
-      --test
-    outputs:
-      highly_sensitive:
-        dataset: output/practice_measures/practice_measures_{start_date}_test.csv.gz
-  generate_pre_processing_ungrouped_test:
-    run: python:v2 analysis/pre_processing_ungrouped.py --test
-    needs: [generate_practice_measures_test]
-    outputs:
-      highly_sensitive:
-        ungrouped_measures: output/ungrouped_measures/proc_ungrouped_measures_test.csv.gz
-  generate_pre_processing_patient_test:
-    run: python:v2 analysis/pre_processing_patient.py --test
-    needs: [generate_patient_measures_test]
-    outputs:
-      highly_sensitive:
-        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
-      # moderately_sensitive:
-      #   frequency_table: output/patient_measures/frequency_table_test.csv
-  generate_pre_processing_patient_comorbid_test:
-    run: python:v2 analysis/pre_processing_patient.py --test --comorbid
-    needs: [generate_patient_measures_test]
-    outputs:
-      highly_sensitive:
-        patient_measure: output/patient_measures/proc_patient_measures_test_comorbid.csv.gz
-      # moderately_sensitive:
-      #   frequency_table: output/patient_measures/frequency_table.csv
-  generate_pre_processing_practice_test:
-    run: python:v2 analysis/pre_processing_practice.py --test
-    needs: [generate_practice_measures_test]
-    outputs:
-      highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
-
-  # Rounding
-  generate_rounding_test:
-    run: r:v2 analysis/round_measures.r --test
-    needs: [generate_pre_processing_ungrouped_test, generate_pre_processing_practice_test, generate_pre_processing_patient_test, generate_pre_processing_patient_comorbid_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/*/*midpoint6_test.csv.gz
-
-  # Normalization
-  generate_normalization_test:
-    run: python:v2 analysis/normalization.py --test
-    needs: [generate_rounding_test]
-    outputs:
-      highly_sensitive:
-        RR_table: output/practice_measures/RR_test.csv
-      moderately_sensitive:
-        seasonality_table: output/practice_measures/seasonality_results_test.csv
-        trend_table: output/practice_measures/trend_results_test.csv
-
-  # Visualisation
-  generate_tables_patient_test:
-    run: r:v2 analysis/table_generation.r --test --demograph
-    needs: [generate_rounding_test]
-    outputs:
-     moderately_sensitive:
-       patient_measures_tables: output/patient_measures/plots/*_demograph_test.csv
-       patient_measures_plots: output/patient_measures/plots/*_demograph_test.png
-  generate_tables_patient_comorbid_test:
-    run: r:v2 analysis/table_generation.r --test --comorbid
-    needs: [generate_rounding_test]
-    outputs:
-     moderately_sensitive:
-       patient_measures_tables: output/patient_measures/plots/*_comorbid_test.csv
-       patient_measures_plots: output/patient_measures/plots/*_comorbid_test.png
-  
-  generate_deciles_charts_test:
-    run: >
-      r:v2 analysis/decile_charts.r --test
-    needs: [generate_rounding_test]
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6_test.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6_test.csv
-  generate_deciles_charts_RR_test:
-    run: >
-      r:v2 analysis/decile_charts.r --RR --test
-    needs: [generate_normalization_test]
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_RR_test.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_RR_test.csv
-  #generate_test_data:
-  #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/test.csv
-'''
-yaml_test = yaml_test.format(start_date = dates[0])
+# Actions for processing real data
+yaml_processing = yaml_processing_template.format(needs_practice_measures = needs["practice_measures"], 
+                                         needs_comorbid_measures = needs["comorbid_measures"],
+                                         needs_demograph_measures = needs["demograph_measures"],
+                                         test_suffix = "",
+                                         test_flag = "",
+                                         test_filetype = ".arrow")
+# Actions for processing test data
+yaml_processing_test = yaml_processing_template.format(needs_practice_measures = needs["practice_measures"],
+                                         needs_comorbid_measures = needs["comorbid_measures"],
+                                         needs_demograph_measures = needs["demograph_measures"],
+                                         test_suffix = "_test",
+                                         test_flag = "--test",
+                                         test_filetype = ".csv.gz")
 
 # --- Combine scripts and print file ---
-yaml = yaml_header + yaml_body + yaml_appt_report + yaml_processing + yaml_test
+yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_measures_test + yaml_processing_test
 
 with open("project.yaml", "w") as file:
        file.write(yaml)
