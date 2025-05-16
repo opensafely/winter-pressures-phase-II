@@ -48,15 +48,15 @@ def count_follow_up(interval_start, seen_appts_in_interval):
         Count of number of patients who had a follow up appointment 
         in the interval
     '''
-    appointments.app_prev_week = (appointments.where(
+    appointments.app_prev_month = (appointments.where(
                 (appointments.seen_date
-                .is_on_or_between(interval_start - days(7), interval_start - days(1)))
+                .is_on_or_between(interval_start - days(31), interval_start - days(1)))
                 ).exists_for_patient()
                 )
     appointments.app_curr_week = seen_appts_in_interval.exists_for_patient()
 
     follow_up = (appointments.where(
-                        appointments.app_prev_week & appointments.app_curr_week)
+                        appointments.app_prev_month & appointments.app_curr_week)
                         .exists_for_patient())
     return follow_up
 

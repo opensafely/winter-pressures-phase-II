@@ -9,17 +9,18 @@ from ehrql.tables.tpp import (
     practice_registrations,
     appointments,
     vaccinations,
-    emergency_care_attendances
+    emergency_care_attendances,
+    ethnicity_from_sus
 )
 from queries import *
 from codelist_definition import *
-from wp_config_setup import *
+from wp_config_setup import args
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
-measures.configure_dummy_data(population_size=1000)
+measures.configure_dummy_data(population_size=100)
 measures.configure_disclosure_control(enabled=False)
-if test == True:
+if args.test == True:
     NUM_WEEKS = 2
 else:
     NUM_WEEKS = 52
@@ -38,7 +39,8 @@ was_alive = (
 )
 
 # Registered throughout the interval period and 90 days before
-was_registered = practice_registrations.spanning((INTERVAL.start_date - days(90)), INTERVAL.end_date).exists_for_patient()
+# Using spanning_with_systmone to only include practices that were TPP during the interval
+was_registered = practice_registrations.spanning_with_systmone((INTERVAL.start_date - days(90)), INTERVAL.end_date).exists_for_patient()
 
 # No missing data: known sex, IMD, practice region (as per WP 2) 
 was_female_or_male = patients.sex.is_in(["female", "male"])
@@ -161,66 +163,67 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 
 # Configuration based on CLI arg. Add these measures if --add_measure flag called
 
-if add_indicat_prescript == True:
+if args.add_indicat_prescript == True:
     # Count appointments with an indication and prescription
     measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, seen_appts_in_interval))
 
-if add_prescriptions == True:
+if args.add_prescriptions == True:
     # Count prescriptions and add to measures
     measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
-if add_reason == True:
+if args.add_reason == True:
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], seen_appts_in_interval)
 
 # ---------------------- Define measures --------------------------------
 
-if patient_measures == True:
+inclusion_criteria = (was_female_or_male & age_filter & was_alive & 
+                    was_registered & has_deprivation_index & has_region)
+intervals=weeks(NUM_WEEKS).starting_on(args.start_intv)
+
+if args.demograph_measures:
     # Run patient script if patient flag called
     measures.define_defaults(
-        denominator= was_female_or_male & age_filter & was_alive & 
-                    was_registered & has_deprivation_index & has_region,
+        denominator= inclusion_criteria,
         group_by={
             "age": age_group,
             "sex": patients.sex,
             "ethnicity": ethnicity,
+            "ethnicity_sus": ethnicity_from_sus.code,
             "imd_quintile": imd_quintile,
             "carehome": carehome,
             "region": region,
-            "rur_urb_class": rur_urb_class,
+            "rur_urb_class": rur_urb_class
+        },
+        intervals=intervals,
+    )
+elif args.practice_measures:
+    # Run practice script if practice flag called
+    measures.define_defaults(
+        denominator= inclusion_criteria,
+        group_by={
+            "practice_pseudo_id": practice_id
+        },
+        intervals=intervals,
+    )
+elif args.comorbid_measures:
+    # Run comorbid script if comorbid flag called
+    measures.define_defaults(
+        denominator= inclusion_criteria,
+        group_by={
+            "age": age_group,
             "comorbid_chronic_resp": comorbid_chronic_resp,
             "comorbid_copd": comorbid_copd,
             "comorbid_asthma": comorbid_asthma,
             "comorbid_dm": comorbid_dm,
             "comorbid_htn": comorbid_htn,
-            "comorbid_depres": comorbid_depres,
-            "comorbid_mh": comorbid_mh,
-            "comorbid_neuro": comorbid_neuro,
             "comorbid_immuno": comorbid_immuno,
             "vax_flu_12m": vax_status['INFLUENZA'],
             "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
             "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
         },
-        intervals=weeks(NUM_WEEKS).starting_on(start_intv),
-    )
-
-if practice_measures == True:
-    # Run practice script if practice flag called
-    measures.define_defaults(
-        denominator= was_female_or_male & age_filter & was_alive & 
-                    was_registered & has_deprivation_index & has_region,
-        group_by={
-            "age": age_group,
-            "sex": patients.sex,
-            "ethnicity": ethnicity,
-            "imd_quintile": imd_quintile,
-            "carehome": carehome,
-            "region": region,
-            "rur_urb_class": rur_urb_class,
-            "practice_pseudo_id": practice_id
-        },
-        intervals=weeks(NUM_WEEKS).starting_on(start_intv),
+        intervals=intervals,
     )
 
 # Adding measures
