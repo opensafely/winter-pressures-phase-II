@@ -7,26 +7,25 @@ import pyarrow.feather as feather
 
 # --------- Pre-processing functions ------------------------------------------------
 
-def generate_annual_dates(start_year, end_date):
+def generate_annual_dates(end_date, n_years):
     """
     Generates a list of annual start dates from the start year to the end date.
     
     Args:
-        start_year: The starting year for the dates.
-        end_date: The end date for the dates.
-        
+        end_date (str): The end date in 'YYYY-MM-DD' format.
+        n_years (int): The number of years to generate.
     Returns:
-        A list of strings representing the annual start dates in 'YYYY-MM-DD' format.
+        list: A list of annual start dates in 'YYYY-MM-DD' format.
     """
-    # Generate annual start days for the study period: April 2016 - March 2025
-    start_date = datetime.strptime(end_date, '%Y-%m-%d')
+    # Convert the start and end dates to datetime objects
+    end_date = datetime.strptime(end_date, '%Y-%m-%d')
 
     # Subtract 52 weeks until we reach April 2016
     dates = []
-    current_date = start_date
+    current_date = end_date
 
     # Loop to subtract 52 weeks (1 year) in each iteration until April of the start year
-    while current_date.year > start_year or (current_date.year == start_year and current_date.month >= 3):
+    for i in range(n_years):
         print(f"Adding date: {current_date.strftime('%Y-%m-%d')}")
         dates.append(current_date.strftime('%Y-%m-%d'))
         current_date -= timedelta(weeks=52)
@@ -59,24 +58,43 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
     '''
     # Reformat rur_urb column
     if replace_rur_urb:
-        print('Replacing rur_urb')
-        df['rur_urb_class'].replace(
-            {1: 'Urban major conurbation', 2: 'Urban minor conurbation', 3: 'Urban city and town', 
-            4: 'Urban city and town in a sparse setting', 5: 'Rural town and fringe',
-            6: 'Rural town and fringe in a sparse setting', 7: 'Rural village and dispersed',
-            8: 'Rural village and dispersed in a sparse setting'},
-            inplace=True)
-        df['rur_urb_class'].fillna("Unknown", inplace = True)
-        #df['rur_urb_class'] = df['rur_urb_class'].astype('category')
+        print(f"Replacing rur_urb, prior values:, {df['rur_urb_class'].unique()}")
+        # Convert string col to category for efficiency
+        df['rur_urb_class'] = df['rur_urb_class'].astype('category')
+        df['rur_urb_class'] = df['rur_urb_class'].cat.add_categories(['Urban', 'Rural', 'Unknown'])
+        df['rur_urb_class'].fillna('Unknown', inplace = True)
+        # Aggregate urban and rural subcategories
+        df['rur_urb_class'] = df['rur_urb_class'].apply(
+            lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else 'Unknown')
+            )
+        df['rur_urb_class'].replace({'1': 'Urban', '2': 'Rural'}, inplace=True)
+        print(f"Post-replace values:, {df['rur_urb_class'].unique()}")
 
     if replace_ethnicity:
-        print('Replacing ethnicity')
+        print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
+        # Identify missing values
+        df['ethnicity'].replace('6', pd.NA, inplace=True)
+        print(f"Prior Nan count: {df['ethnicity'].isna().sum()}")
+        # Fill missing values with values from sus_ethnicity
+        df['ethnicity'] = df['ethnicity'].fillna(df['ethnicity_sus'])
+        # Convert string col to category for efficiency
+        df['ethnicity'] = df['ethnicity'].astype('category')
         # Reformat ethnicity data
+        df['ethnicity'] = df['ethnicity'].cat.add_categories(['White', 'Mixed', 'South Asian', 'Black', 'Other', 'Not stated'])
         df['ethnicity'].replace(
-            {1: 'White', 2: 'Mixed', 3: 'South Asian', 4: 'Black', 5: 'Other'},
+            {'1': 'White', '2': 'Mixed', '3': 'South Asian', '4': 'Black', '5': 'Other', 
+             'A': 'White', 'B': 'White', 'C': 'White', 
+             'D': 'Mixed', 'E': 'Mixed', 'F': 'Mixed', 'G': 'Mixed', 
+             'H': 'South Asian', 'J': 'South Asian', 'K': 'South Asian', 'L': 'South Asian', 
+             'M': 'Black', 'N': 'Black', 'P': 'Black', 
+             'R': 'Other', 'S': 'Other', 
+             'Z': 'Not stated'},
             inplace=True)
-        df['ethnicity'].fillna('Not Stated', inplace=True)
-        #df['ethnicity'] = df['ethnicity'].astype('category')
+        # Fill missing values with 'Not stated'
+        df['ethnicity'].fillna("Not stated", inplace=True)
+        print(f"Post-replace Nan count: {df['ethnicity'].isna().sum()}")
+        print(f"Post-replace values:, {df['ethnicity'].unique()}")
+        df = df.drop('ethnicity_sus', axis=1)
 
     return df
 
@@ -197,13 +215,15 @@ def read_write(read_or_write, test, path, df = None, **kwargs):
     """
     if read_or_write == 'read':
         if test:
-            df = pd.read_csv(path, compression='gzip', **kwargs)
+            path = path + '_test'
+            df = pd.read_csv(path + '.csv.gz', **kwargs)
         else:
-            df = feather.read_feather(path, **kwargs)
+            df = feather.read_feather(path + '.arrow', **kwargs)
         return df
 
     elif read_or_write == 'write':
         if test:
-            df.to_csv(path, index=False, compression='gzip', **kwargs)
+            path = path + '_test'
+            df.to_csv(path + '.csv.gz', **kwargs)
         else:
-            feather.write_feather(df, path, **kwargs)
+            feather.write_feather(df, path + '.arrow', **kwargs)
