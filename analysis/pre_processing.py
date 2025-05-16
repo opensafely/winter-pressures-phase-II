@@ -16,51 +16,47 @@ from datetime import datetime, timedelta
 import os
 from utils import *
 import pyarrow.feather as feather
-from wp_config_setup import *
+from wp_config_setup import args
 
-# -------- Set up variables ----------------------------------
+# --------- Configuration ------------------------------------------------
 
-if test == True:
-    dates = ["2016-08-10"]
-    suffix = "_test"
-else:
-    dates = generate_annual_dates(2016, '2024-07-31')
-    suffix = ""
-study_start_date = dates[0]
+dates = generate_annual_dates(args.study_start_date, args.n_years)
 
-log_memory_usage(label="Before loading data")
-
+if args.test:
+    # Set test mode to use only the first year
+    dates = dates[:1]
+    print(f"Test mode: using {dates}", flush=True)
 # -------- Patient measures processing ----------------------------------
 
 df_list = []
-
+log_memory_usage(label="Before loading data")
 # Load and format data for each interval
 for date in dates:
-    if comorbid_measures:
+    if args.comorbid_measures:
         print("Loading comorbid measures", flush=True)
-        # Define demographic col datatypes
+        # Define comorbid col datatypes
         dtype_dict = {
         'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
         'denominator' : 'int64', 'age' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
         'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
         'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
         }    
-        input_path = f"output/comorbid_measures/comorbid_measures_{date}{suffix}"
+        input_path = f"output/comorbid_measures/comorbid_measures_{date}"
         output_path = "output/comorbid_measures/proc_comorbid_measures"
 
-    elif demograph_measures:
+    elif args.demograph_measures:
         print("Loading demographic measures", flush=True)
         # Define demographic col datatypes
         dtype_dict = {
             'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
-            'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'object', 
+            'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'string', 
             'ethnicity_sus': 'string', 'imd_quintile' : 'int8', 'carehome' : 'category',
-            'region' : 'category', 'rur_urb_class' : 'object', 
+            'region' : 'category', 'rur_urb_class' : 'string', 
         }
-        input_path = f"output/demograph_measures/demograph_measures_{date}{suffix}.csv.gz"
+        input_path = f"output/demograph_measures/demograph_measures_{date}"
         output_path = "output/demograph_measures/proc_demograph_measures"
     
-    elif practice_measures:
+    elif args.practice_measures:
         print("Loading practice measures", flush=True)
         
         dtype_dict = {
@@ -72,55 +68,30 @@ for date in dates:
         }
 
         needed_cols = ['measure', 'interval_start', 'numerator', 'denominator','practice_pseudo_id']
-        input_path = f"output/practice_measures/practice_measures_{date}{suffix}.csv.gz"
+        input_path = f"output/practice_measures/practice_measures_{date}"
         output_path = "output/practice_measures/proc_practice_measures"
 
     # Select columns to read
     needed_cols = list(dtype_dict.keys())
     # Read in measures
-    read_write(read_or_write = 'read', test = test, path = input_path, 
+    df = read_write(read_or_write = 'read', test = args.test, path = input_path, 
                 dtype=dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
-
     log_memory_usage(label=f"After loading measures {date}")
+    print(f"Initial shape of input: {df.shape}", flush=True)
         
-    if demograph_measures:
-        # Collapse rur_urb_class to two categories: #1 for urban and #2 for rural
-        df['rur_urb_class'] = df['rur_urb_class'].apply(
-            lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else np.nan)
-            )
-    # print type of each column
+    # Rename denominator column to list_size
+    df.rename(columns={'denominator': 'list_size'}, inplace=True)
     print(f"Data types of input: {df.dtypes}", flush=True)
-    # Count NaNs in each column
     nan_counts = df.isna().sum()
-    # Print result
     print(f"Number of NA's in each columns {nan_counts}", flush=True)
-    print(f"Before grouping shape: {df.shape}", flush=True)
-    # count without 0 numerator
     print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
-    # count without nan numerator
     print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}", flush=True)
-    # count without 0 list_size
-    print(f"count without 0 denominator: {df[(df['denominator'] > 0)].shape}", flush=True)
-    # count without nan list_size
-    print(f"count without nan denominator: {df[(df['denominator'].notna())].shape}", flush=True)
-
-    # Perform efficient groupby and aggregation
-    print('GROUPING AND AGGREGATING', flush=True)
-
-    # count without 0 numerator
-    print(f"count without 0 numerator: {df[(df['numerator'] > 0)].shape}", flush=True)
-    # count without nan numerator
-    print(f"count without nan numerator: {df[(df['numerator'].notna())].shape}", flush=True)
-    # count without 0 list_size
     print(f"count without 0 list_size: {df[(df['list_size'] > 0)].shape}", flush=True)
-    # count without nan list_size
     print(f"count without nan list_size: {df[(df['list_size'].notna())].shape}", flush=True)
     
     # Drop rows with 0 list_size or nan list_size
     df = df[(df['list_size'] > 0) & (df['list_size'].notna())]
-    print(f"After grouping shape: {df.shape}", flush=True)
-
-    print(f"After grouping: df.shape", flush=True)
+    print(f"After dropping rows with 0 list_size or nan list_size shape: {df.shape}", flush=True)
 
     df_list.append(df)
     del(df)
@@ -132,12 +103,12 @@ del df_list
 print(f"Data types of input: {proc_df.dtypes}", flush=True)
 log_memory_usage(label=f"After deletion of dataframes")
 
-if demograph_measures:
+if args.demograph_measures:
     # Replace numerical values with string values
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
     
 # Save processed file
-read_write(read_or_write = 'write', test = test, path = output_path)
+read_write(df = proc_df, read_or_write = 'write', test = args.test, path = output_path)
 
 # -------- Frequency table generation ----------------------------------
 

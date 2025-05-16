@@ -14,13 +14,13 @@ from ehrql.tables.tpp import (
 )
 from queries import *
 from codelist_definition import *
-from wp_config_setup import *
+from wp_config_setup import args
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
-measures.configure_dummy_data(population_size=300)
+measures.configure_dummy_data(population_size=100)
 measures.configure_disclosure_control(enabled=False)
-if test == True:
+if args.test == True:
     NUM_WEEKS = 2
 else:
     NUM_WEEKS = 52
@@ -163,15 +163,15 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 
 # Configuration based on CLI arg. Add these measures if --add_measure flag called
 
-if add_indicat_prescript == True:
+if args.add_indicat_prescript == True:
     # Count appointments with an indication and prescription
     measures_to_add.update(appointments_with_indication_and_prescription(INTERVAL.start_date, INTERVAL.end_date, indication_dict, prescription_dict, seen_appts_in_interval))
 
-if add_prescriptions == True:
+if args.add_prescriptions == True:
     # Count prescriptions and add to measures
     measures_to_add.update(count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict))
 
-if add_reason == True:
+if args.add_reason == True:
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], seen_appts_in_interval)
@@ -180,9 +180,9 @@ if add_reason == True:
 
 inclusion_criteria = (was_female_or_male & age_filter & was_alive & 
                     was_registered & has_deprivation_index & has_region)
-intervals=weeks(NUM_WEEKS).starting_on(start_intv)
+intervals=weeks(NUM_WEEKS).starting_on(args.start_intv)
 
-if demograph_measures:
+if args.demograph_measures:
     # Run patient script if patient flag called
     measures.define_defaults(
         denominator= inclusion_criteria,
@@ -198,7 +198,7 @@ if demograph_measures:
         },
         intervals=intervals,
     )
-elif practice_measures:
+elif args.practice_measures:
     # Run practice script if practice flag called
     measures.define_defaults(
         denominator= inclusion_criteria,
@@ -207,11 +207,12 @@ elif practice_measures:
         },
         intervals=intervals,
     )
-elif comorbid_measures:
+elif args.comorbid_measures:
     # Run comorbid script if comorbid flag called
     measures.define_defaults(
         denominator= inclusion_criteria,
         group_by={
+            "age": age_group,
             "comorbid_chronic_resp": comorbid_chronic_resp,
             "comorbid_copd": comorbid_copd,
             "comorbid_asthma": comorbid_asthma,

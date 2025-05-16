@@ -18,12 +18,6 @@ parser.add_argument("--test", action= 'store_true', help = "Sets lowest time int
 
 args = parser.parse_args() # Stores arguments in 'args'
 
-# Extract args
-add_indicat_prescript = args.add_indicat_prescript
-add_prescriptions = args.add_prescriptions
-add_reason = args.add_reason
-demograph_measures = args.demograph_measures
-practice_measures = args.practice_measures
-comorbid_measures = args.comorbid_measures
-start_intv = args.start_intv
-test = args.test
+# Configure dates
+args.study_start_date = "2025-03-31"
+args.n_years = 10
