@@ -1,10 +1,8 @@
-# TODO:
-# Add actions for patient and practice pre_processing files
-
 """
 Description: 
 - This script generates the YAML file for the project.
-- It iteratively generates measures for each combination of patient/practice measures and interval date.
+- It iteratively generates actions for practice/demographic/comorbidity measures, split across many years.
+- It also generates test actions for each action.
 
 Usage:
 - python generate_yaml.py
@@ -15,6 +13,9 @@ Output:
 
 from datetime import datetime, timedelta
 from analysis.utils import generate_annual_dates
+from analysis.wp_config_setup import args
+
+dates = generate_annual_dates(args.study_start_date, args.n_years)
 
 # --- YAML HEADER ---
 
@@ -28,8 +29,6 @@ actions:
 """
 
 # ------- YAML MEASURES --------------------------------------------
-
-dates = generate_annual_dates(2016, '2025-03-31')
 
 # Patient and practice measures flags to loop
 flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
@@ -65,16 +64,16 @@ for flag in flags:
 yaml_measures_test = '''
   # --------------- TEST ACTIONS ------------------------------------------
 
-  generate_patient_measures_test:
+  generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/patient_measures/patient_measures_{start_date}_test.csv.gz
+      --output output/demograph_measures/demograph_measures_{start_date}_test.csv.gz
       --
-      --patient_measures
+      --demograph_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/patient_measures/patient_measures_{start_date}_test.csv.gz
+        dataset: output/demograph_measures/demograph_measures_{start_date}_test.csv.gz
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
       --output output/practice_measures/practice_measures_{start_date}_test.csv.gz
@@ -85,6 +84,16 @@ yaml_measures_test = '''
     outputs:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_{start_date}_test.csv.gz
+  generate_comorbid_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures/comorbid_measures_{start_date}_test.csv.gz
+      --
+      --comorbid_measures
+      --start_intv {start_date}
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures/comorbid_measures_{start_date}_test.csv.gz
 '''
 yaml_measures_test = yaml_measures_test.format(start_date = dates[0])
 
@@ -137,7 +146,7 @@ yaml_processing_template = """
     outputs:
       highly_sensitive:
         measures: output/practice_measures/proc_practice_measures{test_suffix}{test_filetype}
-  generate_pre_processing_demograph:
+  generate_pre_processing_demograph{test_suffix}:
     run: python:v2 analysis/pre_processing.py --demograph_measures {test_flag}
     needs: [{needs_demograph_measures}]
     outputs:
@@ -211,9 +220,9 @@ yaml_processing = yaml_processing_template.format(needs_practice_measures = need
                                          test_flag = "",
                                          test_filetype = ".arrow")
 # Actions for processing test data
-yaml_processing_test = yaml_processing_template.format(needs_practice_measures = needs["practice_measures"],
-                                         needs_comorbid_measures = needs["comorbid_measures"],
-                                         needs_demograph_measures = needs["demograph_measures"],
+yaml_processing_test = yaml_processing_template.format(needs_practice_measures = "generate_practice_measures_test,",
+                                         needs_comorbid_measures =  "generate_comorbid_measures_test",
+                                         needs_demograph_measures = "generate_demograph_measures_test",
                                          test_suffix = "_test",
                                          test_flag = "--test",
                                          test_filetype = ".csv.gz")

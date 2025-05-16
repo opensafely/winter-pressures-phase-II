@@ -423,16 +423,16 @@ actions:
 
   # --------------- TEST ACTIONS ------------------------------------------
 
-  generate_patient_measures_test:
+  generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/patient_measures/patient_measures_2016-04-11_test.csv.gz
+      --output output/demograph_measures/demograph_measures_2016-04-11_test.csv.gz
       --
-      --patient_measures
+      --demograph_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2016-04-11_test.csv.gz
+        dataset: output/demograph_measures/demograph_measures_2016-04-11_test.csv.gz
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
       --output output/practice_measures/practice_measures_2016-04-11_test.csv.gz
@@ -443,22 +443,32 @@ actions:
     outputs:
       highly_sensitive:
         dataset: output/practice_measures/practice_measures_2016-04-11_test.csv.gz
+  generate_comorbid_measures_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures/comorbid_measures_2016-04-11_test.csv.gz
+      --
+      --comorbid_measures
+      --start_intv 2016-04-11
+      --test
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.csv.gz
 
   generate_pre_processing_practice_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --test
-    needs: [generate_practice_measures_2016-04-11, generate_practice_measures_2017-04-10, generate_practice_measures_2018-04-09, generate_practice_measures_2019-04-08, generate_practice_measures_2020-04-06, generate_practice_measures_2021-04-05, generate_practice_measures_2022-04-04, generate_practice_measures_2023-04-03, generate_practice_measures_2024-04-01, generate_practice_measures_2025-03-31]
+    needs: [generate_practice_measures_test,]
     outputs:
       highly_sensitive:
         measures: output/practice_measures/proc_practice_measures_test.csv.gz
-  generate_pre_processing_demograph:
+  generate_pre_processing_demograph_test:
     run: python:v2 analysis/pre_processing.py --demograph_measures --test
-    needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
+    needs: [generate_demograph_measures_test]
     outputs:
       highly_sensitive:
         measures: output/demograph_measures/proc_demograph_measures_test.csv.gz
   generate_pre_processing_comorbid_test:
     run: python:v2 analysis/pre_processing.py --comorbid_measures --test
-    needs: [generate_comorbid_measures_2016-04-11, generate_comorbid_measures_2017-04-10, generate_comorbid_measures_2018-04-09, generate_comorbid_measures_2019-04-08, generate_comorbid_measures_2020-04-06, generate_comorbid_measures_2021-04-05, generate_comorbid_measures_2022-04-04, generate_comorbid_measures_2023-04-03, generate_comorbid_measures_2024-04-01, generate_comorbid_measures_2025-03-31]
+    needs: [generate_comorbid_measures_test]
     outputs:
       highly_sensitive:
         measures: output/comorbid_measures/proc_comorbid_measures_test.csv.gz
