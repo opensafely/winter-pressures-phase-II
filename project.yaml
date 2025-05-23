@@ -397,34 +397,34 @@ actions:
 
   generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures/demograph_measures_2016-04-11_test.csv.gz
+      --output output/demograph_measures/demograph_measures_2016-04-11_test.arrow
       --
       --demograph_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2016-04-11_test.csv.gz
+        dataset: output/demograph_measures/demograph_measures_2016-04-11_test.arrow
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-04-11_test.csv.gz
+      --output output/practice_measures/practice_measures_2016-04-11_test.arrow
       --
       --practice_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-04-11_test.csv.gz
+        dataset: output/practice_measures/practice_measures_2016-04-11_test.arrow
   generate_comorbid_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2016-04-11_test.csv.gz
+      --output output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
       --
       --comorbid_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.csv.gz
+        dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
 
   generate_pre_processing_demograph_test:
     run: python:v2 analysis/pre_processing.py --demograph_measures --test
