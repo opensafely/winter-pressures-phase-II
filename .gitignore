@@ -10,4 +10,3 @@ venv/
 .Rhistory
 .Rproj.user/
 .devcontainer/ehrql-main/
-analysis/test.py
