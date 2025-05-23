@@ -2,6 +2,9 @@ library(dplyr)
 library(tidyr)
 library(glue)
 library(readr)
+library(readr)
+library(arrow)
+library(feather)
 
 # Midpoint rounding function
 # Args:
@@ -35,4 +38,29 @@ round_columns <- function(df, cols_to_round) {
     rename_with(~ paste0(., "_midpoint6"), all_of(cols_to_round))
 
   return(rounded_df)
+}
+
+read_write <- function(read_or_write, test, path, df = NULL, ...) {
+
+  if (read_or_write == "read") {
+    if (test) {
+      path <- paste0(path, "_test.csv.gz")
+      df <- read_csv(path, ...)
+    } else {
+      path <- paste0(path, ".arrow")
+      df <- read_feather(path, ...)
+    }
+    return(df)
+
+  } else if (read_or_write == "write") {
+    if (is.null(df)) stop("Data frame 'df' must be provided for writing.")
+
+    if (test) {
+      path <- paste0(path, "_test.csv.gz")
+      write_csv(df, path, ...)
+    } else {
+      path <- paste0(path, ".arrow")
+      write_feather(df, path, ...)
+    }
+  }
 }

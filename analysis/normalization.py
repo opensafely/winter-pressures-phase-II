@@ -4,7 +4,6 @@
 
 #TODO:
 # 1. Check assumptions for poissoin
-# 2. Fix trend analysis
 
 import pandas as pd
 from utils import *
@@ -20,21 +19,19 @@ import pyarrow.feather as feather
 # -------- Load data ----------------------------------
 
 # Generate dates
-dates = generate_annual_dates(2016, '2024-07-31')
+dates = generate_annual_dates(args.study_end_date, args.n_years)
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
-if test == True:
-    study_start_date = date_objects[3] # Later start date for testing
-    suffix = "_test"
+if args.test == True:
+    # Later start date for testing
+    study_start_date = date_objects[3] 
 else:
-    # Convert to datetime objects
-    suffix = ""
     study_start_date = date_objects[0]
 
 log_memory_usage(label="Before loading data")
 
 # Load practice data
-if test:
+if args.test:
     # Generate simulated data
     # Parameters
     measures = ['CancelledbyPatient', 'CancelledbyUnit', 'DidNotAttend',
@@ -120,7 +117,7 @@ practice_interval_df['RR'] = practice_interval_df.apply(compare_to_summer,
     args=(max_year, min_year, max_year_issue, min_year_issue, 'Rel', season_df)
 )
 # Save rate ratios (essentially de-trended rates)
-if test:
+if args.test:
     practice_interval_df.to_csv('output/practice_measures/RR_test.csv')
 else:
     feather.write_feather(practice_interval_df, 'output/practice_measures/RR.arrow')
@@ -167,7 +164,7 @@ sum_win_df.columns = ['_'.join(col).strip('_') for col in sum_win_df.columns.val
 # Merge with the results df
 sum_win_df = sum_win_df.merge(results, on=['measure', 'season'], how='left')
 sum_win_df['signif_%'] = round((sum_win_df['signif_sum'] / sum_win_df['signif_count']) * 100, 2)
-if test:
+if args.test:
     sum_win_df.to_csv('output/practice_measures/seasonality_results_test.csv')
 else:
     sum_win_df.to_csv('output/practice_measures/seasonality_results.csv')
@@ -200,7 +197,7 @@ for measure in measures:
 results_df = pd.DataFrame.from_dict(results_dict, orient='index')
 # Round results
 results_df = results_df.round(4)
-if test:
+if args.test:
     results_df.to_csv("output/practice_measures/trend_results_test.csv")
 else:
     results_df.to_csv("output/practice_measures/trend_results.csv")
