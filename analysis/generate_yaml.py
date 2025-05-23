@@ -1,5 +1,5 @@
 #TODO: 
-# 1. Change output filetype to .arrow in all paths
+# 1. Add support for .csv.gz measures
 """
 Description: 
 - This script generates the YAML file for the project.
@@ -68,34 +68,34 @@ yaml_measures_test = '''
 
   generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures/demograph_measures_{start_date}_test.csv.gz
+      --output output/demograph_measures/demograph_measures_{start_date}_test.arrow
       --
       --demograph_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_{start_date}_test.csv.gz
+        dataset: output/demograph_measures/demograph_measures_{start_date}_test.arrow
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_{start_date}_test.csv.gz
+      --output output/practice_measures/practice_measures_{start_date}_test.arrow
       --
       --practice_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_{start_date}_test.csv.gz
+        dataset: output/practice_measures/practice_measures_{start_date}_test.arrow
   generate_comorbid_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_{start_date}_test.csv.gz
+      --output output/comorbid_measures/comorbid_measures_{start_date}_test.arrow
       --
       --comorbid_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_{start_date}_test.csv.gz
+        dataset: output/comorbid_measures/comorbid_measures_{start_date}_test.arrow
 '''
 yaml_measures_test = yaml_measures_test.format(start_date = dates[0])
 
