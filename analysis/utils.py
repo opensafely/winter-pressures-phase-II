@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import pyarrow.feather as feather
+from wp_config_setup import args
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -202,28 +203,41 @@ def get_season(month):
     else:
         return None  # Exclude non-winter months
     
-def read_write(read_or_write, test, path, df = None, **kwargs):
+def read_write(read_or_write, path, test = args.test, file_type = args.file_type, df = None, dtype = None, **kwargs):
     """
     Function to read or write a file based on the test flag.
     Args:
         df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
         read_or_write (str): 'read' or 'write' to specify the operation.
-        test (bool): If True, use gzip compression for reading/writing. If false, use arrow format.
+        test (bool): If True, use test versions of datasets.
+        file_type (str): Type of file to read/write ('csv' or 'arrow').
         path (str): Path to the file.
     Returns:
         pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
     """
-    if read_or_write == 'read':
-        if test:
+    if test:
             path = path + '_test'
+            
+    if read_or_write == 'read':
+        
+        if file_type == 'csv':
             df = pd.read_csv(path + '.csv.gz', **kwargs)
-        else:
-            df = feather.read_feather(path + '.arrow', **kwargs)
+
+        elif file_type == 'arrow':
+            df = feather.read_feather(path + '.arrow')
+            df = df.astype(dtype)
+            # Convert boolean columns to boolean type
+            bool_cols = [col for col, typ in dtype.items() if typ == 'bool']
+            for col in bool_cols:
+                df[col] = df[col] == 'T'
+
         return df
 
     elif read_or_write == 'write':
-        if test:
-            path = path + '_test'
+
+        if file_type == 'csv':
             df.to_csv(path + '.csv.gz', **kwargs)
-        else:
-            feather.write_feather(df, path + '.arrow', **kwargs)
+
+        elif file_type == 'arrow':
+            # Convert boolean columns to string type
+            feather.write_feather(df, path + '.arrow')
