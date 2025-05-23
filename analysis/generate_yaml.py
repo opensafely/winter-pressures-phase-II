@@ -1,3 +1,5 @@
+#TODO: 
+# 1. Add support for .csv.gz measures
 """
 Description: 
 - This script generates the YAML file for the project.
@@ -12,10 +14,10 @@ Output:
 """
 
 from datetime import datetime, timedelta
-from analysis.utils import generate_annual_dates
-from analysis.wp_config_setup import args
+from utils import generate_annual_dates
+from wp_config_setup import args
 
-dates = generate_annual_dates(args.study_start_date, args.n_years)
+dates = generate_annual_dates(args.study_end_date, args.n_years)
 
 # --- YAML HEADER ---
 
@@ -66,34 +68,34 @@ yaml_measures_test = '''
 
   generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures/demograph_measures_{start_date}_test.csv.gz
+      --output output/demograph_measures/demograph_measures_{start_date}_test.arrow
       --
       --demograph_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_{start_date}_test.csv.gz
+        dataset: output/demograph_measures/demograph_measures_{start_date}_test.arrow
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_{start_date}_test.csv.gz
+      --output output/practice_measures/practice_measures_{start_date}_test.arrow
       --
       --practice_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_{start_date}_test.csv.gz
+        dataset: output/practice_measures/practice_measures_{start_date}_test.arrow
   generate_comorbid_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_{start_date}_test.csv.gz
+      --output output/comorbid_measures/comorbid_measures_{start_date}_test.arrow
       --
       --comorbid_measures
       --start_intv {start_date}
       --test
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_{start_date}_test.csv.gz
+        dataset: output/comorbid_measures/comorbid_measures_{start_date}_test.arrow
 '''
 yaml_measures_test = yaml_measures_test.format(start_date = dates[0])
 
@@ -137,36 +139,25 @@ yaml_appt_processing_template = """
 yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
 
 yaml_appt_report = yaml_appt_report + yaml_appt_processing
+yaml_appt_report += " \n # --------------- PROCESSING ------------------------------------------\n"
 
-# --- YAML FILE PROCESSING ---------------------------------------
+groups = ["demograph", "practice", "comorbid"]
 yaml_processing_template = """
-  generate_pre_processing_practice{test_suffix}:
-    run: python:v2 analysis/pre_processing.py --practice_measures {test_flag}
-    needs: [{needs_practice_measures}]
+  generate_pre_processing_{group}{test_suffix}:
+    run: python:v2 analysis/pre_processing.py --{group}_measures {test_flag}
+    needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures/proc_practice_measures{test_suffix}{test_filetype}
-  generate_pre_processing_demograph{test_suffix}:
-    run: python:v2 analysis/pre_processing.py --demograph_measures {test_flag}
-    needs: [{needs_demograph_measures}]
-    outputs:
-      highly_sensitive:
-        measures: output/demograph_measures/proc_demograph_measures{test_suffix}{test_filetype}
-  generate_pre_processing_comorbid{test_suffix}:
-    run: python:v2 analysis/pre_processing.py --comorbid_measures {test_flag}
-    needs: [{needs_comorbid_measures}]
-    outputs:
-      highly_sensitive:
-        measures: output/comorbid_measures/proc_comorbid_measures{test_suffix}{test_filetype}
+        measures: output/{group}_measures/proc_{group}_measures{test_suffix}.arrow
 
-  # Rounding
-  generate_rounding{test_suffix}:
-    run: r:v2 analysis/round_measures.r {test_flag}
-    needs: [generate_pre_processing_practice{test_suffix}, generate_pre_processing_demograph{test_suffix}, generate_pre_processing_comorbid{test_suffix}]
+  generate_rounding_{group}{test_suffix}:
+    run: r:v2 analysis/round_measures.r --{group}_measures  {test_flag}
+    needs: [generate_pre_processing_{group}{test_suffix}]
     outputs:
       highly_sensitive:
-        rounded_measures: output/*/*midpoint6{test_suffix}{test_filetype}
-
+        rounded_measures: output/{group}_measures/proc_{group}_measures_midpoint6{test_suffix}.arrow
+"""
+''' TEMPORARILY COMMENTED OUT:
   # Normalization
   generate_normalization{test_suffix}:
     run: python:v2 analysis/normalization.py {test_flag}
@@ -210,25 +201,25 @@ yaml_processing_template = """
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_RR{test_suffix}.png
         deciles_table: output/practice_measures/decile_tables/decile_table_*_RR{test_suffix}.csv
-
-"""
-# Actions for processing real data
-yaml_processing = yaml_processing_template.format(needs_practice_measures = needs["practice_measures"], 
-                                         needs_comorbid_measures = needs["comorbid_measures"],
-                                         needs_demograph_measures = needs["demograph_measures"],
-                                         test_suffix = "",
-                                         test_flag = "",
-                                         test_filetype = ".arrow")
-# Actions for processing test data
-yaml_processing_test = yaml_processing_template.format(needs_practice_measures = "generate_practice_measures_test,",
-                                         needs_comorbid_measures =  "generate_comorbid_measures_test",
-                                         needs_demograph_measures = "generate_demograph_measures_test",
-                                         test_suffix = "_test",
-                                         test_flag = "--test",
-                                         test_filetype = ".csv.gz")
+'''
+yaml_processing = ""
+yaml_processing_test = ""
+for group in groups:
+  # Actions for processing real data
+  yaml_processing += yaml_processing_template.format(group = group,
+                                          needs = needs[f'{group}_measures'],
+                                          test_suffix = "",
+                                          test_flag = "",)
+  
+for group in groups:
+  # Actions for processing test data
+  yaml_processing_test += yaml_processing_template.format(group = group,
+                                          needs = f'generate_{group}_measures',
+                                          test_suffix = "_test",
+                                          test_flag = "--test")
 
 # --- Combine scripts and print file ---
 yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_measures_test + yaml_processing_test
 
-with open("project.yaml", "w") as file:
+with open("/workspaces/winter-pressures-phase-II/project.yaml", "w") as file:
        file.write(yaml)

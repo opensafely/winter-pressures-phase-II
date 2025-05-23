@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import pyarrow.feather as feather
+from wp_config_setup import args
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -202,28 +203,70 @@ def get_season(month):
     else:
         return None  # Exclude non-winter months
     
-def read_write(read_or_write, test, path, df = None, **kwargs):
+def read_write(read_or_write, path, test = args.test, file_type = args.file_type, df = None, dtype = None, **kwargs):
     """
     Function to read or write a file based on the test flag.
     Args:
         df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
         read_or_write (str): 'read' or 'write' to specify the operation.
-        test (bool): If True, use gzip compression for reading/writing. If false, use arrow format.
+        test (bool): If True, use test versions of datasets.
+        file_type (str): Type of file to read/write ('csv' or 'arrow').
         path (str): Path to the file.
     Returns:
         pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
     """
-    if read_or_write == 'read':
-        if test:
+    if test:
             path = path + '_test'
+            
+    if read_or_write == 'read':
+        
+        if file_type == 'csv':
             df = pd.read_csv(path + '.csv.gz', **kwargs)
-        else:
-            df = feather.read_feather(path + '.arrow', **kwargs)
+
+        elif file_type == 'arrow':
+            df = feather.read_feather(path + '.arrow')
+            df = df.astype(dtype)
+            # Convert boolean columns to boolean type
+            bool_cols = [col for col, typ in dtype.items() if typ == 'bool']
+            for col in bool_cols:
+                df[col] = df[col] == 'T'
+
         return df
 
     elif read_or_write == 'write':
-        if test:
-            path = path + '_test'
+
+        if file_type == 'csv':
             df.to_csv(path + '.csv.gz', **kwargs)
+
+        elif file_type == 'arrow':
+            # Convert boolean columns to string type
+            feather.write_feather(df, path + '.arrow')
+
+def simulate_dataframe(dtype_dict, n_rows):
+    """
+    Simulate a DataFrame with specified dtypes and number of rows.
+    Args:
+        dtype_dict (dict): Dictionary mapping column names to dtypes.
+        n_rows (int): Number of rows to generate.
+    Returns:
+        pd.DataFrame: Simulated DataFrame with specified dtypes.
+    """
+    data = {}
+    for col, dtype in dtype_dict.items():
+        if dtype == 'int64':
+            data[col] = np.random.randint(0, 1000, size=n_rows)
+        elif dtype == 'int16':
+            data[col] = np.random.randint(-30000, 30000, size=n_rows).astype(np.int16)
+        elif dtype == 'int8':
+            data[col] = np.random.randint(1, 6, size=n_rows).astype(np.int8)
+        elif dtype == 'bool':
+            data[col] = np.random.choice(['T', 'F'], size=n_rows)
+        elif dtype == 'category':
+            data[col] = pd.Categorical(np.random.choice(['A', 'B', 'C'], size=n_rows))
+        elif dtype == 'string':
+            data[col] = pd.Series(np.random.choice(['x', 'y', 'z', None], size=n_rows), dtype='string')
         else:
-            feather.write_feather(df, path + '.arrow', **kwargs)
+            raise ValueError(f"Unhandled dtype: {dtype}")
+
+    df = pd.DataFrame(data).astype(dtype_dict)
+    return df

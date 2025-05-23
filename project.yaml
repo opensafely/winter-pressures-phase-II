@@ -348,6 +348,22 @@ actions:
      outputs:
        moderately_sensitive:
          table_rounded: output/appointments/app_measures_rounded_*.csv
+ 
+ # --------------- PROCESSING ------------------------------------------
+
+  generate_pre_processing_demograph:
+    run: python:v2 analysis/pre_processing.py --demograph_measures 
+    needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures/proc_demograph_measures.arrow
+
+  generate_rounding_demograph:
+    run: r:v2 analysis/round_measures.r --demograph_measures  
+    needs: [generate_pre_processing_demograph]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures/proc_demograph_measures_midpoint6.arrow
 
   generate_pre_processing_practice:
     run: python:v2 analysis/pre_processing.py --practice_measures 
@@ -355,12 +371,14 @@ actions:
     outputs:
       highly_sensitive:
         measures: output/practice_measures/proc_practice_measures.arrow
-  generate_pre_processing_demograph:
-    run: python:v2 analysis/pre_processing.py --demograph_measures 
-    needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
+
+  generate_rounding_practice:
+    run: r:v2 analysis/round_measures.r --practice_measures  
+    needs: [generate_pre_processing_practice]
     outputs:
       highly_sensitive:
-        measures: output/demograph_measures/proc_demograph_measures.arrow
+        rounded_measures: output/practice_measures/proc_practice_measures_midpoint6.arrow
+
   generate_pre_processing_comorbid:
     run: python:v2 analysis/pre_processing.py --comorbid_measures 
     needs: [generate_comorbid_measures_2016-04-11, generate_comorbid_measures_2017-04-10, generate_comorbid_measures_2018-04-09, generate_comorbid_measures_2019-04-08, generate_comorbid_measures_2020-04-06, generate_comorbid_measures_2021-04-05, generate_comorbid_measures_2022-04-04, generate_comorbid_measures_2023-04-03, generate_comorbid_measures_2024-04-01, generate_comorbid_measures_2025-03-31]
@@ -368,160 +386,84 @@ actions:
       highly_sensitive:
         measures: output/comorbid_measures/proc_comorbid_measures.arrow
 
-  # Rounding
-  generate_rounding:
-    run: r:v2 analysis/round_measures.r 
-    needs: [generate_pre_processing_practice, generate_pre_processing_demograph, generate_pre_processing_comorbid]
+  generate_rounding_comorbid:
+    run: r:v2 analysis/round_measures.r --comorbid_measures  
+    needs: [generate_pre_processing_comorbid]
     outputs:
       highly_sensitive:
-        rounded_measures: output/*/*midpoint6.arrow
-
-  # Normalization
-  generate_normalization:
-    run: python:v2 analysis/normalization.py 
-    needs: [generate_rounding]
-    outputs:
-      highly_sensitive:
-        RR_table: output/practice_measures/RR.arrow
-      moderately_sensitive:
-        seasonality_table: output/practice_measures/seasonality_results.csv
-        trend_table: output/practice_measures/trend_results.csv
-
-  # Visualisation
-  generate_tables_demograph:
-    run: r:v2 analysis/table_generation.r --demograph_measures 
-    needs: [generate_rounding]
-    outputs:
-     moderately_sensitive:
-       tables: output/demograph_measures/plots/*_demograph.csv
-       plots: output/demograph_measures/plots/*_demograph.png
-  generate_tables_comorbid:
-    run: r:v2 analysis/table_generation.r --comorbid_measures 
-    needs: [generate_rounding]
-    outputs:
-     moderately_sensitive:
-        tables: output/comorbid_measures/plots/*_comorbid.csv
-        plots: output/comorbid_measures/plots/*_comorbid.png
-
-  generate_deciles_charts:
-    run: >
-      r:v2 analysis/decile_charts.r 
-    needs: [generate_rounding] 
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6.csv
-  generate_deciles_charts_RR:
-    run: >
-      r:v2 analysis/decile_charts.r --RR 
-    needs: [generate_normalization]
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_RR.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_RR.csv
-
+        rounded_measures: output/comorbid_measures/proc_comorbid_measures_midpoint6.arrow
 
   # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures/demograph_measures_2016-04-11_test.csv.gz
+      --output output/demograph_measures/demograph_measures_2016-04-11_test.arrow
       --
       --demograph_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2016-04-11_test.csv.gz
+        dataset: output/demograph_measures/demograph_measures_2016-04-11_test.arrow
   generate_practice_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-04-11_test.csv.gz
+      --output output/practice_measures/practice_measures_2016-04-11_test.arrow
       --
       --practice_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-04-11_test.csv.gz
+        dataset: output/practice_measures/practice_measures_2016-04-11_test.arrow
   generate_comorbid_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2016-04-11_test.csv.gz
+      --output output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
       --
       --comorbid_measures
       --start_intv 2016-04-11
       --test
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.csv.gz
+        dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
 
-  generate_pre_processing_practice_test:
-    run: python:v2 analysis/pre_processing.py --practice_measures --test
-    needs: [generate_practice_measures_test,]
-    outputs:
-      highly_sensitive:
-        measures: output/practice_measures/proc_practice_measures_test.csv.gz
   generate_pre_processing_demograph_test:
     run: python:v2 analysis/pre_processing.py --demograph_measures --test
     needs: [generate_demograph_measures_test]
     outputs:
       highly_sensitive:
-        measures: output/demograph_measures/proc_demograph_measures_test.csv.gz
+        measures: output/demograph_measures/proc_demograph_measures_test.arrow
+
+  generate_rounding_demograph_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures  --test
+    needs: [generate_pre_processing_demograph_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures/proc_demograph_measures_midpoint6_test.arrow
+
+  generate_pre_processing_practice_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --test
+    needs: [generate_practice_measures_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures/proc_practice_measures_test.arrow
+
+  generate_rounding_practice_test:
+    run: r:v2 analysis/round_measures.r --practice_measures  --test
+    needs: [generate_pre_processing_practice_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures/proc_practice_measures_midpoint6_test.arrow
+
   generate_pre_processing_comorbid_test:
     run: python:v2 analysis/pre_processing.py --comorbid_measures --test
     needs: [generate_comorbid_measures_test]
     outputs:
       highly_sensitive:
-        measures: output/comorbid_measures/proc_comorbid_measures_test.csv.gz
+        measures: output/comorbid_measures/proc_comorbid_measures_test.arrow
 
-  # Rounding
-  generate_rounding_test:
-    run: r:v2 analysis/round_measures.r --test
-    needs: [generate_pre_processing_practice_test, generate_pre_processing_demograph_test, generate_pre_processing_comorbid_test]
+  generate_rounding_comorbid_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures  --test
+    needs: [generate_pre_processing_comorbid_test]
     outputs:
       highly_sensitive:
-        rounded_measures: output/*/*midpoint6_test.csv.gz
-
-  # Normalization
-  generate_normalization_test:
-    run: python:v2 analysis/normalization.py --test
-    needs: [generate_rounding_test]
-    outputs:
-      highly_sensitive:
-        RR_table: output/practice_measures/RR_test.csv.gz
-      moderately_sensitive:
-        seasonality_table: output/practice_measures/seasonality_results_test.csv
-        trend_table: output/practice_measures/trend_results_test.csv
-
-  # Visualisation
-  generate_tables_demograph_test:
-    run: r:v2 analysis/table_generation.r --demograph_measures --test
-    needs: [generate_rounding_test]
-    outputs:
-     moderately_sensitive:
-       tables: output/demograph_measures/plots/*_demograph_test.csv
-       plots: output/demograph_measures/plots/*_demograph_test.png
-  generate_tables_comorbid_test:
-    run: r:v2 analysis/table_generation.r --comorbid_measures --test
-    needs: [generate_rounding_test]
-    outputs:
-     moderately_sensitive:
-        tables: output/comorbid_measures/plots/*_comorbid_test.csv
-        plots: output/comorbid_measures/plots/*_comorbid_test.png
-
-  generate_deciles_charts_test:
-    run: >
-      r:v2 analysis/decile_charts.r --test
-    needs: [generate_rounding_test] 
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6_test.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6_test.csv
-  generate_deciles_charts_RR_test:
-    run: >
-      r:v2 analysis/decile_charts.r --RR --test
-    needs: [generate_normalization_test]
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_RR_test.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_RR_test.csv
-
+        rounded_measures: output/comorbid_measures/proc_comorbid_measures_midpoint6_test.arrow
