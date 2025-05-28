@@ -4,7 +4,6 @@ library(glue)
 library(readr)
 library(readr)
 library(arrow)
-library(feather)
 
 # Midpoint rounding function
 # Args:
@@ -23,14 +22,7 @@ roundmid_any <- function(x, to = 6) {
 # Returns:
 #   Dataframe with specified columns rounded to the nearest multiple of 6
 round_columns <- function(df, cols_to_round) {
-  print(colnames(df))
-  # print unique values in columns
-  for (col in cols_to_round) {
-    cat(glue::glue("Unique values in {col}:\n"))
-    print(typeof(df[[col]]))
-    print(unique(df[[col]]))
-    cat("\n")
-  }
+
   rounded_df <- df %>%
     # Select required columns and round their values
     mutate(across(all_of(cols_to_round), ~ roundmid_any(.x))) %>%
@@ -40,27 +32,41 @@ round_columns <- function(df, cols_to_round) {
   return(rounded_df)
 }
 
-read_write <- function(read_or_write, test, path, df = NULL, ...) {
+read_write <- function(read_or_write, path, test = args$test, file_type = args$file_type, df = NULL, dtype = NULL, ...) {
+  # Add '_test' suffix to path if test flag is TRUE
+  if (test) {
+    path <- paste0(path, "_test")
+  }
 
   if (read_or_write == "read") {
-    if (test) {
-      path <- paste0(path, "_test.csv.gz")
-      df <- read_csv(path, ...)
-    } else {
-      path <- paste0(path, ".arrow")
-      df <- read_feather(path, ...)
+    if (file_type == "csv") {
+      df <- readr::read_csv(paste0(path, ".csv.gz"), ...)
+    } else if (file_type == "arrow") {
+      df <- arrow::read_feather(paste0(path, ".arrow"))
+      
+      # Apply dtype coercion if provided
+      if (!is.null(dtype)) {
+        for (col in names(dtype)) {
+          target_type <- dtype[[col]]
+          if (target_type == "bool") {
+            # Arrow stores logicals as "T"/"F" strings in R when written from Python with string conversion
+            df[[col]] <- df[[col]] == "T"
+          } else {
+            df[[col]] <- as(df[[col]], target_type)
+          }
+        }
+      }
     }
     return(df)
+  }
 
-  } else if (read_or_write == "write") {
-    if (is.null(df)) stop("Data frame 'df' must be provided for writing.")
-
-    if (test) {
-      path <- paste0(path, "_test.csv.gz")
-      write_csv(df, path, ...)
-    } else {
-      path <- paste0(path, ".arrow")
-      write_feather(df, path, ...)
+  if (read_or_write == "write") {
+    if (file_type == "csv") {
+      readr::write_csv(df, paste0(path, ".csv.gz"), ...)
+    } else if (file_type == "arrow") {
+      # Arrow in R supports logicals directly, no need to convert unless mimicking Python logic
+      arrow::write_feather(df, paste0(path, ".arrow"))
     }
   }
 }
+

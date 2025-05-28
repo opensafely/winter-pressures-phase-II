@@ -22,7 +22,9 @@ option_list <- list(
   make_option("--start_intv", type = "character", default = NULL,
               help = "Interval start date."),
   make_option("--test", action = "store_true",
-              default = FALSE, help = "Sets lowest time intervals for lightweight testing.")
+              default = FALSE, help = "Sets lowest time intervals for lightweight testing."),
+  make_option("--use_csv", action = "store_true", default = FALSE,
+              help = "Use CSV files instead of Arrow for reading/writing data.")
 )
 
 # Parse options
@@ -38,10 +40,14 @@ args$n_years <- 10
 
 if (args$demograph_measures){
     args$group = 'demograph'
-}
-else if (args.practice_measures){
+} else if (args$practice_measures){
     args$group = 'practice'
-}
-else if (args.comorbid_measures){
+} else if (args$comorbid_measures){
     args$group = 'comorbid'
-}    
+}
+
+if (args$use_csv) {
+    args$file_type <- "csv"
+} else {
+    args$file_type <- "arrow"
+}
