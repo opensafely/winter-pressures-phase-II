@@ -241,32 +241,3 @@ def read_write(read_or_write, path, test = args.test, file_type = args.file_type
         elif file_type == 'arrow':
             # Convert boolean columns to string type
             feather.write_feather(df, path + '.arrow')
-
-def simulate_dataframe(dtype_dict, n_rows):
-    """
-    Simulate a DataFrame with specified dtypes and number of rows.
-    Args:
-        dtype_dict (dict): Dictionary mapping column names to dtypes.
-        n_rows (int): Number of rows to generate.
-    Returns:
-        pd.DataFrame: Simulated DataFrame with specified dtypes.
-    """
-    data = {}
-    for col, dtype in dtype_dict.items():
-        if dtype == 'int64':
-            data[col] = np.random.randint(0, 1000, size=n_rows)
-        elif dtype == 'int16':
-            data[col] = np.random.randint(-30000, 30000, size=n_rows).astype(np.int16)
-        elif dtype == 'int8':
-            data[col] = np.random.randint(1, 6, size=n_rows).astype(np.int8)
-        elif dtype == 'bool':
-            data[col] = np.random.choice(['T', 'F'], size=n_rows)
-        elif dtype == 'category':
-            data[col] = pd.Categorical(np.random.choice(['A', 'B', 'C'], size=n_rows))
-        elif dtype == 'string':
-            data[col] = pd.Series(np.random.choice(['x', 'y', 'z', None], size=n_rows), dtype='string')
-        else:
-            raise ValueError(f"Unhandled dtype: {dtype}")
-
-    df = pd.DataFrame(data).astype(dtype_dict)
-    return df

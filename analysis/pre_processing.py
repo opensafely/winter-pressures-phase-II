@@ -69,6 +69,11 @@ log_memory_usage(label=f"After deletion of dataframes")
 if args.demograph_measures:
     # Replace numerical values with string values
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
-    
+
+if args.test:
+    # Increase numerator and list_size for testing of downstream functions
+    proc_df['numerator'] = np.random.randint(0, 1000, size = len(proc_df))
+    proc_df['list_size'] = np.random.randint(1000, 2000, size = len(proc_df))
+
 # Save processed file
 read_write(read_or_write = 'write', path = output_path, df = proc_df)
