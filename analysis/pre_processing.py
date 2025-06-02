@@ -17,14 +17,10 @@ from wp_config_setup import args
 # --------- Configuration ------------------------------------------------
 
 dates = generate_annual_dates(args.study_end_date, args.n_years)
-
+date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 if args.test:
-    # Set test mode to use only the first year
-    dates = dates[:1]
-    print(f"Test mode: using {dates}", flush=True)
-
-# Select columns to read
-needed_cols = list(args.dtype_dict.keys())
+    # For testing, use only the first date
+    dates = [dates[0]]
 
 # -------- Patient measures processing ----------------------------------
 
@@ -37,8 +33,7 @@ for date in dates:
     input_path = f"output/{args.group}_measures/{args.group}_measures_{date}"
     output_path = f"output/{args.group}_measures/proc_{args.group}_measures"
     # Read in measures
-    df = read_write(read_or_write = 'read', path = input_path, 
-                    dtype=args.dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
+    df = read_write(read_or_write = 'read', path = input_path, dtype=args.dtype_dict)
     log_memory_usage(label=f"After loading measures {date}")
     print(f"Initial shape of input: {df.shape}", flush=True)
         
@@ -74,6 +69,34 @@ if args.test:
     # Increase numerator and list_size for testing of downstream functions
     proc_df['numerator'] = np.random.randint(0, 1000, size = len(proc_df))
     proc_df['list_size'] = np.random.randint(1000, 2000, size = len(proc_df))
+
+    # Simulate extra data for downstream testing
+    print(proc_df['interval_start'].unique())
+    print("Simulating practice measures data for testing")
+
+    n_weeks = 52 * 2
+    max_start = proc_df['interval_start'].max()
+
+    # Generate extended rows by shifting weeks
+    extended_rows = []
+    for i in range(1, n_weeks + 1):
+        df_copy = proc_df.copy()
+        df_copy['interval_start'] = df_copy['interval_start'] + timedelta(weeks=i)
+        extended_rows.append(df_copy)
+
+    # Combine original with extended data
+    proc_df = pd.concat([proc_df] + extended_rows, ignore_index=True)
+
+    # Sample 10 unique practice_pseudo_ids
+    test_practices = pd.Series(proc_df['practice_pseudo_id'].unique()).sample(10)
+    proc_df = proc_df[proc_df['practice_pseudo_id'].isin(test_practices)]
+
+    print(proc_df.head())
+    print(proc_df['interval_start'].unique())
+    print(proc_df.shape)
+
+# Remove intervals before the first summer reference period
+proc_df = proc_df[proc_df['interval_start'] > '2016-05-31']
 
 # Save processed file
 read_write(read_or_write = 'write', path = output_path, df = proc_df)
