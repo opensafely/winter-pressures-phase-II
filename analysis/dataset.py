@@ -62,10 +62,11 @@ age_group = case(
 
 # Ethnicity
 dataset.ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+    clinical_events.where(clinical_events.snomedct_code.is_in(ethnicity))
+    .where(clinical_events.date.is_on_or_before(INTERVAL.start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
+    .snomedct_code.to_category(ethnicity)
 )
 
 # Depravation
