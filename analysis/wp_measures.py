@@ -134,7 +134,6 @@ seen_appts_in_interval = create_seen_appts_in_interval(INTERVAL.start_date, INTE
 measures_to_add['online_consult'] = count_clinical_consultations(online_consult, INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['call_from_patient'] = count_clinical_consultations('25691000000103',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['call_from_gp'] = count_clinical_consultations('24671000000101',INTERVAL.start_date, INTERVAL.end_date)
-measures_to_add['GP_ooh_admin'] = count_clinical_consultations('401165003',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['tele_consult'] = count_clinical_consultations('386472008',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['emergency_care'] = count_emergency_care_attendance(INTERVAL.start_date, INTERVAL.end_date)
 

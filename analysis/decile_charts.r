@@ -108,7 +108,7 @@ measure_groups <- list(
   appts_table = c('CancelledbyPatient', 'CancelledbyUnit', 'DidNotAttend', 'Waiting', 
                   'follow_up_app', 'seen_in_interval', 'start_in_interval'),  
   # Plot 2: Other measures
-  not_appts_table = c('GP_ooh_admin','call_from_gp', 'call_from_patient',
+  not_appts_table = c('call_from_gp', 'call_from_patient',
                       'emergency_care', 'online_consult', 'secondary_referral',
                       'tele_consult', 'vax_app', 'vax_app_covid', 'vax_app_flu')
 )
