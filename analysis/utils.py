@@ -73,8 +73,7 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
 
     if replace_ethnicity:
         print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
-        # Identify missing values
-        df['ethnicity'].replace('6', pd.NA, inplace=True)
+        # Count missing values prior to adding from sus_ethnicity
         print(f"Prior Nan count: {df['ethnicity'].isna().sum()}")
         # Fill missing values with values from sus_ethnicity
         df['ethnicity'] = df['ethnicity'].fillna(df['ethnicity_sus'])
