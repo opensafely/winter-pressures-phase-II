@@ -73,13 +73,15 @@ ethnicity = (
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
 max_imd = 32844
+# Otherwise condition captures all IMDs -1 which is equivalent to NULL in TPP 
 imd_quintile = case(
-    when(imd_rounded < int(max_imd * 1 / 5)).then(1),
-    when(imd_rounded < int(max_imd * 2 / 5)).then(2),
-    when(imd_rounded < int(max_imd * 3 / 5)).then(3),
-    when(imd_rounded < int(max_imd * 4 / 5)).then(4),
+    when((imd_rounded >= 0) & (imd_rounded <= int(max_imd * 1 / 5))).then(1),
+    when(imd_rounded <= int(max_imd * 2 / 5)).then(2),
+    when(imd_rounded <= int(max_imd * 3 / 5)).then(3),
+    when(imd_rounded <= int(max_imd * 4 / 5)).then(4),
     when(imd_rounded <= max_imd).then(5),
-)
+    otherwise = 99
+    )
 
 # Care home residency
 carehome = addresses.for_patient_on(INTERVAL.start_date).care_home_is_potential_match
