@@ -143,6 +143,13 @@ yaml_appt_report += " \n # --------------- PROCESSING --------------------------
 
 groups = ["demograph", "practice", "comorbid"]
 yaml_processing_template = """
+  generate_freq_table_{group}{test_suffix}:
+    run: python:v2 analysis/freq_table.py --{group}_measures  {test_flag}
+    needs: [{needs}{test_suffix}]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/{group}_measures/freq_table_{group}{test_suffix}.csv
+
   generate_pre_processing_{group}{test_suffix}:
     run: python:v2 analysis/pre_processing.py --{group}_measures {test_flag}
     needs: [{needs}{test_suffix}]
