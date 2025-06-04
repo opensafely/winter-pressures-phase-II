@@ -61,19 +61,22 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
     if replace_rur_urb:
         print(f"Replacing rur_urb, prior values:, {df['rur_urb_class'].unique()}")
         # Convert string col to category for efficiency
+        df['rur_urb_class'] = df['rur_urb_class'].astype('string')
         df['rur_urb_class'] = df['rur_urb_class'].astype('category')
         df['rur_urb_class'] = df['rur_urb_class'].cat.add_categories(['Urban', 'Rural', 'Unknown'])
         df['rur_urb_class'].fillna('Unknown', inplace = True)
         # Aggregate urban and rural subcategories
-        df['rur_urb_class'] = df['rur_urb_class'].apply(
-            lambda x: '1' if x in ['1', '2', '3', '4'] else ('2' if x in ['5', '6', '7', '8'] else 'Unknown')
-            )
-        df['rur_urb_class'].replace({'1': 'Urban', '2': 'Rural'}, inplace=True)
+        df['rur_urb_class'] = df['rur_urb_class'].replace({
+            '1': 'Urban', '2': 'Urban', '3': 'Urban', '4': 'Urban', # Urban = 1
+            '5': 'Rural', '6': 'Rural', '7': 'Rural', '8': 'Rural' # Rural = 2
+            }).fillna('Unknown')
+        print(f"New datatype of rur_urb: {df['rur_urb_class'].dtype}")
         print(f"Post-replace values:, {df['rur_urb_class'].unique()}")
 
     if replace_ethnicity:
         print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
-        # Count missing values prior to adding from sus_ethnicity
+        # Identify missing values
+        df['ethnicity'].replace('6', pd.NA, inplace=True)
         print(f"Prior Nan count: {df['ethnicity'].isna().sum()}")
         # Fill missing values with values from sus_ethnicity
         df['ethnicity'] = df['ethnicity'].fillna(df['ethnicity_sus'])
@@ -92,9 +95,14 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
             inplace=True)
         # Fill missing values with 'Not stated'
         df['ethnicity'].fillna("Not stated", inplace=True)
+        print(f"New datatype of ethnicity: {df['ethnicity'].dtype}")
         print(f"Post-replace Nan count: {df['ethnicity'].isna().sum()}")
         print(f"Post-replace values:, {df['ethnicity'].unique()}")
         df = df.drop('ethnicity_sus', axis=1)
+        # Aggregate ethnicity categories
+        group_cols = [col for col in df.columns if col not in ['numerator', 'list_size']]
+        df = df.groupby(group_cols, as_index=False, observed = True)[['numerator', 'list_size']].sum()
+        print(f"Post-replace df: {df.head()}")
 
     return df
 
@@ -202,14 +210,13 @@ def get_season(month):
     else:
         return None  # Exclude non-winter months
     
-def read_write(read_or_write, path, test = args.test, file_type = args.file_type, df = None, dtype = None, **kwargs):
+def read_write(read_or_write, path, test = args.test, df = None, dtype = None, **kwargs):
     """
     Function to read or write a file based on the test flag.
     Args:
         df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
         read_or_write (str): 'read' or 'write' to specify the operation.
         test (bool): If True, use test versions of datasets.
-        file_type (str): Type of file to read/write ('csv' or 'arrow').
         path (str): Path to the file.
     Returns:
         pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
@@ -218,28 +225,25 @@ def read_write(read_or_write, path, test = args.test, file_type = args.file_type
             path = path + '_test'
             
     if read_or_write == 'read':
-        
-        if file_type == 'csv':
-            df = pd.read_csv(path + '.csv.gz', **kwargs)
-
-        elif file_type == 'arrow':
+            
             df = feather.read_feather(path + '.arrow')
-            df = df.astype(dtype)
-            # Convert boolean columns to boolean type
-            bool_cols = [col for col, typ in dtype.items() if typ == 'bool']
-            for col in bool_cols:
-                df[col] = df[col] == 'T'
+            
+            if dtype is not None:
+                df = df.astype(dtype)
+                df["interval_start"] = pd.to_datetime(df["interval_start"])
+                # Drop columns that are not in the dtype dictionary
+                df = df[df.columns.intersection(dtype.keys())]
+                # Convert boolean columns to boolean type
+                bool_cols = [col for col, typ in dtype.items() if typ == 'bool']
+                for col in bool_cols:
+                    df[col] = df[col] == 'T'
 
-        return df
+            return df
 
     elif read_or_write == 'write':
 
-        if file_type == 'csv':
-            df.to_csv(path + '.csv.gz', **kwargs)
-
-        elif file_type == 'arrow':
-            # Convert boolean columns to string type
-            feather.write_feather(df, path + '.arrow')
+        # Convert boolean columns to string type
+        feather.write_feather(df, path + '.arrow')
 
 def simulate_dataframe(dtype_dict, n_rows):
     """

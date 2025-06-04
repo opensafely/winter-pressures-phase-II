@@ -27,31 +27,26 @@ args = parser.parse_args() # Stores arguments in 'args'
 args.study_end_date = "2025-03-31"
 args.n_years = 10
 
+args.dtype_dict = {'measure': 'category', 'interval_start' : 'string', 'numerator' : 'int64', 
+        'denominator' : 'int64'}
+
 if args.demograph_measures:
     args.group = 'demograph'
-    args.dtype_dict = {
-        'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
-        'denominator' : 'int64', 'age' : 'category', 'sex' : 'category', 'ethnicity' : 'string', 
+    args.dtype_dict.update(
+        {'age' : 'category', 'sex' : 'category', 'ethnicity' : 'string', 
         'ethnicity_sus': 'string', 'imd_quintile' : 'int8', 'carehome' : 'category',
-        'region' : 'category', 'rur_urb_class' : 'string', 
-    }
+        'region' : 'category', 'rur_urb_class' : 'Int8'}
+    )
 elif args.practice_measures:
     args.group = 'practice'
-    args.dtype_dict = {
-        "measure": "category",
-        "interval_start": "category",
-        "numerator": "int64",
-        "denominator": "int64",
-        "practice_pseudo_id": "int16", # range of int16 is -32768 to 32767
-        }
+    args.dtype_dict.update({"practice_pseudo_id": "int16"}) # range of int16 is -32768 to 32767
+
 elif args.comorbid_measures:
     args.group = 'comorbid'
-    args.dtype_dict = {
-        'measure': 'category', 'interval_start' : 'category', 'numerator' : 'int64', 
-        'denominator' : 'int64', 'age' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
+    args.dtype_dict.update({'age' : 'category', 'comorbid_chronic_resp' : 'bool', 'comorbid_copd': 'bool',
         'comorbid_asthma': 'bool', 'comorbid_dm': 'bool', 'comorbid_htn': 'bool', 'comorbid_immuno': 'bool', 'vax_flu_12m': 'bool',
         'vax_covid_12m': 'bool', 'vax_pneum_12m': 'bool'
-        }    
+        })    
 
 if args.use_csv:
     args.file_type = 'csv'

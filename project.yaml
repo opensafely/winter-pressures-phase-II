@@ -351,6 +351,13 @@ actions:
  
  # --------------- PROCESSING ------------------------------------------
 
+  generate_freq_table_demograph:
+    run: python:v2 analysis/freq_table.py --demograph_measures  
+    needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/demograph_measures/freq_table_demograph.csv
+
   generate_pre_processing_demograph:
     run: python:v2 analysis/pre_processing.py --demograph_measures 
     needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
@@ -365,6 +372,13 @@ actions:
       highly_sensitive:
         rounded_measures: output/demograph_measures/proc_demograph_measures_midpoint6.arrow
 
+  generate_freq_table_practice:
+    run: python:v2 analysis/freq_table.py --practice_measures  
+    needs: [generate_practice_measures_2016-04-11, generate_practice_measures_2017-04-10, generate_practice_measures_2018-04-09, generate_practice_measures_2019-04-08, generate_practice_measures_2020-04-06, generate_practice_measures_2021-04-05, generate_practice_measures_2022-04-04, generate_practice_measures_2023-04-03, generate_practice_measures_2024-04-01, generate_practice_measures_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures/freq_table_practice.csv
+
   generate_pre_processing_practice:
     run: python:v2 analysis/pre_processing.py --practice_measures 
     needs: [generate_practice_measures_2016-04-11, generate_practice_measures_2017-04-10, generate_practice_measures_2018-04-09, generate_practice_measures_2019-04-08, generate_practice_measures_2020-04-06, generate_practice_measures_2021-04-05, generate_practice_measures_2022-04-04, generate_practice_measures_2023-04-03, generate_practice_measures_2024-04-01, generate_practice_measures_2025-03-31]
@@ -378,6 +392,13 @@ actions:
     outputs:
       highly_sensitive:
         rounded_measures: output/practice_measures/proc_practice_measures_midpoint6.arrow
+
+  generate_freq_table_comorbid:
+    run: python:v2 analysis/freq_table.py --comorbid_measures  
+    needs: [generate_comorbid_measures_2016-04-11, generate_comorbid_measures_2017-04-10, generate_comorbid_measures_2018-04-09, generate_comorbid_measures_2019-04-08, generate_comorbid_measures_2020-04-06, generate_comorbid_measures_2021-04-05, generate_comorbid_measures_2022-04-04, generate_comorbid_measures_2023-04-03, generate_comorbid_measures_2024-04-01, generate_comorbid_measures_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures/freq_table_comorbid.csv
 
   generate_pre_processing_comorbid:
     run: python:v2 analysis/pre_processing.py --comorbid_measures 
@@ -426,6 +447,13 @@ actions:
       highly_sensitive:
         dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
 
+  generate_freq_table_demograph_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures  --test
+    needs: [generate_demograph_measures_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/demograph_measures/freq_table_demograph_test.csv
+
   generate_pre_processing_demograph_test:
     run: python:v2 analysis/pre_processing.py --demograph_measures --test
     needs: [generate_demograph_measures_test]
@@ -440,6 +468,13 @@ actions:
       highly_sensitive:
         rounded_measures: output/demograph_measures/proc_demograph_measures_midpoint6_test.arrow
 
+  generate_freq_table_practice_test:
+    run: python:v2 analysis/freq_table.py --practice_measures  --test
+    needs: [generate_practice_measures_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures/freq_table_practice_test.csv
+
   generate_pre_processing_practice_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --test
     needs: [generate_practice_measures_test]
@@ -453,6 +488,13 @@ actions:
     outputs:
       highly_sensitive:
         rounded_measures: output/practice_measures/proc_practice_measures_midpoint6_test.arrow
+
+  generate_freq_table_comorbid_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures  --test
+    needs: [generate_comorbid_measures_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures/freq_table_comorbid_test.csv
 
   generate_pre_processing_comorbid_test:
     run: python:v2 analysis/pre_processing.py --comorbid_measures --test

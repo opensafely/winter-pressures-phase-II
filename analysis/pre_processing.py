@@ -17,6 +17,7 @@ from wp_config_setup import args
 # --------- Configuration ------------------------------------------------
 
 dates = generate_annual_dates(args.study_end_date, args.n_years)
+date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 if args.test:
     # Set test mode to use only the first year
@@ -38,7 +39,7 @@ for date in dates:
     output_path = f"output/{args.group}_measures/proc_{args.group}_measures"
     # Read in measures
     df = read_write(read_or_write = 'read', path = input_path, 
-                    dtype=args.dtype_dict, true_values=["T"], false_values=["F"], usecols=needed_cols)
+                    dtype=args.dtype_dict, true_values=["T"], false_values=["F"])
     log_memory_usage(label=f"After loading measures {date}")
     print(f"Initial shape of input: {df.shape}", flush=True)
         
