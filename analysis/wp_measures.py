@@ -63,22 +63,25 @@ age_group = case(
 
 # Ethnicity
 ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+    clinical_events.where(clinical_events.snomedct_code.is_in(ethnicity))
+    .where(clinical_events.date.is_on_or_before(INTERVAL.start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
+    .snomedct_code.to_category(ethnicity)
 )
 
 # Depravation
 imd_rounded = addresses.for_patient_on(INTERVAL.start_date).imd_rounded
 max_imd = 32844
+# Otherwise condition captures all IMDs -1 which is equivalent to NULL in TPP 
 imd_quintile = case(
-    when(imd_rounded < int(max_imd * 1 / 5)).then(1),
-    when(imd_rounded < int(max_imd * 2 / 5)).then(2),
-    when(imd_rounded < int(max_imd * 3 / 5)).then(3),
-    when(imd_rounded < int(max_imd * 4 / 5)).then(4),
+    when((imd_rounded >= 0) & (imd_rounded <= int(max_imd * 1 / 5))).then(1),
+    when(imd_rounded <= int(max_imd * 2 / 5)).then(2),
+    when(imd_rounded <= int(max_imd * 3 / 5)).then(3),
+    when(imd_rounded <= int(max_imd * 4 / 5)).then(4),
     when(imd_rounded <= max_imd).then(5),
-)
+    otherwise = 99
+    )
 
 # Care home residency
 carehome = addresses.for_patient_on(INTERVAL.start_date).care_home_is_potential_match
@@ -133,7 +136,6 @@ seen_appts_in_interval = create_seen_appts_in_interval(INTERVAL.start_date, INTE
 measures_to_add['online_consult'] = count_clinical_consultations(online_consult, INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['call_from_patient'] = count_clinical_consultations('25691000000103',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['call_from_gp'] = count_clinical_consultations('24671000000101',INTERVAL.start_date, INTERVAL.end_date)
-measures_to_add['GP_ooh_admin'] = count_clinical_consultations('401165003',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['tele_consult'] = count_clinical_consultations('386472008',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['emergency_care'] = count_emergency_care_attendance(INTERVAL.start_date, INTERVAL.end_date)
 

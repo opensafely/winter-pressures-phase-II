@@ -1,16 +1,10 @@
 {
   "files": {
-    "user-martinaf-online-consultations-snomed-v01.csv": {
-      "id": "user/martinaf/online-consultations-snomed-v01/28bba9bc",
-      "url": "https://www.opencodelists.org/codelist/user/martinaf/online-consultations-snomed-v01/28bba9bc/",
-      "downloaded_at": "2025-02-07 13:12:10.806806Z",
-      "sha": "b1d87efb073f60ff1daf7debdc9f268050df60de"
-    },
-    "opensafely-ethnicity.csv": {
-      "id": "opensafely/ethnicity/2020-04-27",
-      "url": "https://www.opencodelists.org/codelist/opensafely/ethnicity/2020-04-27/",
-      "downloaded_at": "2024-09-26 12:33:18.593613Z",
-      "sha": "3d2f3998b71863a80b24d60f6f4282e14191ae13"
+    "opensafely-ethnicity-snomed-0removed.csv": {
+      "id": "opensafely/ethnicity-snomed-0removed/22911876",
+      "url": "https://www.opencodelists.org/codelist/opensafely/ethnicity-snomed-0removed/22911876/",
+      "downloaded_at": "2025-06-03 16:15:44.870015Z",
+      "sha": "d95a2f826299563aa57f6fa99009e6e13a65151b"
     },
     "opensafely-acute-respiratory-illness-primary-care.csv": {
       "id": "opensafely/acute-respiratory-illness-primary-care/30f1c6ca",
@@ -173,6 +167,12 @@
       "url": "https://www.opencodelists.org/codelist/nhsd/immunosupression-pcdcluster-snomed-ct/0993606d/",
       "downloaded_at": "2024-11-01 15:58:45.518146Z",
       "sha": "3cc58660e33777bd2cd4e9d43b4ff3843ee9ead2"
+    },
+    "user-martinaf-online-consultations-snomed-v01.csv": {
+      "id": "user/martinaf/online-consultations-snomed-v01/28bba9bc",
+      "url": "https://www.opencodelists.org/codelist/user/martinaf/online-consultations-snomed-v01/28bba9bc/",
+      "downloaded_at": "2025-02-07 13:12:10.806806Z",
+      "sha": "b1d87efb073f60ff1daf7debdc9f268050df60de"
     }
   }
 }

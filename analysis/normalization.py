@@ -38,7 +38,7 @@ if test:
     # Generate simulated data
     # Parameters
     measures = ['CancelledbyPatient', 'CancelledbyUnit', 'DidNotAttend',
-        'GP_ooh_admin', 'Waiting', 'call_from_gp', 'call_from_patient',
+        'Waiting', 'call_from_gp', 'call_from_patient',
         'emergency_care', 'follow_up_app', 'online_consult',
         'secondary_referral', 'seen_in_interval', 'start_in_interval',
         'tele_consult', 'vax_app', 'vax_app_covid', 'vax_app_flu']
