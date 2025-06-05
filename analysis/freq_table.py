@@ -5,10 +5,12 @@ from wp_config_setup import *
 import numpy as np
 
 if args.test:
-    dates = generate_annual_dates(args.study_end_date, args.n_years)
-    date = dates[0]  
+    year = '2016'
 else:
-    date = '2020-04-06'
+    year = '2020'
+
+dates = generate_annual_dates(args.study_end_date, args.n_years)
+date = [date for date in dates if date.startswith(year)][0]
 
 # Load and format data for each interval
 print(f"Loading {args.group} measures {date}", flush=True)
@@ -19,7 +21,7 @@ patient_df = read_write(read_or_write = 'read', path = input_path,
                     dtype=args.dtype_dict, true_values=["T"], false_values=["F"])
 
 # Extract first week of data
-patient_df = patient_df[(patient_df['interval_start'].astype(str) == dates[0]) & 
+patient_df = patient_df[(patient_df['interval_start'].astype(str) == date) & 
                         (patient_df['measure'] == 'seen_in_interval')]
 patient_df.rename(columns={'denominator': 'list_size'}, inplace=True)
 

@@ -16,5 +16,5 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_pre_processing_comorbid_test generate_pre_processing_demograph_test generate_pre_processing_practice_test
+        actions: generate_pre_processing_comorbid_test generate_pre_processing_demograph_test generate_pre_processing_practice_test generate_freq_table_comorbid_test generate_freq_table_demograph_test generate_freq_table_practice_test
 
