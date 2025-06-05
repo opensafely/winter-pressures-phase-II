@@ -227,16 +227,12 @@ def read_write(read_or_write, path, test = args.test, df = None, dtype = None, *
     if read_or_write == 'read':
             
             df = feather.read_feather(path + '.arrow')
-            
+
             if dtype is not None:
                 df = df.astype(dtype)
                 df["interval_start"] = pd.to_datetime(df["interval_start"])
                 # Drop columns that are not in the dtype dictionary
                 df = df[df.columns.intersection(dtype.keys())]
-                # Convert boolean columns to boolean type
-                bool_cols = [col for col, typ in dtype.items() if typ == 'bool']
-                for col in bool_cols:
-                    df[col] = df[col] == 'T'
 
             return df
 
