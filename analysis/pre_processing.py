@@ -47,6 +47,7 @@ for date in dates:
             count without 0 list_size: {df[(df['list_size'] > 0)].shape}\n
             count without nan list_size: {df[(df['list_size'].notna())].shape}""", flush=True)
     
+
     # Drop rows with 0 list_size or nan list_size
     df = df[(df['list_size'] > 0) & (df['list_size'].notna())]
     print(f"After dropping rows with 0 list_size or nan list_size shape: {df.shape}", flush=True)
@@ -67,8 +68,8 @@ if args.demograph_measures:
 
 if args.test:
     # Increase numerator and list_size for testing of downstream functions
-    proc_df['numerator'] = np.random.randint(0, 1000, size = len(proc_df))
-    proc_df['list_size'] = np.random.randint(1000, 2000, size = len(proc_df))
+    proc_df['numerator'] = np.random.randint(0, 500, size = len(proc_df))
+    proc_df['list_size'] = np.random.randint(500, 1000, size = len(proc_df))
 
     # Simulate extra data for downstream testing
     print(proc_df['interval_start'].unique())
@@ -97,6 +98,12 @@ if args.test:
 
 # Remove intervals before the first summer reference period
 proc_df = proc_df[proc_df['interval_start'] > '2016-05-31']
+
+# Remove practices with < 750 list size
+if args.practice_measures:
+    print(f"Number of practices before filtering: {proc_df['practice_pseudo_id'].nunique()}", flush=True)
+    proc_df = proc_df[(proc_df['list_size'] > 750)]
+    print(f"Number of practices after filtering: {proc_df['practice_pseudo_id'].nunique()}", flush=True)
 
 # Save processed file
 read_write(read_or_write = 'write', path = output_path, df = proc_df)

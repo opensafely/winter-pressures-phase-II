@@ -79,12 +79,14 @@ practice_interval_df = practice_interval_df.merge(
 practice_interval_df['RR'] = practice_interval_df['rate_per_1000_midpoint6_derived'] / practice_interval_df['summer_mean']
 practice_interval_df['RD'] = practice_interval_df['rate_per_1000_midpoint6_derived'] - practice_interval_df['summer_mean']
 
-# Save rate ratios (essentially de-trended rates)
+# Save full dataset of rate ratios (essentially de-trended rates)
 if args.test:
     practice_interval_df.to_csv('output/practice_measures/RR_test.csv')
 else:
     feather.write_feather(practice_interval_df, 'output/practice_measures/RR.arrow')
 
+# Remove intervals where the rate is 0
+practice_interval_df = practice_interval_df.loc[practice_interval_df['rate_per_1000_midpoint6_derived'] > 0]
 # Filter for summer and winter
 practice_interval_sum_win_df = practice_interval_df.loc[practice_interval_df['season'].isin(['Jun-Jul', 'Sep-Oct', 'Nov-Dec', 'Jan-Feb'])]
 
