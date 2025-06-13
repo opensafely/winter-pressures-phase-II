@@ -34,6 +34,9 @@ args.n_years = 10
 args.dtype_dict = {'measure': 'category', 'interval_start' : 'string', 'numerator' : 'int64', 
         'denominator' : 'int64'}
 
+args.dtype_dict = {'measure': 'category', 'interval_start' : 'string', 'numerator' : 'int64', 
+        'denominator' : 'int64'}
+
 if args.demograph_measures:
     args.group = 'demograph'
     args.dtype_dict.update(

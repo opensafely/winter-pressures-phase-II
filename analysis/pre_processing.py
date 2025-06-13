@@ -18,6 +18,7 @@ from wp_config_setup import args
 
 dates = generate_annual_dates(args.study_end_date, args.n_years)
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
+
 if args.test:
     # For testing, use only the first date
     dates = [dates[0]]

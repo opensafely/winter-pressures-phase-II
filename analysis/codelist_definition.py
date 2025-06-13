@@ -17,8 +17,8 @@ def create_codelist_dict(dic: dict) -> dict:
 
 # Demogragic codelists
 ethnicity = codelist_from_csv(
-    "codelists/opensafely-ethnicity.csv",
-    column="Code",
+    "codelists/opensafely-ethnicity-snomed-0removed.csv",
+    column="code",
     category_column="Grouping_6",
 )
 

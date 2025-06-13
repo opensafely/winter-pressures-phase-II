@@ -67,8 +67,8 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
         df['rur_urb_class'].fillna('Unknown', inplace = True)
         # Aggregate urban and rural subcategories
         df['rur_urb_class'] = df['rur_urb_class'].replace({
-            '1': '1', '2': '1', '3': '1', '4': '1', # Urban = 1
-            '5': '2', '6': '2', '7': '2', '8': '2' # Rural = 2
+            '1': 'Urban', '2': 'Urban', '3': 'Urban', '4': 'Urban', # Urban = 1
+            '5': 'Rural', '6': 'Rural', '7': 'Rural', '8': 'Rural' # Rural = 2
             }).fillna('Unknown')
         print(f"New datatype of rur_urb: {df['rur_urb_class'].dtype}")
         print(f"Post-replace values:, {df['rur_urb_class'].unique()}")
@@ -100,7 +100,8 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
         print(f"Post-replace values:, {df['ethnicity'].unique()}")
         df = df.drop('ethnicity_sus', axis=1)
         # Aggregate ethnicity categories
-        df = df.groupby(df.cols.remove(['numerator', 'list_size']), as_index=False)['numerator', 'list_size'].sum()
+        group_cols = [col for col in df.columns if col not in ['numerator', 'list_size']]
+        df = df.groupby(group_cols, as_index=False, observed = True)[['numerator', 'list_size']].sum()
         print(f"Post-replace df: {df.head()}")
 
     return df
@@ -153,14 +154,13 @@ def get_season(month):
     else:
         return None  # Exclude non-winter months
     
-def read_write(read_or_write, path, test = args.test, file_type = args.file_type, df = None, dtype = None, **kwargs):
+def read_write(read_or_write, path, test = args.test, df = None, dtype = None, **kwargs):
     """
     Function to read or write a file based on the test flag.
     Args:
         df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
         read_or_write (str): 'read' or 'write' to specify the operation.
         test (bool): If True, use test versions of datasets.
-        file_type (str): Type of file to read/write ('csv' or 'arrow').
         path (str): Path to the file.
     Returns:
         pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
@@ -186,7 +186,13 @@ def read_write(read_or_write, path, test = args.test, file_type = args.file_type
                 for col in bool_cols:
                     df[col] = df[col] == 'T'
 
-        return df
+            if dtype is not None:
+                df = df.astype(dtype)
+                df["interval_start"] = pd.to_datetime(df["interval_start"])
+                # Drop columns that are not in the dtype dictionary
+                df = df[df.columns.intersection(dtype.keys())]
+
+            return df
 
     elif read_or_write == 'write':
 
@@ -196,3 +202,35 @@ def read_write(read_or_write, path, test = args.test, file_type = args.file_type
         elif file_type == 'arrow':
             # Convert boolean columns to string type
             feather.write_feather(df, path + '.arrow')
+
+        # Convert boolean columns to string type
+        feather.write_feather(df, path + '.arrow')
+
+def simulate_dataframe(dtype_dict, n_rows):
+    """
+    Simulate a DataFrame with specified dtypes and number of rows.
+    Args:
+        dtype_dict (dict): Dictionary mapping column names to dtypes.
+        n_rows (int): Number of rows to generate.
+    Returns:
+        pd.DataFrame: Simulated DataFrame with specified dtypes.
+    """
+    data = {}
+    for col, dtype in dtype_dict.items():
+        if dtype == 'int64':
+            data[col] = np.random.randint(0, 1000, size=n_rows)
+        elif dtype == 'int16':
+            data[col] = np.random.randint(-30000, 30000, size=n_rows).astype(np.int16)
+        elif dtype == 'int8':
+            data[col] = np.random.randint(1, 6, size=n_rows).astype(np.int8)
+        elif dtype == 'bool':
+            data[col] = np.random.choice(['T', 'F'], size=n_rows)
+        elif dtype == 'category':
+            data[col] = pd.Categorical(np.random.choice(['A', 'B', 'C'], size=n_rows))
+        elif dtype == 'string':
+            data[col] = pd.Series(np.random.choice(['x', 'y', 'z', None], size=n_rows), dtype='string')
+        else:
+            raise ValueError(f"Unhandled dtype: {dtype}")
+
+    df = pd.DataFrame(data).astype(dtype_dict)
+    return df

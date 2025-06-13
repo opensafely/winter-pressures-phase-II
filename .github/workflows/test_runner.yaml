@@ -16,5 +16,6 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_rounding_demograph_test generate_rounding_practice_test generate_rounding_comorbid_test
+        actions: generate_rounding_demograph_test generate_rounding_practice_test generate_rounding_comorbid_test generate_normalization_practice_test
+
 

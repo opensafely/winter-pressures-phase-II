@@ -25,6 +25,7 @@ dates = generate_annual_dates(args.study_end_date, args.n_years)
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 log_memory_usage(label="Before loading data")
+
 input_path = f"output/{args.group}_measures/proc_{args.group}_measures_midpoint6"
 practice_interval_df = read_write('read', input_path)
 

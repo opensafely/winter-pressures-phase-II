@@ -62,22 +62,24 @@ age_group = case(
 
 # Ethnicity
 dataset.ethnicity = (
-    clinical_events.where(clinical_events.ctv3_code.is_in(ethnicity))
+    clinical_events.where(clinical_events.snomedct_code.is_in(ethnicity))
+    .where(clinical_events.date.is_on_or_before(INTERVAL.start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
-    .ctv3_code.to_category(ethnicity)
+    .snomedct_code.to_category(ethnicity)
 )
 
 # Depravation
 imd_rounded = addresses.for_patient_on(study_start_date).imd_rounded
 max_imd = 32844
-dataset.imd_quintile = case(
-    when(imd_rounded < int(max_imd * 1 / 5)).then(1),
-    when(imd_rounded < int(max_imd * 2 / 5)).then(2),
-    when(imd_rounded < int(max_imd * 3 / 5)).then(3),
-    when(imd_rounded < int(max_imd * 4 / 5)).then(4),
+imd_quintile = case(
+    when((imd_rounded >= 0) & (imd_rounded <= int(max_imd * 1 / 5))).then(1),
+    when(imd_rounded <= int(max_imd * 2 / 5)).then(2),
+    when(imd_rounded <= int(max_imd * 3 / 5)).then(3),
+    when(imd_rounded <= int(max_imd * 4 / 5)).then(4),
     when(imd_rounded <= max_imd).then(5),
-)
+    otherwise = 99
+    )
 
 # Care home residency
 dataset.carehome = addresses.for_patient_on(study_start_date).care_home_is_potential_match
@@ -136,7 +138,6 @@ dataset.start_in_interval = count_start_in_interval(study_start_date, study_end_
 dataset.online_consult = count_clinical_consultations(online_consult, study_start_date, study_end_date)
 dataset.call_from_patient = count_clinical_consultations('25691000000103',study_start_date, study_end_date)
 dataset.call_from_gp = count_clinical_consultations('24671000000101',study_start_date, study_end_date)
-dataset.GP_ooh_admin = count_clinical_consultations('401165003',study_start_date, study_end_date)
 dataset.tele_consult = count_clinical_consultations('386472008',study_start_date, study_end_date)
 dataset.emergency_care = count_emergency_care_attendance(study_start_date, study_end_date)
 
