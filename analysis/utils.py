@@ -171,7 +171,7 @@ def read_write(read_or_write, path, test = args.test, file_type = args.file_type
     if read_or_write == 'read':
         
         if file_type == 'csv':
-            df = pd.read_csv(path + '.csv.gz', **kwargs)
+            df = pd.read_csv(path + '.csv', **kwargs)
 
         elif file_type == 'arrow':
             df = feather.read_feather(path + '.arrow')
@@ -191,7 +191,7 @@ def read_write(read_or_write, path, test = args.test, file_type = args.file_type
     elif read_or_write == 'write':
 
         if file_type == 'csv':
-            df.to_csv(path + '.csv.gz', **kwargs)
+            df.to_csv(path + '.csv', **kwargs)
 
         elif file_type == 'arrow':
             # Convert boolean columns to string type

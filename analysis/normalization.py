@@ -15,6 +15,8 @@ from datetime import datetime, timedelta
 from scipy import stats
 from itertools import product
 import pyarrow.feather as feather
+from itertools import combinations
+from scipy.stats import pearsonr, spearmanr
 
 # -------- Load data ----------------------------------
 
@@ -115,8 +117,8 @@ for baseline in baselines:
     measures = practice_interval_sum_win_df['measure'].unique()
     seasons = practice_interval_sum_win_df['season'].unique()
     pandemics = practice_interval_sum_win_df['pandemic'].unique()
-    combinations = list(product(practices, measures, seasons, pandemics))
-    practice_sum_win_df = pd.DataFrame(combinations, columns=['practice_pseudo_id', 'measure', 'season', 'pandemic'])
+    permutations = list(product(practices, measures, seasons, pandemics))
+    practice_sum_win_df = pd.DataFrame(permutations, columns=['practice_pseudo_id', 'measure', 'season', 'pandemic'])
 
     # Apply poisson means test to each practice-measure-season combination
     # Precompute aggregates
@@ -206,27 +208,24 @@ for baseline in baselines:
     # Check calculations
     print(f"Matches between means, expect all to match: {(results['rate_mean_bw_prac_mean'] == results['rate_mean_w/in_prac_mean']).sum()}/{len(results)}")
     print(f"Matches between vars, expect none to match: {(results['rate_var_bw_prac_mean'] == results['rate_var_w/in_prac_mean']).sum()}/{len(results)}")
+    
     # Save results
-    if args.test:
-        results.to_csv(f'output/{args.group}_measures/seasonality_results_{baseline}_test.csv')
-    else:
-        results.to_csv(f'output/{args.group}_measures/seasonality_results_{baseline}.csv')
+    read_write('write', f'output/{args.group}_measures/seasonality_results_{baseline}', df = results, file_type = 'csv')
     log_memory_usage(label="After practice-level testing data")
 
 # --------------- Describing long-term trend --------------------------------------------
 
-# Uses 'prev_summer_baseline' as that was the last iteration of the baseline loop
-practice_interval_df['weeks_from_start'] = (
-        practice_interval_df['interval_start'] - args.study_start_date
-    ).dt.days / 7
+# Calculate long-term statistics for each measure
 results_dict = {}
 for measure in measures:
     # Use mask instead of filter so that view is used instead of copy (saves memory)
     mask = practice_interval_df['measure'] == measure
-    # Create column for time since start
+    # Create column for time since start, which varies depending on measure
     practice_interval_df.loc[mask, 'weeks_from_start'] = (
-        practice_interval_df.loc[mask, 'interval_start'] - args.study_start_date
+        practice_interval_df.loc[mask, 'interval_start'] - practice_interval_df['interval_start'].min()
     ).dt.days / 7
+
+    # Calculate slope and coefficient of determination using linear regression on time series
     res_SumBas = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'RR'])
     res_rate_mp6 = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'rate_per_1000_midpoint6_derived'])
     results_dict[measure] = {
@@ -237,14 +236,45 @@ for measure in measures:
         "r_squared_rate_mp6": res_rate_mp6.rvalue**2,
         "variance_rate_mp6": stats.variation(practice_interval_df.loc[mask, 'rate_per_1000_midpoint6_derived'])
     }
-
 results_df = pd.DataFrame.from_dict(results_dict, orient='index')
+
 # Round results
 results_df = results_df.round(4)
-if args.test:
-    results_df.to_csv("output/practice_measures/trend_results_test.csv")
-else:
-    results_df.to_csv("output/practice_measures/trend_results.csv")
+read_write('write', f'output/{args.group}_measures/trend_results', df = results_df, file_type = 'csv')
+
+# Calculate correlation between each possible pair of measures
+# Pivot to wide format (measures as columns)
+pivot_df = practice_interval_df.pivot_table(
+    index='interval_start',
+    columns='measure',
+    values='RR'  # or another variable
+)
+# Get all unique measure pairs
+measure_list = pivot_df.columns.dropna().tolist()
+measure_pairs = list(combinations(measure_list, 2))
+
+# Compute correlations
+results = []
+for m1, m2 in measure_pairs:
+    # Drop missing rows so correlation only uses intervals where both measures are present
+    pair_df = pivot_df[[m1, m2]].dropna()
+    n = len(pair_df)
+
+    # Calculate pearson (linear) and spearman (non-linear) correlations
+    pearson_r, _ = pearsonr(pair_df[m1], pair_df[m2])
+    spearman_r, _ = spearmanr(pair_df[m1], pair_df[m2])
+
+    results.append({
+        'measure_1': m1,
+        'measure_2': m2,
+        'pearson_r': pearson_r,
+        'spearman_r': spearman_r,
+        'n_overlap': n
+    })
+
+# Convert to DataFrame and sort by Pearson correlation (or another metric)
+correlation_longform_df = pd.DataFrame(results).sort_values(by='pearson_r', ascending=False)
+read_write('write', f'output/{args.group}_measures/corr_results', df = correlation_longform_df, file_type = 'csv')
 log_memory_usage(label="After trend analysis")
 
 
