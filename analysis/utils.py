@@ -154,7 +154,7 @@ def get_season(month):
     else:
         return None  # Exclude non-winter months
     
-def read_write(read_or_write, path, test = args.test, df = None, dtype = None, **kwargs):
+def read_write(read_or_write, path, file_type = 'arrow', test = args.test, df = None, dtype = None, **kwargs):
     """
     Function to read or write a file based on the test flag.
     Args:
