@@ -25,7 +25,14 @@ args = parser.parse_args() # Stores arguments in 'args'
 
 # Configure dates
 args.study_end_date = "2025-03-31"
+args.pandemic_start = "2020-03-01"
+args.pandemic_end = "2021-05-17"
+if args.test:
+    args.pandemic_start = "2017-03-01"
+    args.pandemic_end = "2018-05-17"
 args.n_years = 10
+args.dtype_dict = {'measure': 'category', 'interval_start' : 'string', 'numerator' : 'int64', 
+        'denominator' : 'int64'}
 
 args.dtype_dict = {'measure': 'category', 'interval_start' : 'string', 'numerator' : 'int64', 
         'denominator' : 'int64'}

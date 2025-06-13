@@ -156,25 +156,27 @@ yaml_processing_template = """
     outputs:
       highly_sensitive:
         measures: output/{group}_measures/proc_{group}_measures{test_suffix}.arrow
-
   generate_rounding_{group}{test_suffix}:
     run: r:v2 analysis/round_measures.r --{group}_measures  {test_flag}
     needs: [generate_pre_processing_{group}{test_suffix}]
     outputs:
       highly_sensitive:
         rounded_measures: output/{group}_measures/proc_{group}_measures_midpoint6{test_suffix}.arrow
-"""
-''' TEMPORARILY COMMENTED OUT:
-  # Normalization
-  generate_normalization{test_suffix}:
-    run: python:v2 analysis/normalization.py {test_flag}
-    needs: [generate_rounding{test_suffix}]
+  generate_normalization_{group}{test_suffix}:
+    run: python:v2 analysis/normalization.py --{group}_measures {test_flag}
+    needs: [generate_rounding_{group}{test_suffix}]
     outputs:
       highly_sensitive:
-        RR_table: output/practice_measures/RR{test_suffix}{test_filetype}
+        RR_table1: output/{group}_measures/RR_first_summer_mean{test_suffix}.arrow
+        RR_table2: output/{group}_measures/RR_prev_summer_mean{test_suffix}.arrow
       moderately_sensitive:
-        seasonality_table: output/practice_measures/seasonality_results{test_suffix}.csv
-        trend_table: output/practice_measures/trend_results{test_suffix}.csv
+        rr_summary_table_first_summer: output/{group}_measures/seasonality_results_first_summer_mean{test_suffix}.csv
+        rr_summary_table_prev_summer: output/{group}_measures/seasonality_results_prev_summer_mean{test_suffix}.csv
+        trend_table: output/{group}_measures/trend_results{test_suffix}.csv
+        correlation_table: output/{group}_measures/corr_results{test_suffix}.csv
+
+"""
+''' TEMPORARILY COMMENTED OUT:
 
   # Visualisation
   generate_tables_demograph{test_suffix}:

@@ -108,88 +108,32 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
 
 # ----------- Summer-winter comparison functions ---------------------------------------------
 
-def compare_to_summer(row, max_year, min_year, max_year_issue, min_year_issue, diff, season_df):
-    '''
-    Calculates the difference between the rate and the summer baseline for a given measure and year.
-    Args:
-        row (pd.Series): Row of the DataFrame containing the measure, year, and rate.
-        max_year (int): Maximum year in the dataset.
-        min_year (int): Minimum year in the dataset.
-        max_year_issue (bool): Whether the latest year has no summer. Prev year summer used instead.
-        min_year_issue (bool): Whether the earliest year has no summer. Next year summer used instead.
-        diff (str): Type of difference to calculate ('Abs', 'Rel', 'Both').
-        season_df (pd.DataFrame): DataFrame containing the summer values for each measure and year.
-    Returns:
-        float: The difference between the rate and the summer baseline.
-    '''
-    year = row['year']
-    # Check if the year is the max or min year and if it has a summer
-    if (year == max_year) and (max_year_issue):
-        print(f'Interval {row.interval_start} does not have a summer for that year, using prev years')
-        year = year - 1
-    elif (year == min_year) and (min_year_issue):
-        print(f'Interval {row.interval_start} does not have a summer for that year, using next years')
-        year = year + 1
-    else:
-        print(f'Interval {row.interval_start} has a summer for that year')
-    # Get the summer value for the measure and year
-    summer_value = season_df.loc[(row['measure'], 'Jun-Jul', year)]['mean']
-    # Calculate rate normalized by summer baseline
-    if diff == 'Abs':
-        # Calculate absolute difference
-        return row.rate_per_1000_midpoint6_derived - summer_value
-    elif diff == 'Rel':
-        # Calculate relative difference
-        return row.rate_per_1000_midpoint6_derived / summer_value
-    elif diff == 'Both':
-        # Calculate both absolute and relative difference
-        return pd.Series({'rate_diff': row.rate_per_1000_midpoint6_derived - summer_value, 'RR': row.rate_per_1000_midpoint6_derived / summer_value})
+def build_aggregates(rate_df):
+    # Ensure grouping columns are correct
+    grouped = rate_df.groupby(['measure', 'season', 'practice_pseudo_id', 'pandemic'])['rate_per_1000_midpoint6_derived']
+    agg = grouped.agg(['sum', 'count']).rename(columns={'sum': 'total_rate', 'count': 'intervals'})
+    return agg
 
-def test_difference(row, rate_df):
-    '''
-    Conducts a poisson means test comparing the summer and winter rates for a given measure, season and practice.
-    Args:
-        row (pd.Series): Row of the DataFrame containing the measure, season, and practice.
-        rate_df (pd.DataFrame): DataFrame containing the rate data. Should be interval-level.
-    Returns:
-        float: The p-value of the difference between summer and winter values.
-    '''
-    print(f"Testing difference for measure: {row['measure']}, season: {row['season']}, practice: {row['practice_pseudo_id']}")
+def test_difference(row, agg_df):
+    # Skip summer-summer comparisons
     if row['season'] == 'Jun-Jul':
-        print("Skipping summer-summer comparison")
         return np.nan
-    # Extract the summer and winter values for the measure, season, and year
-    summer = rate_df.loc[
-        (rate_df['measure'] == row['measure']) &
-        (rate_df['season'] == 'Jun-Jul') &
-        (rate_df['practice_pseudo_id'] == row['practice_pseudo_id'])
-        ]
-    season = rate_df.loc[
-        (rate_df['measure'] == row['measure']) &
-        (rate_df['season'] == row['season']) &
-        (rate_df['practice_pseudo_id'] == row['practice_pseudo_id'])
-        ]
-    # Get the rates for summer and winter
-    vals_summer = summer['rate_per_1000_midpoint6_derived']
-    vals_season = season['rate_per_1000_midpoint6_derived']
-    
-    # Conduct poisson test
-    rate1 = round(vals_summer.sum())
-    intervals1 = len(vals_summer)
-    print(f"Rate summer: {rate1}, Intervals summer: {intervals1}")
-    rate2 = round(vals_season.sum())
-    intervals2 = len(vals_season)
-    print(f"Rate season: {rate2}, Intervals season: {intervals2}")
-    if intervals1 == 0 or intervals2 == 0:
-        print("One of the counts is zero, returning NaN")
+
+    key_summer = (row['measure'], 'Jun-Jul', row['practice_pseudo_id'], row['pandemic'])
+    key_season = (row['measure'], row['season'], row['practice_pseudo_id'], row['pandemic'])
+
+    # Fetch rates for each season
+    summer_rate = round(agg_df.loc[key_summer, 'total_rate'])
+    summer_n = agg_df.loc[key_summer, 'intervals']
+    winter_rate = round(agg_df.loc[key_season, 'total_rate'])
+    winter_n = agg_df.loc[key_season, 'intervals']
+
+    # Skip comparisons with 0 intervals
+    if summer_n == 0 or winter_n == 0:
         return np.nan
-    result = stats.poisson_means_test(rate1, intervals1, rate2, intervals2, alternative='two-sided')
 
-    # Get the p-value
-    pval = result.pvalue
-
-    # Return significance at p < 0.05
-    return round(pval, 4)
+    result = stats.poisson_means_test(summer_rate, summer_rate, winter_rate, winter_n, alternative='two-sided')
+    return round(result.pvalue, 4)
 
 def get_season(month):
     '''
@@ -210,7 +154,7 @@ def get_season(month):
     else:
         return None  # Exclude non-winter months
     
-def read_write(read_or_write, path, test = args.test, df = None, dtype = None, **kwargs):
+def read_write(read_or_write, path, file_type = 'arrow', test = args.test, df = None, dtype = None, **kwargs):
     """
     Function to read or write a file based on the test flag.
     Args:
@@ -225,8 +169,22 @@ def read_write(read_or_write, path, test = args.test, df = None, dtype = None, *
             path = path + '_test'
             
     if read_or_write == 'read':
-            
+        
+        if file_type == 'csv':
+            df = pd.read_csv(path + '.csv', **kwargs)
+
+        elif file_type == 'arrow':
             df = feather.read_feather(path + '.arrow')
+            
+            if dtype is not None:
+                df = df.astype(dtype)
+                df["interval_start"] = pd.to_datetime(df["interval_start"])
+                # Drop columns that are not in the dtype dictionary
+                df = df[df.columns.intersection(dtype.keys())]
+                # Convert boolean columns to boolean type
+                bool_cols = [col for col, typ in dtype.items() if typ == 'bool']
+                for col in bool_cols:
+                    df[col] = df[col] == 'T'
 
             if dtype is not None:
                 df = df.astype(dtype)
@@ -237,6 +195,13 @@ def read_write(read_or_write, path, test = args.test, df = None, dtype = None, *
             return df
 
     elif read_or_write == 'write':
+
+        if file_type == 'csv':
+            df.to_csv(path + '.csv', **kwargs)
+
+        elif file_type == 'arrow':
+            # Convert boolean columns to string type
+            feather.write_feather(df, path + '.arrow')
 
         # Convert boolean columns to string type
         feather.write_feather(df, path + '.arrow')
