@@ -67,9 +67,9 @@ if args.demograph_measures:
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
 
 if args.test:
-    # Increase numerator and list_size for testing of downstream functions
-    proc_df['numerator'] = np.random.randint(0, 500, size = len(proc_df))
-    proc_df['list_size'] = np.random.randint(500, 1000, size = len(proc_df))
+    # Initial randomization for original data
+    proc_df['numerator'] = np.random.randint(0, 500, size=len(proc_df))
+    proc_df['list_size'] = np.random.randint(500, 1000, size=len(proc_df))
 
     # Simulate extra data for downstream testing
     print(proc_df['interval_start'].unique())
@@ -78,15 +78,18 @@ if args.test:
     n_weeks = 52 * 2
     max_start = proc_df['interval_start'].max()
 
-    # Generate extended rows by shifting weeks
+    # Generate extended rows by shifting weeks and randomizing values
     extended_rows = []
     for i in range(1, n_weeks + 1):
         df_copy = proc_df.copy()
         df_copy['interval_start'] = df_copy['interval_start'] + timedelta(weeks=i)
+        df_copy['numerator'] = np.random.randint(0, 500, size=len(df_copy))
+        df_copy['list_size'] = np.random.randint(500, 1000, size=len(df_copy))
         extended_rows.append(df_copy)
 
-    # Combine original with extended data
+    # Combine original and simulated rows
     proc_df = pd.concat([proc_df] + extended_rows, ignore_index=True)
+
 
     # Sample 10 unique practice_pseudo_ids
     test_practices = pd.Series(proc_df['practice_pseudo_id'].unique()).sample(10)

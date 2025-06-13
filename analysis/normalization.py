@@ -81,7 +81,7 @@ practice_interval_df = practice_interval_df.merge(
 first_summer_df = (
     prev_summer_df[prev_summer_df['summer_year'] == prev_summer_df['summer_year'].min()]
     .drop(columns='summer_year')  # Remove since it's not needed in merge
-    .rename(columns={'summer_mean': 'first_summer_mean'})
+    .rename(columns={'prev_summer_mean': 'first_summer_mean'})
 )
 # Merge using only 'measure', so every row gets the same baseline per measure
 practice_interval_df = practice_interval_df.merge(
@@ -213,7 +213,6 @@ for baseline in baselines:
         results.to_csv(f'output/{args.group}_measures/seasonality_results_{baseline}.csv')
     log_memory_usage(label="After practice-level testing data")
 
-breakpoint()
 # --------------- Describing long-term trend --------------------------------------------
 
 # Uses 'prev_summer_baseline' as that was the last iteration of the baseline loop
