@@ -36,6 +36,7 @@ log_memory_usage(label="After loading data")
 # Ensure correct datetime format
 practice_interval_df['interval_start'] = pd.to_datetime(practice_interval_df['interval_start']).dt.tz_localize(None)
 practice_interval_df['month'] = practice_interval_df['interval_start'].dt.month
+# If Jan - May, RR is relative to prev years summer. If June - Dec, RR is relative to same years summer.
 practice_interval_df['summer_year'] = np.where( practice_interval_df['month'] <= 5, 
                                                 practice_interval_df['interval_start'].dt.year - 1,
                                                 practice_interval_df['interval_start'].dt.year)
@@ -66,26 +67,35 @@ practice_interval_df['season'] = practice_interval_df['month'].apply(get_season)
 
 # Create smaller df, summarized at season level using mean
 # This is used as a reference for the rate ratio calculation
-prev_summer_df = practice_interval_df[practice_interval_df['season'] == 'Jun-Jul']
+summer_df = practice_interval_df[practice_interval_df['season'] == 'Jun-Jul']
 prev_summer_df = (
-    prev_summer_df.groupby(['measure', 'summer_year'])['rate_per_1000_midpoint6_derived']
+    summer_df.groupby(['measure', 'summer_year', 'practice_pseudo_id'])['rate_per_1000_midpoint6_derived']
     .agg(['mean'])
     .rename(columns={'mean': 'prev_summer_mean'})
     .reset_index()
 )
+
 # Add new column for summer mean to the main df
 practice_interval_df = practice_interval_df.merge(
     prev_summer_df,
-    on=['measure', 'summer_year'],
+    on=['measure', 'summer_year', 'practice_pseudo_id'],
     how='left'
 )
+# Remove rows for years where the summer baseline rate is 0 and not null
+practice_interval_df = practice_interval_df[(practice_interval_df['prev_summer_mean'] > 0) & 
+                     ~(practice_interval_df['prev_summer_mean'].isnull())]
+prev_summer_df = prev_summer_df[(prev_summer_df['prev_summer_mean'] > 0) & 
+                     ~(prev_summer_df['prev_summer_mean'].isnull())]
 
-# Create summer df version with only first summer
+# Find the first summer year per measure
+first_summer_years = prev_summer_df.groupby('measure')['summer_year'].min().reset_index()
+# Merge to keep only rows where summer_year equals the first summer for that measure
 first_summer_df = (
-    prev_summer_df[prev_summer_df['summer_year'] == prev_summer_df['summer_year'].min()]
-    .drop(columns='summer_year')  # Remove since it's not needed in merge
+    prev_summer_df.merge(first_summer_years, on=['measure', 'summer_year'])
+    .drop(columns='summer_year')  # Drop original summer_year after filtering
     .rename(columns={'prev_summer_mean': 'first_summer_mean'})
 )
+
 # Merge using only 'measure', so every row gets the same baseline per measure
 practice_interval_df = practice_interval_df.merge(
     first_summer_df,
@@ -107,9 +117,6 @@ for baseline in baselines:
     output_path = f"output/{args.group}_measures/RR_{baseline}"
     read_write(read_or_write = 'write', path = output_path, df = practice_interval_df)
 
-    # Remove intervals where the rate is 0
-    practice_interval_df = practice_interval_df.loc[practice_interval_df['rate_per_1000_midpoint6_derived'] > 0]
-    # Filter for summer and winter
     practice_interval_sum_win_df = practice_interval_df.loc[practice_interval_df['season'].isin(['Jun-Jul', 'Sep-Oct', 'Nov-Dec', 'Jan-Feb'])]
 
     # Test for seasonality at practice-measure-season-level
@@ -126,6 +133,7 @@ for baseline in baselines:
     agg_df = build_aggregates(practice_interval_sum_win_df)
     # Apply efficiently (no repeated filtering)
     practice_sum_win_df['test_summer_vs_winter'] = practice_sum_win_df.apply(lambda row: test_difference(row, agg_df), axis=1)
+
     # Adjust for multiple testing
     # Identify non-NaN indices
     valid_mask = ~np.isnan(practice_sum_win_df['test_summer_vs_winter'])
@@ -213,7 +221,7 @@ for baseline in baselines:
     # Save results
     read_write('write', f'output/{args.group}_measures/seasonality_results_{baseline}', df = results, file_type = 'csv')
     log_memory_usage(label="After practice-level testing data")
-
+breakpoint()
 # --------------- Describing long-term trend --------------------------------------------
 
 # Calculate long-term statistics for each measure
