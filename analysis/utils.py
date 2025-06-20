@@ -207,8 +207,6 @@ def read_write(read_or_write, path, file_type = 'arrow', test = args.test, df = 
             # Convert boolean columns to string type
             feather.write_feather(df, path + '.arrow')
 
-        # Convert boolean columns to string type
-        feather.write_feather(df, path + '.arrow')
 
 def simulate_dataframe(dtype_dict, n_rows):
     """

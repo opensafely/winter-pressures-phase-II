@@ -99,7 +99,7 @@ first_summer_df = (
 # Merge using only 'measure', so every row gets the same baseline per measure
 practice_interval_df = practice_interval_df.merge(
     first_summer_df,
-    on='measure',
+    on= ['measure', 'practice_pseudo_id'],
     how='left'
 )
 
@@ -131,6 +131,7 @@ for baseline in baselines:
     # Apply poisson means test to each practice-measure-season combination
     # Precompute aggregates
     agg_df = build_aggregates(practice_interval_sum_win_df)
+
     # Apply efficiently (no repeated filtering)
     practice_sum_win_df['test_summer_vs_winter'] = practice_sum_win_df.apply(lambda row: test_difference(row, agg_df), axis=1)
 
@@ -155,7 +156,7 @@ for baseline in baselines:
     # Fix column index
     results.columns = ['_'.join(col).strip('_') for col in results.columns.values]
 
-    # Within practice variance
+    # Mean and variance at each timepoint
     interval_sum_win_df = practice_interval_sum_win_df.groupby(['measure', 'interval_start', 'pandemic']).agg({
         'rate_per_1000_midpoint6_derived': ['mean', 'var'],
         'RR': ['mean', 'var'],
@@ -163,32 +164,36 @@ for baseline in baselines:
     }).reset_index()
     interval_sum_win_df.columns = ['_'.join(col).strip('_') for col in interval_sum_win_df.columns.values]
     interval_sum_win_df['season'] = interval_sum_win_df['interval_start'].dt.month.apply(get_season)
+    # Mean and variance at each timepoint, averaged per season
     sum_win_df = interval_sum_win_df.groupby(['measure', 'season', 'pandemic']).agg({
-        'rate_per_1000_midpoint6_derived_mean': ['mean'],
+        'rate_per_1000_midpoint6_derived_mean': ['mean', 'count'],
         'rate_per_1000_midpoint6_derived_var': ['mean'],
-        'RR_mean': ['mean'],
+        'RR_mean': ['mean', 'count'],
         'RD_var': ['mean'],
     }).reset_index()
     sum_win_df.columns = ['_'.join(col).strip('_') for col in sum_win_df.columns.values]
     # Rename columns for clarity
     sum_win_df.rename(columns={
-        'rate_per_1000_midpoint6_derived_mean_mean': 'rate_mean_w/in_prac_mean',
-        'rate_per_1000_midpoint6_derived_var_mean': 'rate_var_w/in_prac_mean',
-        'RR_mean_mean': 'RR_mean_w/in_prac_mean',
-        'RD_var_mean': 'RD_var_w/in_prac_mean'
+        'rate_per_1000_midpoint6_derived_mean_mean': 'rate_mean_over_t_ave',
+        'rate_per_1000_midpoint6_derived_mean_count': 'rate_N_timepoints',
+        'rate_per_1000_midpoint6_derived_var_mean': 'rate_var_over_t_ave',
+        'RR_mean_mean': 'RR_mean_over_t_ave',
+        'RR_mean_count': 'RR_N_timepoints',
+        'RD_var_mean': 'RD_var_over_t_ave'
     }, inplace=True)
 
-    # Between practice variance
+    # Mean and variance per practice
     practice_sum_win_df = practice_interval_sum_win_df.groupby(['measure', 'practice_pseudo_id', 'season', 'pandemic']).agg({
         'rate_per_1000_midpoint6_derived': ['mean', 'var'],
         'RR': ['mean', 'var'],
         'RD': ['mean', 'var'],
     }).reset_index()
     practice_sum_win_df.columns = ['_'.join(col).strip('_') for col in practice_sum_win_df.columns.values]
+    # Mean and variance per practice, averaged per season
     practice_sum_win_df = practice_sum_win_df.groupby(['measure', 'season', 'pandemic']).agg({
-        'rate_per_1000_midpoint6_derived_mean': ['mean'],
+        'rate_per_1000_midpoint6_derived_mean': ['mean', 'count'],
         'rate_per_1000_midpoint6_derived_var': ['mean'],
-        'RR_mean': ['mean'],
+        'RR_mean': ['mean', 'count'],
         'RD_var': ['mean'],
     }).reset_index()
     practice_sum_win_df.columns = ['_'.join(col).strip('_') for col in practice_sum_win_df.columns.values]
@@ -199,10 +204,12 @@ for baseline in baselines:
     )
     # Rename columns for clarity
     practice_sum_win_df.rename(columns={
-        'rate_per_1000_midpoint6_derived_mean_mean': 'rate_mean_bw_prac_mean',
-        'rate_per_1000_midpoint6_derived_var_mean': 'rate_var_bw_prac_mean',
-        'RR_mean_mean': 'RR_mean_bw_prac_mean',
-        'RD_var_mean': 'RD_var_bw_prac_mean'
+        'rate_per_1000_midpoint6_derived_mean_mean': 'rate_mean_per_prac_ave',
+        'rate_per_1000_midpoint6_derived_mean_count': 'rate_N_practices',
+        'rate_per_1000_midpoint6_derived_var_mean': 'rate_var_per_prac_ave',
+        'RR_mean_mean': 'RR_mean_per_prac_ave',
+        'rate_per_1000_midpoint6_derived_mean_count': 'RR_N_practices',
+        'RD_var_mean': 'RD_var_per_prac_ave'
     }, inplace=True)
     # Merge with practice_sum_win_df
     sum_win_df = sum_win_df.merge(practice_sum_win_df, on=['measure', 'season', 'pandemic'], how='left')
@@ -214,76 +221,130 @@ for baseline in baselines:
 
     # Round results
     results = results.round(2)
-    # Check calculations
-    print(f"Matches between means, expect all to match: {(results['rate_mean_bw_prac_mean'] == results['rate_mean_w/in_prac_mean']).sum()}/{len(results)}")
-    print(f"Matches between vars, expect none to match: {(results['rate_var_bw_prac_mean'] == results['rate_var_w/in_prac_mean']).sum()}/{len(results)}")
-    
+
     # Save results
     read_write('write', f'output/{args.group}_measures/seasonality_results_{baseline}', df = results, file_type = 'csv')
     log_memory_usage(label="After practice-level testing data")
-breakpoint()
+
 # --------------- Describing long-term trend --------------------------------------------
 
-# Calculate long-term statistics for each measure
-results_dict = {}
+from scipy import stats
+import pandas as pd
+import numpy as np
+
+results_list = []
+
+# Loop over each measure
 for measure in measures:
-    # Use mask instead of filter so that view is used instead of copy (saves memory)
-    mask = practice_interval_df['measure'] == measure
-    # Create column for time since start, which varies depending on measure
-    practice_interval_df.loc[mask, 'weeks_from_start'] = (
-        practice_interval_df.loc[mask, 'interval_start'] - practice_interval_df['interval_start'].min()
-    ).dt.days / 7
+    # Subset for current measure
+    measure_df = practice_interval_df[practice_interval_df['measure'] == measure].copy()
 
-    # Calculate slope and coefficient of determination using linear regression on time series
-    res_SumBas = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'RR'])
-    res_rate_mp6 = stats.linregress(practice_interval_df.loc[mask, 'weeks_from_start'], practice_interval_df.loc[mask, 'rate_per_1000_midpoint6_derived'])
-    results_dict[measure] = {
-        "slope_RR": res_SumBas.slope,
-        "r_squared_RR": res_SumBas.rvalue**2,
-        "variance_RR": stats.variation(practice_interval_df.loc[mask, 'RR']),
-        "slope_rate_mp6": res_rate_mp6.slope,
-        "r_squared_rate_mp6": res_rate_mp6.rvalue**2,
-        "variance_rate_mp6": stats.variation(practice_interval_df.loc[mask, 'rate_per_1000_midpoint6_derived'])
-    }
-results_df = pd.DataFrame.from_dict(results_dict, orient='index')
+    # Get the earliest date for time 0 (can vary per measure)
+    min_date = measure_df['interval_start'].min()
 
-# Round results
-results_df = results_df.round(4)
-read_write('write', f'output/{args.group}_measures/trend_results', df = results_df, file_type = 'csv')
+    # Compute weeks from start
+    measure_df['weeks_from_start'] = (measure_df['interval_start'] - min_date).dt.days / 7
 
-# Calculate correlation between each possible pair of measures
-# Pivot to wide format (measures as columns)
-pivot_df = practice_interval_df.pivot_table(
-    index='interval_start',
-    columns='measure',
-    values='RR'  # or another variable
-)
-# Get all unique measure pairs
-measure_list = pivot_df.columns.dropna().tolist()
-measure_pairs = list(combinations(measure_list, 2))
+    # Loop over each practice
+    for pid, sub_df in measure_df.groupby('practice_pseudo_id'):
+        if len(sub_df) < 2:
+            continue  # skip if insufficient data points
 
-# Compute correlations
-results = []
-for m1, m2 in measure_pairs:
-    # Drop missing rows so correlation only uses intervals where both measures are present
-    pair_df = pivot_df[[m1, m2]].dropna()
-    n = len(pair_df)
+        # Linear regression: RR vs. time
+        res_rr = stats.linregress(sub_df['weeks_from_start'], sub_df['RR'])
+        # Linear regression: rate vs. time
+        res_rate = stats.linregress(sub_df['weeks_from_start'], sub_df['rate_per_1000_midpoint6_derived'])
 
-    # Calculate pearson (linear) and spearman (non-linear) correlations
-    pearson_r, _ = pearsonr(pair_df[m1], pair_df[m2])
-    spearman_r, _ = spearmanr(pair_df[m1], pair_df[m2])
+        # Collect per-practice stats
+        results_list.append({
+            'measure': measure,
+            'practice_pseudo_id': pid,
+            'slope_RR': res_rr.slope,
+            'r_squared_RR': res_rr.rvalue**2,
+            'cv_RR': stats.variation(sub_df['RR'], nan_policy='omit'),
 
-    results.append({
-        'measure_1': m1,
-        'measure_2': m2,
-        'pearson_r': pearson_r,
-        'spearman_r': spearman_r,
-        'n_overlap': n
-    })
+            'slope_rate': res_rate.slope,
+            'r_squared_rate': res_rate.rvalue**2,
+            'cv_rate': stats.variation(sub_df['rate_per_1000_midpoint6_derived'], nan_policy='omit')
+        })
 
-# Convert to DataFrame and sort by Pearson correlation (or another metric)
-correlation_longform_df = pd.DataFrame(results).sort_values(by='pearson_r', ascending=False)
-read_write('write', f'output/{args.group}_measures/corr_results', df = correlation_longform_df, file_type = 'csv')
+# Combine into dataframe
+practice_results_df = pd.DataFrame(results_list)
+
+# Now calculate mean and variance of each stat per measure
+summary_df = practice_results_df.groupby('measure').agg({
+    'slope_RR': ['mean', 'var'],
+    'r_squared_RR': ['mean', 'var'],
+    'cv_RR': ['mean', 'var'],
+    'slope_rate': ['mean', 'var'],
+    'r_squared_rate': ['mean', 'var'],
+    'cv_rate': ['mean', 'var']
+})
+
+# Flatten column names
+summary_df.columns = ['_'.join(col) for col in summary_df.columns]
+summary_df = summary_df.round(4)
+
+# Save
+read_write('write', f'output/{args.group}_measures/trend_results', df=summary_df, file_type='csv')
+
+# Correlation analysis
+correlation_results = []
+
+# Loop over practices
+for pid, df in practice_interval_df.groupby("practice_pseudo_id"):
+    # Pivot to wide format for this practice
+    pivot_df = df.pivot_table(
+        index="interval_start",
+        columns="measure",
+        values="RR"
+    )
+
+    measure_list = pivot_df.columns.dropna().tolist()
+    measure_pairs = list(combinations(measure_list, 2))
+
+    for m1, m2 in measure_pairs:
+        pair_df = pivot_df[[m1, m2]].dropna()
+        n = len(pair_df)
+        if n < 2:
+            continue  # need at least 2 points to compute correlation
+
+        # Compute correlations
+        pearson_r, _ = pearsonr(pair_df[m1], pair_df[m2])
+        spearman_r, _ = spearmanr(pair_df[m1], pair_df[m2])
+
+        correlation_results.append({
+            'practice_pseudo_id': pid,
+            'measure_1': m1,
+            'measure_2': m2,
+            'pearson_r': pearson_r,
+            'spearman_r': spearman_r,
+            'n_overlap': n
+        })
+
+# Convert to DataFrame
+correlation_df = pd.DataFrame(correlation_results)
+
+# Now group by measure pair to get mean and variance across practices
+summary_corr_df = correlation_df.groupby(['measure_1', 'measure_2']).agg({
+    'pearson_r': ['mean', 'var'],
+    'spearman_r': ['mean', 'var'],
+    'n_overlap': 'mean'
+}).reset_index()
+
+# Flatten columns
+summary_corr_df.columns = ['_'.join(col).strip('_') for col in summary_corr_df.columns.values]
+summary_corr_df = summary_corr_df.rename(columns={
+    'measure_1_': 'measure_1',
+    'measure_2_': 'measure_2'
+})
+
+# Round for readability
+summary_corr_df = summary_corr_df.round(4)
+
+# Save to file
+read_write('write', f'output/{args.group}_measures/corr_results', df=summary_corr_df, file_type='csv')
+
 log_memory_usage(label="After trend analysis")
 
 
