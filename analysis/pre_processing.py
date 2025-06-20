@@ -67,17 +67,18 @@ if args.demograph_measures:
     # Replace numerical values with string values
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
 
+
 if args.test:
-    # Initial randomization for original data
-    proc_df['numerator'] = np.random.randint(0, 500, size=len(proc_df))
-    proc_df['list_size'] = np.random.randint(500, 1000, size=len(proc_df))
+    np.random.seed(42)  # For reproducibility in testing
+    # Increase numerator and list_size for testing of downstream functions
+    proc_df['numerator'] = np.random.randint(0, 500, size = len(proc_df))
+    proc_df['list_size'] = np.random.randint(500, 1000, size = len(proc_df))
 
     # Simulate extra data for downstream testing
     print(proc_df['interval_start'].unique())
     print("Simulating practice measures data for testing")
 
     n_weeks = 52 * 2
-    max_start = proc_df['interval_start'].max()
 
     # Generate extended rows by shifting weeks and randomizing values
     extended_rows = []
@@ -91,14 +92,26 @@ if args.test:
     # Combine original and simulated rows
     proc_df = pd.concat([proc_df] + extended_rows, ignore_index=True)
 
-
     # Sample 10 unique practice_pseudo_ids
     test_practices = pd.Series(proc_df['practice_pseudo_id'].unique()).sample(10)
     proc_df = proc_df[proc_df['practice_pseudo_id'].isin(test_practices)]
 
+    # Set values in 'numerator' column to 0 for the selected rows to simulate real data missingness
+    # Define mask for conditional rows
+    mask = (proc_df['measure'] == 'online_consult') & (proc_df['interval_start'] < '2016-11-30')
+    # Get indices that meet condition
+    matching_indices = proc_df[mask].index
+    proc_df.loc[matching_indices, 'numerator'] = 0
+
+    # Drop some rows to simulate real data missingness
+    # Define mask for conditional rows
+    mask = (proc_df['measure'] == 'call_from_gp') & (proc_df['interval_start'] < '2016-11-30')
+    # Get indices that meet condition
+    matching_indices = proc_df[mask].index
+    # Drop rows
+    proc_df = proc_df.drop(matching_indices)
+
     print(proc_df.head())
-    print(proc_df['interval_start'].unique())
-    print(proc_df.shape)
 
 # Remove intervals before the first summer reference period
 proc_df = proc_df[proc_df['interval_start'] > '2016-05-31']

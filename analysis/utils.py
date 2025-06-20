@@ -115,12 +115,15 @@ def build_aggregates(rate_df):
     return agg
 
 def test_difference(row, agg_df):
+
     # Skip summer-summer comparisons
     if row['season'] == 'Jun-Jul':
         return np.nan
 
     key_summer = (row['measure'], 'Jun-Jul', row['practice_pseudo_id'], row['pandemic'])
     key_season = (row['measure'], row['season'], row['practice_pseudo_id'], row['pandemic'])
+
+    print(f"Comparing {key_season} with {key_summer}")
 
     # Fetch rates for each season
     summer_rate = round(agg_df.loc[key_summer, 'total_rate'])
@@ -130,9 +133,10 @@ def test_difference(row, agg_df):
 
     # Skip comparisons with 0 intervals
     if summer_n == 0 or winter_n == 0:
+        print("Skipping as n = 0")
         return np.nan
 
-    result = stats.poisson_means_test(summer_rate, summer_rate, winter_rate, winter_n, alternative='two-sided')
+    result = stats.poisson_means_test(summer_rate, summer_n, winter_rate, winter_n, alternative='two-sided')
     return round(result.pvalue, 4)
 
 def get_season(month):
@@ -203,8 +207,6 @@ def read_write(read_or_write, path, file_type = 'arrow', test = args.test, df = 
             # Convert boolean columns to string type
             feather.write_feather(df, path + '.arrow')
 
-        # Convert boolean columns to string type
-        feather.write_feather(df, path + '.arrow')
 
 def simulate_dataframe(dtype_dict, n_rows):
     """
