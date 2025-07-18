@@ -39,9 +39,10 @@ was_alive = (
 
 # Registered at the start of the interval and
 # only include practices that became TPP before the interval being measured
-was_registered = practice_registrations.exists_for_patient_on(INTERVAL.start_date).where(
-    practice_registrations.practice_systmone_go_live_date <= INTERVAL.start_date
-).exists_for_patient()
+was_registered = (practice_registrations.exists_for_patient_on(INTERVAL.start_date) & 
+                  practice_registrations.where(
+                    practice_registrations.practice_systmone_go_live_date <= INTERVAL.start_date
+                    ).exists_for_patient())
 
 # No missing data: known sex
 was_female_or_male = patients.sex.is_in(["female", "male", "intersex", "unknown"])
@@ -129,12 +130,9 @@ comorbid_copd = check_resolved_condition(comorbid_dict["copd"], comorbid_dict["c
 comorbid_asthma = check_resolved_condition(comorbid_dict["asthma"], comorbid_dict["asthma_res"], INTERVAL.start_date)
 comorbid_dm = check_resolved_condition(comorbid_dict["diabetes"], comorbid_dict["diabetes_res"], INTERVAL.start_date)
 comorbid_htn = check_resolved_condition(comorbid_dict["htn"], comorbid_dict["htn_res"], INTERVAL.start_date)
-comorbid_depres = check_resolved_condition(comorbid_dict["depres"], comorbid_dict["depres_res"], INTERVAL.start_date)
 
 # Check if patient had an unresolvable (chronic) condition in the interval
 comorbid_chronic_resp = check_chronic_condition(comorbid_dict["chronic_resp"], INTERVAL.start_date)
-comorbid_mh = check_chronic_condition(comorbid_dict["mental_health"], INTERVAL.start_date)
-comorbid_neuro = check_chronic_condition(comorbid_dict["neuro"], INTERVAL.start_date)
 comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], INTERVAL.start_date)
 
 # ---------------------- Measures --------------------------------
@@ -192,7 +190,7 @@ if args.add_reason == True:
 # ---------------------- Define measures --------------------------------
 
 inclusion_criteria = (was_female_or_male & age_filter & was_alive & 
-                    was_registered & has_deprivation_index & has_region)
+                    was_registered)
 intervals=weeks(NUM_WEEKS).starting_on(args.start_intv)
 
 if args.demograph_measures:
