@@ -75,10 +75,6 @@ comorbid_dict = {
     "diabetes_res": "codelists/nhsd-primary-care-domain-refsets-dmres_cod.csv",
     "htn": "codelists/nhsd-primary-care-domain-refsets-hyp_cod.csv",
     "htn_res": "codelists/nhsd-primary-care-domain-refsets-hypres_cod.csv",
-    "depres": "codelists/nhsd-primary-care-domain-refsets-depr_cod.csv",
-    "depres_res": "codelists/nhsd-primary-care-domain-refsets-depres_cod.csv",
-    "mental_health": "codelists/qcovid-has_severe_mental_illness.csv",
-    "neuro": "codelists/primis-covid19-vacc-uptake-cns_cov.csv",
     "immuno_sup": "codelists/nhsd-immunosupression-pcdcluster-snomed-ct.csv"
 }
 comorbid_dict = create_codelist_dict(comorbid_dict)
