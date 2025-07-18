@@ -1,7 +1,15 @@
 code,term
 111552007,Diabetes mellitus without complication
 112991000000101,Lipoatrophic diabetes mellitus without complication
+1142044000,Pre-existing malnutrition-related diabetes mellitus in pregnancy
 11530004,Brittle diabetes mellitus
+1196922005,Neovascular glaucoma due to diabetes mellitus type 2
+1196923000,Neovascular glaucoma due to diabetes mellitus type 1
+1217044000,Ketosis-resistant diabetes mellitus
+1217068008,Fulminant type 1 diabetes mellitus
+1217674007,Neurotrophic keratitis due to diabetes mellitus
+1222660008,"Pancreatic agenesis, holoprosencephaly syndrome"
+1255271005,"Juvenile-onset diabetes mellitus, central and peripheral neurodegeneration syndrome"
 127012008,Lipoatrophic diabetes
 127013003,Disorder of kidney due to diabetes mellitus
 127014009,Peripheral angiopathy due to diabetes mellitus
@@ -18,12 +26,10 @@ code,term
 237601000,Secondary endocrine diabetes mellitus
 237604008,"Maturity onset diabetes of the young, type 2"
 237612000,"Photomyoclonus, diabetes mellitus, deafness, nephropathy and cerebral dysfunction"
-237613005,Hyperproinsulinemia
 237618001,Insulin-dependent diabetes mellitus secretory diarrhea syndrome
-237619009,Diabetes-deafness syndrome maternally transmitted
+237619009,Maternally inherited diabetes and deafness
 268519009,Diabetic - poor control
-284449005,Congenital total lipodystrophy
-290002008,Brittle type I diabetes mellitus
+290002008,Brittle type 1 diabetes mellitus
 313435000,Type I diabetes mellitus without complication
 313436004,Type II diabetes mellitus without complication
 314771006,Type I diabetes mellitus with hypoglycemic coma
@@ -40,20 +46,22 @@ code,term
 413183008,Diabetes mellitus caused by non-steroid drugs without complication
 420270002,Ketoacidosis due to type 1 diabetes mellitus
 420825003,Gangrene due to type 1 diabetes mellitus
+420868002,Disorder due to type 1 diabetes mellitus
 421075007,Ketoacidotic coma due to type 1 diabetes mellitus
 421305000,Persistent microalbuminuria due to type 1 diabetes mellitus
 421437000,Hypoglycemic coma due to type 1 diabetes mellitus
 421631007,Gangrene due to type 2 diabetes mellitus
 421750000,Ketoacidosis due to type 2 diabetes mellitus
 421847006,Ketoacidotic coma due to type 2 diabetes mellitus
+422014003,Disorder due to type 2 diabetes mellitus
 422228004,Multiple complications due to type 1 diabetes mellitus
 426705001,Diabetes mellitus co-occurrent and due to cystic fibrosis
 426875007,Latent autoimmune diabetes mellitus in adult
 427089005,Diabetes mellitus due to cystic fibrosis
 44054006,Diabetes mellitus type 2
-443694000,Type II diabetes mellitus uncontrolled
-444073006,Type I diabetes mellitus uncontrolled
-445353002,Brittle type II diabetes mellitus
+443694000,Uncontrolled type 2 diabetes mellitus
+444073006,Uncontrolled type 1 diabetes mellitus
+445353002,Brittle type 2 diabetes mellitus
 46635009,Diabetes mellitus type 1
 4855003,Retinopathy due to diabetes mellitus
 49455004,Polyneuropathy due to diabetes mellitus
@@ -66,8 +74,7 @@ code,term
 703136005,Diabetes mellitus in remission
 703137001,Type I diabetes mellitus in remission
 703138006,Type II diabetes mellitus in remission
-70694009,Diabetes mellitus AND insipidus with optic atrophy AND deafness
-724276006,"X-linked immune dysregulation, polyendocrinopathy, enteropathy syndrome"
+70694009,Wolfram syndrome
 73211009,Diabetes mellitus
 737212004,Diabetes mellitus caused by chemical
 739681000,Disorder of eye due to type 1 diabetes mellitus

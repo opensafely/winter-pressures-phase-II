@@ -32,20 +32,19 @@ age_at_interval_start = patients.age_on(INTERVAL.start_date)
 age_filter = (age_at_interval_start >= 0) & (
     age_at_interval_start <= 110)
 
-# Alive throughout the interval period (vs. at the beginning)
+# Alive throughout at the beginning (avoids immortal patient bias)
 was_alive = (
-    patients.date_of_death.is_after(INTERVAL.end_date) | 
-    patients.date_of_death.is_null()
+    patients.is_alive_on(INTERVAL.start_date)
 )
 
-# Registered throughout the interval period and 90 days before
-# Using spanning_with_systmone to only include practices that were TPP during the interval
-was_registered = practice_registrations.spanning_with_systmone((INTERVAL.start_date - days(90)), INTERVAL.end_date).exists_for_patient()
+# Registered at the start of the interval and
+# only include practices that became TPP before the interval being measured
+was_registered = practice_registrations.exists_for_patient_on(INTERVAL.start_date).where(
+    practice_registrations.practice_systmone_go_live_date <= INTERVAL.start_date
+).exists_for_patient()
 
-# No missing data: known sex, IMD, practice region (as per WP 2) 
-was_female_or_male = patients.sex.is_in(["female", "male"])
-has_deprivation_index = addresses.for_patient_on(INTERVAL.start_date).imd_rounded.is_not_null()
-has_region = practice_registrations.for_patient_on(INTERVAL.start_date).practice_nuts1_region_name.is_not_null()
+# No missing data: known sex
+was_female_or_male = patients.sex.is_in(["female", "male", "intersex", "unknown"])
 
 # ---------------------- Patient subgroups --------------------------------
 
@@ -55,10 +54,11 @@ age_group = case(
     when((age >= 0) & (age < 5)).then("preschool"),
     when((age >= 5) & (age < 12)).then("primary_school"),
     when((age >= 12) & (age < 18)).then("secondary_school"),
-    when((age >= 18) & (age < 40)).then("adult_under_40"),
+    when((age >= 18) & (age < 45)).then("adult_under_45"),
     when((age >= 40) & (age < 65)).then("adult_under_65"),
-    when((age >= 65) & (age < 80)).then("adult_under_80"),
-    when((age >= 80) & (age < 111)).then("adult_over_80")
+    when((age >= 65) & (age < 75)).then("adult_under_75"),
+    when((age >= 75) & (age < 80)).then("adult_under_80"),
+    when((age >= 80) & (age < 111)).then("adult_80+")
 )
 
 # Ethnicity
@@ -103,14 +103,25 @@ region = (practice_registrations.for_patient_on(INTERVAL.start_date)
 
 # Vaccination against flu or covid in the last 12 months
 vax_status = {}
-for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL']:
-    vax_status[disease] = (vaccinations.where((vaccinations
+for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL', 'PALIVIZUMAB']:
+
+    has_vax = vaccinations.where(vaccinations
                                         .target_disease
-                                        .is_in([disease])) &
-                                        vaccinations
-                                        .date
-                                        .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date))
-                                        .exists_for_patient())
+                                        .is_in([disease])
+                                ).exists_for_patient()
+
+    last_12_months = vaccinations.where(vaccinations
+                        .date
+                        .is_on_or_between(INTERVAL.start_date - years(1), INTERVAL.start_date)
+                      ).exists_for_patient()
+    
+    # Flu and covid give 12 months protection
+    if disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS']:
+        vax_status[disease] = has_vax & last_12_months
+        
+    # Pneumococcal and RSV (palivizumab) are lifetime vaccines
+    elif disease in ['PNEUMOCOCCAL', 'PALIVIZUMAB']:
+        vax_status[disease] = has_vax
 
 # Co-morbidity
 # Check if patient had a resolvable condition in the interval

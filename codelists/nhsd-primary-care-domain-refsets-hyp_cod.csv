@@ -3,12 +3,20 @@ code,term
 10725009,Benign hypertension
 10752641000119102,Eclampsia with pre-existing hypertension in childbirth
 10757401000119104,Pre-existing hypertensive heart and chronic kidney disease in mother complicating childbirth
+10757441000119102,Pre-existing hypertensive heart disease in mother complicating childbirth
+10757481000119107,Pre-existing hypertensive heart and chronic kidney disease in mother complicating pregnancy
+10759031000119106,Pre-existing hypertensive heart disease in mother complicating pregnancy
 1078301000112109,Multiple drug intolerant hypertension
 111438007,Hypertension secondary to renal disease in obstetric context
 118781000119108,Pre-existing hypertensive chronic kidney disease in mother complicating pregnancy
 1201005,Benign essential hypertension
+1204139007,Hypertension due to congenital adrenal hyperplasia
+1208839002,Secondary hypertension due to renal tubular disorder
+1208845005,Secondary hypertension due to congenital heart disorder
 123799005,Renovascular hypertension
 123800009,Goldblatt hypertension
+127991000119101,Hypertension concurrent and due to end stage renal disease on dialysis due to type 2 diabetes mellitus
+128001000119105,Hypertension concurrent and due to end stage renal disease on dialysis due to type 1 diabetes mellitus
 132721000119104,Hypertensive emergency
 140101000119109,Hypertension in chronic kidney disease stage 5 due to type 2 diabetes mellitus
 140111000119107,Hypertension in chronic kidney disease stage 4 due to type 2 diabetes mellitus
@@ -39,6 +47,7 @@ code,term
 199002002,Pre-eclampsia or eclampsia with pre-existing hypertension - not delivered
 199003007,Pre-eclampsia or eclampsia with pre-existing hypertension with postnatal complication
 199005000,"Pre-existing hypertension complicating pregnancy, childbirth and puerperium"
+199006004,"Pre-existing hypertensive heart disease complicating pregnancy, childbirth and the puerperium"
 199007008,"Pre-existing hypertensive heart and renal disease complicating pregnancy, childbirth and the puerperium"
 199008003,"Pre-existing secondary hypertension complicating pregnancy, childbirth and puerperium"
 23717007,Benign essential hypertension complicating AND/OR reason for care during pregnancy
@@ -51,6 +60,7 @@ code,term
 31992008,Secondary hypertension
 34694006,Pre-existing hypertension complicating AND/OR reason for care during childbirth
 35303009,Benign essential hypertension complicating AND/OR reason for care during puerperium
+367821000119106,Hypertension due to compression of renal parenchyma
 371125006,Labile essential hypertension
 37618003,Chronic hypertension complicating AND/OR reason for care during pregnancy
 38341003,"Hypertensive disorder, systemic arterial"
@@ -77,6 +87,7 @@ code,term
 67359005,Pre-eclampsia added to pre-existing hypertension
 69909000,Eclampsia added to pre-existing hypertension
 70272006,Malignant hypertension
+704667004,Hypertension concurrent and due to end stage renal disease on dialysis
 706882009,Hypertensive crisis
 712832005,Supine hypertension
 71421000119105,Hypertension in chronic kidney disease due to type 2 diabetes mellitus
