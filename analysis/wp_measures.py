@@ -45,7 +45,7 @@ was_registered = (practice_registrations.exists_for_patient_on(INTERVAL.start_da
                     ).exists_for_patient())
 
 # No missing data: known sex
-was_female_or_male = patients.sex.is_in(["female", "male", "intersex", "unknown"])
+has_known_sex = patients.sex.is_in(["female", "male", "intersex"])
 
 # ---------------------- Patient subgroups --------------------------------
 
@@ -56,7 +56,7 @@ age_group = case(
     when((age >= 5) & (age < 12)).then("primary_school"),
     when((age >= 12) & (age < 18)).then("secondary_school"),
     when((age >= 18) & (age < 45)).then("adult_under_45"),
-    when((age >= 40) & (age < 65)).then("adult_under_65"),
+    when((age >= 45) & (age < 65)).then("adult_under_65"),
     when((age >= 65) & (age < 75)).then("adult_under_75"),
     when((age >= 75) & (age < 80)).then("adult_under_80"),
     when((age >= 80) & (age < 111)).then("adult_80+")
@@ -102,12 +102,18 @@ practice_id = (practice_registrations.for_patient_on(INTERVAL.start_date)
 region = (practice_registrations.for_patient_on(INTERVAL.start_date)
           .practice_nuts1_region_name)
 
-# Vaccination against flu or covid in the last 12 months
+# Vaccination status
 vax_status = {}
-for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL', 'PALIVIZUMAB']:
-
-    has_vax = vaccinations.where(vaccinations
-                                        .target_disease
+for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL', 
+                'Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer)']:
+    
+    # Abrysvo is the vaccine name for rsv
+    if 'Abrysvo' in disease:
+        vax_table_field = vaccinations.product_name
+    else:
+        vax_table_field = vaccinations.target_disease
+    
+    has_vax = vaccinations.where(vax_table_field
                                         .is_in([disease])
                                 ).exists_for_patient()
 
@@ -120,8 +126,8 @@ for disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS', 'PNEUMOCOCCAL', 'PALIVIZUMAB'
     if disease in ['INFLUENZA', 'SARS-2 CORONAVIRUS']:
         vax_status[disease] = has_vax & last_12_months
         
-    # Pneumococcal and RSV (palivizumab) are lifetime vaccines
-    elif disease in ['PNEUMOCOCCAL', 'PALIVIZUMAB']:
+    # Pneumococcal and RSV (Abrysvo) are lifetime vaccines
+    elif disease in ['PNEUMOCOCCAL', 'Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer)']:
         vax_status[disease] = has_vax
 
 # Co-morbidity
@@ -189,7 +195,7 @@ if args.add_reason == True:
 
 # ---------------------- Define measures --------------------------------
 
-inclusion_criteria = (was_female_or_male & age_filter & was_alive & 
+inclusion_criteria = (has_known_sex & age_filter & was_alive & 
                     was_registered)
 intervals=weeks(NUM_WEEKS).starting_on(args.start_intv)
 
@@ -232,7 +238,8 @@ elif args.comorbid_measures:
             "comorbid_immuno": comorbid_immuno,
             "vax_flu_12m": vax_status['INFLUENZA'],
             "vax_covid_12m": vax_status['SARS-2 CORONAVIRUS'],
-            "vax_pneum_12m": vax_status['PNEUMOCOCCAL']
+            "vax_pneum_ever": vax_status['PNEUMOCOCCAL'],
+            "vax_rsv_ever": vax_status['Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer)']
         },
         intervals=intervals,
     )
