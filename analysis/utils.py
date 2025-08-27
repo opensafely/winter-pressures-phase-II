@@ -108,11 +108,27 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
 
 # ----------- Summer-winter comparison functions ---------------------------------------------
 
-def build_aggregates(rate_df):
+def build_aggregate_df(rate_df, strata, aggregation_dict):
     # Ensure grouping columns are correct
-    grouped = rate_df.groupby(['measure', 'season', 'practice_pseudo_id', 'pandemic'])['rate_per_1000_midpoint6_derived']
-    agg = grouped.agg(['sum', 'count']).rename(columns={'sum': 'total_rate', 'count': 'intervals'})
+    agg = (rate_df.groupby(strata)
+                .agg(aggregation_dict)
+    ).reset_index()
+    agg.columns = ['_'.join(col).strip('_') for col in agg.columns.values]
     return agg
+
+def transpose_summer(df, baseline):
+    
+    # 1. Extract the baseline (Jun-Jul rows) CURRENTLY PREV SUMMER ONLY
+    summer_df = df[df["season"] == "Jun-Jul"][["measure", "pandemic", "rate_per_1000_midpoint6_derived"]]
+    summer_df = summer_df.rename(columns={"rate_per_1000_midpoint6_derived": f"{baseline}_rate"})
+    
+    # 2. Merge baseline back on measure + pandemic
+    df = df.merge(summer_df, on=["measure", "pandemic"], how="left")
+
+    # 3. Compute rate ratio
+    df["RR"] = df["rate_per_1000_midpoint6_derived"] / df[f"{baseline}_rate"]
+
+    return df
 
 def test_difference(row, agg_df):
 
@@ -125,7 +141,7 @@ def test_difference(row, agg_df):
 
     print(f"Comparing {key_season} with {key_summer}")
 
-    # Fetch rates for each season
+    # Fetch rates for each season NEED TO UPDATE TOTAL_RATE
     summer_rate = round(agg_df.loc[key_summer, 'total_rate'])
     summer_n = agg_df.loc[key_summer, 'intervals']
     winter_rate = round(agg_df.loc[key_season, 'total_rate'])
