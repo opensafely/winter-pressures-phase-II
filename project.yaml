@@ -375,13 +375,9 @@ actions:
     needs: [generate_rounding_demograph]
     outputs:
       highly_sensitive:
-        RR_table1: output/demograph_measures/RR_first_summer_mean.arrow
-        RR_table2: output/demograph_measures/RR_prev_summer_mean.arrow
+        practice_level_tables: output/demograph_measures/practice_level_counts.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/demograph_measures/seasonality_results_first_summer_mean.csv
-        rr_summary_table_prev_summer: output/demograph_measures/seasonality_results_prev_summer_mean.csv
-        trend_table: output/demograph_measures/trend_results.csv
-        correlation_table: output/demograph_measures/corr_results.csv
+        seasonal_tables_tables: output/demograph_measures/Results*.csv
 
 
   generate_freq_table_practice:
@@ -408,13 +404,9 @@ actions:
     needs: [generate_rounding_practice]
     outputs:
       highly_sensitive:
-        RR_table1: output/practice_measures/RR_first_summer_mean.arrow
-        RR_table2: output/practice_measures/RR_prev_summer_mean.arrow
+        practice_level_tables: output/practice_measures/practice_level_counts.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/practice_measures/seasonality_results_first_summer_mean.csv
-        rr_summary_table_prev_summer: output/practice_measures/seasonality_results_prev_summer_mean.csv
-        trend_table: output/practice_measures/trend_results.csv
-        correlation_table: output/practice_measures/corr_results.csv
+        seasonal_tables_tables: output/practice_measures/Results*.csv
 
 
   generate_freq_table_comorbid:
@@ -441,13 +433,9 @@ actions:
     needs: [generate_rounding_comorbid]
     outputs:
       highly_sensitive:
-        RR_table1: output/comorbid_measures/RR_first_summer_mean.arrow
-        RR_table2: output/comorbid_measures/RR_prev_summer_mean.arrow
+        practice_level_tables: output/comorbid_measures/practice_level_counts.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/comorbid_measures/seasonality_results_first_summer_mean.csv
-        rr_summary_table_prev_summer: output/comorbid_measures/seasonality_results_prev_summer_mean.csv
-        trend_table: output/comorbid_measures/trend_results.csv
-        correlation_table: output/comorbid_measures/corr_results.csv
+        seasonal_tables_tables: output/comorbid_measures/Results*.csv
 
 
   # --------------- TEST ACTIONS ------------------------------------------
@@ -507,13 +495,9 @@ actions:
     needs: [generate_rounding_demograph_test]
     outputs:
       highly_sensitive:
-        RR_table1: output/demograph_measures/RR_first_summer_mean_test.arrow
-        RR_table2: output/demograph_measures/RR_prev_summer_mean_test.arrow
+        practice_level_tables: output/demograph_measures/practice_level_counts_test.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/demograph_measures/seasonality_results_first_summer_mean_test.csv
-        rr_summary_table_prev_summer: output/demograph_measures/seasonality_results_prev_summer_mean_test.csv
-        trend_table: output/demograph_measures/trend_results_test.csv
-        correlation_table: output/demograph_measures/corr_results_test.csv
+        seasonal_tables_tables: output/demograph_measures/Results*_test.csv
 
 
   generate_freq_table_practice_test:
@@ -540,13 +524,9 @@ actions:
     needs: [generate_rounding_practice_test]
     outputs:
       highly_sensitive:
-        RR_table1: output/practice_measures/RR_first_summer_mean_test.arrow
-        RR_table2: output/practice_measures/RR_prev_summer_mean_test.arrow
+        practice_level_tables: output/practice_measures/practice_level_counts_test.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/practice_measures/seasonality_results_first_summer_mean_test.csv
-        rr_summary_table_prev_summer: output/practice_measures/seasonality_results_prev_summer_mean_test.csv
-        trend_table: output/practice_measures/trend_results_test.csv
-        correlation_table: output/practice_measures/corr_results_test.csv
+        seasonal_tables_tables: output/practice_measures/Results*_test.csv
 
 
   generate_freq_table_comorbid_test:
@@ -573,11 +553,7 @@ actions:
     needs: [generate_rounding_comorbid_test]
     outputs:
       highly_sensitive:
-        RR_table1: output/comorbid_measures/RR_first_summer_mean_test.arrow
-        RR_table2: output/comorbid_measures/RR_prev_summer_mean_test.arrow
+        practice_level_tables: output/comorbid_measures/practice_level_counts_test.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/comorbid_measures/seasonality_results_first_summer_mean_test.csv
-        rr_summary_table_prev_summer: output/comorbid_measures/seasonality_results_prev_summer_mean_test.csv
-        trend_table: output/comorbid_measures/trend_results_test.csv
-        correlation_table: output/comorbid_measures/corr_results_test.csv
+        seasonal_tables_tables: output/comorbid_measures/Results*_test.csv
 

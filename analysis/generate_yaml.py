@@ -167,13 +167,9 @@ yaml_processing_template = """
     needs: [generate_rounding_{group}{test_suffix}]
     outputs:
       highly_sensitive:
-        RR_table1: output/{group}_measures/RR_first_summer_mean{test_suffix}.arrow
-        RR_table2: output/{group}_measures/RR_prev_summer_mean{test_suffix}.arrow
+        practice_level_tables: output/{group}_measures/practice_level_counts{test_suffix}.arrow
       moderately_sensitive:
-        rr_summary_table_first_summer: output/{group}_measures/seasonality_results_first_summer_mean{test_suffix}.csv
-        rr_summary_table_prev_summer: output/{group}_measures/seasonality_results_prev_summer_mean{test_suffix}.csv
-        trend_table: output/{group}_measures/trend_results{test_suffix}.csv
-        correlation_table: output/{group}_measures/corr_results{test_suffix}.csv
+        seasonal_tables_tables: output/{group}_measures/Results*{test_suffix}.csv
 
 """
 ''' TEMPORARILY COMMENTED OUT:

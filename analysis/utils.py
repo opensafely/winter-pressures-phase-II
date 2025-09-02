@@ -252,3 +252,50 @@ def simulate_dataframe(dtype_dict, n_rows):
 
     df = pd.DataFrame(data).astype(dtype_dict)
     return df
+
+def merge_seasons(summer_df, non_summer_df, practice_level):
+
+    """
+    Merges summer (baseline) and non-summer dataframes
+    Args:
+        summer_df: Summer dataframe of counts
+        non_summer_df: Non-Summer dataframe of counts
+        practice_level: Boolean, determines whether merging is done at practice level
+    Returns: 
+        pd.DataFrame: Merged dataframe containing columns for summer and non_summer rates per measure
+    """
+
+    # Merge keys: use summer_year, measure, pandemic, and practice if practice_level
+    merge_cols = ["measure", "summer_year", "pandemic"]
+    if practice_level:
+        merge_cols.append("practice_pseudo_id")
+
+    # Perform left merge: every non-summer row gets the same summer baseline
+    combined_seasons_df = non_summer_df.merge(
+        summer_df,
+        on=merge_cols,
+        how='left',
+        suffixes=[None, '_prev_summr']
+    )
+    
+    # Find the first valid summer year for each measure
+    first_summer_years = summer_df.groupby('measure')['summer_year'].min().reset_index()
+    # Merge to keep only the first summer for a given practice and measure
+    first_summer_df = (
+        summer_df.merge(first_summer_years, on=['measure', 'summer_year'])
+        .drop(columns='summer_year')  # Drop original summer_year after filtering
+    )
+
+    # Merge first summer counts into main df
+    merge_cols = ['measure', 'pandemic']
+    if practice_level == True:
+        merge_cols.append('practice_pseudo_id')
+
+    combined_seasons_df_final = combined_seasons_df.merge(
+        first_summer_df,
+        on=merge_cols,
+        how='left',
+        suffixes = [None, '_first_summr']
+    )
+
+    return combined_seasons_df_final
