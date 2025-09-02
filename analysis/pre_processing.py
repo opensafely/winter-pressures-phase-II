@@ -1,4 +1,5 @@
 # This script processes the raw measures output to generate patient-characteristic stratified measures
+# Usage python analysis/pre_processing.py
 # Option --comorbid_measures flag to aggregate by comorbidities
 # Option --demograph_measures flag to aggregate by demographics
 # Option --practice_measures flag to aggregate by practice
@@ -110,6 +111,11 @@ if args.test:
     matching_indices = proc_df[mask].index
     # Drop rows
     proc_df = proc_df.drop(matching_indices)
+    # Drop duplicates
+    proc_df = pd.concat([proc_df] + extended_rows, ignore_index=True)
+    proc_df = proc_df.drop_duplicates(
+        subset=["practice_pseudo_id", "measure", "interval_start"]
+    )
 
     print(proc_df.head())
 
