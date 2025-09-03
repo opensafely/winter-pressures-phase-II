@@ -1,4 +1,5 @@
 # This script generates decile charts for practice measures.
+# USAGE: Rscript analysis/decile_charts.r
 # Option --test uses test data
 # Option --RR uses Rate Ratio data
 
@@ -10,59 +11,25 @@ library(tidyr)
 library(glue)
 library(optparse)
 library(arrow)
-
-# Define option list
-option_list <- list(
-  make_option("--test", action = "store_true", default = FALSE, 
-              help = "Uses test data instead of full data"),
-  make_option("--RR", action = "store_true", default = FALSE, 
-              help = "Uses RR instead of rounded rate")
-)
-
-# Parse arguments
-opt <- parse_args(OptionParser(option_list = option_list))
-# Set suffix
-suffix <- ""
+source("analysis/utils.r")
+source("analysis/config.r")
 
 # Message about test or full
-print(if (opt$test) "Using test data" else "Using full data")
+print(if (args$test) "Using test data" else "Using full data")
 
 # Determine file paths
-if (opt$RR) {
-  print("Using RR data")
-  suffix <- suffix %>% paste0("_RR")
+practice_measures <- read_write('read', 'output/practice_measures/proc_practice_measures_midpoint6')
 
-if (opt$test) {
-    practice_measures <- read.csv("output/practice_measures/RR_test.csv") %>%
-      select(interval_start, measure, practice_pseudo_id, RR)
-    practice_measures <- rename(practice_measures, rate_per_1000 = RR)
-    suffix <- suffix %>% paste0("_test")
-
-  } else {
-    practice_measures <- read_feather(
-      "output/practice_measures/RR.arrow",
-      col_select = c("interval_start", "measure", "practice_pseudo_id", "RR")
-    ) %>%
-    rename(rate_per_1000 = RR)
-  }
+if (args$test) {
   
-} else {
-  print("Using rounded rate data")
-  suffix <- suffix %>% paste0("_rate_mp6")
-
-  if (opt$test) {
-    practice_measures <- read.csv("output/practice_measures/proc_practice_measures_midpoint6_test.csv.gz")
-    # Generate simulated rate data (since dummy data contains too many 0's to graph)
-    practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)  
-    practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)  
-    practice_measures <- mutate(practice_measures, rate_per_1000=(numerator_midpoint6/list_size_midpoint6)*1000)
-    suffix <- suffix %>% paste0("_test")
-    
-  } else {
-    practice_measures <- as.data.frame(read_feather("output/practice_measures/proc_practice_measures_midpoint6.arrow")) %>%
-      mutate(rate_per_1000=(numerator_midpoint6/list_size_midpoint6)*1000)
-  }
+  # Generate simulated rate data (since dummy data contains too many 0's to graph)
+  practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)  
+  practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)  
+  
 }
+
+# Calculate rate per 1000
+practice_measures <- mutate(practice_measures, rate_per_1000=(numerator_midpoint6/list_size_midpoint6)*1000)
 
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
@@ -88,8 +55,13 @@ practice_deciles <- practice_measures %>%
 
 # Save tables, generating a separate file for each measure
 for (measure in unique(practice_deciles$measure)) {
+
   measure_data <- practice_deciles %>% filter(measure == !!measure)
-  write.csv(measure_data, glue("output/practice_measures/decile_tables/decile_table_{measure}{suffix}.csv"))
+
+  read_write('write', 
+    glue("output/practice_measures/decile_tables/decile_table_{measure}_rate_mp6"), 
+    df = measure_data,
+    file_type = 'csv')
 }
 
 # Define line types
@@ -126,7 +98,7 @@ for (group_name in names(measure_groups)) {
     geom_line() +
     scale_linetype_manual(values = line_types) + 
     scale_color_manual(values = line_colors) + 
-    labs(title = glue("Decile Charts for {group_name}{suffix}"),
+    labs(title = glue("Decile Charts for {group_name}_rate_mp6"),
          x = "Interval Start",
          y = "Rate per 1000") +
     facet_wrap(vars(measure), scales = "free_y") +
@@ -134,7 +106,8 @@ for (group_name in names(measure_groups)) {
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   # Save the plot for this group
-  ggsave(glue("output/practice_measures/plots/decile_chart_{group_name}{suffix}.png"),
+  suffix <- if (args$test) "_test" else ""
+  ggsave(glue("output/practice_measures/plots/decile_chart_{group_name}_rate_mp6{suffix}.png"),
          plot = plot, width = 20, height = 12, dpi = 400)
 }
 
