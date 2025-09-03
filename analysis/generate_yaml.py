@@ -64,7 +64,7 @@ for flag in flags:
   needs[flag] = ", ".join(needs[flag])
 
 yaml_measures_test = '''
-  # --------------- TEST ACTIONS ------------------------------------------
+# --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
@@ -170,8 +170,38 @@ yaml_processing_template = """
         practice_level_tables: output/{group}_measures/practice_level_counts{test_suffix}.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/{group}_measures/Results*{test_suffix}.csv
-
 """
+
+yaml_processing = ""
+yaml_processing_test = ""
+for group in groups:
+  # Actions for processing real data
+  yaml_processing += yaml_processing_template.format(group = group,
+                                          needs = needs[f'{group}_measures'],
+                                          test_suffix = "",
+                                          test_flag = "",)
+  
+for group in groups:
+  # Actions for processing test data
+  yaml_processing_test += yaml_processing_template.format(group = group,
+                                          needs = f'generate_{group}_measures',
+                                          test_suffix = "_test",
+                                          test_flag = "--test")
+
+yaml_viz = ' \n # --------------- VISUALIZATION ACTIONS ------------------------------------------'
+
+yaml_viz_template = '''
+
+  generate_deciles_charts{test_suffix}:
+    run: >
+      r:v2 analysis/decile_charts.r {test_flag}
+    needs: [generate_rounding_practice{test_suffix}] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6{test_suffix}.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+'''
+
 ''' TEMPORARILY COMMENTED OUT:
 
   # Visualisation
@@ -190,14 +220,6 @@ yaml_processing_template = """
         tables: output/comorbid_measures/plots/*_comorbid{test_suffix}.csv
         plots: output/comorbid_measures/plots/*_comorbid{test_suffix}.png
 
-  generate_deciles_charts{test_suffix}:
-    run: >
-      r:v2 analysis/decile_charts.r {test_flag}
-    needs: [generate_rounding{test_suffix}] 
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6{test_suffix}.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
   generate_deciles_charts_RR{test_suffix}:
     run: >
       r:v2 analysis/decile_charts.r --RR {test_flag}
@@ -207,24 +229,16 @@ yaml_processing_template = """
         deciles_charts: output/practice_measures/plots/decile_chart_*_RR{test_suffix}.png
         deciles_table: output/practice_measures/decile_tables/decile_table_*_RR{test_suffix}.csv
 '''
-yaml_processing = ""
-yaml_processing_test = ""
-for group in groups:
-  # Actions for processing real data
-  yaml_processing += yaml_processing_template.format(group = group,
-                                          needs = needs[f'{group}_measures'],
-                                          test_suffix = "",
-                                          test_flag = "",)
-  
-for group in groups:
-  # Actions for processing test data
-  yaml_processing_test += yaml_processing_template.format(group = group,
-                                          needs = f'generate_{group}_measures',
-                                          test_suffix = "_test",
-                                          test_flag = "--test")
 
-# --- Combine scripts and print file ---
-yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_measures_test + yaml_processing_test
+suffixes = ['', '_test']
+test_flags = ['', '--test']
+for test_suffix, test_flag in zip(suffixes, test_flags):
+  yaml_viz += yaml_viz_template.format(test_suffix = test_suffix,
+                                       test_flag = test_flag)
+
+# -------- Combine scripts and print file -----------
+
+yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_viz + yaml_measures_test + yaml_processing_test
 
 with open("/workspaces/winter-pressures-phase-II/project.yaml", "w") as file:
        file.write(yaml)

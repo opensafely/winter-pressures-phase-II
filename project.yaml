@@ -379,7 +379,6 @@ actions:
       moderately_sensitive:
         seasonal_tables_tables: output/demograph_measures/Results*.csv
 
-
   generate_freq_table_practice:
     run: python:v2 analysis/freq_table.py --practice_measures  
     needs: [generate_practice_measures_2016-04-11, generate_practice_measures_2017-04-10, generate_practice_measures_2018-04-09, generate_practice_measures_2019-04-08, generate_practice_measures_2020-04-06, generate_practice_measures_2021-04-05, generate_practice_measures_2022-04-04, generate_practice_measures_2023-04-03, generate_practice_measures_2024-04-01, generate_practice_measures_2025-03-31]
@@ -408,7 +407,6 @@ actions:
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures/Results*.csv
 
-
   generate_freq_table_comorbid:
     run: python:v2 analysis/freq_table.py --comorbid_measures  
     needs: [generate_comorbid_measures_2016-04-11, generate_comorbid_measures_2017-04-10, generate_comorbid_measures_2018-04-09, generate_comorbid_measures_2019-04-08, generate_comorbid_measures_2020-04-06, generate_comorbid_measures_2021-04-05, generate_comorbid_measures_2022-04-04, generate_comorbid_measures_2023-04-03, generate_comorbid_measures_2024-04-01, generate_comorbid_measures_2025-03-31]
@@ -436,9 +434,29 @@ actions:
         practice_level_tables: output/comorbid_measures/practice_level_counts.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/comorbid_measures/Results*.csv
+ 
+ # --------------- VISUALIZATION ACTIONS ------------------------------------------
+
+  generate_deciles_charts:
+    run: >
+      r:v2 analysis/decile_charts.r 
+    needs: [generate_rounding_practice] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6.csv
 
 
-  # --------------- TEST ACTIONS ------------------------------------------
+  generate_deciles_charts_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test
+    needs: [generate_rounding_practice_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6_test.csv
+
+# --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
@@ -499,7 +517,6 @@ actions:
       moderately_sensitive:
         seasonal_tables_tables: output/demograph_measures/Results*_test.csv
 
-
   generate_freq_table_practice_test:
     run: python:v2 analysis/freq_table.py --practice_measures  --test
     needs: [generate_practice_measures_test]
@@ -528,7 +545,6 @@ actions:
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures/Results*_test.csv
 
-
   generate_freq_table_comorbid_test:
     run: python:v2 analysis/freq_table.py --comorbid_measures  --test
     needs: [generate_comorbid_measures_test]
@@ -556,4 +572,3 @@ actions:
         practice_level_tables: output/comorbid_measures/practice_level_counts_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/comorbid_measures/Results*_test.csv
-
