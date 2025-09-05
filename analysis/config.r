@@ -24,7 +24,9 @@ option_list <- list(
   make_option("--test", action = "store_true",
               default = FALSE, help = "Sets lowest time intervals for lightweight testing."),
   make_option("--use_csv", action = "store_true", default = FALSE,
-              help = "Use CSV files instead of Arrow for reading/writing data.")
+              help = "Use CSV files instead of Arrow for reading/writing data."),
+  make_option("--released", action = "store_true", default = FALSE,
+              help = "Use already released data")
 )
 
 # Parse options
