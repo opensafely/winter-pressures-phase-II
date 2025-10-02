@@ -1,4 +1,4 @@
-from ehrql import case, codelist_from_csv, create_dataset, days, weeks, months, years, when, INTERVAL, create_measures
+from ehrql import case, codelist_from_csv, create_dataset, days, weeks, months, years, when, INTERVAL, create_measures, claim_permissions
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
     addresses,
@@ -9,6 +9,8 @@ from ehrql.tables.tpp import (
     vaccinations
 )
 import argparse
+
+claim_permissions("appointments")
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
