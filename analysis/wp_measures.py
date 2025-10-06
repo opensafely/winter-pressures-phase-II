@@ -1,6 +1,6 @@
 # This script defines the measures for the analysis pipeline.
 
-from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures
+from ehrql import case, codelist_from_csv, create_dataset, days, weeks, years, when, INTERVAL, create_measures, claim_permissions
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
     addresses,
@@ -15,6 +15,8 @@ from ehrql.tables.tpp import (
 from queries import *
 from codelist_definition import *
 from wp_config_setup import args
+
+claim_permissions("appointments")
 
 # Instantiate measures, with small number suppression turned off
 measures = create_measures()
