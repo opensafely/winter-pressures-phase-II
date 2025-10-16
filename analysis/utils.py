@@ -5,6 +5,8 @@ import numpy as np
 from scipy import stats
 import pyarrow.feather as feather
 from wp_config_setup import args
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -299,3 +301,19 @@ def merge_seasons(summer_df, non_summer_df, practice_level):
     )
 
     return combined_seasons_df_final
+
+def generate_dist_plot(df, var, facet_var, **kwargs):
+    
+    facet_plot = sns.FacetGrid(
+        data = df,
+        col=facet_var,
+        col_wrap=4,
+        height=4,
+        aspect=1,
+        sharex=False,   # ✅ works properly here
+        sharey=False
+    )
+
+    facet_plot.map_dataframe(sns.histplot, x = var, element="bars")
+
+    return facet_plot
