@@ -14,6 +14,8 @@
    - Measures are tested by copying measure definitions to `dataset.py` and specifying test dummy data using `test_dataset.py`
    - Helper functions: `utils.r` and `utils.py`
    - Automatically generate the yaml actions file using `generate_yaml.py`
+ 
+## Running the pipeline
 1. Generate measures
    - Measures are split by year
    - `opensafely run generate_practice_measures_2016-04-11` runs `wp_measures.py`
