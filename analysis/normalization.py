@@ -98,7 +98,7 @@ practice_interval_df = practice_interval_df.loc[
 
 non_summer ={}
 summer = {}
-seasonal_groups = [non_summer, summer]
+seasonal_groups = [summer, non_summer]
 non_summer['practice_interval_df'] = practice_interval_df[practice_interval_df['season'] != 'Jun-Jul']
 summer['practice_interval_df'] = practice_interval_df[practice_interval_df['season'] == 'Jun-Jul']
 
@@ -146,12 +146,13 @@ summer['zero_or_nan_df'] = summer['practice_season_df'][
     (summer['practice_season_df']['numerator_midpoint6_sum'] == 0) |
     (summer['practice_season_df']['numerator_midpoint6_sum'].isna())
 ]
-to_remove = summer['zero_or_nan_df'][['measure', 'season', 'summer_year', 'practice_pseudo_id', 'pandemic']]
 
 for seasonal_group in seasonal_groups:
 
-    # Remove seasons without a valid baseline rate
-    seasonal_group['practice_season_df'] = pd.concat([seasonal_group['practice_season_df'], to_remove]).drop_duplicates(keep=False)
+    # Remove practice seasons without a valid baseline rate
+    keys = ['measure', 'summer_year', 'practice_pseudo_id']
+    seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'].merge(summer['zero_or_nan_df'][keys], on=keys, how='left', indicator=True)
+    seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'][seasonal_group['practice_season_df']['_merge'] == 'left_only'].drop(columns='_merge')
     
     # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
 
@@ -160,6 +161,8 @@ for seasonal_group in seasonal_groups:
         ["measure", "season", "pandemic", "summer_year"],
         {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_sum": ["sum"], "list_size_midpoint6_count": ["sum"]},
     )
+long_df = pd.concat([summer['practice_season_df'], non_summer['practice_season_df']])
+read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_weighted_long", df=long_df, file_type = 'csv')    
 
 combined_seasons_df = merge_seasons(summer['season_df'], non_summer['season_df'], practice_level = False)
 
