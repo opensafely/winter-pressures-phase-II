@@ -259,8 +259,10 @@ def count_clinical_consultations(code, interval_start, interval_end):
     Returns:
         The count of consultations per patient.
     """
+    # If a single code is given rather than a codelist, parse the code as a list
     if isinstance(code, str):
         code = [code]
+
     return clinical_events.where(clinical_events.snomedct_code.is_in(code)
                                   & clinical_events.date.is_on_or_between(interval_start, interval_end)).count_for_patient()
 

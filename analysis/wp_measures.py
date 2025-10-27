@@ -156,6 +156,10 @@ measures_to_add['call_from_gp'] = count_clinical_consultations('24671000000101',
 measures_to_add['tele_consult'] = count_clinical_consultations('386472008',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['emergency_care'] = count_emergency_care_attendance(INTERVAL.start_date, INTERVAL.end_date)
 
+# Count sro measures in interval
+for key in sro_dict.keys():
+    measures_to_add[key] = count_clinical_consultations(sro_dict[key], INTERVAL.start_date, INTERVAL.end_date)
+
 # Number of appointments in interval
 measures_to_add['seen_in_interval'] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add['start_in_interval'] = count_start_in_interval(INTERVAL.start_date, INTERVAL.end_date)
@@ -178,7 +182,6 @@ app_status_code = ['Did Not Attend', 'Waiting', 'Cancelled by Patient', 'Cancell
 app_status_measure = [status.replace(" ", "") for status in app_status_code]
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
-
 
 # Configuration based on CLI arg. Add these measures if --add_measure flag called
 

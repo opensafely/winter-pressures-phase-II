@@ -25,3 +25,6 @@ nhsd-primary-care-domain-refsets/dm_cod/20250627
 nhsd-primary-care-domain-refsets/dmres_cod/20250627
 nhsd-primary-care-domain-refsets/hypres_cod/20250627
 nhsd-primary-care-domain-refsets/hyp_cod/20241205/
+opensafely/systolic-blood-pressure-qof/659dc936/
+opensafely/alanine-aminotransferase-alt-tests/11d2e678/
+opensafely/sodium-tests-numerical-value/1f50a646/

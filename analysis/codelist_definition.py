@@ -78,3 +78,11 @@ comorbid_dict = {
     "immuno_sup": "codelists/nhsd-immunosupression-pcdcluster-snomed-ct.csv"
 }
 comorbid_dict = create_codelist_dict(comorbid_dict)
+
+# SRO measures
+sro_dict = {
+    "sodium": "codelists/opensafely-sodium-tests-numerical-value.csv",
+    "alt": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
+    "sys_bp": "codelists/opensafely-systolic-blood-pressure-qof.csv"
+}
+sro_dict = create_codelist_dict(sro_dict)
