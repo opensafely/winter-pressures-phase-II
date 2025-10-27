@@ -23,18 +23,28 @@ def create_seen_appts_in_interval(interval_start, interval_end):
     return appointments.where(appointments.seen_date.is_on_or_between(interval_start, interval_end))
     
 # Note that all below measures use intervals as arguments
-def count_secondary_referral(interval_start, interval_end): 
+def count_secondary_referral(interval_start, interval_end, type): 
     '''
     Counts the number of secondary care referrals. Outpatient appointments 
     data is provided via the NHS Secondary Uses Service.
-    No args
+    Args:
+        type: 'referral_date' or 'appointment_date'
     Returns:
-        Count of secondary referrals in interval
+        Count of secondary referrals in interval. One per patient for referral date;
+        multiple per patient for appointment date
     '''
-    secondary_referral_count = (opa_cost.where(opa_cost
-                    .referral_request_received_date
-                    .is_on_or_between(interval_start, interval_end))
-                    .count_for_patient())
+    if type == "referral_date":    
+        secondary_referral_count = (opa_cost.where(opa_cost
+                        .referral_request_received_date
+                        .is_on_or_between(interval_start, interval_end))
+                        .exists_for_patient())
+        
+    elif type == "appointment_date":
+        secondary_referral_count = (opa_cost.where(opa_cost
+                        .appointment_date 
+                        .is_on_or_between(interval_start, interval_end))
+                        .count_for_patient())
+    
     return secondary_referral_count
 
 def count_follow_up(interval_start, seen_appts_in_interval):

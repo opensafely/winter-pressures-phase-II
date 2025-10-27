@@ -175,7 +175,8 @@ measures_to_add['vax_app_covid'] = count_vaccinations(INTERVAL.start_date, INTER
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-measures_to_add['secondary_referral'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['secondary_referral'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date, type = 'referral_date')
+measures_to_add['secondary_appt'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date, type = 'appointment_date')
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Did Not Attend', 'Waiting', 'Cancelled by Patient', 'Cancelled by Unit']
