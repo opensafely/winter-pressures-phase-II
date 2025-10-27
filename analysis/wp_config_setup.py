@@ -25,8 +25,8 @@ args = parser.parse_args() # Stores arguments in 'args'
 
 # Configure dates
 args.study_end_date = "2025-03-31"
-args.pandemic_start = "2020-03-01"
-args.pandemic_end = "2021-05-17"
+args.pandemic_start = "2020-03-23"
+args.pandemic_end = "2021-07-19"
 if args.test:
     args.pandemic_start = "2017-03-01"
     args.pandemic_end = "2018-05-17"
