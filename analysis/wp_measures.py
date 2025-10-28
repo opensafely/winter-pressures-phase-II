@@ -251,6 +251,11 @@ elif args.comorbid_measures:
     )
 
 # Adding measures
+if args.set == 'subset2':
+    for key in list(measures_to_add.keys()):
+        if key not in sro_dict and key not in ['secondary_referral', 'secondary_appt']:
+            del measures_to_add[key]
+
 for measure in measures_to_add.keys():
     measures.define_measure(
         name=measure,

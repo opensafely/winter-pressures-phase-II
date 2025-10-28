@@ -14,6 +14,7 @@ parser.add_argument("--demograph_measures", action= 'store_true', help = "Sets m
 parser.add_argument("--practice_measures", action= 'store_true', help = "Sets measures defaults to practice-level subrgoups")
 parser.add_argument("--comorbid_measures", action= 'store_true', help = "Sets measures defaults to comorbidity-level subgroups")
 parser.add_argument("--use_csv", action = 'store_true', help = "Uses csv instead of arrow for ease of file inspection")
+parser.add_argument("--set", help = "Choose which set of measures to extract")
 
 # Configuration for interval date input
 parser.add_argument("--start_intv", help="Interval start date")
