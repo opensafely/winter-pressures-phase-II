@@ -28,3 +28,6 @@ nhsd-primary-care-domain-refsets/hyp_cod/20241205/
 opensafely/systolic-blood-pressure-qof/659dc936/
 opensafely/alanine-aminotransferase-alt-tests/11d2e678/
 opensafely/sodium-tests-numerical-value/1f50a646/
+opensafely/cholesterol-tests/09896c09/
+opensafely/red-blood-cell-rbc-tests/576a859e/
+opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20/

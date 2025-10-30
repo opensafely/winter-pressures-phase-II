@@ -81,8 +81,11 @@ comorbid_dict = create_codelist_dict(comorbid_dict)
 
 # SRO measures
 sro_dict = {
-    "sodium": "codelists/opensafely-sodium-tests-numerical-value.csv",
-    "alt": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
-    "sys_bp": "codelists/opensafely-systolic-blood-pressure-qof.csv"
+    "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",
+    "alt_test": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
+    "sys_bp_test": "codelists/opensafely-systolic-blood-pressure-qof.csv",
+    "chol_test": "codelists/opensafely-cholesterol-tests.csv",
+    "rbc_test": "codelists/opensafely-red-blood-cell-rbc-tests.csv",
+    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv"
 }
 sro_dict = create_codelist_dict(sro_dict)
