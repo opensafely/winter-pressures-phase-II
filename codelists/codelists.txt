@@ -34,3 +34,14 @@ opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20/
 opensafely/influenza-identification-primary-care/2b370a92/
 opensafely/covid-19-identification-primary-care/2f7731a6/
 opensafely/rsv-identification-primary-care/47b6884f/
+opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749/
+opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a/
+opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf/
+
+opensafely/symptoms-fever/758b5341/
+opensafely/influenza-identification-prescriptions-maximal-sensitivity/2de9ca88/
+opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f/
+opensafely/covid-19-identification-prescriptions/51c43d95/
+opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400/
+opensafely/rsv-identification-prescriptions-maximal-sensitivity/6378bb7a/
+opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f/

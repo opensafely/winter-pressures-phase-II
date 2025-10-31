@@ -164,6 +164,10 @@ for key in sro_dict.keys():
 for key in resp_dict.keys():
     measures_to_add[key] = count_clinical_consultations(resp_dict[key], INTERVAL.start_date, INTERVAL.end_date)
 
+# Count maximally sensitive respiratory illnesses in interval
+# Flu
+
+
 # Number of appointments in interval
 measures_to_add['seen_in_interval'] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add['start_in_interval'] = count_start_in_interval(INTERVAL.start_date, INTERVAL.end_date)

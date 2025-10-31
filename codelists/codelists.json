@@ -1,5 +1,65 @@
 {
   "files": {
+    "opensafely-rsv-exclusion-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f/",
+      "downloaded_at": "2025-10-31 12:32:40.064004Z",
+      "sha": "ad069c67e67f6f4b9b448978a39a2a96fa1274a8"
+    },
+    "opensafely-rsv-identification-prescriptions-maximal-sensitivity.csv": {
+      "id": "opensafely/rsv-identification-prescriptions-maximal-sensitivity/6378bb7a",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-prescriptions-maximal-sensitivity/6378bb7a/",
+      "downloaded_at": "2025-10-31 12:31:50.213924Z",
+      "sha": "252bdccfc4202eb0bda2b9966e183b7c86e41ddd"
+    },
+    "opensafely-covid-19-exclusion-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400/",
+      "downloaded_at": "2025-10-31 12:30:59.920676Z",
+      "sha": "cdf022d35fc2224852848d18065143358cf3ec98"
+    },
+    "opensafely-covid-19-identification-prescriptions.csv": {
+      "id": "opensafely/covid-19-identification-prescriptions/51c43d95",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-prescriptions/51c43d95/",
+      "downloaded_at": "2025-10-31 12:30:17.064897Z",
+      "sha": "ae44a3755f4b72820ef8b2fb98af1ef755c3fe29"
+    },
+    "opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-exclusion-primary-care-maximal-sensitivity/7ed2e05f/",
+      "downloaded_at": "2025-10-31 12:11:15.789062Z",
+      "sha": "9c8b6953a4c8ef86fc614b9806d3d5de0fc00ee3"
+    },
+    "opensafely-influenza-identification-prescriptions-maximal-sensitivity.csv": {
+      "id": "opensafely/influenza-identification-prescriptions-maximal-sensitivity/2de9ca88",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-prescriptions-maximal-sensitivity/2de9ca88/",
+      "downloaded_at": "2025-10-31 12:10:01.575425Z",
+      "sha": "3c7ed13c2c44cf215ae835eea57dc6c90432d69c"
+    },
+    "opensafely-symptoms-fever.csv": {
+      "id": "opensafely/symptoms-fever/758b5341",
+      "url": "https://www.opencodelists.org/codelist/opensafely/symptoms-fever/758b5341/",
+      "downloaded_at": "2025-10-31 12:05:26.072251Z",
+      "sha": "189b0d500e232993d0cdf89d65a5ab1b3fa4bd99"
+    },
+    "opensafely-rsv-identification-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care-maximal-sensitivity/7c882eaf/",
+      "downloaded_at": "2025-10-31 11:57:58.953964Z",
+      "sha": "d8b2a5a6fdd7500171354af54c03c2769ffb8d6e"
+    },
+    "opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-primary-care-maximal-sensitivity/52781f2a/",
+      "downloaded_at": "2025-10-31 11:57:37.748874Z",
+      "sha": "a9d5d5c9e652a4850e36a8499243c6210bb4da5e"
+    },
+    "opensafely-influenza-identification-primary-care-maximal-sensitivity.csv": {
+      "id": "opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-primary-care-maximal-sensitivity/178d1749/",
+      "downloaded_at": "2025-10-31 11:55:37.286837Z",
+      "sha": "7f187e95de072872a9495744a0ea52a3dd59be97"
+    },
     "opensafely-rsv-identification-primary-care.csv": {
       "id": "opensafely/rsv-identification-primary-care/47b6884f",
       "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care/47b6884f/",
