@@ -89,3 +89,11 @@ sro_dict = {
     "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv"
 }
 sro_dict = create_codelist_dict(sro_dict)
+
+# Seasonal respiratory illness
+resp_dict = {
+    "flu_specific": "codelists/opensafely-influenza-identification-primary-care.csv",
+    "covid_specific": "codelists/opensafely-covid-19-identification-primary-care.csv",
+    "rsv_specific": "codelists/opensafely-rsv-identification-primary-care.csv"
+}
+resp_dict = create_codelist_dict(resp_dict)

@@ -160,6 +160,10 @@ measures_to_add['emergency_care'] = count_emergency_care_attendance(INTERVAL.sta
 for key in sro_dict.keys():
     measures_to_add[key] = count_clinical_consultations(sro_dict[key], INTERVAL.start_date, INTERVAL.end_date)
 
+# Count respiratory illness in interval
+for key in resp_dict.keys():
+    measures_to_add[key] = count_clinical_consultations(resp_dict[key], INTERVAL.start_date, INTERVAL.end_date)
+
 # Number of appointments in interval
 measures_to_add['seen_in_interval'] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add['start_in_interval'] = count_start_in_interval(INTERVAL.start_date, INTERVAL.end_date)
@@ -253,7 +257,7 @@ elif args.comorbid_measures:
 # Adding measures
 if args.set == 'subset2':
     for key in list(measures_to_add.keys()):
-        if key not in sro_dict and key not in ['secondary_referral', 'secondary_appt']:
+        if key not in sro_dict and key not in ['secondary_referral', 'secondary_appt'] and key not in resp_dict:
             del measures_to_add[key]
 
 for measure in measures_to_add.keys():

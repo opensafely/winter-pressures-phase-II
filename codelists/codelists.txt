@@ -31,3 +31,6 @@ opensafely/sodium-tests-numerical-value/1f50a646/
 opensafely/cholesterol-tests/09896c09/
 opensafely/red-blood-cell-rbc-tests/576a859e/
 opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20/
+opensafely/influenza-identification-primary-care/2b370a92/
+opensafely/covid-19-identification-primary-care/2f7731a6/
+opensafely/rsv-identification-primary-care/47b6884f/

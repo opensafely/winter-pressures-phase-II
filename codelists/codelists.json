@@ -1,5 +1,23 @@
 {
   "files": {
+    "opensafely-rsv-identification-primary-care.csv": {
+      "id": "opensafely/rsv-identification-primary-care/47b6884f",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-primary-care/47b6884f/",
+      "downloaded_at": "2025-10-31 11:18:51.808214Z",
+      "sha": "e0a6b548665f92602c8ed8ce6faf89b0285418cd"
+    },
+    "opensafely-covid-19-identification-primary-care.csv": {
+      "id": "opensafely/covid-19-identification-primary-care/2f7731a6",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-primary-care/2f7731a6/",
+      "downloaded_at": "2025-10-31 11:18:33.263901Z",
+      "sha": "7f7b874001887d5a2649685484f5b0240b9bfc35"
+    },
+    "opensafely-influenza-identification-primary-care.csv": {
+      "id": "opensafely/influenza-identification-primary-care/2b370a92",
+      "url": "https://www.opencodelists.org/codelist/opensafely/influenza-identification-primary-care/2b370a92/",
+      "downloaded_at": "2025-10-31 11:18:14.558648Z",
+      "sha": "eac1e41a22ca77f453969710e55a6a6322c82a56"
+    },
     "opensafely-glycated-haemoglobin-hba1c-tests.csv": {
       "id": "opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20",
       "url": "https://www.opencodelists.org/codelist/opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20/",
