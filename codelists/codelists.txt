@@ -45,3 +45,4 @@ opensafely/covid-19-identification-prescriptions/51c43d95/
 opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/03e32400/
 opensafely/rsv-identification-prescriptions-maximal-sensitivity/6378bb7a/
 opensafely/rsv-exclusion-primary-care-maximal-sensitivity/0e4f7e8f/
+opensafely/influenza-identification-prescriptions-maximal-sensitivity-dmd/4bf6af63/
