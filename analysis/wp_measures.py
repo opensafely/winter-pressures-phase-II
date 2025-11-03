@@ -207,6 +207,155 @@ if args.add_reason == True:
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], seen_appts_in_interval)
 
+# ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
+
+
+import codelist_definition
+from ehrql import minimum_of
+"""
+Changes from original code:
+1. Removed 'followup_end_date' since we don't need to filter out age groups in measures
+"""
+
+##define function for outcome identification
+def get_codes_dates(codelist_name, num_events, start_date, num_codes, end_date, codelist_key):
+    if isinstance(codelist_name, dict):
+        pathogen_codelist = codelist_name[codelist_key]
+    else:
+        # Dynamically get the codelist object
+        pathogen_codelist = getattr(codelist_definition, codelist_name)
+    # Get all relevant events sorted by date
+    all_events = (
+        clinical_events.where(
+            clinical_events.date.is_on_or_between(start_date, end_date)
+        )
+        .where(clinical_events.snomedct_code.is_in(pathogen_codelist))
+        .sort_by(clinical_events.date)
+    )
+
+    # Get the first event
+    event = all_events.first_for_patient()
+
+    # # Use this as the default if we don't match any others
+    # default_event = event
+
+    # Start with an empty list of possible cases for the date and code
+    date_cases = []
+    code_cases = []
+
+    # For the next three events ...
+    for n in range(num_events):
+        # Check if there are multiple distinct codes within 14 days
+        events_in_date_window = all_events.where(
+            all_events.date.is_on_or_between(event.date, event.date + days(14))
+        )
+        has_multiple_codes = (
+            events_in_date_window.snomedct_code.count_distinct_for_patient() >= num_codes
+        )
+        # Append this event to the lists of cases
+        if num_codes == 1:
+          date_cases.append(event.date)
+        else:
+          date_cases.append(
+            when(has_multiple_codes).then(event.date)
+          )
+        code_cases.append(
+            when(has_multiple_codes).then(event.snomedct_code)
+        )
+        # Get the next event after this one and repeat
+        event = all_events.where(
+            all_events.date.is_after(event.date)
+        ).first_for_patient()
+
+    if num_codes != 1:
+      codes_date = case(*date_cases, otherwise = None)
+    code = case(*code_cases, otherwise = None)
+
+    if num_codes == 1: 
+      return(date_cases) 
+    else:
+      return(codes_date, code)
+    
+#extract flu primary care dates for 'sensitive' phenotype
+  
+#get date of first case of either ARI or fever for first episode
+ari_dates = (
+get_codes_dates(app_reason_dict, 4, INTERVAL.start_date, 1, INTERVAL.end_date, "ARI")
+)
+fever_dates = (
+get_codes_dates("fever_codelist", 4, INTERVAL.start_date, 1, INTERVAL.end_date, None)
+)
+
+ILI_pairs = []
+ILI_date_cases = []
+
+for ari_date in ari_dates:
+    for fever_date in fever_dates:
+        close_in_time = (ari_date-fever_date).days <= abs(14)
+        ILI_pairs.append(when(close_in_time).then(True))
+        ILI_date_cases.append(when(close_in_time)
+        .then(minimum_of(ari_date, fever_date)))
+
+ILI_case = case(*ILI_pairs, otherwise = False)
+ILI_date = case(*ILI_date_cases, otherwise = None)
+
+prescribing_events = (
+  medications.where(medications.date
+  .is_on_or_between(INTERVAL.start_date, INTERVAL.end_date))
+)
+#get date of occurrence of first relevant prescription
+flu_med_date = (
+prescribing_events.where(prescribing_events.dmd_code.is_in(codelist_definition.flu_med_codelist))
+.date.minimum_for_patient()
+)
+#gp events occuring after index date but before end of follow up
+gp_events = (
+  clinical_events.where(clinical_events.date
+  .is_on_or_between(INTERVAL.start_date, INTERVAL.end_date))
+)
+#query gp_events for existence of event-in-codelist 
+def is_gp_event(codelist, where = True):
+    return (
+        gp_events.where(where)
+        .where(gp_events.snomedct_code.is_in(codelist)))
+#occurrence of event in exclusion list within one month of ILI
+flu_exclusion_primary = (case(
+when(
+    is_gp_event(codelist_definition.flu_sensitive_exclusion)
+    .where(gp_events.date.is_on_or_between(ILI_date - days(30), ILI_date + days(30)))
+    .exists_for_patient()
+)
+.then(True),
+when(
+    is_gp_event(codelist_definition.flu_sensitive_exclusion)
+    .where(gp_events.date.is_on_or_between(flu_med_date - days(30), flu_med_date + days(30)))
+    .exists_for_patient()
+)
+.then(True),
+otherwise = False)
+)
+
+#get date of first flu episode
+def first_gp_event(codelist, where = True):
+    return (
+        gp_events.where(where)
+        .where(gp_events.snomedct_code.is_in(codelist))
+        .sort_by(clinical_events.date)
+        .first_for_patient()
+    )
+#first define inclusion from specific phenotype
+flu_primary_spec = (
+first_gp_event(resp_dict['flu_specific']).date
+)
+#then extract date - prioritising inclusion from specific phenotype
+patients.flu_primary_date = (case(
+when(flu_primary_spec.is_not_null())
+.then(flu_primary_spec),
+when((flu_primary_spec.is_null()) & (~flu_exclusion_primary))
+.then(minimum_of(ILI_date, flu_med_date)))
+)
+measures_to_add["seasonal_flu"] = patients.flu_primary_date.is_during(INTERVAL).as_int()
+
 # ---------------------- Define measures --------------------------------
 
 inclusion_criteria = (has_known_sex & age_filter & was_alive & 
@@ -261,7 +410,7 @@ elif args.comorbid_measures:
 # Adding measures
 if args.set == 'subset2':
     for key in list(measures_to_add.keys()):
-        if key not in sro_dict and key not in ['secondary_referral', 'secondary_appt'] and key not in resp_dict:
+        if key not in sro_dict and key not in ['secondary_referral', 'secondary_appt','seasonal_flu'] and key not in resp_dict:
             del measures_to_add[key]
 
 for measure in measures_to_add.keys():
