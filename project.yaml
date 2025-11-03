@@ -1147,3 +1147,12 @@ actions:
         practice_level_tables: output/comorbid_measures_subset2/practice_level_counts_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/comorbid_measures_subset2/Results*_test.csv
+  generate_dataset:
+    run: >
+        ehrql:v1 generate-dataset
+        analysis/dataset.py
+        --test-data-file analysis/test_dataset.py
+        --output outputs/dataset.csv
+    outputs:
+      highly_sensitive:
+        population: outputs/dataset.csv

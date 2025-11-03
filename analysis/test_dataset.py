@@ -57,4 +57,21 @@ test_data = {
           "seen_in_interval": 1 
         },
     },
+    3: { # Specific flu 
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1033051000000101'}],
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "flu_specific": 1, 
+          "flu_sensitive": 1, 
+          "seen_in_interval": 1,
+        },
+    },
 }
