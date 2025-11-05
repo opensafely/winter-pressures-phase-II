@@ -86,7 +86,11 @@ sro_dict = {
     "sys_bp_test": "codelists/opensafely-systolic-blood-pressure-qof.csv",
     "chol_test": "codelists/opensafely-cholesterol-tests.csv",
     "rbc_test": "codelists/opensafely-red-blood-cell-rbc-tests.csv",
-    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv"
+    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
+    "cvd_10yr": "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
+    "thy_test": "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
+    "asthma_review": "codelists/opensafely-asthma-annual-review-qof.csv",
+    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv"
 }
 sro_dict = create_codelist_dict(sro_dict)
 
@@ -103,7 +107,7 @@ resp_dict = create_codelist_dict(resp_dict)
 
 # Supporting codelists for sensitive seasonal respiratory illnesses
 fever_codelist = codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
-flu_med_codelist = codelist_from_csv("codelists/opensafely-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="dmd_id")
+flu_med_codelist = codelist_from_csv("codelists/user-emprestige-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="dmd_id")
 flu_sensitive_exclusion = codelist_from_csv("codelists/opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv", column="code")
 
 covid_med_codelist = codelist_from_csv("codelists/opensafely-covid-19-identification-prescriptions.csv", column="code")

@@ -32,7 +32,6 @@ opensafely/red-blood-cell-rbc-tests/576a859e/
 opensafely/glycated-haemoglobin-hba1c-tests/2ab11f20/
 opensafely/rsv-identification-primary-care/13907155/
 opensafely/rsv-identification-primary-care-maximal-sensitivity/2c9fe48a/
-opensafely/rsv-identification-prescriptions-maximal-sensitivity/210e3123/
 opensafely/rsv-exclusion-primary-care-maximal-sensitivity/02993e02/
 opensafely/influenza-identification-primary-care/4b14d7ab/
 opensafely/influenza-identification-primary-care-maximal-sensitivity/64244ae0/
@@ -52,3 +51,5 @@ opensafely/cvd-risk-assessment-score-qof/7bfa7c75/
 opensafely/thyroid-stimulating-hormone-tsh-testing/4c8e5601/
 opensafely/asthma-annual-review-qof/1509efab/
 opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/49db960b/
+user/emprestige/influenza-identification-prescriptions-maximal-sensitivity-dmd/4bf6af63/
+opensafely/rsv-identification-prescriptions-maximal-sensitivity/7a80fe1f/
