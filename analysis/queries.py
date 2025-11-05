@@ -346,14 +346,17 @@ def count_emergency_care_attendance(interval_start, interval_end):
 #     # ---------------- Combine ----------------
 #     return meets_inclusion & ~within_exclusion_window
 
-def count_seasonal_illness(interval_start, interval_end, codelist_ili, codelist_max_sens, codelist_med, codelist_exclusion):
+def count_seasonal_flu_sensitive(interval_start, interval_end, codelist_ili, codelist_max_sens, codelist_med, codelist_exclusion):
     '''
-    Counts the number of patients who had a symptom of the illness,
-    followed by another symptom within the same episode (2 weeks).
+    Counts the number of patients who had a flu, identified with maximal sensitivity:
+    (ILI OR flu diagnosis OR antiviral prescription) AND NOT other non-flu respiratory illness (e.g. covid)
     Args:
-        codelist: codelist
+        codelist_ili: ILI codelist
+        codelist_max_sens: Max sensitivity flu codelist
+        codelist_med: Flu antiviral codelist
+        codelist_exclusion: Non-flu respiratory illness
     Returns:
-        Count the number of patients who had a seasonal illness
+        Count the number of patients who had a flu case
     '''
     
     # ILI - ARI and fever in same episode
@@ -387,11 +390,13 @@ def count_seasonal_illness(interval_start, interval_end, codelist_ili, codelist_
                     ).exists_for_patient()
                     )
 
-    max_sensitivity_count = (clinical_events.where(
-                        (clinical_events.ili_symptom_this_week & clinical_events.ili_symptom_next_2_weeks) |
-                        (clinical_events.max_sens_event)|
-                        (has_antiviral_prescription) &
-                        ~(clinical_events.exclusion))
-                        .exists_for_patient())
+    max_sensitivity_count = ((
+                        clinical_events.where(
+                            (clinical_events.ili_symptom_this_week & clinical_events.ili_symptom_next_2_weeks) |
+                            (clinical_events.max_sens_event))
+                            .exists_for_patient() |
+                        has_antiviral_prescription
+                        ) &
+                        (clinical_events.where(~(clinical_events.exclusion)).exists_for_patient()))
     
     return max_sensitivity_count
