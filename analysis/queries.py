@@ -345,3 +345,53 @@ def count_emergency_care_attendance(interval_start, interval_end):
 
 #     # ---------------- Combine ----------------
 #     return meets_inclusion & ~within_exclusion_window
+
+def count_seasonal_illness(interval_start, interval_end, codelist_ili, codelist_max_sens, codelist_med, codelist_exclusion):
+    '''
+    Counts the number of patients who had a symptom of the illness,
+    followed by another symptom within the same episode (2 weeks).
+    Args:
+        codelist: codelist
+    Returns:
+        Count the number of patients who had a seasonal illness
+    '''
+    
+    # ILI - ARI and fever in same episode
+    clinical_events.ili_symptom_this_week = clinical_events.where(clinical_events.snomedct_code.is_in(codelist_ili)
+                                  & clinical_events.date.is_on_or_between(interval_start, interval_end)
+                                  ).exists_for_patient()
+
+    clinical_events.ili_symptom_next_2_weeks = (clinical_events.where(
+                    (clinical_events.snomedct_code.is_in(codelist_ili)
+                    & clinical_events.date.is_on_or_between(interval_end + days(1), interval_end + days(15)))
+                    ).exists_for_patient()
+                    )
+    
+    # Max sensitivity flu event
+    clinical_events.max_sens_event = (clinical_events.where(
+                    (clinical_events.snomedct_code.is_in(codelist_max_sens)
+                    & clinical_events.date.is_on_or_between(interval_start, interval_end))
+                    ).exists_for_patient()
+                    )
+    
+    # Antiviral prescription
+    has_antiviral_prescription = medications.where(
+                        (medications.dmd_code.is_in(codelist_med))
+                            & medications.date.is_on_or_between(interval_start, interval_end)
+                        ).exists_for_patient()
+
+    # Exclusion criteria
+    clinical_events.exclusion = (clinical_events.where(
+                    (clinical_events.snomedct_code.is_in(codelist_exclusion)
+                    & clinical_events.date.is_on_or_between(interval_start - weeks(4), interval_end + weeks(4)))
+                    ).exists_for_patient()
+                    )
+
+    max_sensitivity_count = (clinical_events.where(
+                        (clinical_events.ili_symptom_this_week & clinical_events.ili_symptom_next_2_weeks) |
+                        (clinical_events.max_sens_event)|
+                        (has_antiviral_prescription) &
+                        ~(clinical_events.exclusion))
+                        .exists_for_patient())
+    
+    return max_sensitivity_count

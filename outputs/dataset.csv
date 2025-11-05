@@ -1,11 +1,11 @@
-patient_id,ethnicity,carehome,rur_urb_class,practice_id,region,comorbid_copd,comorbid_asthma,comorbid_dm,comorbid_htn,comorbid_chronic_resp,comorbid_immuno,seen_in_interval,start_in_interval,online_consult,call_from_patient,call_from_gp,tele_consult,emergency_care,follow_up_app,vax_app,vax_app_flu,vax_app_covid,flu_sensitive,flu_specific,covid_specific,rsv_specific,secondary_referral,cancelled_app,waiting_app,antidepressant_pres,antibiotic_pres,chest_abx,opioid_pres,ARI,pneum_broad,neurological_app,sick_notes_app,back_pain,chest_inf,pneum,back_pain_opioid,chest_inf_abx,pneum_abx
-2,,F,7,-13,Yorkshire and The Humber,T,F,F,F,T,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-43,5,T,3,-78,North West,F,F,T,F,T,T,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-45,,T,2,27,North West,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-65,,,,5,Yorkshire and The Humber,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-81,5,,,-78,East,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-89,,,3,-23,Yorkshire and The Humber,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-96,3,T,,51,South East,F,F,F,F,T,T,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-97,,,,-48,North East,F,F,F,F,F,T,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0
-98,,,4,84,East Midlands,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-111,,,,-56,East Midlands,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,,0,0,0,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+patient_id,ethnicity,carehome,rur_urb_class,practice_id,region,comorbid_copd,comorbid_asthma,comorbid_dm,comorbid_htn,comorbid_chronic_resp,comorbid_immuno,seen_in_interval,start_in_interval,online_consult,call_from_patient,call_from_gp,tele_consult,emergency_care,follow_up_app,vax_app,vax_app_flu,vax_app_covid,flu_sensitive,secondary_referral,cancelled_app,waiting_app,antidepressant_pres,antibiotic_pres,chest_abx,opioid_pres,ARI,pneum_broad,neurological_app,sick_notes_app,back_pain,chest_inf,pneum,back_pain_opioid,chest_inf_abx,pneum_abx
+2,,F,7,-13,Yorkshire and The Humber,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+23,,F,3,7,North East,F,F,F,F,F,T,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+26,,,3,-75,East,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+29,,,2,82,East,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+36,,F,1,8,West Midlands,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+43,1,T,3,-78,North West,F,T,F,T,T,T,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+45,,,8,6,South East,F,F,F,F,F,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+64,1,,2,-97,North West,F,F,F,F,T,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+65,5,,,5,Yorkshire and The Humber,F,F,F,F,T,F,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+69,1,T,8,93,East Midlands,F,F,T,F,F,T,0,0,0,0,0,0,0,F,0,0,0,F,F,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0

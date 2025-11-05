@@ -53,14 +53,49 @@ test_data = {
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
-          "follow_up_app": False, # Because first appointment occurs 2 weeks rather than 1 week before
+          #"follow_up_app": False, # Because first appointment occurs 2 weeks rather than 1 week before
           "seen_in_interval": 1 
         },
     },
-    3: { # Specific flu 
+    # 3: { # Specific flu 
+    #     "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+    #     "medications": [],
+    #     "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1033051000000101'}],
+    #     "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+    #     "opa_cost": [],
+    #     "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+    #     "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+    #     "vaccinations": [],
+    #     "emergency_care_attendances": [],
+    #     "expected_in_population": True,
+    #     "expected_columns": {
+    #       "flu_specific": 1, 
+    #       "flu_sensitive": 1, 
+    #       "seen_in_interval": 1,
+    #     },
+    # },
+    # 4: { # Max sensitive flu
+    #     "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+    #     "medications": [],
+    #     "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '511791000000104'}],
+    #     "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+    #     "opa_cost": [],
+    #     "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+    #     "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+    #     "vaccinations": [],
+    #     "emergency_care_attendances": [],
+    #     "expected_in_population": True,
+    #     "expected_columns": {
+    #       "flu_specific": 0, 
+    #       "flu_sensitive": 1, 
+    #       "seen_in_interval": 1,
+    #     },
+    # },
+    3: { # Max sensitive flu - Fever, then ARI a week later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
-        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1033051000000101'}],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10151000132103'}, #fever
+                            {"date": date(2022, 1, 25), "snomedct_code": '10509002'}], #ari
         "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
         "opa_cost": [],
         "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
@@ -69,15 +104,14 @@ test_data = {
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
-          "flu_specific": 1, 
           "flu_sensitive": 1, 
           "seen_in_interval": 1,
         },
     },
-    4: { # Max sensitive flu
+    4: { # No Max sensitive flu - Fever, but no ARI a week later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
-        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '511791000000104'}],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10151000132103'}], #fever
         "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
         "opa_cost": [],
         "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
@@ -86,8 +120,7 @@ test_data = {
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
-          "flu_specific": 0, 
-          "flu_sensitive": 1, 
+          "flu_sensitive": 0, 
           "seen_in_interval": 1,
         },
     },

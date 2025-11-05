@@ -219,91 +219,91 @@ def get_codes_dates(codelist_name, num_events, start_date, num_codes, codelist_k
 #extract flu primary care dates for 'sensitive' phenotype
   
 #get date of first case of either ARI or fever for first episode
-ari_dates = (
-get_codes_dates(app_reason_dict, 4, study_start_date, 1, "ARI")
-)
-fever_dates = (
-get_codes_dates("fever_codelist", 4, study_start_date, 1, None)
-)
+# ari_dates = (
+# get_codes_dates(app_reason_dict, 4, study_start_date, 1, "ARI")
+# )
+# fever_dates = (
+# get_codes_dates("fever_codelist", 4, study_start_date, 1, None)
+# )
 
-ILI_pairs = []
-ILI_date_cases = []
+# ILI_pairs = []
+# ILI_date_cases = []
 
-for ari_date in ari_dates:
-    for fever_date in fever_dates:
-        close_in_time = (ari_date-fever_date).days <= abs(14)
-        ILI_pairs.append(when(close_in_time).then(True))
-        ILI_date_cases.append(when(close_in_time)
-        .then(minimum_of(ari_date, fever_date)))
+# for ari_date in ari_dates:
+#     for fever_date in fever_dates:
+#         close_in_time = (ari_date-fever_date).days <= abs(14)
+#         ILI_pairs.append(when(close_in_time).then(True))
+#         ILI_date_cases.append(when(close_in_time)
+#         .then(minimum_of(ari_date, fever_date)))
 
-ILI_case = case(*ILI_pairs, otherwise = False)
-ILI_date = case(*ILI_date_cases, otherwise = None)
+# ILI_case = case(*ILI_pairs, otherwise = False)
+# ILI_date = case(*ILI_date_cases, otherwise = None)
 
-prescribing_events = (
-  medications.where(medications.date
-  .is_on_or_between(study_start_date, study_end_date))
-)
-#get date of occurrence of first relevant prescription
-flu_med_date = (
-prescribing_events.where(prescribing_events.dmd_code.is_in(codelist_definition.flu_med_codelist))
-.date.minimum_for_patient()
-)
-#gp events occuring after index date but before end of follow up
-gp_events = (
-  clinical_events.where(clinical_events.date
-  .is_on_or_between(study_start_date, study_end_date))
-)
-#query gp_events for existence of event-in-codelist 
-def is_gp_event(codelist, where = True):
-    return (
-        gp_events.where(where)
-        .where(gp_events.snomedct_code.is_in(codelist)))
-#occurrence of event in exclusion list within one month of ILI
-flu_exclusion_primary = (case(
-when(
-    is_gp_event(codelist_definition.flu_sensitive_exclusion)
-    .where(gp_events.date.is_on_or_between(ILI_date - days(30), ILI_date + days(30)))
-    .exists_for_patient()
-)
-.then(True),
-when(
-    is_gp_event(codelist_definition.flu_sensitive_exclusion)
-    .where(gp_events.date.is_on_or_between(flu_med_date - days(30), flu_med_date + days(30)))
-    .exists_for_patient()
-)
-.then(True),
-otherwise = False)
-)
+# prescribing_events = (
+#   medications.where(medications.date
+#   .is_on_or_between(study_start_date, study_end_date))
+# )
+# #get date of occurrence of first relevant prescription
+# flu_med_date = (
+# prescribing_events.where(prescribing_events.dmd_code.is_in(codelist_definition.flu_med_codelist))
+# .date.minimum_for_patient()
+# )
+# #gp events occuring after index date but before end of follow up
+# gp_events = (
+#   clinical_events.where(clinical_events.date
+#   .is_on_or_between(study_start_date, study_end_date))
+# )
+# #query gp_events for existence of event-in-codelist 
+# def is_gp_event(codelist, where = True):
+#     return (
+#         gp_events.where(where)
+#         .where(gp_events.snomedct_code.is_in(codelist)))
+# #occurrence of event in exclusion list within one month of ILI
+# flu_exclusion_primary = (case(
+# when(
+#     is_gp_event(codelist_definition.flu_sensitive_exclusion)
+#     .where(gp_events.date.is_on_or_between(ILI_date - days(30), ILI_date + days(30)))
+#     .exists_for_patient()
+# )
+# .then(True),
+# when(
+#     is_gp_event(codelist_definition.flu_sensitive_exclusion)
+#     .where(gp_events.date.is_on_or_between(flu_med_date - days(30), flu_med_date + days(30)))
+#     .exists_for_patient()
+# )
+# .then(True),
+# otherwise = False)
+# )
 
-#get date of first flu episode
-def first_gp_event(codelist, where = True):
-    return (
-        gp_events.where(where)
-        .where(gp_events.snomedct_code.is_in(codelist))
-        .sort_by(clinical_events.date)
-        .first_for_patient()
-    )
-#first define inclusion from specific phenotype
-flu_primary_spec = (
-first_gp_event(resp_dict['flu_specific']).date
-)
-from datetime import date
-#then extract date - prioritising inclusion from specific phenotype
-patients.flu_primary_date = (case(
-when(flu_primary_spec.is_not_null())
-.then(flu_primary_spec),
-when((flu_primary_spec.is_null()) & (~flu_exclusion_primary))
-.then(minimum_of(ILI_date, flu_med_date)))
-)
-dataset.flu_sensitive = patients.flu_primary_date.is_on_or_between(study_start_date, study_end_date).as_int()
+# #get date of first flu episode
+# def first_gp_event(codelist, where = True):
+#     return (
+#         gp_events.where(where)
+#         .where(gp_events.snomedct_code.is_in(codelist))
+#         .sort_by(clinical_events.date)
+#         .first_for_patient()
+#     )
+# #first define inclusion from specific phenotype
+# flu_primary_spec = (
+# first_gp_event(resp_dict['flu_specific']).date
+# )
+# from datetime import date
+# #then extract date - prioritising inclusion from specific phenotype
+# patients.flu_primary_date = (case(
+# when(flu_primary_spec.is_not_null())
+# .then(flu_primary_spec),
+# when((flu_primary_spec.is_null()) & (~flu_exclusion_primary))
+# .then(minimum_of(ILI_date, flu_med_date)))
+# )
+# dataset.flu_sensitive = patients.flu_primary_date.is_on_or_between(study_start_date, study_end_date).as_int()
 
-#Count respiratory illness in interval
-for key in resp_dict.keys():
-   if 'sensitive' in key:
-      continue
-   else:
-       dataset.add_column(key, count_clinical_consultations(resp_dict[key], study_start_date, study_end_date))
-
+# #Count respiratory illness in interval
+# for key in resp_dict.keys():
+#    if 'sensitive' in key:
+#       continue
+#    else:
+#        dataset.add_column(key, count_clinical_consultations(resp_dict[key], study_start_date, study_end_date))
+dataset.flu_sensitive = count_seasonal_illness(study_start_date, study_end_date, ILI_codelist, resp_dict['flu_sensitive'], flu_med_codelist, flu_sensitive_exclusion)
 
 
 
