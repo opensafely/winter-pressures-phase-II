@@ -46,3 +46,9 @@ opensafely/covid-19-identification-prescriptions/376ae462/
 opensafely/covid-19-exclusion-primary-care-maximal-sensitivity/054bfdf8/
 opensafely/respiratory-virus-unspecified-identification-primary-care/3392cb94/
 opensafely/respiratory-virus-unspecified-exclusion-primary-care/686471f4/
+opensafely/care-planning-medication-review-simple-reference-set-nhs-digital/61b13c39/
+nhsd-primary-care-domain-refsets/medrvw_cod/20250912/
+opensafely/cvd-risk-assessment-score-qof/7bfa7c75/
+opensafely/thyroid-stimulating-hormone-tsh-testing/4c8e5601/
+opensafely/asthma-annual-review-qof/1509efab/
+opensafely/chronic-obstructive-pulmonary-disease-copd-review-qof/49db960b/
