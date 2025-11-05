@@ -90,9 +90,16 @@ sro_dict = {
     "cvd_10yr": "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
     "thy_test": "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
     "asthma_review": "codelists/opensafely-asthma-annual-review-qof.csv",
-    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv"
+    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
+    "med_review1": "codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
+    "med_review2": "codelists/nhsd-primary-care-domain-refsets-medrvw_cod.csv"
 }
 sro_dict = create_codelist_dict(sro_dict)
+
+# Combine medication review codelists into one codelist
+sro_dict["med_review"] = sro_dict["med_review1"] + sro_dict["med_review2"]
+del sro_dict["med_review1"]
+del sro_dict["med_review2"]
 
 # Seasonal respiratory illness
 resp_dict = {
@@ -106,7 +113,7 @@ resp_dict = {
 resp_dict = create_codelist_dict(resp_dict)
 
 # Supporting codelists for sensitive seasonal respiratory illnesses
-fever_codelist = codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
+ILI_codelist = app_reason_dict['ARI'] + codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
 flu_med_codelist = codelist_from_csv("codelists/user-emprestige-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="dmd_id")
 flu_sensitive_exclusion = codelist_from_csv("codelists/opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv", column="code")
 
