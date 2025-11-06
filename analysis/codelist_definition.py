@@ -113,7 +113,7 @@ resp_dict = {
 resp_dict = create_codelist_dict(resp_dict)
 
 # Supporting codelists for sensitive seasonal respiratory illnesses
-ILI_codelist = app_reason_dict['ARI'] + codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
+fever_codelist = codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
 flu_med_codelist = codelist_from_csv("codelists/user-emprestige-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="dmd_id")
 flu_sensitive_exclusion = codelist_from_csv("codelists/opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv", column="code")
 

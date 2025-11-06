@@ -346,7 +346,19 @@ def count_emergency_care_attendance(interval_start, interval_end):
 #     # ---------------- Combine ----------------
 #     return meets_inclusion & ~within_exclusion_window
 
-def count_seasonal_flu_sensitive(interval_start, interval_end, codelist_ili, codelist_max_sens, codelist_med, codelist_exclusion):
+def filter_events_in_interval(interval_start, interval_end, codelist):
+    '''
+    Filter the events from a given codelist and interval
+    Args:
+        codelist
+    Returns:
+        EventFrame
+    '''
+    return clinical_events.where(clinical_events.snomedct_code.is_in(codelist)
+                                  & clinical_events.date.is_on_or_between(interval_start, interval_end)
+                                  )
+
+def count_seasonal_flu_sensitive(interval_start, interval_end, codelist_ari, codelist_fever, codelist_max_sens, codelist_med, codelist_exclusion):
     '''
     Counts the number of patients who had a flu, identified with maximal sensitivity:
     (ILI OR flu diagnosis OR antiviral prescription) AND NOT other non-flu respiratory illness (e.g. covid)
@@ -359,23 +371,39 @@ def count_seasonal_flu_sensitive(interval_start, interval_end, codelist_ili, cod
         Count the number of patients who had a flu case
     '''
     
-    # ILI - ARI and fever in same episode
-    clinical_events.ili_symptom_this_week = clinical_events.where(clinical_events.snomedct_code.is_in(codelist_ili)
-                                  & clinical_events.date.is_on_or_between(interval_start, interval_end)
-                                  ).exists_for_patient()
-
-    clinical_events.ili_symptom_next_2_weeks = (clinical_events.where(
-                    (clinical_events.snomedct_code.is_in(codelist_ili)
-                    & clinical_events.date.is_on_or_between(interval_end + days(1), interval_end + days(15)))
-                    ).exists_for_patient()
-                    )
+    # ILI 1 - ARI and then fever in same episode
+    clinical_events.ari_symptom_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_ari)
+                                             .exists_for_patient())
     
+    clinical_events.ari_date_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_ari)
+                                          .sort_by(clinical_events.date)
+                                          .last_for_patient()
+                                          .date)
+
+    clinical_events.fever_symptom_next_2_weeks = (filter_events_in_interval(clinical_events.ari_date_this_week, clinical_events.ari_date_this_week + weeks(2), codelist_fever)
+                                                  .exists_for_patient())
+
+    # ILI 2 - fever and then ALI in same episode
+    clinical_events.fever_symptom_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_fever)
+                                             .exists_for_patient())
+    
+    clinical_events.fever_date_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_fever)
+                                          .sort_by(clinical_events.date)
+                                          .last_for_patient()
+                                          .date)
+
+    clinical_events.ari_symptom_next_2_weeks = (filter_events_in_interval(clinical_events.fever_date_this_week, clinical_events.fever_date_this_week + weeks(2), codelist_ari)
+                                                  .exists_for_patient())
+
+    # ILI overall - Either ari and then fever, or fever and then ari
+    clinical_events.ili = (
+        (clinical_events.ari_symptom_this_week & clinical_events.fever_symptom_next_2_weeks) |
+        (clinical_events.fever_symptom_this_week & clinical_events.ari_symptom_next_2_weeks)
+    )
+
     # Max sensitivity flu event
-    clinical_events.max_sens_event = (clinical_events.where(
-                    (clinical_events.snomedct_code.is_in(codelist_max_sens)
-                    & clinical_events.date.is_on_or_between(interval_start, interval_end))
-                    ).exists_for_patient()
-                    )
+    clinical_events.max_sens_event = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
+                                      .exists_for_patient())
     
     # Antiviral prescription
     has_antiviral_prescription = medications.where(
@@ -384,19 +412,15 @@ def count_seasonal_flu_sensitive(interval_start, interval_end, codelist_ili, cod
                         ).exists_for_patient()
 
     # Exclusion criteria
-    clinical_events.exclusion = (clinical_events.where(
-                    (clinical_events.snomedct_code.is_in(codelist_exclusion)
-                    & clinical_events.date.is_on_or_between(interval_start - weeks(4), interval_end + weeks(4)))
-                    ).exists_for_patient()
-                    )
+    clinical_events.exclusion = (filter_events_in_interval(interval_start - weeks(2), interval_end + weeks(2), codelist_exclusion)
+                                 .exists_for_patient())
 
+    # Max sensitive flue = (ILI, flu code, or flu medication) AND not a different respiratory illness
     max_sensitivity_count = ((
                         clinical_events.where(
-                            (clinical_events.ili_symptom_this_week & clinical_events.ili_symptom_next_2_weeks) |
-                            (clinical_events.max_sens_event))
-                            .exists_for_patient() |
-                        has_antiviral_prescription
-                        ) &
+                            (clinical_events.ili) | (clinical_events.max_sens_event)
+                            )
+                            .exists_for_patient() | has_antiviral_prescription) &
                         (clinical_events.where(~(clinical_events.exclusion)).exists_for_patient()))
     
     return max_sensitivity_count

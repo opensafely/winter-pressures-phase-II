@@ -108,7 +108,24 @@ test_data = {
           "seen_in_interval": 1,
         },
     },
-    4: { # No Max sensitive flu - Fever, but no ARI a week later
+    4: { # Max sensitive flu - ARI, then fever a week later
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10509002'}, #ari
+                            {"date": date(2022, 1, 25), "snomedct_code": '10151000132103'}], #fever
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "flu_sensitive": 1, 
+          "seen_in_interval": 1,
+        },
+    },
+    5: { # No Max sensitive flu - Fever, but no ARI a week later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10151000132103'}], #fever
