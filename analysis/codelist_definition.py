@@ -104,13 +104,15 @@ del sro_dict["med_review2"]
 # Seasonal respiratory illness
 resp_dict = {
     "flu_specific": "codelists/opensafely-influenza-identification-primary-care.csv",
+    "flu_sensitive": "codelists/opensafely-influenza-identification-primary-care-maximal-sensitivity.csv",
     "covid_specific": "codelists/opensafely-covid-19-identification-primary-care.csv",
     "rsv_specific": "codelists/opensafely-rsv-identification-primary-care.csv",
-    "flu_sensitive": "codelists/opensafely-influenza-identification-primary-care-maximal-sensitivity.csv",
-    "covid_sensitive": "codelists/opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv",
-    "rsv_sensitive": "codelists/opensafely-rsv-identification-primary-care-maximal-sensitivity.csv"
 }
 resp_dict = create_codelist_dict(resp_dict)
+
+# Define sensitive codelists as additional codes not found in specific codelist
+resp_dict["covid_sensitive"] = set(resp_dict["covid_specific"]) - set(codelist_from_csv("codelists/opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv", column = "code"))
+resp_dict["rsv_sensitive"] = set(resp_dict["rsv_specific"]) - set(codelist_from_csv("codelists/opensafely-rsv-identification-primary-care-maximal-sensitivity.csv", column = "code"))
 
 # Supporting codelists for sensitive seasonal respiratory illnesses
 fever_codelist = codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")

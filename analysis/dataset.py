@@ -303,7 +303,9 @@ def get_codes_dates(codelist_name, num_events, start_date, num_codes, codelist_k
 #       continue
 #    else:
 #        dataset.add_column(key, count_clinical_consultations(resp_dict[key], study_start_date, study_end_date))
-dataset.flu_sensitive = count_seasonal_flu_sensitive(study_start_date, study_end_date, app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], flu_med_codelist, flu_sensitive_exclusion)
+dataset.flu_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'flu', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                         flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
 
 
 
