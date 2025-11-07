@@ -377,8 +377,8 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
                                       .exists_for_patient())
 
     # Max sensitivity event
-    clinical_events.max_sens_event = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
-                                      .exists_for_patient())
+    clinical_events.max_sens_event_count = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
+                                      .count_for_patient())
     
     # Antiviral prescription
     has_antiviral_prescription = medications.where(
@@ -394,24 +394,19 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
 
         clinical_events.max_sens_event_date = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
                                                 .sort_by(clinical_events.date)
-                                                .last_for_patient()
+                                                .first_for_patient()
                                                 .date)
         
-        clinical_events.max_sens_event_code = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
-                                                .sort_by(clinical_events.date)
-                                                .last_for_patient()
-                                                .snomedct_code)
-        
-        clinical_events.max_sens_event2 = (filter_events_in_interval(clinical_events.max_sens_event_date, 
-                                                                    clinical_events.max_sens_event_date + weeks(2), 
-                                                                    codelist_max_sens - clinical_events.max_sens_event_code)
+        clinical_events.max_sens_event2 = (filter_events_in_interval(clinical_events.max_sens_event_date + days(1), 
+                                                                    clinical_events.max_sens_event_date + days(1) + weeks(2), 
+                                                                    codelist_max_sens)
                                         .exists_for_patient())
 
         # (Max specificity RSV OR 2 Max sensitivity RSV OR [1 Max sensitivity RSV AND antiviral prescription]) 
         # AND NOT other non-flu respiratory illness (e.g. covid)
-        max_sensitivity_count = (
-            (clinical_events.max_spec_event | (clinical_events.max_sens_event & clinical_events.max_sens_event2) | (has_antiviral_prescription & clinical_events.max_sens_event)) &
-            ~(clinical_events.exclusion)
+        has_max_sensitivity = (
+            (clinical_events.max_spec_event | (clinical_events.max_sens_event_count >= 2) | ((clinical_events.max_sens_event_count == 1) & clinical_events.max_sens_event2) | ((clinical_events.max_sens_event_count >= 1) & has_antiviral_prescription))
+            & ~(clinical_events.exclusion)
         )
 
     if disease == 'flu':
@@ -447,11 +442,9 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
         )
 
         # Max sensitive flu = (ILI, flu code, or flu medication) AND not a different respiratory illness
-        max_sensitivity_count = ((
-                            clinical_events.where(
-                                (clinical_events.ili) | (clinical_events.max_sens_event)
-                                )
-                                .exists_for_patient() | has_antiviral_prescription) &
-                            (clinical_events.where(~(clinical_events.exclusion)).exists_for_patient())) # Can this line be simplified as to ~(clinical_events.exclusion)?
+        has_max_sensitivity = (
+                                ((clinical_events.ili) | (clinical_events.max_sens_event_count >= 1) | (has_antiviral_prescription))
+                                & (~(clinical_events.exclusion))
+                             ) # Can this line be simplified as to ~(clinical_events.exclusion)?
     
-    return max_sensitivity_count
+    return has_max_sensitivity

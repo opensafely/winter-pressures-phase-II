@@ -56,42 +56,24 @@ test_data = {
           #"follow_up_app": False, # Because first appointment occurs 2 weeks rather than 1 week before
           "seen_in_interval": 1 
         },
-    },
-    # 3: { # Specific flu 
-    #     "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
-    #     "medications": [],
-    #     "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1033051000000101'}],
-    #     "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
-    #     "opa_cost": [],
-    #     "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
-    #     "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
-    #     "vaccinations": [],
-    #     "emergency_care_attendances": [],
-    #     "expected_in_population": True,
-    #     "expected_columns": {
-    #       "flu_specific": 1, 
-    #       "flu_sensitive": 1, 
-    #       "seen_in_interval": 1,
-    #     },
-    # },
-    # 4: { # Max sensitive flu
-    #     "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
-    #     "medications": [],
-    #     "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '511791000000104'}],
-    #     "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
-    #     "opa_cost": [],
-    #     "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
-    #     "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
-    #     "vaccinations": [],
-    #     "emergency_care_attendances": [],
-    #     "expected_in_population": True,
-    #     "expected_columns": {
-    #       "flu_specific": 0, 
-    #       "flu_sensitive": 1, 
-    #       "seen_in_interval": 1,
-    #     },
-    # },
-    3: { # Max sensitive flu - Fever, then ARI a week later
+    }, # -------------- Seasonal illnesses ---------------------------
+    # Flu
+    3: { # Max sensitive flu - Max sensitivity event
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1001341000000106'}],
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "flu_sensitive": 1, 
+        },
+    },  
+    4: { # Max sensitive flu - Fever, then ARI a week later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10151000132103'}, #fever
@@ -99,16 +81,15 @@ test_data = {
         "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
         "opa_cost": [],
         "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
-        "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+        "appointments": [],
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
           "flu_sensitive": 1, 
-          "seen_in_interval": 1,
         },
     },
-    4: { # Max sensitive flu - ARI, then fever a week later
+    5: { # Max sensitive flu - ARI, then fever a week later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10509002'}, #ari
@@ -116,29 +97,103 @@ test_data = {
         "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
         "opa_cost": [],
         "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
-        "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+        "appointments": [],
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
           "flu_sensitive": 1, 
-          "seen_in_interval": 1,
         },
     },
-    5: { # No Max sensitive flu - Fever, but no ARI a week later
+    6: { # No Max sensitive flu - Fever, but no ARI a week later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '10151000132103'}], #fever
         "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
         "opa_cost": [],
         "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
-        "appointments": [{"start_date": date(2022, 1, 1), "seen_date": date(2022, 1, 1)}, {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+        "appointments": [],
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
           "flu_sensitive": 0, 
-          "seen_in_interval": 1,
         },
     },
+    7: { # Max sensitive flu - Flu antiviral
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [{"date": date(2022, 1, 1), "dmd_code": '36151011000001106'}],
+        "clinical_events": [], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "flu_sensitive": 1, 
+        },
+    },
+    7: { # No Max sensitive flu - Max sens event AND exclusion code in episode
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1001341000000106'}, 
+                            {"date": date(2022, 1, 3), "snomedct_code": '1002141000000100'}], #exclusion code
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "flu_sensitive": 0, 
+        },
+    },
+    8: { # No Max sensitive RSV - Only one rsv event
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102496004'}], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "rsv_sensitive": 0, 
+        },
+    },
+    9: { # Max sensitive RSV - 2 RSV events in episode
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102496004'}, {"date": date(2022, 1, 22), "snomedct_code": '103001002'}], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "rsv_sensitive": 1, 
+        },
+    },  
+    10: { # Max sensitive RSV - 1 RSV event later
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 22), "snomedct_code": '103001002'}], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "rsv_sensitive": 0, 
+        },
+    },  
 }

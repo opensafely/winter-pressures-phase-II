@@ -307,7 +307,13 @@ dataset.flu_sensitive = count_seasonal_illness_sensitive(study_start_date, study
                                                          app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
                                                          flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
 
+dataset.rsv_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'rsv', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['rsv_sensitive'], 
+                                                         rsv_med_codelist, rsv_sensitive_exclusion, resp_dict['rsv_specific'])
 
+dataset.covid_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'covid', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
+                                                         covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'])
 
 
 

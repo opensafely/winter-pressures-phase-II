@@ -212,7 +212,9 @@ Changes from original code:
 1. Removed 'followup_end_date' since we don't need to filter out age groups in measures
 """
 
-measures_to_add["flu_sensitive"] = count_seasonal_flu_sensitive(INTERVAL.start_date, INTERVAL.end_date, ILI_codelist, resp_dict['flu_sensitive'], flu_med_codelist, flu_sensitive_exclusion)
+measures_to_add["flu_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'flu', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                         flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
 
 # ---------------------- Define measures --------------------------------
 
