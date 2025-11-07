@@ -205,17 +205,45 @@ if args.add_reason == True:
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
 
-import codelist_definition
-from ehrql import minimum_of
-"""
-Changes from original code:
-1. Removed 'followup_end_date' since we don't need to filter out age groups in measures
-"""
-
 measures_to_add["flu_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'flu', 
                                                          app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
                                                          flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
 
+measures_to_add["rsv_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'rsv', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['rsv_sensitive'], 
+                                                         rsv_med_codelist, rsv_sensitive_exclusion, resp_dict['rsv_specific'])
+
+measures_to_add["covid_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'covid', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
+                                                         covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'])
+
+measures_to_add["overall_resp_sensitive"] = count_mild_overall_resp_illness(INTERVAL.start_date, INTERVAL.end_date, measures_to_add["flu_sensitive"], 
+                                                                            measures_to_add["covid_sensitive"], measures_to_add["rsv_sensitive"], 
+                                                                            age, resp_dict['overall_sensitive'], 
+                                                                            overall_exclusion, asthma_copd_exacerbation_codelist)
+
+# Limit to cases with appt in the same interval to reduce secondary discharge codes
+
+measures_to_add["flu_sensitive_with_appt"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'flu', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                                    flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'],
+                                                                    seen_appts_in_interval)
+
+measures_to_add["rsv_sensitive_with_appt"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'rsv', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['rsv_sensitive'], 
+                                                                    rsv_med_codelist, rsv_sensitive_exclusion, resp_dict['rsv_specific'],
+                                                                    seen_appts_in_interval)
+
+measures_to_add["covid_sensitive_with_appt"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'covid', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
+                                                                    covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'],
+                                                                    seen_appts_in_interval)
+
+measures_to_add["overall_resp_sensitive_with_appt"] = count_mild_overall_resp_illness(INTERVAL.start_date, INTERVAL.end_date, measures_to_add["flu_sensitive"], 
+                                                                            measures_to_add["covid_sensitive"], measures_to_add["rsv_sensitive"], 
+                                                                            age, resp_dict['overall_sensitive'], 
+                                                                            overall_exclusion, asthma_copd_exacerbation_codelist,
+                                                                            seen_appts_in_interval)
 
 # ---------------------- Define measures --------------------------------
 
@@ -268,12 +296,13 @@ elif args.comorbid_measures:
         intervals=intervals,
     )
 
-# Adding measures
+# Filtering out previous measures
 if args.set == 'subset2':
     for key in list(measures_to_add.keys()):
-        if key not in sro_dict and key not in ['secondary_referral', 'secondary_appt', 'flu_sensitive']:
+        if (key not in sro_dict) and (key not in ['secondary_referral', 'secondary_appt']) and ('sensitive' not in key):
             del measures_to_add[key]
 
+# Adding measures
 for measure in measures_to_add.keys():
     measures.define_measure(
         name=measure,
