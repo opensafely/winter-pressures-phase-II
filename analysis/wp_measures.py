@@ -216,6 +216,7 @@ measures_to_add["flu_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.sta
                                                          app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
                                                          flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
 
+
 # ---------------------- Define measures --------------------------------
 
 inclusion_criteria = (has_known_sex & age_filter & was_alive & 

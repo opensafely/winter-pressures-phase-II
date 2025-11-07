@@ -315,6 +315,9 @@ dataset.covid_sensitive = count_seasonal_illness_sensitive(study_start_date, stu
                                                          app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
                                                          covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'])
 
+dataset.overall_resp_sensitive = count_mild_overall_resp_illness(study_start_date, study_end_date, dataset.flu_sensitive, dataset.covid_sensitive, 
+                                                                 dataset.rsv_sensitive, age, resp_dict['overall_sensitive'], 
+                                                                 overall_exclusion, asthma_copd_exacerbation_codelist)
 
 
 

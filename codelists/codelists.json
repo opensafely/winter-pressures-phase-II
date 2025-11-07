@@ -1,5 +1,17 @@
 {
   "files": {
+    "bristol-asthma_exacerbations_snomed.csv": {
+      "id": "bristol/asthma_exacerbations_snomed/137bfd26",
+      "url": "https://www.opencodelists.org/codelist/bristol/asthma_exacerbations_snomed/137bfd26/",
+      "downloaded_at": "2025-11-07 15:18:58.398008Z",
+      "sha": "fe2a7ff5102e2c796585f5adfe69dd84bdd8d738"
+    },
+    "bristol-copd-exacerbations-snomed.csv": {
+      "id": "bristol/copd-exacerbations-snomed/162ebd1c",
+      "url": "https://www.opencodelists.org/codelist/bristol/copd-exacerbations-snomed/162ebd1c/",
+      "downloaded_at": "2025-11-07 15:18:41.285132Z",
+      "sha": "b0e32941638b2da1cc4584c0a6f092587a6589f7"
+    },
     "opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv": {
       "id": "opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/210e3123",
       "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/210e3123/",

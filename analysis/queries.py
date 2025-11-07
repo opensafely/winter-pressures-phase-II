@@ -448,3 +448,34 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
                              ) # Can this line be simplified as to ~(clinical_events.exclusion)?
     
     return has_max_sensitivity
+
+def count_mild_overall_resp_illness(interval_start, interval_end, has_flu, has_covid, has_rsv, age,
+                                    codelist_overall_max_sens, codelist_exclusion, asthma_copd_exacerbation_codelist):
+    '''
+    Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]) AND NOT exclusion criteria
+    Args:
+        has_flu/covid/rsv: BoolPatientSeries of max sensitivity cases
+        age: IntPatientSeries of age of each patient
+        codelist_overall_max_sens: codelist for unidentified resp illness
+        codelist_exclusion: codelist for exclusion criteria (i.e. other non-respiratory illnesses)
+    Returns:
+        has_max_sens_overall_resp_ill: BoolPatientSeries of any respiratory illness at max sensitivity
+    '''
+
+    has_overall_max_sens = (filter_events_in_interval(interval_start, interval_end, codelist_overall_max_sens)
+                                                .exists_for_patient())
+    
+    has_exclusion = (filter_events_in_interval(interval_start - weeks(2), interval_end + weeks(2), codelist_exclusion)
+                                 .exists_for_patient())
+    
+    has_exacerbation = (filter_events_in_interval(interval_start, interval_end, asthma_copd_exacerbation_codelist)
+                                                .exists_for_patient())
+    
+    is_older = age >= 65 
+    
+    # Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]) AND NOT exclusion criteria
+
+    has_max_sens_overall_resp_ill = ((has_flu | has_covid | has_rsv | has_overall_max_sens | (has_exacerbation & is_older))
+                                     & ~(has_exclusion))
+    
+    return has_max_sens_overall_resp_ill

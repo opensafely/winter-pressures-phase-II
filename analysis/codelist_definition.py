@@ -107,6 +107,7 @@ resp_dict = {
     "flu_sensitive": "codelists/opensafely-influenza-identification-primary-care-maximal-sensitivity.csv",
     "covid_specific": "codelists/opensafely-covid-19-identification-primary-care.csv",
     "rsv_specific": "codelists/opensafely-rsv-identification-primary-care.csv",
+    "overall_sensitive": "codelists/opensafely-respiratory-virus-unspecified-identification-primary-care.csv"
 }
 resp_dict = create_codelist_dict(resp_dict)
 
@@ -124,3 +125,7 @@ covid_sensitive_exclusion = codelist_from_csv("codelists/opensafely-covid-19-exc
 
 rsv_med_codelist = codelist_from_csv("codelists/opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv", column="code")
 rsv_sensitive_exclusion = codelist_from_csv("codelists/opensafely-rsv-exclusion-primary-care-maximal-sensitivity.csv", column="code")
+
+overall_exclusion = codelist_from_csv("codelists/opensafely-respiratory-virus-unspecified-exclusion-primary-care.csv", column = "code")
+asthma_copd_exacerbation_codelist = (codelist_from_csv("codelists/bristol-asthma_exacerbations_snomed.csv", column = "code")
+                                     + codelist_from_csv("codelists/bristol-copd-exacerbations-snomed.csv", column = "code"))

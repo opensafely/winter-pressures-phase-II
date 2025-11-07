@@ -55,3 +55,5 @@ user/emprestige/influenza-identification-prescriptions-maximal-sensitivity-dmd/4
 opensafely/rsv-identification-prescriptions-maximal-sensitivity/7a80fe1f/
 opensafely/covid-19-identification-prescriptions-dmd/32e73c2e/
 opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/210e3123/
+bristol/copd-exacerbations-snomed/162ebd1c/
+bristol/asthma_exacerbations_snomed/137bfd26/

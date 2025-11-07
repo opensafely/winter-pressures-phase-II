@@ -196,4 +196,50 @@ test_data = {
           "rsv_sensitive": 0, 
         },
     },  
+    11: { # Overall resp: rsv case
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102496004'}, {"date": date(2022, 1, 22), "snomedct_code": '103001002'}], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "rsv_sensitive": 1,
+          "overall_resp_sensitive": 1 
+        },
+    },  
+12: { # Overall resp: unidentified case
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102453009'}], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "overall_resp_sensitive": 1 
+        },
+    }, 
+12: { # No overall resp: unidentified case + exclusion
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102453009'}, {"date": date(2022, 1, 22), "snomedct_code": "1005131000000102"}], 
+        "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+          "overall_resp_sensitive": 0 
+        },
+    }, 
 }
