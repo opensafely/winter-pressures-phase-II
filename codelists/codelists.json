@@ -1,5 +1,17 @@
 {
   "files": {
+    "opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv": {
+      "id": "opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/210e3123",
+      "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-prescriptions-maximal-sensitivity-dmd/210e3123/",
+      "downloaded_at": "2025-11-07 11:35:45.145962Z",
+      "sha": "72ed6706ec41831fd9f9be73c85241ccf2dbe168"
+    },
+    "opensafely-covid-19-identification-prescriptions-dmd.csv": {
+      "id": "opensafely/covid-19-identification-prescriptions-dmd/32e73c2e",
+      "url": "https://www.opencodelists.org/codelist/opensafely/covid-19-identification-prescriptions-dmd/32e73c2e/",
+      "downloaded_at": "2025-11-07 11:35:20.410835Z",
+      "sha": "7c17a141fc9c02fa85d885fa6c21bc398e9a957e"
+    },
     "opensafely-rsv-identification-prescriptions-maximal-sensitivity.csv": {
       "id": "opensafely/rsv-identification-prescriptions-maximal-sensitivity/6378bb7a",
       "url": "https://www.opencodelists.org/codelist/opensafely/rsv-identification-prescriptions-maximal-sensitivity/6378bb7a/",

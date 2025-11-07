@@ -111,16 +111,16 @@ resp_dict = {
 resp_dict = create_codelist_dict(resp_dict)
 
 # Define sensitive codelists as additional codes not found in specific codelist
-resp_dict["covid_sensitive"] = set(resp_dict["covid_specific"]) - set(codelist_from_csv("codelists/opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv", column = "code"))
-resp_dict["rsv_sensitive"] = set(resp_dict["rsv_specific"]) - set(codelist_from_csv("codelists/opensafely-rsv-identification-primary-care-maximal-sensitivity.csv", column = "code"))
+resp_dict["covid_sensitive"] = set(codelist_from_csv("codelists/opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv", column = "code")) - set(resp_dict["covid_specific"])
+resp_dict["rsv_sensitive"] = set(codelist_from_csv("codelists/opensafely-rsv-identification-primary-care-maximal-sensitivity.csv", column = "code")) - set(resp_dict["rsv_specific"])
 
 # Supporting codelists for sensitive seasonal respiratory illnesses
 fever_codelist = codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
-flu_med_codelist = codelist_from_csv("codelists/user-emprestige-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="dmd_id")
+flu_med_codelist = codelist_from_csv("codelists/user-emprestige-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="code")
 flu_sensitive_exclusion = codelist_from_csv("codelists/opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv", column="code")
 
-covid_med_codelist = codelist_from_csv("codelists/opensafely-covid-19-identification-prescriptions.csv", column="code")
+covid_med_codelist = codelist_from_csv("codelists/opensafely-covid-19-identification-prescriptions-dmd.csv", column="code")
 covid_sensitive_exclusion = codelist_from_csv("codelists/opensafely-covid-19-exclusion-primary-care-maximal-sensitivity.csv", column="code")
 
-rsv_med_codelist = codelist_from_csv("codelists/opensafely-rsv-identification-prescriptions-maximal-sensitivity.csv", column="code")
+rsv_med_codelist = codelist_from_csv("codelists/opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv", column="code")
 rsv_sensitive_exclusion = codelist_from_csv("codelists/opensafely-rsv-exclusion-primary-care-maximal-sensitivity.csv", column="code")
