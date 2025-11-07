@@ -254,9 +254,24 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
                                         test_flag = test_flag,
                                         set = set)
 
+yaml_test = '''
+
+  # --------------- TEST QUERIES ------------------------------------------
+
+  generate_dataset:
+    run: >
+        ehrql:v1 generate-dataset
+        analysis/dataset.py
+        --test-data-file analysis/test_dataset.py
+        --output output/dataset.csv
+    outputs:
+      highly_sensitive:
+        population: output/dataset.csv
+'''  
+
 # -------- Combine scripts and print file -----------
 
-yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_viz + yaml_measures_test + yaml_processing_test
+yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_viz + yaml_measures_test + yaml_processing_test + yaml_test
 
 with open("/workspaces/winter-pressures-phase-II/project.yaml", "w") as file:
        file.write(yaml)
