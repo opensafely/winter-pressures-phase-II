@@ -29,7 +29,7 @@ date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 log_memory_usage(label="Before loading data")
 
-input_path = f"output/{args.group}_measures/proc_{args.group}_measures_midpoint6"
+input_path = f"output/{args.group}_measures_{args.set}/proc_{args.group}_measures_midpoint6"
 practice_interval_df = read_write("read", input_path)
 
 log_memory_usage(label="After loading data")
@@ -189,13 +189,13 @@ rename_map = {
 
 combined_seasons_df = combined_seasons_df.rename(columns=rename_map)
 combined_seasons_df = combined_seasons_df.drop(columns=["season_prev_summr", "season_first_summr"])
-read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_weighted", df=combined_seasons_df, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/Results_weighted", df=combined_seasons_df, file_type = 'csv')    
 
 combined_var_df = summer['season_var_df'].merge(
     non_summer['season_var_df'], on=["measure", "season", "pandemic"], how="left"
 )
 
-read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_variance", df=combined_var_df, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/Results_variance", df=combined_var_df, file_type = 'csv')    
 
 # Check means and var ratio
 # practice_season_df["var/mean"] = (
@@ -216,7 +216,7 @@ combined_practice_seasons_df['RD_prev_summr'] = combined_practice_seasons_df['Ra
 combined_practice_seasons_df['RD_first_summr'] = combined_practice_seasons_df['Rate_per_1000'] - combined_practice_seasons_df['Rate_per_1000_first_summr']
 
 # Save practice-level counts for downstream stat testing
-read_write(read_or_write="write", path=f"output/{args.group}_measures/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
+read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
 
 # Aggregate from practice level to pandemic level
 combined_seasons_df_results = build_aggregate_df(
@@ -241,7 +241,7 @@ rename_map = {
     "RD_first_summr_mean": "RD_first_mean",
 }
 combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
 
 # # --------------- Describing long-term trend --------------------------------------------
 
@@ -314,7 +314,7 @@ read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_un
 # # Save
 # read_write(
 #     "write",
-#     f"output/{args.group}_measures/trend_results",
+#     f"output/{args.group}_measures_{args.set}/trend_results",
 #     df=summary_df,
 #     file_type="csv",
 # )
@@ -370,7 +370,7 @@ read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_un
 # # Save to file
 # read_write(
 #     "write",
-#     f"output/{args.group}_measures/corr_results",
+#     f"output/{args.group}_measures_{args.set}/corr_results",
 #     df=summary_corr_df,
 #     file_type="csv",
 # )
