@@ -27,7 +27,7 @@ online_consult = codelist_from_csv("codelists/user-martinaf-online-consultations
 
 # Appointment reasons codelist:
 app_reason_dict = {
-    "resp_ill": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist - misses many pneumonia codes
+    "ARI": "codelists/opensafely-acute-respiratory-illness-primary-care.csv", # not a good codelist - misses many pneumonia codes
     "pneum_broad": "codelists/bristol-pneumonia.csv", # pneumonia specific codelist to compensate for above
     "neurological_app": "codelists/ons-neurological-disorders.csv",
     "sick_notes_app": "codelists/opensafely-sick-notes-snomed.csv"
@@ -78,3 +78,66 @@ comorbid_dict = {
     "immuno_sup": "codelists/nhsd-immunosupression-pcdcluster-snomed-ct.csv"
 }
 comorbid_dict = create_codelist_dict(comorbid_dict)
+
+# SRO measures
+sro_dict = {
+    "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",
+    "alt_test": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
+    "sys_bp_test": "codelists/opensafely-systolic-blood-pressure-qof.csv",
+    "chol_test": "codelists/opensafely-cholesterol-tests.csv",
+    "rbc_test": "codelists/opensafely-red-blood-cell-rbc-tests.csv",
+    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
+    "cvd_10yr": "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
+    "thy_test": "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
+    "asthma_review": "codelists/opensafely-asthma-annual-review-qof.csv",
+    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
+    "med_review1": "codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
+    "med_review2": "codelists/nhsd-primary-care-domain-refsets-medrvw_cod.csv"
+}
+sro_dict = create_codelist_dict(sro_dict)
+
+# Combine medication review codelists into one codelist
+sro_dict["med_review"] = sro_dict["med_review1"] + sro_dict["med_review2"]
+del sro_dict["med_review1"]
+del sro_dict["med_review2"]
+
+# Combine prioritized tests together
+prioritized = ['copd_review', 'asthma_review', 'med_review']
+sro_dict['sro_prioritized'] = []
+for sro in prioritized:
+    sro_dict['sro_prioritized'] = sro_dict['sro_prioritized'] + sro_dict[sro]
+
+# Combine deprioritized tests together
+deprioritized = set(sro_dict.keys()) - set(prioritized) - set(['sro_prioritized'])
+sro_dict['sro_deprioritized'] = []
+for sro in deprioritized:
+    sro_dict['sro_deprioritized'] = sro_dict['sro_deprioritized'] + sro_dict[sro]
+
+# Seasonal respiratory illness
+resp_dict = {
+    "flu_specific": "codelists/opensafely-influenza-identification-primary-care.csv",
+    "flu_sensitive": "codelists/opensafely-influenza-identification-primary-care-maximal-sensitivity.csv",
+    "covid_specific": "codelists/opensafely-covid-19-identification-primary-care.csv",
+    "rsv_specific": "codelists/opensafely-rsv-identification-primary-care.csv",
+    "overall_sensitive": "codelists/opensafely-respiratory-virus-unspecified-identification-primary-care.csv"
+}
+resp_dict = create_codelist_dict(resp_dict)
+
+# Define sensitive codelists as additional codes not found in specific codelist
+resp_dict["covid_sensitive"] = set(codelist_from_csv("codelists/opensafely-covid-19-identification-primary-care-maximal-sensitivity.csv", column = "code")) - set(resp_dict["covid_specific"])
+resp_dict["rsv_sensitive"] = set(codelist_from_csv("codelists/opensafely-rsv-identification-primary-care-maximal-sensitivity.csv", column = "code")) - set(resp_dict["rsv_specific"])
+
+# Supporting codelists for sensitive seasonal respiratory illnesses
+fever_codelist = codelist_from_csv("codelists/opensafely-symptoms-fever.csv", column="code")
+flu_med_codelist = codelist_from_csv("codelists/user-emprestige-influenza-identification-prescriptions-maximal-sensitivity-dmd.csv", column="code")
+flu_sensitive_exclusion = codelist_from_csv("codelists/opensafely-influenza-exclusion-primary-care-maximal-sensitivity.csv", column="code")
+
+covid_med_codelist = codelist_from_csv("codelists/opensafely-covid-19-identification-prescriptions-dmd.csv", column="code")
+covid_sensitive_exclusion = codelist_from_csv("codelists/opensafely-covid-19-exclusion-primary-care-maximal-sensitivity.csv", column="code")
+
+rsv_med_codelist = codelist_from_csv("codelists/opensafely-rsv-identification-prescriptions-maximal-sensitivity-dmd.csv", column="code")
+rsv_sensitive_exclusion = codelist_from_csv("codelists/opensafely-rsv-exclusion-primary-care-maximal-sensitivity.csv", column="code")
+
+overall_exclusion = codelist_from_csv("codelists/opensafely-respiratory-virus-unspecified-exclusion-primary-care.csv", column = "code")
+asthma_copd_exacerbation_codelist = (codelist_from_csv("codelists/bristol-asthma_exacerbations_snomed.csv", column = "code")
+                                     + codelist_from_csv("codelists/bristol-copd-exacerbations-snomed.csv", column = "code"))

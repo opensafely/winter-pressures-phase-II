@@ -14,7 +14,8 @@ from ehrql.tables.tpp import (
 
 from queries import *
 from codelist_definition import *
-
+from ehrql import claim_permissions
+claim_permissions("appointments")
 # Instantiate measures, with small number suppression turned off
 dataset = create_dataset()
 
@@ -63,7 +64,7 @@ age_group = case(
 # Ethnicity
 dataset.ethnicity = (
     clinical_events.where(clinical_events.snomedct_code.is_in(ethnicity))
-    .where(clinical_events.date.is_on_or_before(INTERVAL.start_date))
+    .where(clinical_events.date.is_on_or_before(study_start_date))
     .sort_by(clinical_events.date)
     .last_for_patient()
     .snomedct_code.to_category(ethnicity)
@@ -116,12 +117,9 @@ dataset.comorbid_copd = check_resolved_condition(comorbid_dict["copd"], comorbid
 dataset.comorbid_asthma = check_resolved_condition(comorbid_dict["asthma"], comorbid_dict["asthma_res"], study_start_date)
 dataset.comorbid_dm = check_resolved_condition(comorbid_dict["diabetes"], comorbid_dict["diabetes_res"], study_start_date)
 dataset.comorbid_htn = check_resolved_condition(comorbid_dict["htn"], comorbid_dict["htn_res"], study_start_date)
-dataset.comorbid_depres = check_resolved_condition(comorbid_dict["depres"], comorbid_dict["depres_res"], study_start_date)
 
 # Check if patient had an unresolvable (chronic) condition in the interval
 dataset.comorbid_chronic_resp = check_chronic_condition(comorbid_dict["chronic_resp"], study_start_date)
-dataset.comorbid_mh = check_chronic_condition(comorbid_dict["mental_health"], study_start_date)
-dataset.comorbid_neuro = check_chronic_condition(comorbid_dict["neuro"], study_start_date)
 dataset.comorbid_immuno = check_chronic_condition(comorbid_dict["immuno_sup"], study_start_date)
 
 # Measures ---
@@ -149,10 +147,42 @@ dataset.vax_app = count_vaccinations(study_start_date, study_end_date)
 dataset.vax_app_flu = count_vaccinations(study_start_date, study_end_date, ['INFLUENZA'])
 dataset.vax_app_covid = count_vaccinations(study_start_date, study_end_date, ['SARS-2 CORONAVIRUS'])
 
+# Count sro measures in interval
+for key in sro_dict.keys(): 
+    result = count_clinical_consultations(sro_dict[key], study_start_date, study_end_date)
+    dataset.add_column(key, result)
+
+# ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
+
+dataset.flu_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'flu', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                         flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
+
+dataset.rsv_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'rsv', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['rsv_sensitive'], 
+                                                         rsv_med_codelist, rsv_sensitive_exclusion, resp_dict['rsv_specific'])
+
+dataset.covid_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'covid', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
+                                                         covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'])
+
+dataset.overall_resp_sensitive = count_mild_overall_resp_illness(study_start_date, study_end_date, dataset.flu_sensitive, dataset.covid_sensitive, 
+                                                                 dataset.rsv_sensitive, age, resp_dict['overall_sensitive'], 
+                                                                 overall_exclusion, asthma_copd_exacerbation_codelist)
+
+dataset.overall_resp_sensitive_with_appt = count_mild_overall_resp_illness(study_start_date, study_end_date, dataset.flu_sensitive, dataset.covid_sensitive, 
+                                                                 dataset.rsv_sensitive, age, resp_dict['overall_sensitive'], 
+                                                                 overall_exclusion, asthma_copd_exacerbation_codelist, seen_appts_in_interval)
+
+dataset.flu_sensitive_with_appt = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'flu', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                                    flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'],
+                                                                    seen_appts_in_interval)
+
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-dataset.secondary_referral = count_secondary_referral(study_start_date, study_end_date)
+dataset.secondary_referral = count_secondary_referral(study_start_date, study_end_date, type="referral_date")
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Cancelled by Unit','Waiting']

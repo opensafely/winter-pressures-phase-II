@@ -156,6 +156,10 @@ measures_to_add['call_from_gp'] = count_clinical_consultations('24671000000101',
 measures_to_add['tele_consult'] = count_clinical_consultations('386472008',INTERVAL.start_date, INTERVAL.end_date)
 measures_to_add['emergency_care'] = count_emergency_care_attendance(INTERVAL.start_date, INTERVAL.end_date)
 
+# Count sro measures in interval
+for key in sro_dict.keys():        
+    measures_to_add[key] = count_clinical_consultations(sro_dict[key], INTERVAL.start_date, INTERVAL.end_date)
+
 # Number of appointments in interval
 measures_to_add['seen_in_interval'] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add['start_in_interval'] = count_start_in_interval(INTERVAL.start_date, INTERVAL.end_date)
@@ -171,14 +175,14 @@ measures_to_add['vax_app_covid'] = count_vaccinations(INTERVAL.start_date, INTER
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and 
 # doesn't include mental health care and community services
-measures_to_add['secondary_referral'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date)
+measures_to_add['secondary_referral'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date, type = 'referral_date')
+measures_to_add['secondary_appt'] = count_secondary_referral(INTERVAL.start_date, INTERVAL.end_date, type = 'appointment_date')
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ['Did Not Attend', 'Waiting', 'Cancelled by Patient', 'Cancelled by Unit']
 app_status_measure = [status.replace(" ", "") for status in app_status_code]
 for status_code, status_measure in zip(app_status_code, app_status_measure):
     measures_to_add[status_measure] = count_appointments_by_status(INTERVAL.start_date, INTERVAL.end_date, status_code)
-
 
 # Configuration based on CLI arg. Add these measures if --add_measure flag called
 
@@ -194,6 +198,48 @@ if args.add_reason == True:
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_reason_for_app(INTERVAL.start_date, INTERVAL.end_date, app_reason_dict[reason], seen_appts_in_interval)
+
+# ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
+
+measures_to_add["flu_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'flu', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                         flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'])
+
+measures_to_add["rsv_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'rsv', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['rsv_sensitive'], 
+                                                         rsv_med_codelist, rsv_sensitive_exclusion, resp_dict['rsv_specific'])
+
+measures_to_add["covid_sensitive"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'covid', 
+                                                         app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
+                                                         covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'])
+
+measures_to_add["overall_resp_sensitive"] = count_mild_overall_resp_illness(INTERVAL.start_date, INTERVAL.end_date, measures_to_add["flu_sensitive"], 
+                                                                            measures_to_add["covid_sensitive"], measures_to_add["rsv_sensitive"], 
+                                                                            age, resp_dict['overall_sensitive'], 
+                                                                            overall_exclusion, asthma_copd_exacerbation_codelist)
+
+# Limit to cases with appt in the same interval to reduce secondary discharge codes
+
+measures_to_add["flu_sensitive_with_appt"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'flu', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
+                                                                    flu_med_codelist, flu_sensitive_exclusion, resp_dict['flu_specific'],
+                                                                    seen_appts_in_interval)
+
+measures_to_add["rsv_sensitive_with_appt"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'rsv', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['rsv_sensitive'], 
+                                                                    rsv_med_codelist, rsv_sensitive_exclusion, resp_dict['rsv_specific'],
+                                                                    seen_appts_in_interval)
+
+measures_to_add["covid_sensitive_with_appt"] = count_seasonal_illness_sensitive(INTERVAL.start_date, INTERVAL.end_date, 'covid', 
+                                                                    app_reason_dict['ARI'], fever_codelist, resp_dict['covid_sensitive'], 
+                                                                    covid_med_codelist, covid_sensitive_exclusion, resp_dict['covid_specific'],
+                                                                    seen_appts_in_interval)
+
+measures_to_add["overall_resp_sensitive_with_appt"] = count_mild_overall_resp_illness(INTERVAL.start_date, INTERVAL.end_date, measures_to_add["flu_sensitive"], 
+                                                                            measures_to_add["covid_sensitive"], measures_to_add["rsv_sensitive"], 
+                                                                            age, resp_dict['overall_sensitive'], 
+                                                                            overall_exclusion, asthma_copd_exacerbation_codelist,
+                                                                            seen_appts_in_interval)
 
 # ---------------------- Define measures --------------------------------
 
@@ -245,6 +291,12 @@ elif args.comorbid_measures:
         },
         intervals=intervals,
     )
+
+# Filtering out previous measures
+if args.set == 'subset2':
+    for key in list(measures_to_add.keys()):
+        if (key not in sro_dict) and (key not in ['secondary_referral', 'secondary_appt']) and ('sensitive' not in key):
+            del measures_to_add[key]
 
 # Adding measures
 for measure in measures_to_add.keys():

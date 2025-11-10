@@ -23,18 +23,28 @@ def create_seen_appts_in_interval(interval_start, interval_end):
     return appointments.where(appointments.seen_date.is_on_or_between(interval_start, interval_end))
     
 # Note that all below measures use intervals as arguments
-def count_secondary_referral(interval_start, interval_end): 
+def count_secondary_referral(interval_start, interval_end, type): 
     '''
     Counts the number of secondary care referrals. Outpatient appointments 
     data is provided via the NHS Secondary Uses Service.
-    No args
+    Args:
+        type: 'referral_date' or 'appointment_date'
     Returns:
-        Count of secondary referrals in interval
+        Count of secondary referrals in interval. One per patient for referral date;
+        multiple per patient for appointment date
     '''
-    secondary_referral_count = (opa_cost.where(opa_cost
-                    .referral_request_received_date
-                    .is_on_or_between(interval_start, interval_end))
-                    .count_for_patient())
+    if type == "referral_date":    
+        secondary_referral_count = (opa_cost.where(opa_cost
+                        .referral_request_received_date
+                        .is_on_or_between(interval_start, interval_end))
+                        .exists_for_patient())
+        
+    elif type == "appointment_date":
+        secondary_referral_count = (opa_cost.where(opa_cost
+                        .appointment_date 
+                        .is_on_or_between(interval_start, interval_end))
+                        .count_for_patient())
+    
     return secondary_referral_count
 
 def count_follow_up(interval_start, seen_appts_in_interval):
@@ -259,8 +269,10 @@ def count_clinical_consultations(code, interval_start, interval_end):
     Returns:
         The count of consultations per patient.
     """
+    # If a single code is given rather than a codelist, parse the code as a list
     if isinstance(code, str):
         code = [code]
+
     return clinical_events.where(clinical_events.snomedct_code.is_in(code)
                                   & clinical_events.date.is_on_or_between(interval_start, interval_end)).count_for_patient()
 
@@ -274,3 +286,155 @@ def count_emergency_care_attendance(interval_start, interval_end):
                                             .arrival_date
                                             .is_on_or_between(interval_start, interval_end)
                                             ).count_for_patient()
+
+def filter_events_in_interval(interval_start, interval_end, codelist):
+    '''
+    Filter the events from a given codelist and interval
+    Args:
+        codelist
+    Returns:
+        EventFrame
+    '''
+    return clinical_events.where(clinical_events.snomedct_code.is_in(codelist)
+                                  & clinical_events.date.is_on_or_between(interval_start, interval_end)
+                                  )
+
+def count_seasonal_illness_sensitive(interval_start, interval_end, disease, codelist_ari, codelist_fever, 
+                                     codelist_max_sens, codelist_med, codelist_exclusion, codelist_max_spec, 
+                                     seen_appts_in_interval = None):
+    '''
+    Counts the number of patients who had a flu, identified with maximal sensitivity
+    Args:
+        disease: flu, rsv or covid
+        codelist_ari: Acute Respiratory Disease codelist
+        codelist_fever: Fever codelist
+        codelist_max_sens: Max sensitivity flu codelist
+        codelist_med: Flu antiviral codelist
+        codelist_exclusion: Non-flu respiratory illness
+        codelist_max_spec: Max specificity rsv codelist
+        seen_appts_in_interval: Filtered appointments table, used if filtering events to those paired with an appt
+    Returns:
+        Count the number of patients who had a flu case
+    '''
+
+    # Max specificity event
+    has_max_spec_event = (filter_events_in_interval(interval_start, interval_end, codelist_max_spec)
+                                      .exists_for_patient())
+
+    # Max sensitivity event
+    max_sens_event_count = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
+                                      .count_for_patient())
+    
+    # Antiviral prescription
+    has_antiviral_prescription = medications.where(
+                        (medications.dmd_code.is_in(codelist_med))
+                            & medications.date.is_on_or_between(interval_start, interval_end)
+                        ).exists_for_patient()
+    
+    # Exclusion criteria
+    has_exclusion = (filter_events_in_interval(interval_start - weeks(2), interval_end + weeks(2), codelist_exclusion)
+                                 .exists_for_patient())
+    
+    if (disease == 'rsv') | (disease == 'covid'):
+
+        max_sens_event_date = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
+                                                .sort_by(clinical_events.date)
+                                                .first_for_patient()
+                                                .date)
+        
+        has_max_sens_event2 = (filter_events_in_interval(max_sens_event_date + days(1), 
+                                                                    max_sens_event_date + days(1) + weeks(2), 
+                                                                    codelist_max_sens)
+                                        .exists_for_patient())
+
+        # (Max specificity RSV OR 2 Max sensitivity RSV OR [1 Max sensitivity RSV AND antiviral prescription]) 
+        # AND NOT other non-flu respiratory illness (e.g. covid)
+        has_max_sensitivity = (
+            (has_max_spec_event | (max_sens_event_count >= 2) | ((max_sens_event_count == 1) & has_max_sens_event2) | ((max_sens_event_count >= 1) & has_antiviral_prescription))
+            & ~(has_exclusion)
+        )
+
+    if disease == 'flu':
+
+        # ILI 1 - ARI and then fever in same episode
+        has_ari_symptom_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_ari)
+                                                .exists_for_patient())
+        
+        ari_date_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_ari)
+                                            .sort_by(clinical_events.date)
+                                            .last_for_patient()
+                                            .date)
+
+        has_fever_symptom_next_2_weeks = (filter_events_in_interval(ari_date_this_week, ari_date_this_week + weeks(2), codelist_fever)
+                                                    .exists_for_patient())
+
+        # ILI 2 - fever and then ALI in same episode
+        has_fever_symptom_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_fever)
+                                                .exists_for_patient())
+        
+        fever_date_this_week = (filter_events_in_interval(interval_start, interval_end, codelist_fever)
+                                            .sort_by(clinical_events.date)
+                                            .last_for_patient()
+                                            .date)
+
+        has_ari_symptom_next_2_weeks = (filter_events_in_interval(fever_date_this_week, fever_date_this_week + weeks(2), codelist_ari)
+                                                    .exists_for_patient())
+
+        # ILI overall - Either ari and then fever, or fever and then ari
+        has_ili = (
+            (has_ari_symptom_this_week & has_fever_symptom_next_2_weeks) |
+            (has_fever_symptom_this_week & has_ari_symptom_next_2_weeks)
+        )
+
+        # Max sensitive flu = (ILI, flu code, or flu medication) AND not a different respiratory illness
+        has_max_sensitivity = (((has_ili) | (max_sens_event_count >= 1) | (has_antiviral_prescription))
+                                & (~(has_exclusion)))
+    
+    if seen_appts_in_interval != None:
+
+        has_appt_in_interval = seen_appts_in_interval.exists_for_patient()
+
+        has_max_sensitivity = has_max_sensitivity & has_appt_in_interval
+
+    return has_max_sensitivity
+
+def count_mild_overall_resp_illness(interval_start, interval_end, has_flu, has_covid, has_rsv, age,
+                                    codelist_overall_max_sens, codelist_exclusion, asthma_copd_exacerbation_codelist,
+                                    seen_appts_in_interval = None):
+    '''
+    Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]) 
+    AND NOT exclusion criteria
+    Args:
+        has_flu/covid/rsv: BoolPatientSeries of max sensitivity cases
+        age: IntPatientSeries of age of each patient
+        codelist_overall_max_sens: codelist for unidentified resp illness
+        codelist_exclusion: codelist for exclusion criteria (i.e. other non-respiratory illnesses)
+        asthma_copd_exacerbation_codelist: codelist for ashma and copd exacerbation for the elderly
+        seen_appts_in_interval: Filtered appointments table, used if filtering events to those paired with an appt
+    Returns:
+        has_max_sens_overall_resp_ill: BoolPatientSeries of any respiratory illness at max sensitivity
+    '''
+
+    has_overall_max_sens = (filter_events_in_interval(interval_start, interval_end, codelist_overall_max_sens)
+                                                .exists_for_patient())
+    
+    has_exclusion = (filter_events_in_interval(interval_start - weeks(2), interval_end + weeks(2), codelist_exclusion)
+                                 .exists_for_patient())
+    
+    has_exacerbation = (filter_events_in_interval(interval_start, interval_end, asthma_copd_exacerbation_codelist)
+                                                .exists_for_patient())
+    
+    is_older = age >= 65 
+    
+    # Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]) AND NOT exclusion criteria
+
+    has_max_sens_overall_resp_ill = ((has_flu | has_covid | has_rsv | has_overall_max_sens | (has_exacerbation & is_older))
+                                     & ~(has_exclusion))
+    
+    if seen_appts_in_interval != None:
+
+        has_appt_in_interval = seen_appts_in_interval.exists_for_patient()
+
+        has_max_sens_overall_resp_ill = has_max_sens_overall_resp_ill & has_appt_in_interval
+
+    return has_max_sens_overall_resp_ill

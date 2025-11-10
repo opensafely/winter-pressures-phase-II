@@ -1,0 +1,11 @@
+# Ignore all files in this folder
+*
+
+# Allow subdirectories to be tracked
+!*/
+
+# Allow this .gitignore file
+!/.gitignore
+
+# Allow .gitkeep files to track empty folders
+!**/.gitkeep
