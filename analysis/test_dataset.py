@@ -257,7 +257,7 @@ test_data = {
             "flu_sensitive_with_appt": 0 
           },
       }, 
-  14: { # Flu with same day appt
+  15: { # Flu with same day appt
           "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
           "medications": [],
           "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1001341000000106'}], 
@@ -270,6 +270,68 @@ test_data = {
           "expected_in_population": True,
           "expected_columns": {
             "flu_sensitive_with_appt": 1 
+          },
+      }, 
+  16: { # No Overall resp as no same day appt
+          "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+          "medications": [],
+          "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102453009'}], 
+          "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+          "opa_cost": [],
+          "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+          "appointments": [],
+          "vaccinations": [],
+          "emergency_care_attendances": [],
+          "expected_in_population": True,
+          "expected_columns": {
+            "overall_resp_sensitive_with_appt": 0
+          },
+      },
+  17: { # Overall resp with same day appt
+          "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+          "medications": [],
+          "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '102453009'}], 
+          "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+          "opa_cost": [],
+          "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+          "appointments": [{"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}],
+          "vaccinations": [],
+          "emergency_care_attendances": [],
+          "expected_in_population": True,
+          "expected_columns": {
+            "overall_resp_sensitive_with_appt": 1
+          },
+      },
+  17: { # Sro prioritized
+          "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+          "medications": [],
+          "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '270442000'}], #asthma review
+          "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+          "opa_cost": [],
+          "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+          "appointments": [],
+          "vaccinations": [],
+          "emergency_care_attendances": [],
+          "expected_in_population": True,
+          "expected_columns": {
+            "sro_prioritized": 1,
+            "sro_deprioritized": 0
+          },
+      },  
+  18: { # Sro de-prioritized
+          "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+          "medications": [],
+          "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": '1013211000000103'}], #alt
+          "addresses": [{"start_date": date(2010, 1, 1),"imd_rounded": 200}],
+          "opa_cost": [],
+          "practice_registrations": [{"start_date": date(2010, 1, 1), "end_date": date(2025, 1, 1), "practice_nuts1_region_name": "West Midlands"}],
+          "appointments": [],
+          "vaccinations": [],
+          "emergency_care_attendances": [],
+          "expected_in_population": True,
+          "expected_columns": {
+            "sro_prioritized": 0,
+            "sro_deprioritized": 1
           },
       },
 }

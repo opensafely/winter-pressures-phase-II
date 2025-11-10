@@ -101,6 +101,18 @@ sro_dict["med_review"] = sro_dict["med_review1"] + sro_dict["med_review2"]
 del sro_dict["med_review1"]
 del sro_dict["med_review2"]
 
+# Combine prioritized tests together
+prioritized = ['copd_review', 'asthma_review', 'med_review']
+sro_dict['sro_prioritized'] = []
+for sro in prioritized:
+    sro_dict['sro_prioritized'] = sro_dict['sro_prioritized'] + sro_dict[sro]
+
+# Combine deprioritized tests together
+deprioritized = set(sro_dict.keys()) - set(prioritized) - set(['sro_prioritized'])
+sro_dict['sro_deprioritized'] = []
+for sro in deprioritized:
+    sro_dict['sro_deprioritized'] = sro_dict['sro_deprioritized'] + sro_dict[sro]
+
 # Seasonal respiratory illness
 resp_dict = {
     "flu_specific": "codelists/opensafely-influenza-identification-primary-care.csv",

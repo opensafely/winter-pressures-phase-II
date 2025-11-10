@@ -147,6 +147,11 @@ dataset.vax_app = count_vaccinations(study_start_date, study_end_date)
 dataset.vax_app_flu = count_vaccinations(study_start_date, study_end_date, ['INFLUENZA'])
 dataset.vax_app_covid = count_vaccinations(study_start_date, study_end_date, ['SARS-2 CORONAVIRUS'])
 
+# Count sro measures in interval
+for key in sro_dict.keys(): 
+    result = count_clinical_consultations(sro_dict[key], study_start_date, study_end_date)
+    dataset.add_column(key, result)
+
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
 
 dataset.flu_sensitive = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'flu', 
@@ -164,6 +169,10 @@ dataset.covid_sensitive = count_seasonal_illness_sensitive(study_start_date, stu
 dataset.overall_resp_sensitive = count_mild_overall_resp_illness(study_start_date, study_end_date, dataset.flu_sensitive, dataset.covid_sensitive, 
                                                                  dataset.rsv_sensitive, age, resp_dict['overall_sensitive'], 
                                                                  overall_exclusion, asthma_copd_exacerbation_codelist)
+
+dataset.overall_resp_sensitive_with_appt = count_mild_overall_resp_illness(study_start_date, study_end_date, dataset.flu_sensitive, dataset.covid_sensitive, 
+                                                                 dataset.rsv_sensitive, age, resp_dict['overall_sensitive'], 
+                                                                 overall_exclusion, asthma_copd_exacerbation_codelist, seen_appts_in_interval)
 
 dataset.flu_sensitive_with_appt = count_seasonal_illness_sensitive(study_start_date, study_end_date, 'flu', 
                                                                     app_reason_dict['ARI'], fever_codelist, resp_dict['flu_sensitive'], 
