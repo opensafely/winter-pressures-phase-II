@@ -287,65 +287,6 @@ def count_emergency_care_attendance(interval_start, interval_end):
                                             .is_on_or_between(interval_start, interval_end)
                                             ).count_for_patient()
 
-# def count_influenza_like_illness(interval_start, interval_end, 
-#                                  maximally_specific_codes,
-#                                  maximally_sensitive_codes,
-#                                  ARI_codes,
-#                                  fever_codes,
-#                                  antiviral_codes,
-#                                  exclusion_codes):
-#     """
-#     Counts influenza-like illness (ILI) events meeting 'maximally sensitive' criteria.
-#     """
-
-#     # Limit to events in interval
-#     events = clinical_events.where(clinical_events.date.is_on_or_between(interval_start, interval_end))
-#     meds = medications.where(medications.date.is_on_or_between(interval_start, interval_end))
-
-#     # ---------------- Inclusion criteria ----------------
-
-#     # 1. Maximally specific event
-#     specific_events = events.where(events.snomedct_code.is_in(maximally_specific_codes))
-
-#     # 2. Maximally sensitive event
-#     sensitive_events = events.where(events.snomedct_code.is_in(maximally_sensitive_codes))
-
-#     # Exclusion events
-#     exclusion_events = events.where(events.snomedct_code.is_in(exclusion_codes))
-
-#     # 3. Influenza-like illness = Respiratory illness + fever ≥ 38°C within same episode (±14 days)
-#     ARI_events = events.where(events.snomedct_code.is_in(ARI_codes))
-#     fever_events = events.where(events.snomedct_code.is_in(fever_codes))
-
-#     # ILI_codes (with duplicates) = ari_event in interval & fever within 14 days 
-#     # ILI_codes (without duplicates) = first_for_patient(ILI_codes (with duplicates))
-#     ILI_events = ARI_events.where(
-#         fever_events.where(
-#             (ARI_events.sort_by(ARI_events.date.first_for_patient().date)
-#              -fever_events.sort_by(fever_events.date..date)).days 
-#              <= days(14))
-#     ).first_for_patient()
-
-#     # 4. Antiviral prescription
-#     antiviral_rx = meds.where(meds.dmd_code.is_in(antiviral_codes))
-
-#     meets_inclusion = (
-#         specific_event.exists_for_patient() |
-#         influenza_event.exists_for_patient() |
-#         respiratory_with_fever |
-#         antiviral_rx.exists_for_patient()
-#     )
-
-#     # ---------------- Exclusion criteria ----------------
-
-#     within_exclusion_window = exclusion_events.where(
-#         (exclusion_events.date - ARI_events.date).days <= days(30)) |
-#         ((exclusion_events.date - antiviral_rx.date).days <= days(30))
-#     )
-
-#     # ---------------- Combine ----------------
-#     return meets_inclusion & ~within_exclusion_window
-
 def filter_events_in_interval(interval_start, interval_end, codelist):
     '''
     Filter the events from a given codelist and interval
