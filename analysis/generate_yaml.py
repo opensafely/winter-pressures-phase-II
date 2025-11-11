@@ -256,8 +256,9 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
 
 yaml_test = '''
 
-  # --------------- TEST QUERIES ------------------------------------------
+  # --------------- OTHER ACTIONS ------------------------------------------
 
+  # Assurance test
   generate_dataset:
     run: >
         ehrql:v1 generate-dataset
@@ -267,6 +268,14 @@ yaml_test = '''
     outputs:
       highly_sensitive:
         population: output/dataset.csv
+
+  # Sense check
+  generate_sense_check:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set subset2
+    needs: [generate_practice_measures_subset2_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_subset2/sense_check_practice_test.csv
 '''  
 
 # -------- Combine scripts and print file -----------

@@ -1149,8 +1149,9 @@ actions:
         seasonal_tables_tables: output/comorbid_measures_subset2/Results*_test.csv
 
 
-  # --------------- TEST QUERIES ------------------------------------------
+  # --------------- OTHER ACTIONS ------------------------------------------
 
+  # Assurance test
   generate_dataset:
     run: >
         ehrql:v1 generate-dataset
@@ -1160,3 +1161,11 @@ actions:
     outputs:
       highly_sensitive:
         population: output/dataset.csv
+
+  # Sense check
+  generate_sense_check:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set subset2
+    needs: [generate_practice_measures_subset2_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_subset2/sense_check_practice_test.csv
