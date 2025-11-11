@@ -216,6 +216,9 @@ def read_write(read_or_write, path, file_type = 'arrow', test = args.test, df = 
 
     elif read_or_write == 'write':
 
+        if df is None:
+            raise Exception("Must supply dataframe when writing")
+
         if file_type == 'csv':
             df.to_csv(path + '.csv', **kwargs)
 
