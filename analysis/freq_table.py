@@ -14,8 +14,8 @@ date = [date for date in dates if date.startswith(year)][0]
 
 # Load and format data for each interval
 print(f"Loading {args.group} measures {date}", flush=True)
-input_path = f"output/{args.group}_measures/{args.group}_measures_{date}"
-output_path = f"output/{args.group}_measures/freq_table_{args.group}"
+input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{date}"
+output_path = f"output/{args.group}_measures_{args.set}/freq_table_{args.group}"
 
 patient_df = read_write(read_or_write = 'read', path = input_path, 
                     dtype=args.dtype_dict, true_values=["T"], false_values=["F"])

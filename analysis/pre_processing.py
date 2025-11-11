@@ -4,6 +4,8 @@
 # Option --demograph_measures flag to aggregate by demographics
 # Option --practice_measures flag to aggregate by practice
 # Option --test flag to run a lightweight test with a single date
+# Option --set all to run all measures
+# Option --set subset2 to run the 2nd iteration subset of measures 
 
 import pandas as pd
 from scipy import stats
@@ -32,8 +34,8 @@ log_memory_usage(label="Before loading data")
 for date in dates:
 
     print(f"Loading {args.group} measures {date}", flush=True)
-    input_path = f"output/{args.group}_measures/{args.group}_measures_{date}"
-    output_path = f"output/{args.group}_measures/proc_{args.group}_measures"
+    input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{date}"
+    output_path = f"output/{args.group}_measures_{args.set}/proc_{args.group}_measures"
     # Read in measures
     df = read_write(read_or_write = 'read', path = input_path, dtype=args.dtype_dict)
     log_memory_usage(label=f"After loading measures {date}")
