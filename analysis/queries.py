@@ -303,7 +303,7 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
                                      codelist_max_sens, codelist_med, codelist_exclusion, codelist_max_spec, 
                                      seen_appts_in_interval = None):
     '''
-    Counts the number of patients who had a flu, identified with maximal sensitivity
+    Counts the number of patients who had a flu, RSV or covid case, identified with maximal sensitivity
     Args:
         disease: flu, rsv or covid
         codelist_ari: Acute Respiratory Disease codelist
@@ -314,7 +314,7 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
         codelist_max_spec: Max specificity rsv codelist
         seen_appts_in_interval: Filtered appointments table, used if filtering events to those paired with an appt
     Returns:
-        Count the number of patients who had a flu case
+        Count the number of patients who had a flu, RSV or covid case.
     '''
 
     # Max specificity event
@@ -402,8 +402,7 @@ def count_mild_overall_resp_illness(interval_start, interval_end, has_flu, has_c
                                     codelist_overall_max_sens, codelist_exclusion, asthma_copd_exacerbation_codelist,
                                     seen_appts_in_interval = None):
     '''
-    Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]) 
-    AND NOT exclusion criteria
+    Count patients with any broadly defined mild respiratory illness.
     Args:
         has_flu/covid/rsv: BoolPatientSeries of max sensitivity cases
         age: IntPatientSeries of age of each patient
