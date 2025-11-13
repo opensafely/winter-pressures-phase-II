@@ -10,6 +10,7 @@ from ehrql import (
     when,
     INTERVAL,
     create_measures,
+    minimum_of,
 )
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
@@ -91,21 +92,27 @@ def count_follow_up(interval_start, seen_appts_in_interval):
 def count_reason_for_app(interval_start, interval_end, reason, seen_appts_in_interval):
     """
     Counts the number of appointments for different clinical events,
-    where reason and event are assumed to be linked if they have the same date
+    where reason and event are assumed to be linked if they occur in the same interval.
     Args:
         reason: clinical event that could be linked to appointment
         seen_appts_in_interval: appointments with seen date in interval
     Returns:
         Count of number of appointments for each reason
     """
-    event = clinical_events.where(
+
+    # Number of clinical events for reason in interval
+    n_event = clinical_events.where(
         (clinical_events.snomedct_code.is_in(reason))
         & (clinical_events.date.is_on_or_between(interval_start, interval_end))
-    )
-    result = event.where(
-        event.date.is_in(seen_appts_in_interval.start_date)
     ).count_for_patient()
-    return result
+
+    # Number of appointments in interval
+    n_appts = count_seen_in_interval(seen_appts_in_interval)
+
+    # Number of clinical events for reason that match appointment dates
+    n_event_and_appt = minimum_of(n_event, n_appts)
+
+    return n_event_and_appt
 
 
 def count_seen_in_interval(seen_appts_in_interval):

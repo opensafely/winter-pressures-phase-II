@@ -11,6 +11,7 @@ from ehrql import (
     INTERVAL,
     create_measures,
     claim_permissions,
+    minimum_of,
 )
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
@@ -231,6 +232,14 @@ measures_to_add["secondary_appt"] = count_secondary_referral(
     INTERVAL.start_date, INTERVAL.end_date, type="appointment_date"
 )
 
+# Count number of appts for sick notes
+measures_to_add["sick_notes_app"] = count_reason_for_app(
+    INTERVAL.start_date,
+    INTERVAL.end_date,
+    app_reason_dict["sick_notes_app"],
+    seen_appts_in_interval,
+)
+
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = [
     "Did Not Attend",
@@ -433,7 +442,7 @@ if args.set == "subset2":
     for key in list(measures_to_add.keys()):
         if (
             (key not in sro_dict)
-            and (key not in ["secondary_referral", "secondary_appt"])
+            and (key not in ["secondary_referral", "secondary_appt", "sick_notes_app"])
             and ("sensitive" not in key)
         ):
             del measures_to_add[key]
