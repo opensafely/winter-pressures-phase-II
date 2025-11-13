@@ -325,8 +325,8 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
     max_sens_event_count = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
                                       .count_for_patient())
     
-    # Antiviral prescription
-    has_antiviral_prescription = medications.where(
+    # Has prescription
+    has_prescription = medications.where(
                         (medications.dmd_code.is_in(codelist_med))
                             & medications.date.is_on_or_between(interval_start, interval_end)
                         ).exists_for_patient()
@@ -337,20 +337,30 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
     
     if (disease == 'rsv') | (disease == 'covid'):
 
-        max_sens_event_date = (filter_events_in_interval(interval_start, interval_end, codelist_max_sens)
-                                                .sort_by(clinical_events.date)
-                                                .first_for_patient()
-                                                .date)
-        
-        has_max_sens_event2 = (filter_events_in_interval(max_sens_event_date + days(1), 
-                                                                    max_sens_event_date + days(1) + weeks(2), 
+        # Check if there was another max sensitivity event (e.g. cough) within 2 weeks of this interval
+        has_max_sens_prior = (filter_events_in_interval(interval_start - weeks(2), 
+                                                                    interval_start - days(1), 
                                                                     codelist_max_sens)
                                         .exists_for_patient())
+        
+        has_max_sens_after = (filter_events_in_interval(interval_end + days(1), 
+                                                                interval_start + weeks(2), 
+                                                                codelist_max_sens)
+                                    .exists_for_patient())
+        
+        has_max_sens_event2 = has_max_sens_prior | has_max_sens_after
+        
+        # For RSV, prescription requires accompanying max sensitivity code because the prescriptions include
+        # antibiotics, which are too unspecific to use alone
 
-        # (Max specificity RSV OR 2 Max sensitivity RSV OR [1 Max sensitivity RSV AND antiviral prescription]) 
-        # AND NOT other non-flu respiratory illness (e.g. covid)
+        if disease == 'rsv':
+
+            has_prescription = has_prescription & (max_sens_event_count >= 1)
+
+        # (Max specificity OR 2 Max sensitivity in interval OR 2 Max sensitivity in wider episode OR antiviral prescription) 
+        # AND NOT other respiratory illness
         has_max_sensitivity = (
-            (has_max_spec_event | (max_sens_event_count >= 2) | ((max_sens_event_count == 1) & has_max_sens_event2) | ((max_sens_event_count >= 1) & has_antiviral_prescription))
+            (has_max_spec_event | (max_sens_event_count >= 2) | ((max_sens_event_count == 1) & has_max_sens_event2) | (has_prescription))
             & ~(has_exclusion)
         )
 
@@ -387,7 +397,7 @@ def count_seasonal_illness_sensitive(interval_start, interval_end, disease, code
         )
 
         # Max sensitive flu = (ILI, flu code, or flu medication) AND not a different respiratory illness
-        has_max_sensitivity = (((has_ili) | (max_sens_event_count >= 1) | (has_antiviral_prescription))
+        has_max_sensitivity = (((has_ili) | (max_sens_event_count >= 1) | (has_prescription))
                                 & (~(has_exclusion)))
     
     if seen_appts_in_interval != None:
