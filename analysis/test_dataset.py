@@ -232,7 +232,31 @@ test_data = {
             "flu_sensitive": 0,
         },
     },
-    9: {  # No Max sensitive RSV - Only one rsv event
+    9: {  # Max sensitive flu - Max spec event AND exclusion code in episode
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [
+            {"date": date(2022, 1, 15), "snomedct_code": "1033051000000101"},
+            {"date": date(2022, 1, 3), "snomedct_code": "1002141000000100"},
+        ],  # exclusion code
+        "addresses": [{"start_date": date(2010, 1, 1), "imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [
+            {
+                "start_date": date(2010, 1, 1),
+                "end_date": date(2025, 1, 1),
+                "practice_nuts1_region_name": "West Midlands",
+            }
+        ],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+            "flu_sensitive": 1,
+        },
+    },
+    10: {  # No Max sensitive RSV - Only one rsv event
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "102496004"}],
@@ -253,7 +277,7 @@ test_data = {
             "rsv_sensitive": 0,
         },
     },
-    10: {  # Max sensitive RSV - 2 RSV events in episode
+    11: {  # Max sensitive RSV - 2 RSV events in episode
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -277,7 +301,7 @@ test_data = {
             "rsv_sensitive": 1,
         },
     },
-    11: {  # Max sensitive RSV - 1 RSV event later
+    12: {  # Max sensitive RSV - 1 RSV event later
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 22), "snomedct_code": "103001002"}],
@@ -298,7 +322,7 @@ test_data = {
             "rsv_sensitive": 0,
         },
     },
-    12: {  # Max sensitive RSV - 1 RSV event + 1 prescription
+    13: {  # Max sensitive RSV - 1 RSV event + 1 prescription
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [{"date": date(2022, 1, 15), "dmd_code": "41953711000001109"}],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "103001002"}],
@@ -319,7 +343,7 @@ test_data = {
             "rsv_sensitive": 1,
         },
     },
-    13: {  # No Max sensitive RSV - 1 prescription alone
+    14: {  # No Max sensitive RSV - 1 prescription alone
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [{"date": date(2022, 1, 1), "dmd_code": "41953711000001109"}],
         "clinical_events": [],
@@ -340,7 +364,7 @@ test_data = {
             "rsv_sensitive": 0,
         },
     },
-    14: {  # Overall resp: rsv case
+    15: {  # Overall resp: rsv case
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -362,7 +386,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"rsv_sensitive": 1, "overall_resp_sensitive": 1},
     },
-    15: {  # Overall resp: unidentified case
+    16: {  # Overall resp: unidentified case
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "102453009"}],
@@ -381,7 +405,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"overall_resp_sensitive": 1},
     },
-    16: {  # No overall resp: unidentified case + exclusion
+    17: {  # No overall resp: unidentified case + exclusion
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -403,7 +427,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"overall_resp_sensitive": 0},
     },
-    17: {  # No flu due to no same day appt
+    18: {  # No flu due to no same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -424,7 +448,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"flu_sensitive_with_appt": 0},
     },
-    18: {  # Flu with same day appt
+    19: {  # Flu with same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -447,7 +471,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"flu_sensitive_with_appt": 1},
     },
-    19: {  # No Overall resp as no same day appt
+    20: {  # No Overall resp as no same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "102453009"}],
@@ -466,7 +490,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"overall_resp_sensitive_with_appt": 0},
     },
-    20: {  # Overall resp with same day appt
+    21: {  # Overall resp with same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "102453009"}],
@@ -487,7 +511,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"overall_resp_sensitive_with_appt": 1},
     },
-    21: {  # Sro prioritized
+    22: {  # Sro prioritized
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -508,7 +532,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"sro_prioritized": 1, "sro_deprioritized": 0},
     },
-    22: {  # Sro de-prioritized
+    23: {  # Sro de-prioritized
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [

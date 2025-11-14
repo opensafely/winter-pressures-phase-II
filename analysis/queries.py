@@ -22,6 +22,7 @@ from ehrql.tables.tpp import (
     vaccinations,
     emergency_care_attendances,
 )
+from codelist_definition import *
 
 
 def create_seen_appts_in_interval(interval_start, interval_end):
@@ -359,12 +360,12 @@ def count_seasonal_illness_sensitive(
     interval_start,
     interval_end,
     disease,
-    codelist_ari,
-    codelist_fever,
     codelist_max_sens,
     codelist_med,
     codelist_exclusion,
     codelist_max_spec,
+    codelist_ari=app_reason_dict["ARI"],
+    codelist_fever=fever_codelist,
     seen_appts_in_interval=None,
 ):
     """
@@ -403,7 +404,7 @@ def count_seasonal_illness_sensitive(
         interval_start - weeks(2), interval_end + weeks(2), codelist_exclusion
     ).exists_for_patient()
 
-    if (disease == "rsv") | (disease == "covid"):
+    if disease in ("rsv", "covid"):
 
         # Check if there was another max sensitivity event (e.g. cough) within 2 weeks of this interval
         has_max_sens_prior = filter_events_in_interval(
@@ -411,7 +412,7 @@ def count_seasonal_illness_sensitive(
         ).exists_for_patient()
 
         has_max_sens_after = filter_events_in_interval(
-            interval_end + days(1), interval_start + weeks(2), codelist_max_sens
+            interval_end + days(1), interval_end + weeks(2), codelist_max_sens
         ).exists_for_patient()
 
         has_max_sens_event2 = has_max_sens_prior | has_max_sens_after
@@ -423,14 +424,13 @@ def count_seasonal_illness_sensitive(
 
             has_prescription = has_prescription & (max_sens_event_count >= 1)
 
-        # (Max specificity OR 2 Max sensitivity in interval OR 2 Max sensitivity in wider episode OR antiviral prescription)
-        # AND NOT other respiratory illness
-        has_max_sensitivity = (
-            has_max_spec_event
-            | (max_sens_event_count >= 2)
+        # (Max specificity) OR (2 Max sensitivity in interval OR 2 Max sensitivity in wider episode OR antiviral prescription
+        # AND NOT other respiratory illness)
+        has_max_sensitivity = (has_max_spec_event) | (
+            (max_sens_event_count >= 2)
             | ((max_sens_event_count == 1) & has_max_sens_event2)
             | (has_prescription)
-        ) & ~(has_exclusion)
+        ) & (~(has_exclusion))
 
     if disease == "flu":
 
@@ -439,15 +439,8 @@ def count_seasonal_illness_sensitive(
             interval_start, interval_end, codelist_ari
         ).exists_for_patient()
 
-        ari_date_this_week = (
-            filter_events_in_interval(interval_start, interval_end, codelist_ari)
-            .sort_by(clinical_events.date)
-            .last_for_patient()
-            .date
-        )
-
-        has_fever_symptom_next_2_weeks = filter_events_in_interval(
-            ari_date_this_week, ari_date_this_week + weeks(2), codelist_fever
+        has_fever_symptom_in_episode = filter_events_in_interval(
+            interval_start - weeks(2), interval_end + weeks(2), codelist_fever
         ).exists_for_patient()
 
         # ILI 2 - fever and then ALI in same episode
@@ -455,26 +448,20 @@ def count_seasonal_illness_sensitive(
             interval_start, interval_end, codelist_fever
         ).exists_for_patient()
 
-        fever_date_this_week = (
-            filter_events_in_interval(interval_start, interval_end, codelist_fever)
-            .sort_by(clinical_events.date)
-            .last_for_patient()
-            .date
-        )
-
-        has_ari_symptom_next_2_weeks = filter_events_in_interval(
-            fever_date_this_week, fever_date_this_week + weeks(2), codelist_ari
+        has_ari_symptom_in_episode = filter_events_in_interval(
+            interval_start - weeks(2), interval_end + weeks(2), codelist_ari
         ).exists_for_patient()
 
         # ILI overall - Either ari and then fever, or fever and then ari
-        has_ili = (has_ari_symptom_this_week & has_fever_symptom_next_2_weeks) | (
-            has_fever_symptom_this_week & has_ari_symptom_next_2_weeks
+        has_ili = (has_ari_symptom_this_week & has_fever_symptom_in_episode) | (
+            has_fever_symptom_this_week & has_ari_symptom_in_episode
         )
 
-        # Max sensitive flu = (ILI, flu code, or flu medication) AND not a different respiratory illness
-        has_max_sensitivity = (
-            (has_ili) | (max_sens_event_count >= 1) | (has_prescription)
-        ) & (~(has_exclusion))
+        # Max sensitive flu = Max specificty case OR ((ILI, flu code, or flu medication) AND not a different respiratory illness)
+        has_max_sensitivity = (has_max_spec_event) | (
+            ((has_ili) | (max_sens_event_count >= 1) | (has_prescription))
+            & (~(has_exclusion))
+        )
 
     if seen_appts_in_interval != None:
 
@@ -492,14 +479,17 @@ def count_mild_overall_resp_illness(
     has_covid,
     has_rsv,
     age,
-    codelist_overall_max_sens,
-    codelist_exclusion,
-    asthma_copd_exacerbation_codelist,
+    codelist_overall_max_sens=resp_dict["overall_sensitive"],
+    codelist_exclusion=overall_exclusion,
+    asthma_copd_exacerbation_codelist=asthma_copd_exacerbation_codelist,
     seen_appts_in_interval=None,
+    flu_specific_codelist=resp_dict["flu_specific"],
+    rsv_specific_codelist=resp_dict["rsv_specific"],
+    covid_specific_codelist=resp_dict["covid_specific"],
 ):
     """
-    Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older])
-    AND NOT exclusion criteria
+    Count patients with specific case OR sensitive (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]
+    AND NOT exclusion criteria)
     Args:
         has_flu/covid/rsv: BoolPatientSeries of max sensitivity cases
         age: IntPatientSeries of age of each patient
@@ -510,6 +500,13 @@ def count_mild_overall_resp_illness(
     Returns:
         has_max_sens_overall_resp_ill: BoolPatientSeries of any respiratory illness at max sensitivity
     """
+
+    has_specific_case = clinical_events.where(
+        clinical_events.snomedct_code.is_in(
+            flu_specific_codelist + rsv_specific_codelist + covid_specific_codelist
+        )
+        & clinical_events.date.is_on_or_between(interval_start, interval_end)
+    ).exists_for_patient()
 
     has_overall_max_sens = filter_events_in_interval(
         interval_start, interval_end, codelist_overall_max_sens
@@ -527,13 +524,16 @@ def count_mild_overall_resp_illness(
 
     # Count patients with (flu OR RSV or covid OR an unidentified resp illness OR [excerbation AND older]) AND NOT exclusion criteria
 
-    has_max_sens_overall_resp_ill = (
-        has_flu
-        | has_covid
-        | has_rsv
-        | has_overall_max_sens
-        | (has_exacerbation & is_older)
-    ) & ~(has_exclusion)
+    has_max_sens_overall_resp_ill = (has_specific_case) | (
+        (
+            has_flu
+            | has_covid
+            | has_rsv
+            | has_overall_max_sens
+            | (has_exacerbation & is_older)
+        )
+        & (~(has_exclusion))
+    )
 
     if seen_appts_in_interval != None:
 

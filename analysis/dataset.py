@@ -207,8 +207,6 @@ dataset.flu_sensitive = count_seasonal_illness_sensitive(
     study_start_date,
     study_end_date,
     "flu",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["flu_sensitive"],
     flu_med_codelist,
     flu_sensitive_exclusion,
@@ -219,8 +217,6 @@ dataset.rsv_sensitive = count_seasonal_illness_sensitive(
     study_start_date,
     study_end_date,
     "rsv",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["rsv_sensitive"],
     rsv_med_codelist,
     rsv_sensitive_exclusion,
@@ -231,8 +227,6 @@ dataset.covid_sensitive = count_seasonal_illness_sensitive(
     study_start_date,
     study_end_date,
     "covid",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["covid_sensitive"],
     covid_med_codelist,
     covid_sensitive_exclusion,
@@ -246,9 +240,6 @@ dataset.overall_resp_sensitive = count_mild_overall_resp_illness(
     dataset.covid_sensitive,
     dataset.rsv_sensitive,
     age,
-    resp_dict["overall_sensitive"],
-    overall_exclusion,
-    asthma_copd_exacerbation_codelist,
 )
 
 dataset.overall_resp_sensitive_with_appt = count_mild_overall_resp_illness(
@@ -258,23 +249,18 @@ dataset.overall_resp_sensitive_with_appt = count_mild_overall_resp_illness(
     dataset.covid_sensitive,
     dataset.rsv_sensitive,
     age,
-    resp_dict["overall_sensitive"],
-    overall_exclusion,
-    asthma_copd_exacerbation_codelist,
-    seen_appts_in_interval,
+    seen_appts_in_interval=seen_appts_in_interval,
 )
 
 dataset.flu_sensitive_with_appt = count_seasonal_illness_sensitive(
     study_start_date,
     study_end_date,
     "flu",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["flu_sensitive"],
     flu_med_codelist,
     flu_sensitive_exclusion,
     resp_dict["flu_specific"],
-    seen_appts_in_interval,
+    seen_appts_in_interval=seen_appts_in_interval,
 )
 
 # Number of secondary care referrals during intervals

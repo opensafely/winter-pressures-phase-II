@@ -289,8 +289,6 @@ measures_to_add["flu_sensitive"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
     "flu",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["flu_sensitive"],
     flu_med_codelist,
     flu_sensitive_exclusion,
@@ -301,8 +299,6 @@ measures_to_add["rsv_sensitive"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
     "rsv",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["rsv_sensitive"],
     rsv_med_codelist,
     rsv_sensitive_exclusion,
@@ -313,8 +309,6 @@ measures_to_add["covid_sensitive"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
     "covid",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["covid_sensitive"],
     covid_med_codelist,
     covid_sensitive_exclusion,
@@ -328,9 +322,6 @@ measures_to_add["overall_resp_sensitive"] = count_mild_overall_resp_illness(
     measures_to_add["covid_sensitive"],
     measures_to_add["rsv_sensitive"],
     age,
-    resp_dict["overall_sensitive"],
-    overall_exclusion,
-    asthma_copd_exacerbation_codelist,
 )
 
 # Limit to cases with appt in the same interval to reduce secondary discharge codes
@@ -339,39 +330,33 @@ measures_to_add["flu_sensitive_with_appt"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
     "flu",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["flu_sensitive"],
     flu_med_codelist,
     flu_sensitive_exclusion,
     resp_dict["flu_specific"],
-    seen_appts_in_interval,
+    seen_appts_in_interval=seen_appts_in_interval,
 )
 
 measures_to_add["rsv_sensitive_with_appt"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
     "rsv",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["rsv_sensitive"],
     rsv_med_codelist,
     rsv_sensitive_exclusion,
     resp_dict["rsv_specific"],
-    seen_appts_in_interval,
+    seen_appts_in_interval=seen_appts_in_interval,
 )
 
 measures_to_add["covid_sensitive_with_appt"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
     "covid",
-    app_reason_dict["ARI"],
-    fever_codelist,
     resp_dict["covid_sensitive"],
     covid_med_codelist,
     covid_sensitive_exclusion,
     resp_dict["covid_specific"],
-    seen_appts_in_interval,
+    seen_appts_in_interval=seen_appts_in_interval,
 )
 
 measures_to_add["overall_resp_sensitive_with_appt"] = count_mild_overall_resp_illness(
@@ -381,10 +366,7 @@ measures_to_add["overall_resp_sensitive_with_appt"] = count_mild_overall_resp_il
     measures_to_add["covid_sensitive"],
     measures_to_add["rsv_sensitive"],
     age,
-    resp_dict["overall_sensitive"],
-    overall_exclusion,
-    asthma_copd_exacerbation_codelist,
-    seen_appts_in_interval,
+    seen_appts_in_interval=seen_appts_in_interval,
 )
 
 # ---------------------- Define measures --------------------------------
