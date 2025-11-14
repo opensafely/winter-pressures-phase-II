@@ -530,7 +530,11 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"sro_prioritized": 1, "sro_deprioritized": 0},
+        "expected_columns": {
+            "sro_prioritized": 1,
+            "sro_deprioritized": 0,
+            "asthma_review": 1,
+        },
     },
     23: {  # Sro de-prioritized
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
@@ -551,9 +555,13 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"sro_prioritized": 0, "sro_deprioritized": 1},
+        "expected_columns": {
+            "sro_prioritized": 1,
+            "sro_deprioritized": 0,
+            "alt_test": 1,
+        },
     },
-    23: {  # 2 Sick notes - 3 events but 2 appts linking them
+    24: {  # 2 Sick notes - 3 events but 2 appts linking them
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [

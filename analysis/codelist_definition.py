@@ -1,4 +1,5 @@
 from ehrql import codelist_from_csv
+from wp_config_setup import args
 
 
 def create_codelist_dict(dic: dict) -> dict:
@@ -104,38 +105,12 @@ comorbid_dict = {
 comorbid_dict = create_codelist_dict(comorbid_dict)
 
 # SRO measures
-sro_dict = {
-    "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",
-    "alt_test": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
-    "sys_bp_test": "codelists/opensafely-systolic-blood-pressure-qof.csv",
-    "chol_test": "codelists/opensafely-cholesterol-tests.csv",
-    "rbc_test": "codelists/opensafely-red-blood-cell-rbc-tests.csv",
-    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
-    "cvd_10yr": "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
-    "thy_test": "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
-    "asthma_review": "codelists/opensafely-asthma-annual-review-qof.csv",
-    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
-    "med_review1": "codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
-    "med_review2": "codelists/nhsd-primary-care-domain-refsets-medrvw_cod.csv",
-}
-sro_dict = create_codelist_dict(sro_dict)
+sro_dict = create_codelist_dict(args.sro_dict)
 
 # Combine medication review codelists into one codelist
 sro_dict["med_review"] = sro_dict["med_review1"] + sro_dict["med_review2"]
 del sro_dict["med_review1"]
 del sro_dict["med_review2"]
-
-# Combine prioritized tests together
-prioritized = ["copd_review", "asthma_review", "med_review"]
-sro_dict["sro_prioritized"] = []
-for sro in prioritized:
-    sro_dict["sro_prioritized"] = sro_dict["sro_prioritized"] + sro_dict[sro]
-
-# Combine deprioritized tests together
-deprioritized = set(sro_dict.keys()) - set(prioritized) - set(["sro_prioritized"])
-sro_dict["sro_deprioritized"] = []
-for sro in deprioritized:
-    sro_dict["sro_deprioritized"] = sro_dict["sro_deprioritized"] + sro_dict[sro]
 
 # Seasonal respiratory illness
 resp_dict = {

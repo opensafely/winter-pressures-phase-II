@@ -202,6 +202,14 @@ for key in sro_dict.keys():
         sro_dict[key], INTERVAL.start_date, INTERVAL.end_date
     )
 
+# Combine prioritized and deprioritized sro measures
+measures_to_add["sro_prioritized"] = sum(
+    [measures_to_add[sro] for sro in args.prioritized]
+)
+measures_to_add["sro_deprioritized"] = sum(
+    [measures_to_add[sro] for sro in args.deprioritized]
+)
+
 # Number of appointments in interval
 measures_to_add["seen_in_interval"] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add["start_in_interval"] = count_start_in_interval(
@@ -424,7 +432,16 @@ if args.set == "subset2":
     for key in list(measures_to_add.keys()):
         if (
             (key not in sro_dict)
-            and (key not in ["secondary_referral", "secondary_appt", "sick_notes_app"])
+            and (
+                key
+                not in [
+                    "secondary_referral",
+                    "secondary_appt",
+                    "sick_notes_app",
+                    "sro_prioritized",
+                    "sro_deprioritized",
+                ]
+            )
             and ("sensitive" not in key)
         ):
             del measures_to_add[key]

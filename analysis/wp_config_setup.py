@@ -114,6 +114,25 @@ elif args.comorbid_measures:
         }
     )
 
+args.sro_dict = {
+    "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",
+    "alt_test": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
+    "sys_bp_test": "codelists/opensafely-systolic-blood-pressure-qof.csv",
+    "chol_test": "codelists/opensafely-cholesterol-tests.csv",
+    "rbc_test": "codelists/opensafely-red-blood-cell-rbc-tests.csv",
+    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
+    "cvd_10yr": "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
+    "thy_test": "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
+    "asthma_review": "codelists/opensafely-asthma-annual-review-qof.csv",
+    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
+    "med_review1": "codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
+    "med_review2": "codelists/nhsd-primary-care-domain-refsets-medrvw_cod.csv",
+}
+args.prioritized = ["copd_review", "asthma_review", "med_review"]
+args.deprioritized = (
+    set(args.sro_dict.keys()) - set(args.prioritized) - set(["sro_prioritized"])
+)
+
 if args.use_csv:
     args.file_type = "csv"
 else:
