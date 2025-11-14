@@ -1,7 +1,7 @@
-#TODO: 
+# TODO:
 # 1. Add support for .csv.gz measures
 """
-Description: 
+Description:
 - This script generates the YAML file for the project.
 - It iteratively generates actions for practice/demographic/comorbidity measures, split across many years.
 - It also generates test actions for each action.
@@ -35,7 +35,7 @@ actions:
 # Patient and practice measures flags to loop
 flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
 # Set of measures to loop
-measure_sets = ['all', 'subset2']
+measure_sets = ["all", "subset2"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_measures_template = """
@@ -57,21 +57,23 @@ needs = {}
 # Iterate over flags
 for flag in flags:
 
-  # Iterate over sets of measures
-  for set in measure_sets:
+    # Iterate over sets of measures
+    for set in measure_sets:
 
-    needs[f"{flag}_{set}"] = []
+        needs[f"{flag}_{set}"] = []
 
-    # Iterate over dates and generate yaml list of needs for each combination
-    for date in dates:
-      
-      yaml_measures += yaml_measures_template.format(flag = flag, date = date, set = set)
-      needs[f"{flag}_{set}"].append(f"generate_{flag}_{set}_{date}")
+        # Iterate over dates and generate yaml list of needs for each combination
+        for date in dates:
 
-    # Join list into string for each flag
-    needs[f"{flag}_{set}"] = ", ".join(needs[f"{flag}_{set}"])
+            yaml_measures += yaml_measures_template.format(
+                flag=flag, date=date, set=set
+            )
+            needs[f"{flag}_{set}"].append(f"generate_{flag}_{set}_{date}")
 
-yaml_measures_test_template = '''
+        # Join list into string for each flag
+        needs[f"{flag}_{set}"] = ", ".join(needs[f"{flag}_{set}"])
+
+yaml_measures_test_template = """
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_{set}_test:
@@ -107,10 +109,12 @@ yaml_measures_test_template = '''
     outputs:
       highly_sensitive:
         dataset: output/comorbid_measures_{set}/comorbid_measures_{start_date}_test.arrow
-'''
+"""
 yaml_measures_test = ""
 for set in measure_sets:
-  yaml_measures_test += yaml_measures_test_template.format(start_date = dates[0], set = set)
+    yaml_measures_test += yaml_measures_test_template.format(
+        start_date=dates[0], set=set
+    )
 
 # --------------- YAML APPT REPORT ------------------------------------------
 yaml_appt_report = ""
@@ -119,7 +123,7 @@ appt_dates = {
     1: datetime.strptime("2023-07-01", "%Y-%m-%d").date(),
     2: datetime.strptime("2023-12-01", "%Y-%m-%d").date(),
     3: datetime.strptime("2018-07-01", "%Y-%m-%d").date(),
-    4: datetime.strptime("2018-12-01", "%Y-%m-%d").date()
+    4: datetime.strptime("2018-12-01", "%Y-%m-%d").date(),
 }
 
 appt_needs = []
@@ -133,10 +137,10 @@ yaml_appt_template = """
      outputs:
        moderately_sensitive:
          dataset: output/appointments/app_measures_{key}.csv
- """ 
+ """
 
 for key, value in appt_dates.items():
-    yaml_appt_report += yaml_appt_template.format(key = key, appt_date = value)
+    yaml_appt_report += yaml_appt_template.format(key=key, appt_date=value)
     appt_needs.append(f"generate_app_measures_intv_{key}")
 
 appt_list = ", ".join(appt_needs)
@@ -152,7 +156,9 @@ yaml_appt_processing_template = """
 yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
 
 yaml_appt_report = yaml_appt_report + yaml_appt_processing
-yaml_appt_report += " \n # --------------- PROCESSING ------------------------------------------\n"
+yaml_appt_report += (
+    " \n # --------------- PROCESSING ------------------------------------------\n"
+)
 
 groups = ["demograph", "practice", "comorbid"]
 yaml_processing_template = """
@@ -187,26 +193,30 @@ yaml_processing_template = """
 yaml_processing = ""
 yaml_processing_test = ""
 for group in groups:
-  for set in measure_sets:
-    # Actions for processing real data
-    yaml_processing += yaml_processing_template.format(group = group,
-                                            needs = needs[f'{group}_measures_{set}'],
-                                            test_suffix = "",
-                                            test_flag = "",
-                                            set = set)
-  
+    for set in measure_sets:
+        # Actions for processing real data
+        yaml_processing += yaml_processing_template.format(
+            group=group,
+            needs=needs[f"{group}_measures_{set}"],
+            test_suffix="",
+            test_flag="",
+            set=set,
+        )
+
 for group in groups:
-  for set in measure_sets:
-    # Actions for processing test data
-    yaml_processing_test += yaml_processing_template.format(group = group,
-                                            needs = f'generate_{group}_measures_{set}',
-                                            test_suffix = "_test",
-                                            test_flag = "--test",
-                                            set = set)
+    for set in measure_sets:
+        # Actions for processing test data
+        yaml_processing_test += yaml_processing_template.format(
+            group=group,
+            needs=f"generate_{group}_measures_{set}",
+            test_suffix="_test",
+            test_flag="--test",
+            set=set,
+        )
 
-yaml_viz = ' \n # --------------- VISUALIZATION ACTIONS ------------------------------------------'
+yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
 
-yaml_viz_template = '''
+yaml_viz_template = """
 
   generate_deciles_charts_{set}{test_suffix}:
     run: >
@@ -216,9 +226,9 @@ yaml_viz_template = '''
       moderately_sensitive:
         deciles_charts: output/practice_measures_{set}/plots/decile_chart_*_rate_mp6{test_suffix}.png
         deciles_table: output/practice_measures_{set}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
-'''
+"""
 
-''' TEMPORARILY COMMENTED OUT:
+""" TEMPORARILY COMMENTED OUT:
 
   # Visualisation
   generate_tables_demograph{test_suffix}:
@@ -244,17 +254,17 @@ yaml_viz_template = '''
       moderately_sensitive:
         deciles_charts: output/practice_measures/plots/decile_chart_*_RR{test_suffix}.png
         deciles_table: output/practice_measures/decile_tables/decile_table_*_RR{test_suffix}.csv
-'''
+"""
 
-suffixes = ['', '_test']
-test_flags = ['', '--test']
+suffixes = ["", "_test"]
+test_flags = ["", "--test"]
 for test_suffix, test_flag in zip(suffixes, test_flags):
-  for set in measure_sets:
-    yaml_viz += yaml_viz_template.format(test_suffix = test_suffix,
-                                        test_flag = test_flag,
-                                        set = set)
+    for set in measure_sets:
+        yaml_viz += yaml_viz_template.format(
+            test_suffix=test_suffix, test_flag=test_flag, set=set
+        )
 
-yaml_test = '''
+yaml_test = """
 
   # --------------- OTHER ACTIONS ------------------------------------------
 
@@ -276,11 +286,20 @@ yaml_test = '''
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_subset2/sense_check_practice_test.csv
-'''  
+"""
 
 # -------- Combine scripts and print file -----------
 
-yaml = yaml_header + yaml_measures + yaml_appt_report + yaml_processing + yaml_viz + yaml_measures_test + yaml_processing_test + yaml_test
+yaml = (
+    yaml_header
+    + yaml_measures
+    + yaml_appt_report
+    + yaml_processing
+    + yaml_viz
+    + yaml_measures_test
+    + yaml_processing_test
+    + yaml_test
+)
 
 with open("/workspaces/winter-pressures-phase-II/project.yaml", "w") as file:
-       file.write(yaml)
+    file.write(yaml)

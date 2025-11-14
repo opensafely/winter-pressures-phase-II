@@ -6,7 +6,7 @@
 # Option --temp to run a temporary specific section of code and exit early
 
 # TODO:
-# 1 
+# 1
 
 import pandas as pd
 from utils import *
@@ -29,7 +29,9 @@ date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 log_memory_usage(label="Before loading data")
 
-input_path = f"output/{args.group}_measures_{args.set}/proc_{args.group}_measures_midpoint6"
+input_path = (
+    f"output/{args.group}_measures_{args.set}/proc_{args.group}_measures_midpoint6"
+)
 practice_interval_df = read_write("read", input_path)
 
 log_memory_usage(label="After loading data")
@@ -79,47 +81,49 @@ practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
 # Only keep intervals inside the periods of interest
 practice_interval_df = practice_interval_df.loc[
-        practice_interval_df["season"].isin(
-            ["Jun-Jul", "Sep-Oct", "Nov-Dec", "Jan-Feb"]
-        )
-    ]
+    practice_interval_df["season"].isin(["Jun-Jul", "Sep-Oct", "Nov-Dec", "Jan-Feb"])
+]
 
 # ----------------------- Seasonality analysis ----------------------------------
 
 # Iterate over two summer baseline options: 1) Compare winter to prev summer 2) Compare winter to first summer
 
-non_summer ={}
+non_summer = {}
 summer = {}
 seasonal_groups = [non_summer, summer]
-non_summer['practice_interval_df'] = practice_interval_df[practice_interval_df['season'] != 'Jun-Jul']
-summer['practice_interval_df'] = practice_interval_df[practice_interval_df['season'] == 'Jun-Jul']
+non_summer["practice_interval_df"] = practice_interval_df[
+    practice_interval_df["season"] != "Jun-Jul"
+]
+summer["practice_interval_df"] = practice_interval_df[
+    practice_interval_df["season"] == "Jun-Jul"
+]
 
 for seasonal_group in seasonal_groups:
 
     # -------- 1 - VARIANCES --------------------
 
-    seasonal_group['interval_season_df'] = build_aggregate_df(
-        seasonal_group['practice_interval_df'],
+    seasonal_group["interval_season_df"] = build_aggregate_df(
+        seasonal_group["practice_interval_df"],
         ["measure", "interval_start", "pandemic"],
         {"rate_per_1000_midpoint6_derived": ["var"]},
     )
-    
-    seasonal_group['interval_season_df']['season'] = seasonal_group['interval_season_df'][
-        "interval_start"
-    ].dt.month.apply(get_season)
+
+    seasonal_group["interval_season_df"]["season"] = seasonal_group[
+        "interval_season_df"
+    ]["interval_start"].dt.month.apply(get_season)
 
     # Variance at each timepoint, averaged per season
-    seasonal_group['season_var_df'] = build_aggregate_df(
-        seasonal_group['interval_season_df'],
+    seasonal_group["season_var_df"] = build_aggregate_df(
+        seasonal_group["interval_season_df"],
         ["measure", "season", "pandemic"],
         {"rate_per_1000_midpoint6_derived_var": ["mean", "count"]},
     )
 
     # Rename columns for clarity
-    seasonal_group['season_var_df'].rename(
+    seasonal_group["season_var_df"].rename(
         columns={
             "rate_per_1000_midpoint6_derived_var_mean": "rate_var_btwn_prac_mean",
-            "rate_per_1000_midpoint6_derived_var_count": "rate_var_btwn_prac_n_intervals"
+            "rate_per_1000_midpoint6_derived_var_count": "rate_var_btwn_prac_n_intervals",
         },
         inplace=True,
     )
@@ -127,60 +131,78 @@ for seasonal_group in seasonal_groups:
     # -------- 2 - REMOVE SEASONS WITH MISSING BASELINES --------------------
 
     # Aggregate counts per practice per season
-    seasonal_group['practice_season_df'] = build_aggregate_df(
-        seasonal_group['practice_interval_df'],
+    seasonal_group["practice_season_df"] = build_aggregate_df(
+        seasonal_group["practice_interval_df"],
         ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
         {"numerator_midpoint6": ["sum"], "list_size_midpoint6": ["sum", "count"]},
     )
 
 # Generate total counts per measure per summer
-summer['zero_or_nan_df'] = summer['practice_season_df'][
-    (summer['practice_season_df']['numerator_midpoint6_sum'] == 0) |
-    (summer['practice_season_df']['numerator_midpoint6_sum'].isna())
+summer["zero_or_nan_df"] = summer["practice_season_df"][
+    (summer["practice_season_df"]["numerator_midpoint6_sum"] == 0)
+    | (summer["practice_season_df"]["numerator_midpoint6_sum"].isna())
 ]
-to_remove = summer['zero_or_nan_df'][['measure', 'season', 'summer_year', 'practice_pseudo_id', 'pandemic']]
+to_remove = summer["zero_or_nan_df"][
+    ["measure", "season", "summer_year", "practice_pseudo_id", "pandemic"]
+]
 
 for seasonal_group in seasonal_groups:
 
     # Remove seasons without a valid baseline rate
-    seasonal_group['practice_season_df'] = pd.concat([seasonal_group['practice_season_df'], to_remove]).drop_duplicates(keep=False)
-    
+    seasonal_group["practice_season_df"] = pd.concat(
+        [seasonal_group["practice_season_df"], to_remove]
+    ).drop_duplicates(keep=False)
+
     # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
 
-    seasonal_group['season_df'] = build_aggregate_df(
-        seasonal_group['practice_season_df'],
+    seasonal_group["season_df"] = build_aggregate_df(
+        seasonal_group["practice_season_df"],
         ["measure", "season", "pandemic", "summer_year"],
-        {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_sum": ["sum"], "list_size_midpoint6_count": ["sum"]},
+        {
+            "numerator_midpoint6_sum": ["sum"],
+            "list_size_midpoint6_sum": ["sum"],
+            "list_size_midpoint6_count": ["sum"],
+        },
     )
 
-combined_seasons_df = merge_seasons(summer['season_df'], non_summer['season_df'], practice_level = False)
+combined_seasons_df = merge_seasons(
+    summer["season_df"], non_summer["season_df"], practice_level=False
+)
 
 # Calculate rate ratios
-combined_seasons_df[f"rate_per_1000"] = (combined_seasons_df[f'numerator_midpoint6_sum_sum'] / combined_seasons_df[f'list_size_midpoint6_sum_sum'])*1000
-baselines = ['_prev_summr', '_first_summr']
+combined_seasons_df[f"rate_per_1000"] = (
+    combined_seasons_df[f"numerator_midpoint6_sum_sum"]
+    / combined_seasons_df[f"list_size_midpoint6_sum_sum"]
+) * 1000
+baselines = ["_prev_summr", "_first_summr"]
 
 for baseline in baselines:
-    combined_seasons_df[f"rate_per_1000{baseline}"] = (combined_seasons_df[f'numerator_midpoint6_sum_sum{baseline}'] / combined_seasons_df[f'list_size_midpoint6_sum_sum{baseline}'])*1000
-    combined_seasons_df[f"RR{baseline}"] = combined_seasons_df[f"rate_per_1000"] / combined_seasons_df[f"rate_per_1000{baseline}"]
-    combined_seasons_df[f"RD{baseline}"] = combined_seasons_df[f"rate_per_1000"] - combined_seasons_df[f"rate_per_1000{baseline}"]
+    combined_seasons_df[f"rate_per_1000{baseline}"] = (
+        combined_seasons_df[f"numerator_midpoint6_sum_sum{baseline}"]
+        / combined_seasons_df[f"list_size_midpoint6_sum_sum{baseline}"]
+    ) * 1000
+    combined_seasons_df[f"RR{baseline}"] = (
+        combined_seasons_df[f"rate_per_1000"]
+        / combined_seasons_df[f"rate_per_1000{baseline}"]
+    )
+    combined_seasons_df[f"RD{baseline}"] = (
+        combined_seasons_df[f"rate_per_1000"]
+        - combined_seasons_df[f"rate_per_1000{baseline}"]
+    )
 
 rename_map = {
     "numerator_midpoint6_sum_sum": "num_sum",
     "list_size_midpoint6_sum_sum": "list_sum",
     "list_size_midpoint6_count_sum": "list_count",
-
     "numerator_midpoint6_sum_sum_prev_summr": "num_prev",
     "list_size_midpoint6_sum_sum_prev_summr": "list_prev",
     "list_size_midpoint6_count_sum_prev_summr": "list_count_prev",
-
     "numerator_midpoint6_sum_sum_first_summr": "num_first",
     "list_size_midpoint6_sum_sum_first_summr": "list_first",
     "list_size_midpoint6_count_sum_first_summr": "list_count_first",
-
     "rate_per_1000": "rate",
     "rate_per_1000_prev_summr": "rate_prev",
     "rate_per_1000_first_summr": "rate_first",
-
     "RR_prev_summr": "RR_prev",
     "RD_prev_summr": "RD_prev",
     "RR_first_summr": "RR_first",
@@ -188,14 +210,26 @@ rename_map = {
 }
 
 combined_seasons_df = combined_seasons_df.rename(columns=rename_map)
-combined_seasons_df = combined_seasons_df.drop(columns=["season_prev_summr", "season_first_summr"])
-read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/Results_weighted", df=combined_seasons_df, file_type = 'csv')    
-
-combined_var_df = summer['season_var_df'].merge(
-    non_summer['season_var_df'], on=["measure", "season", "pandemic"], how="left"
+combined_seasons_df = combined_seasons_df.drop(
+    columns=["season_prev_summr", "season_first_summr"]
+)
+read_write(
+    read_or_write="write",
+    path=f"output/{args.group}_measures_{args.set}/Results_weighted",
+    df=combined_seasons_df,
+    file_type="csv",
 )
 
-read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/Results_variance", df=combined_var_df, file_type = 'csv')    
+combined_var_df = summer["season_var_df"].merge(
+    non_summer["season_var_df"], on=["measure", "season", "pandemic"], how="left"
+)
+
+read_write(
+    read_or_write="write",
+    path=f"output/{args.group}_measures_{args.set}/Results_variance",
+    df=combined_var_df,
+    file_type="csv",
+)
 
 # Check means and var ratio
 # practice_season_df["var/mean"] = (
@@ -205,25 +239,56 @@ read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}
 
 # ------------ 4 - PRACTICE-LEVEL (UNWEIGHTED) EFFECT -------------------------
 
-non_summer['practice_season_df']['Rate_per_1000'] = (non_summer['practice_season_df']['numerator_midpoint6_sum'] / non_summer['practice_season_df']['list_size_midpoint6_sum'])*1000
-summer['practice_season_df']['Rate_per_1000'] = (summer['practice_season_df']['numerator_midpoint6_sum'] / summer['practice_season_df']['list_size_midpoint6_sum'])*1000
+non_summer["practice_season_df"]["Rate_per_1000"] = (
+    non_summer["practice_season_df"]["numerator_midpoint6_sum"]
+    / non_summer["practice_season_df"]["list_size_midpoint6_sum"]
+) * 1000
+summer["practice_season_df"]["Rate_per_1000"] = (
+    summer["practice_season_df"]["numerator_midpoint6_sum"]
+    / summer["practice_season_df"]["list_size_midpoint6_sum"]
+) * 1000
 
-combined_practice_seasons_df = merge_seasons(summer['practice_season_df'], non_summer['practice_season_df'], practice_level = True)
+combined_practice_seasons_df = merge_seasons(
+    summer["practice_season_df"], non_summer["practice_season_df"], practice_level=True
+)
 
-combined_practice_seasons_df['RR_prev_summr'] = combined_practice_seasons_df['Rate_per_1000'] / combined_practice_seasons_df['Rate_per_1000_prev_summr']
-combined_practice_seasons_df['RR_first_summr'] = combined_practice_seasons_df['Rate_per_1000'] / combined_practice_seasons_df['Rate_per_1000_first_summr']
-combined_practice_seasons_df['RD_prev_summr'] = combined_practice_seasons_df['Rate_per_1000'] - combined_practice_seasons_df['Rate_per_1000_prev_summr']
-combined_practice_seasons_df['RD_first_summr'] = combined_practice_seasons_df['Rate_per_1000'] - combined_practice_seasons_df['Rate_per_1000_first_summr']
+combined_practice_seasons_df["RR_prev_summr"] = (
+    combined_practice_seasons_df["Rate_per_1000"]
+    / combined_practice_seasons_df["Rate_per_1000_prev_summr"]
+)
+combined_practice_seasons_df["RR_first_summr"] = (
+    combined_practice_seasons_df["Rate_per_1000"]
+    / combined_practice_seasons_df["Rate_per_1000_first_summr"]
+)
+combined_practice_seasons_df["RD_prev_summr"] = (
+    combined_practice_seasons_df["Rate_per_1000"]
+    - combined_practice_seasons_df["Rate_per_1000_prev_summr"]
+)
+combined_practice_seasons_df["RD_first_summr"] = (
+    combined_practice_seasons_df["Rate_per_1000"]
+    - combined_practice_seasons_df["Rate_per_1000_first_summr"]
+)
 
 # Save practice-level counts for downstream stat testing
-read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
+read_write(
+    read_or_write="write",
+    path=f"output/{args.group}_measures_{args.set}/practice_level_counts",
+    df=combined_practice_seasons_df,
+    file_type="arrow",
+)
 
 # Aggregate from practice level to pandemic level
 combined_seasons_df_results = build_aggregate_df(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic"],
-    {"RR_prev_summr": ["mean"], "RR_first_summr": ["mean"], "list_size_midpoint6_count_first_summr": ['sum'], "list_size_midpoint6_count_prev_summr": ["sum"],
-     "RD_prev_summr": ["mean"], "RD_first_summr": ["mean"]},
+    {
+        "RR_prev_summr": ["mean"],
+        "RR_first_summr": ["mean"],
+        "list_size_midpoint6_count_first_summr": ["sum"],
+        "list_size_midpoint6_count_prev_summr": ["sum"],
+        "RD_prev_summr": ["mean"],
+        "RD_first_summr": ["mean"],
+    },
 )
 
 # Save unweighted RRs per season
@@ -231,17 +296,20 @@ rename_map = {
     # rate ratios
     "RR_prev_summr_mean": "RR_prev_mean",
     "RR_first_summr_mean": "RR_first_mean",
-
     # list sizes (counts of practices contributing)
     "list_size_midpoint6_count_first_summr_sum": "list_count_first",
     "list_size_midpoint6_count_prev_summr_sum": "list_count_prev",
-
     # rate differences
     "RD_prev_summr_mean": "RD_prev_mean",
     "RD_first_summr_mean": "RD_first_mean",
 }
 combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
+read_write(
+    read_or_write="write",
+    path=f"output/{args.group}_measures_{args.set}/Results_unweighted",
+    df=combined_seasons_df_results,
+    file_type="csv",
+)
 
 # # --------------- Describing long-term trend --------------------------------------------
 
@@ -384,7 +452,7 @@ read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}
 #     lambda row: test_difference(row, agg_df), axis=1
 # )
 
-#breakpoint()
+# breakpoint()
 
 # values = ['numerator_midpoint6_sum', 'list_size_midpoint6_sum', 'numerator_midpoint6_sum_prev_summr', 'list_size_midpoint6_sum_prev_summr']
 # for value in values:
@@ -393,13 +461,13 @@ read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}
 #         combined_practice_seasons_df = combined_practice_seasons_df[combined_practice_seasons_df[value] > 0]
 
 # def run_poisson_test(row):
-    
+
 #     res = stats.poisson_means_test(
 #         row['numerator_midpoint6_sum'], row['list_size_midpoint6_sum'],
 #         row['numerator_midpoint6_sum_prev_summr'], row['list_size_midpoint6_sum_prev_summr'],
 #         alternative='two-sided'
 #     )
-    
+
 #     return res.pvalue   # or res.statistic
 
 # combined_practice_seasons_df['test_prev_summr'] = combined_practice_seasons_df.apply(run_poisson_test, axis=1)
@@ -446,5 +514,3 @@ read_write(read_or_write="write", path=f"output/{args.group}_measures_{args.set}
 # results = results.round(2)
 
 # log_memory_usage(label="After practice-level testing data")
-
-
