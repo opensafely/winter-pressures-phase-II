@@ -130,7 +130,7 @@ args.sro_dict = {
 }
 args.prioritized = ["copd_review", "asthma_review", "med_review"]
 args.deprioritized = (
-    set(args.sro_dict.keys()) - set(args.prioritized) - set(["sro_prioritized"])
+    set(args.sro_dict.keys()) - set(args.prioritized) - set(["med_review1", "med_review2"])
 )
 
 if args.use_csv:
