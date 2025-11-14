@@ -556,8 +556,8 @@ test_data = {
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {
-            "sro_prioritized": 1,
-            "sro_deprioritized": 0,
+            "sro_prioritized": 0,
+            "sro_deprioritized": 1,
             "alt_test": 1,
         },
     },
@@ -592,5 +592,33 @@ test_data = {
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {"sick_notes_app": 2},
+    },
+    25: {  # Secondary care appts
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [],
+        "addresses": [{"start_date": date(2010, 1, 1), "imd_rounded": 200}],
+        "opa_cost": [{"appointment_date": date(2022, 1, 15)}],
+        "practice_registrations": [
+            {
+                "start_date": date(2010, 1, 1),
+                "end_date": date(2025, 1, 1),
+                "practice_nuts1_region_name": "West Midlands",
+            }
+        ],
+        "appointments": [
+            {
+                "start_date": date(2022, 1, 15),
+                "seen_date": date(2022, 1, 15),
+            },
+            {
+                "start_date": date(2022, 1, 17),
+                "seen_date": date(2022, 1, 17),
+            },
+        ],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {"secondary_appt": 1, "secondary_referral": 0},
     },
 }

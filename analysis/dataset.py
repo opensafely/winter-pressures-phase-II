@@ -272,6 +272,9 @@ dataset.flu_sensitive_with_appt = count_seasonal_illness_sensitive(
 dataset.secondary_referral = count_secondary_referral(
     study_start_date, study_end_date, type="referral_date"
 )
+dataset.secondary_appt = count_secondary_referral(
+    study_start_date, study_end_date, type="appointment_date"
+)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = ["Cancelled by Unit", "Waiting"]
