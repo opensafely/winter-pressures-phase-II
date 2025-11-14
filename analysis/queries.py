@@ -380,7 +380,7 @@ def count_seasonal_illness_sensitive(
         codelist_max_spec: Max specificity rsv codelist
         seen_appts_in_interval: Filtered appointments table, used if filtering events to those paired with an appt
     Returns:
-        Count the number of patients who had a flu case
+        Count the number of patients who had a flu, RSV or covid case.
     """
 
     # Max specificity event
