@@ -965,7 +965,7 @@ actions:
         dataset: output/demograph_measures_subset2/demograph_measures_2016-04-11_test.arrow
   generate_practice_measures_subset2_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_subset2/practice_measures_2016-04-11_test.csv
+      --output output/practice_measures_subset2/practice_measures_2016-04-11_test.arrow
       --
       --practice_measures
       --start_intv 2016-04-11
@@ -973,7 +973,7 @@ actions:
       --set subset2
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_subset2/practice_measures_2016-04-11_test.csv
+        dataset: output/practice_measures_subset2/practice_measures_2016-04-11_test.arrow
   generate_comorbid_measures_subset2_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
       --output output/comorbid_measures_subset2/comorbid_measures_2016-04-11_test.arrow
