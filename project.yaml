@@ -918,73 +918,73 @@ actions:
 
   generate_demograph_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_all/demograph_measures_2016-04-11_test.arrow
+      --output output/demograph_measures_all/demograph_measures_2023-01-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
       --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_all/demograph_measures_2016-04-11_test.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2023-01-08_test.arrow
   generate_practice_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_all/practice_measures_2016-04-11_test.arrow
+      --output output/practice_measures_all/practice_measures_2023-01-08_test.arrow
       --
       --practice_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
       --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_all/practice_measures_2016-04-11_test.arrow
+        dataset: output/practice_measures_all/practice_measures_2023-01-08_test.arrow
   generate_comorbid_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_all/comorbid_measures_2016-04-11_test.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2023-01-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
       --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_all/comorbid_measures_2016-04-11_test.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2023-01-08_test.arrow
 
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_subset2_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_subset2/demograph_measures_2016-04-11_test.arrow
+      --output output/demograph_measures_subset2/demograph_measures_2023-01-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
       --set subset2
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_subset2/demograph_measures_2016-04-11_test.arrow
+        dataset: output/demograph_measures_subset2/demograph_measures_2023-01-08_test.arrow
   generate_practice_measures_subset2_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_subset2/practice_measures_2016-04-11_test.arrow
+      --output output/practice_measures_subset2/practice_measures_2023-01-08_test.arrow
       --
       --practice_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
       --set subset2
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_subset2/practice_measures_2016-04-11_test.arrow
+        dataset: output/practice_measures_subset2/practice_measures_2023-01-08_test.arrow
   generate_comorbid_measures_subset2_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_subset2/comorbid_measures_2016-04-11_test.arrow
+      --output output/comorbid_measures_subset2/comorbid_measures_2023-01-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
       --set subset2
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_subset2/comorbid_measures_2016-04-11_test.arrow
+        dataset: output/comorbid_measures_subset2/comorbid_measures_2023-01-08_test.arrow
 
   generate_freq_table_demograph_all_test:
     run: python:v2 analysis/freq_table.py --demograph_measures --set all --test
@@ -1168,4 +1168,4 @@ actions:
     needs: [generate_practice_measures_subset2_test]
     outputs:
       moderately_sensitive:
-        totals: output/practice_measures_subset2/sense_check_practice_test.csv
+        totals: output/practice_measures_subset2/sense_check*.csv
