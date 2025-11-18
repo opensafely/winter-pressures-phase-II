@@ -113,7 +113,7 @@ yaml_measures_test_template = """
 yaml_measures_test = ""
 for set in measure_sets:
     yaml_measures_test += yaml_measures_test_template.format(
-        start_date=dates[0], set=set
+        start_date=args.test_start_date, set=set
     )
 
 # --------------- YAML APPT REPORT ------------------------------------------
@@ -285,7 +285,7 @@ yaml_test = """
     needs: [generate_practice_measures_subset2_test]
     outputs:
       moderately_sensitive:
-        totals: output/practice_measures_subset2/sense_check_practice_test.csv
+        totals: output/practice_measures_subset2/sense_check*.csv
 """
 
 # -------- Combine scripts and print file -----------

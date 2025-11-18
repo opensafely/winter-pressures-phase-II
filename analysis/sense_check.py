@@ -8,18 +8,10 @@ import pyarrow.feather as feather
 from wp_config_setup import *
 import numpy as np
 
-if args.test:
-    year = "2016"
-else:
-    year = "2020"
-
-dates = generate_annual_dates(args.study_end_date, args.n_years)
-date = [date for date in dates if date.startswith(year)][0]
-
 # Load and format data for each interval
-print(f"Loading {args.group} measures {date}", flush=True)
-input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{date}"
-output_path = f"output/{args.group}_measures_{args.set}/sense_check_{args.group}"
+print(f"Loading {args.group} measures {args.test_start_date}", flush=True)
+input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{args.test_start_date}"
+output_path = f"output/{args.group}_measures_{args.set}/sense_check_{args.group}_{args.test_start_date}"
 df = read_write(read_or_write="read", path=input_path)
 
 # Aggregate data to national level
