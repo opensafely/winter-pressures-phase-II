@@ -35,7 +35,7 @@ measures = create_measures()
 measures.configure_dummy_data(population_size=100)
 measures.configure_disclosure_control(enabled=False)
 if args.test == True:
-    NUM_WEEKS = 2
+    NUM_WEEKS = 6
 else:
     NUM_WEEKS = 52
 

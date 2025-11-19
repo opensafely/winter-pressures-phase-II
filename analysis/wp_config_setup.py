@@ -62,7 +62,7 @@ args.pandemic_end = "2021-07-19"
 if args.test:
     args.pandemic_start = "2017-03-01"
     args.pandemic_end = "2018-05-17"
-args.test_start_date = '2023-01-08'
+args.test_start_date = "2023-01-08"
 args.n_years = 10
 args.dtype_dict = {
     "measure": "category",
@@ -131,7 +131,9 @@ args.sro_dict = {
 }
 args.prioritized = ["copd_review", "asthma_review", "med_review"]
 args.deprioritized = (
-    set(args.sro_dict.keys()) - set(args.prioritized) - set(["med_review1", "med_review2"])
+    set(args.sro_dict.keys())
+    - set(args.prioritized)
+    - set(["med_review1", "med_review2"])
 )
 
 if args.use_csv:
