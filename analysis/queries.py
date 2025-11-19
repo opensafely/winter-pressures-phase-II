@@ -427,10 +427,13 @@ def count_seasonal_illness_sensitive(
         # (Max specificity) OR (2 Max sensitivity in interval OR 2 Max sensitivity in wider episode OR antiviral prescription
         # AND NOT other respiratory illness)
         has_max_sensitivity = (has_max_spec_event) | (
-            (max_sens_event_count >= 2)
-            | ((max_sens_event_count == 1) & has_max_sens_event2)
-            | (has_prescription)
-        ) & (~(has_exclusion))
+            (
+                (max_sens_event_count >= 2)
+                | ((max_sens_event_count == 1) & has_max_sens_event2)
+                | (has_prescription)
+            )
+            & (~(has_exclusion))
+        )
 
     if disease == "flu":
 
