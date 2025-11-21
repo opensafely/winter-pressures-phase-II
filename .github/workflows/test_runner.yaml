@@ -16,6 +16,6 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_sense_check
+        actions: generate_practice_measures_resp_test generate_practice_measures_sro_test generate_sense_check
 
 

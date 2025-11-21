@@ -41,7 +41,9 @@ parser.add_argument(
     action="store_true",
     help="Uses csv instead of arrow for ease of file inspection",
 )
-parser.add_argument("--set", help="Choose which set of measures to extract")
+parser.add_argument(
+    "--set", help="Choose which set of measures to extract: all, sro, resp"
+)
 
 # Configuration for interval date input
 parser.add_argument("--start_intv", help="Interval start date")

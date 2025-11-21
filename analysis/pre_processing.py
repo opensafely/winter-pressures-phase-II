@@ -4,8 +4,7 @@
 # Option --demograph_measures flag to aggregate by demographics
 # Option --practice_measures flag to aggregate by practice
 # Option --test flag to run a lightweight test with a single date
-# Option --set all to run all measures
-# Option --set subset2 to run the 2nd iteration subset of measures
+# Option --set all/sro/resp to choose which set of measures to process
 
 import pandas as pd
 from scipy import stats

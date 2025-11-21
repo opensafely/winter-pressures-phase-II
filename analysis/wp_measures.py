@@ -437,22 +437,24 @@ elif args.comorbid_measures:
         intervals=intervals,
     )
 
-# Filtering out previous measures
-if args.set == "subset2":
+# Filtering out measures to select pipeline
+
+if args.set == "resp":
     for key in list(measures_to_add.keys()):
-        if (
-            (key not in sro_dict)
-            and (
-                key
-                not in [
-                    "secondary_referral",
-                    "secondary_appt",
-                    "sick_notes_app",
-                    "sro_prioritized",
-                    "sro_deprioritized",
-                ]
-            )
-            and (("sensitive" not in key) and ("specific" not in key))
+        if ("sensitive" not in key) and ("specific" not in key):
+            del measures_to_add[key]
+
+if args.set == "sro":
+    for key in list(measures_to_add.keys()):
+        if (key not in sro_dict) and (
+            key
+            not in [
+                "secondary_referral",
+                "secondary_appt",
+                "sick_notes_app",
+                "sro_prioritized",
+                "sro_deprioritized",
+            ]
         ):
             del measures_to_add[key]
 
