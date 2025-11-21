@@ -252,9 +252,7 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {
-            "flu_sensitive": 1,
-        },
+        "expected_columns": {"flu_sensitive": 1, "flu_specific": 1},
     },
     10: {  # No Max sensitive RSV - Only one rsv event
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},

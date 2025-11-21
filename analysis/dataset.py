@@ -167,16 +167,16 @@ dataset.start_in_interval = count_start_in_interval(study_start_date, study_end_
 
 # Count number of consultations in interval
 dataset.online_consult = count_clinical_consultations(
-    online_consult, study_start_date, study_end_date
+    online_consult, "many_pp", study_start_date, study_end_date
 )
 dataset.call_from_patient = count_clinical_consultations(
-    "25691000000103", study_start_date, study_end_date
+    "25691000000103", "many_pp", study_start_date, study_end_date
 )
 dataset.call_from_gp = count_clinical_consultations(
-    "24671000000101", study_start_date, study_end_date
+    "24671000000101", "many_pp", study_start_date, study_end_date
 )
 dataset.tele_consult = count_clinical_consultations(
-    "386472008", study_start_date, study_end_date
+    "386472008", "many_pp", study_start_date, study_end_date
 )
 dataset.emergency_care = count_emergency_care_attendance(
     study_start_date, study_end_date
@@ -197,7 +197,7 @@ dataset.vax_app_covid = count_vaccinations(
 # Count sro measures in interval
 for key in sro_dict.keys():
     result = count_clinical_consultations(
-        sro_dict[key], study_start_date, study_end_date
+        sro_dict[key], "many_pp", study_start_date, study_end_date
     )
     dataset.add_column(key, result)
 
@@ -265,6 +265,15 @@ dataset.flu_sensitive_with_appt = count_seasonal_illness_sensitive(
     resp_dict["flu_specific"],
     seen_appts_in_interval=seen_appts_in_interval,
 )
+
+# Max specificity
+
+for codelist in resp_dict.keys():
+    if "specific" in codelist:
+        counts = count_clinical_consultations(
+            resp_dict[codelist], "one_pp", study_start_date, study_end_date
+        )
+        dataset.add_column(codelist, counts)
 
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and
