@@ -35,7 +35,7 @@ actions:
 # Patient and practice measures flags to loop
 flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
 # Set of measures to loop
-measure_sets = ["all", "subset2"]
+measure_sets = ["all", "sro", "resp"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_measures_template = """
@@ -281,11 +281,11 @@ yaml_test = """
 
   # Sense check
   generate_sense_check:
-    run: python:v2 analysis/sense_check.py --test --practice_measures --set subset2
-    needs: [generate_practice_measures_subset2_test]
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set resp
+    needs: [generate_practice_measures_resp_test]
     outputs:
       moderately_sensitive:
-        totals: output/practice_measures_subset2/sense_check*.csv
+        totals: output/practice_measures_resp/sense_check*.csv
 """
 
 # -------- Combine scripts and print file -----------

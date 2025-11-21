@@ -21,9 +21,10 @@ To choose which pipeline to run, add the corresponding flag when calling the scr
 Use the `--test` flag with any script to run the lightweight test pipeline (useful in Codespaces, since the default dummy data is sparse).
 
 ### Measure sets
-There are currently two sets of measures:
+There are currently three sets of measures:
 - `--set all` - runs all measures  
-- `--set subset2` - runs only the second subset of measures
+- `--set sro` - runs sro measures (+ secondary referral measures)
+- `--set resp` - runs respiratory illness measures (rsv/flu/covid)
 
 ### Helper scripts and configuration
 - **Configuration**

@@ -26,7 +26,7 @@ option_list <- list(
   make_option("--use_csv", action = "store_true", default = FALSE,
               help = "Use CSV files instead of Arrow for reading/writing data."),
   make_option("--set", type = "character",
-              default = FALSE, help = "Choose set of measures between 1) all 2) subset2")
+              default = FALSE, help = "Choose set of measures between 1) all 2) sro 3) resp.")
 )
 
 # Parse options

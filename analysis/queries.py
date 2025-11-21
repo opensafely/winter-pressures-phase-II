@@ -311,11 +311,12 @@ def check_resolved_condition(diagnosis_codelist, resolution_codelist, interval_s
     ).when_null_then(False)
 
 
-def count_clinical_consultations(code, interval_start, interval_end):
+def count_clinical_consultations(code, n_per_patient, interval_start, interval_end):
     """
     Counts consultations during the interval.
     Args:
         code: Code or list of codes for interaction
+        n_per_patient: 'one_pp' for exists_for_patient(), 'many_pp' for count_for_patient()
     Returns:
         The count of consultations per patient.
     """
@@ -323,10 +324,16 @@ def count_clinical_consultations(code, interval_start, interval_end):
     if isinstance(code, str):
         code = [code]
 
-    return clinical_events.where(
+    filtered_events = clinical_events.where(
         clinical_events.snomedct_code.is_in(code)
         & clinical_events.date.is_on_or_between(interval_start, interval_end)
-    ).count_for_patient()
+    )
+
+    if n_per_patient == "one_pp":
+        return filtered_events.exists_for_patient()
+
+    elif n_per_patient == "many_pp":
+        return filtered_events.count_for_patient()
 
 
 def count_emergency_care_attendance(interval_start, interval_end):

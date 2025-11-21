@@ -181,16 +181,16 @@ seen_appts_in_interval = create_seen_appts_in_interval(
 
 # Count number of consultations in interval
 measures_to_add["online_consult"] = count_clinical_consultations(
-    online_consult, INTERVAL.start_date, INTERVAL.end_date
+    online_consult, "many_pp", INTERVAL.start_date, INTERVAL.end_date
 )
 measures_to_add["call_from_patient"] = count_clinical_consultations(
-    "25691000000103", INTERVAL.start_date, INTERVAL.end_date
+    "25691000000103", "many_pp", INTERVAL.start_date, INTERVAL.end_date
 )
 measures_to_add["call_from_gp"] = count_clinical_consultations(
-    "24671000000101", INTERVAL.start_date, INTERVAL.end_date
+    "24671000000101", "many_pp", INTERVAL.start_date, INTERVAL.end_date
 )
 measures_to_add["tele_consult"] = count_clinical_consultations(
-    "386472008", INTERVAL.start_date, INTERVAL.end_date
+    "386472008", "many_pp", INTERVAL.start_date, INTERVAL.end_date
 )
 measures_to_add["emergency_care"] = count_emergency_care_attendance(
     INTERVAL.start_date, INTERVAL.end_date
@@ -199,7 +199,7 @@ measures_to_add["emergency_care"] = count_emergency_care_attendance(
 # Count sro measures in interval
 for key in sro_dict.keys():
     measures_to_add[key] = count_clinical_consultations(
-        sro_dict[key], INTERVAL.start_date, INTERVAL.end_date
+        sro_dict[key], "many_pp", INTERVAL.start_date, INTERVAL.end_date
     )
 
 # Combine prioritized and deprioritized sro measures
@@ -293,6 +293,8 @@ if args.add_reason == True:
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
 
+# Max sensitivity
+
 measures_to_add["flu_sensitive"] = count_seasonal_illness_sensitive(
     INTERVAL.start_date,
     INTERVAL.end_date,
@@ -377,6 +379,14 @@ measures_to_add["overall_resp_sensitive_with_appt"] = count_mild_overall_resp_il
     seen_appts_in_interval=seen_appts_in_interval,
 )
 
+# Max specificity
+
+for codelist in resp_dict.keys():
+    if "specific" in codelist:
+        measures_to_add[codelist] = count_clinical_consultations(
+            resp_dict[codelist], "one_pp", INTERVAL.start_date, INTERVAL.end_date
+        )
+
 # ---------------------- Define measures --------------------------------
 
 inclusion_criteria = has_known_sex & age_filter & was_alive & was_registered
@@ -427,22 +437,26 @@ elif args.comorbid_measures:
         intervals=intervals,
     )
 
-# Filtering out previous measures
-if args.set == "subset2":
+# Filtering out measures to select pipeline
+
+if args.set == "resp":
     for key in list(measures_to_add.keys()):
-        if (
-            (key not in sro_dict)
-            and (
-                key
-                not in [
-                    "secondary_referral",
-                    "secondary_appt",
-                    "sick_notes_app",
-                    "sro_prioritized",
-                    "sro_deprioritized",
-                ]
-            )
-            and ("sensitive" not in key)
+        if ("sensitive" not in key) and ("specific" not in key) and (
+            key not in [
+                "secondary_referral",
+                "secondary_appt",
+            ]
+        ):
+            del measures_to_add[key]
+
+if args.set == "sro":
+    for key in list(measures_to_add.keys()):
+        if (key not in sro_dict) and (
+            key not in [
+                "sick_notes_app",
+                "sro_prioritized",
+                "sro_deprioritized",
+            ]
         ):
             del measures_to_add[key]
 
