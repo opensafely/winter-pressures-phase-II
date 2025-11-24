@@ -1,6 +1,7 @@
 # This script generates decile charts for practice measures.
 # USAGE: Rscript analysis/decile_charts.r
 # Option --test uses test data
+# Option --set specifies the measure set (all, sro, resp)
 # Option --RR uses Rate Ratio data
 
 # ------------ Configuration -----------------------------------------------------------
@@ -18,7 +19,8 @@ source("analysis/config.r")
 print(if (args$test) "Using test data" else "Using full data")
 
 # Determine file paths
-practice_measures <- read_write('read', 'output/practice_measures/proc_practice_measures_midpoint6')
+input_path <- glue("output/practice_measures_{args$set}/proc_practice_measures_midpoint6")
+practice_measures <- read_write('read', input_path)
 
 if (args$test) {
   
@@ -59,7 +61,7 @@ for (measure in unique(practice_deciles$measure)) {
   measure_data <- practice_deciles %>% filter(measure == !!measure)
 
   read_write('write', 
-    glue("output/practice_measures/decile_tables/decile_table_{measure}_rate_mp6"), 
+    glue("output/practice_measures_{args$set}/decile_tables/decile_table_{measure}_rate_mp6"), 
     df = measure_data,
     file_type = 'csv')
 }
@@ -75,7 +77,8 @@ line_colors <- c("d1" = "black", "d3" = "black",
                  "d7" = "black", "d9" = "black")
 
 # Define your groups of measures dynamically
-measure_groups <- list(
+if (args$set == 'all'){
+  measure_groups <- list(
   # Plot 1: Appointments table measures
   appts_table = c('CancelledbyPatient', 'CancelledbyUnit', 'DidNotAttend', 'Waiting', 
                   'follow_up_app', 'seen_in_interval', 'start_in_interval'),  
@@ -84,6 +87,25 @@ measure_groups <- list(
                       'emergency_care', 'online_consult', 'secondary_referral',
                       'tele_consult', 'vax_app', 'vax_app_covid', 'vax_app_flu')
 )
+} else if(args$set == 'sro'){
+  measure_groups <- list(
+  # Plot 1: De-prioritized measures
+  deprioritized = append(args$deprioritized, 'sro_deprioritized'),
+  # Plot 2: Prioritized measures
+  prioritized = append(append(args$prioritized, 'sro_prioritized'), 'sick_notes_app')
+  )
+} else if(args$set == 'resp'){
+  measure_groups <- list(
+  # Plot 1: Flu/RSV/COVID measures
+  flu_rsv_covid = c('flu_sensitive', 'rsv_sensitive', 'covid_sensitive',
+  'flu_sensitive_with_appt', 'rsv_sensitive_with_appt', 'covid_sensitive_with_appt',
+  'flu_specific', 'rsv_specific', 'covid_specific'),
+  # Plot 2: Other measures
+  other = c('overall_resp_sensitive', 'overall_resp_sensitive_with_appt', 'secondary_referral',
+  'secondary_referral')
+  )
+}
+
 
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
@@ -107,7 +129,13 @@ for (group_name in names(measure_groups)) {
 
   # Save the plot for this group
   suffix <- if (args$test) "_test" else ""
-  ggsave(glue("output/practice_measures/plots/decile_chart_{group_name}_rate_mp6{suffix}.png"),
+  # Ensure plots directory exists
+  plots_dir <- glue("output/practice_measures_{args$set}/plots")
+  if (!dir.exists(plots_dir)) {
+    dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
+  }
+
+  ggsave(glue("{plots_dir}/decile_chart_{group_name}_rate_mp6{suffix}.png"),
          plot = plot, width = 20, height = 12, dpi = 400)
 }
 
