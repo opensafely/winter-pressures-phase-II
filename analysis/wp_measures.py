@@ -441,18 +441,24 @@ elif args.comorbid_measures:
 
 if args.set == "resp":
     for key in list(measures_to_add.keys()):
-        if ("sensitive" not in key) and ("specific" not in key) and (
-            key not in [
-                "secondary_referral",
-                "secondary_appt",
-            ]
+        if (
+            ("sensitive" not in key)
+            and ("specific" not in key)
+            and (
+                key
+                not in [
+                    "secondary_referral",
+                    "secondary_appt",
+                ]
+            )
         ):
             del measures_to_add[key]
 
 if args.set == "sro":
     for key in list(measures_to_add.keys()):
         if (key not in sro_dict) and (
-            key not in [
+            key
+            not in [
                 "sick_notes_app",
                 "sro_prioritized",
                 "sro_deprioritized",

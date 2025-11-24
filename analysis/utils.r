@@ -63,10 +63,22 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
 
   if (read_or_write == "write") {
     if (file_type == "csv") {
-      readr::write_csv(df, paste0(path, ".csv"), ...)
+      # Ensure the parent directory exists before writing the CSV
+      out_path <- paste0(path, ".csv")
+      out_dir <- dirname(out_path)
+      if (!dir.exists(out_dir)) {
+        dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+      }
+      readr::write_csv(df, out_path, ...)
     } else if (file_type == "arrow") {
+      # Ensure the parent directory exists before writing the Arrow file
+      out_path <- paste0(path, ".arrow")
+      out_dir <- dirname(out_path)
+      if (!dir.exists(out_dir)) {
+        dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+      }
       # Arrow in R supports logicals directly, no need to convert unless mimicking Python logic
-      arrow::write_feather(df, paste0(path, ".arrow"))
+      arrow::write_feather(df, out_path)
     }
   }
 }
