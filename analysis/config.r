@@ -51,17 +51,15 @@ args$sro_dict <- list(
   thy_test      = "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
   asthma_review = "codelists/opensafely-asthma-annual-review-qof.csv",
   copd_review   = "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
-  med_review1   = "codelists/opensafely-care-planning-medication-review-simple-reference-set-nhs-digital.csv",
-  med_review2   = "codelists/nhsd-primary-care-domain-refsets-medrvw_cod.csv"
 )
 
 # Prioritized vector
-args$prioritized <- c("copd_review", "asthma_review", "med_review")
+args$prioritized <- c("copd_review", "asthma_review")
 
 # Deprioritized set (as a vector)
 args$deprioritized <- setdiff(
   names(args$sro_dict),
-  c(args$prioritized, "med_review1", "med_review2")
+  c(args$prioritized)
 )
 
 

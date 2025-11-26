@@ -107,11 +107,6 @@ comorbid_dict = create_codelist_dict(comorbid_dict)
 # SRO measures
 sro_dict = create_codelist_dict(args.sro_dict)
 
-# Combine medication review codelists into one codelist
-sro_dict["med_review"] = sro_dict["med_review1"] + sro_dict["med_review2"]
-del sro_dict["med_review1"]
-del sro_dict["med_review2"]
-
 # Seasonal respiratory illness
 resp_dict = {
     "flu_specific": "codelists/opensafely-influenza-identification-primary-care.csv",

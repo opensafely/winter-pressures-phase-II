@@ -201,7 +201,7 @@ for key in sro_dict.keys():
     )
     dataset.add_column(key, result)
 
-dataset.sro_prioritized = sum([dataset.asthma_review, dataset.med_review])
+dataset.sro_prioritized = dataset.asthma_review, dataset.med_review
 dataset.sro_deprioritized = sum([dataset.cvd_10yr, dataset.alt_test])
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
