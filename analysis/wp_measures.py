@@ -210,6 +210,13 @@ measures_to_add["sro_deprioritized"] = sum(
     [measures_to_add[sro] for sro in args.deprioritized]
 )
 
+# Count sro measures with appt in interval
+for key in sro_dict.keys():
+    measures_to_add[f"appt_{key}"] = restrict_to_seen_appts(measures_to_add[key], seen_appts_in_interval)
+
+measures_to_add["appt_sro_prioritized"] = restrict_to_seen_appts(measures_to_add["sro_prioritized"], seen_appts_in_interval)
+measures_to_add["appt_sro_deprioritized"] = restrict_to_seen_appts(measures_to_add["sro_deprioritized"], seen_appts_in_interval)
+
 # Number of appointments in interval
 measures_to_add["seen_in_interval"] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add["start_in_interval"] = count_start_in_interval(
@@ -241,12 +248,13 @@ measures_to_add["secondary_appt"] = count_secondary_referral(
 )
 
 # Count number of appts for sick notes
-measures_to_add["sick_notes_app"] = count_reason_for_app(
+measures_to_add["sick_notes"] = count_clinical_consultations(
+    app_reason_dict["sick_notes"],
+    'many_pp',
     INTERVAL.start_date,
     INTERVAL.end_date,
-    app_reason_dict["sick_notes_app"],
-    seen_appts_in_interval,
 )
+measures_to_add["appt_sick_notes"] = restrict_to_seen_appts(measures_to_add["sick_notes"], seen_appts_in_interval)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = [
@@ -284,12 +292,13 @@ if args.add_prescriptions == True:
 if args.add_reason == True:
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
-        measures_to_add[reason] = count_reason_for_app(
+        measures_to_add[reason] = count_clinical_consultations(
+            app_reason_dict[reason],
+            'many_pp',
             INTERVAL.start_date,
             INTERVAL.end_date,
-            app_reason_dict[reason],
-            seen_appts_in_interval,
         )
+        measures_to_add[reason] = restrict_to_seen_appts(measures_to_add[reason], seen_appts_in_interval)
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
 
@@ -335,49 +344,8 @@ measures_to_add["overall_resp_sensitive"] = count_mild_overall_resp_illness(
 )
 
 # Limit to cases with appt in the same interval to reduce secondary discharge codes
-
-measures_to_add["flu_sensitive_with_appt"] = count_seasonal_illness_sensitive(
-    INTERVAL.start_date,
-    INTERVAL.end_date,
-    "flu",
-    resp_dict["flu_sensitive"],
-    flu_med_codelist,
-    flu_sensitive_exclusion,
-    resp_dict["flu_specific"],
-    seen_appts_in_interval=seen_appts_in_interval,
-)
-
-measures_to_add["rsv_sensitive_with_appt"] = count_seasonal_illness_sensitive(
-    INTERVAL.start_date,
-    INTERVAL.end_date,
-    "rsv",
-    resp_dict["rsv_sensitive"],
-    rsv_med_codelist,
-    rsv_sensitive_exclusion,
-    resp_dict["rsv_specific"],
-    seen_appts_in_interval=seen_appts_in_interval,
-)
-
-measures_to_add["covid_sensitive_with_appt"] = count_seasonal_illness_sensitive(
-    INTERVAL.start_date,
-    INTERVAL.end_date,
-    "covid",
-    resp_dict["covid_sensitive"],
-    covid_med_codelist,
-    covid_sensitive_exclusion,
-    resp_dict["covid_specific"],
-    seen_appts_in_interval=seen_appts_in_interval,
-)
-
-measures_to_add["overall_resp_sensitive_with_appt"] = count_mild_overall_resp_illness(
-    INTERVAL.start_date,
-    INTERVAL.end_date,
-    measures_to_add["flu_sensitive"],
-    measures_to_add["covid_sensitive"],
-    measures_to_add["rsv_sensitive"],
-    age,
-    seen_appts_in_interval=seen_appts_in_interval,
-)
+for illness in ["flu_sensitive", "rsv_sensitive", "covid_sensitive", "overall_resp_sensitive"]:
+    measures_to_add[f"appt_{illness}"] = restrict_to_seen_appts(measures_to_add[illness], seen_appts_in_interval)
 
 # Max specificity
 
@@ -440,32 +408,41 @@ elif args.comorbid_measures:
 # Filtering out measures to select pipeline
 
 if args.set == "resp":
-    for key in list(measures_to_add.keys()):
+    for measure in list(measures_to_add.keys()):
         if (
-            ("sensitive" not in key)
-            and ("specific" not in key)
+            ("sensitive" not in measure)
+            and ("specific" not in measure)
             and (
-                key
+                measure
                 not in [
                     "secondary_referral",
                     "secondary_appt",
                 ]
             )
         ):
-            del measures_to_add[key]
+            del measures_to_add[measure]
 
 if args.set == "sro":
-    for key in list(measures_to_add.keys()):
-        if (key not in sro_dict) and (
-            key
-            not in [
-                "sick_notes_app",
-                "sro_prioritized",
-                "sro_deprioritized",
-            ]
-        ):
-            del measures_to_add[key]
+    
+    # Build a set of measures to keep. Convert dict keys to a set first
+    # to avoid depending on dict view methods and to allow set operations.
+    measures_to_keep = (
+        set(sro_dict.keys())
+        | {
+            "sick_notes",
+            "sro_prioritized",
+            "sro_deprioritized",
+            "appt_sick_notes",
+            "appt_sro_prioritized",
+            "appt_sro_deprioritized",
+        }
+        | {f"appt_{sro}" for sro in sro_dict.keys()}
+    )
 
+    for measure in list(measures_to_add.keys()):
+        if measure not in measures_to_keep:
+            del measures_to_add[measure]
+print(measures_to_add)
 # Adding measures
 for measure in measures_to_add.keys():
     measures.define_measure(
