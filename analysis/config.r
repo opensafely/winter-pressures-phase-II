@@ -50,7 +50,7 @@ args$sro_dict <- list(
   cvd_10yr      = "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
   thy_test      = "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
   asthma_review = "codelists/opensafely-asthma-annual-review-qof.csv",
-  copd_review   = "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
+  copd_review   = "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv"
 )
 
 # Prioritized vector

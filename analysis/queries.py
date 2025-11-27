@@ -63,7 +63,7 @@ def restrict_to_seen_appts(series, seen_appts_in_interval):
 
     # If IntPatientSeries, count only if patient has appt in interval
     elif isinstance(series, query_language.IntPatientSeries):
-        
+
         # Number of appointments in interval
         n_appts = count_seen_in_interval(seen_appts_in_interval)
 
@@ -498,7 +498,6 @@ def count_mild_overall_resp_illness(
     codelist_overall_max_sens=resp_dict["overall_sensitive"],
     codelist_exclusion=overall_exclusion,
     asthma_copd_exacerbation_codelist=asthma_copd_exacerbation_codelist,
-    seen_appts_in_interval=None,
     flu_specific_codelist=resp_dict["flu_specific"],
     rsv_specific_codelist=resp_dict["rsv_specific"],
     covid_specific_codelist=resp_dict["covid_specific"],
@@ -550,10 +549,5 @@ def count_mild_overall_resp_illness(
         )
         & (~(has_exclusion))
     )
-
-    if seen_appts_in_interval != None:
-        has_max_sens_overall_resp_ill = restrict_to_seen_appts(
-            has_max_sens_overall_resp_ill, seen_appts_in_interval
-        )
 
     return has_max_sens_overall_resp_ill

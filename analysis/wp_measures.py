@@ -343,10 +343,6 @@ measures_to_add["overall_resp_sensitive"] = count_mild_overall_resp_illness(
     age,
 )
 
-# Limit to cases with appt in the same interval to reduce secondary discharge codes
-for illness in ["flu_sensitive", "rsv_sensitive", "covid_sensitive", "overall_resp_sensitive"]:
-    measures_to_add[f"appt_{illness}"] = restrict_to_seen_appts(measures_to_add[illness], seen_appts_in_interval)
-
 # Max specificity
 
 for codelist in resp_dict.keys():
@@ -354,6 +350,17 @@ for codelist in resp_dict.keys():
         measures_to_add[codelist] = count_clinical_consultations(
             resp_dict[codelist], "one_pp", INTERVAL.start_date, INTERVAL.end_date
         )
+
+# Limit to cases with appt in the same interval to reduce secondary discharge codes
+resp_measures = ['overall_resp_sensitive']
+diseases = ["flu", "rsv", "covid"]
+sensitivities = ["specific", "sensitive"]
+for illness in diseases:
+    for sensitivity in sensitivities:
+        resp_measures.append(f"{illness}_{sensitivity}")
+
+for resp_measure in resp_measures:
+    measures_to_add[f"appt_{resp_measure}"] = restrict_to_seen_appts(measures_to_add[resp_measure], seen_appts_in_interval)
 
 # ---------------------- Define measures --------------------------------
 
