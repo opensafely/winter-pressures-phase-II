@@ -81,3 +81,37 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
     }
   }
 }
+
+# Helper function to create and save decile plots
+create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, suffix, title_prefix = "") {
+  # Create the plot
+  plot <- ggplot(
+    filter(practice_deciles, measure %in% measures_subset),
+    aes(
+      x = interval_start, y = rate_per_1000,
+      group = factor(decile),
+      linetype = decile,
+      color = decile
+    )
+  ) +
+    geom_line() +
+    scale_linetype_manual(values = line_types) +
+    scale_color_manual(values = line_colors) +
+    labs(
+      title = glue("Decile Charts for {title_prefix}{group_name}_rate_mp6"),
+      x = "Interval Start",
+      y = "Rate per 1000"
+    ) +
+    facet_wrap(vars(measure), scales = "free_y") +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+  # Save the plot
+  filename <- if (title_prefix == "appt_") {
+    glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6{suffix}.png")
+  } else {
+    glue("{plots_dir}/decile_chart_{group_name}_rate_mp6{suffix}.png")
+  }
+
+  ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
+}

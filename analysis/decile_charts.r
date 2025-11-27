@@ -101,12 +101,6 @@ if (args$set == "all") {
     # Plot 2: Prioritized measures
     prioritized = append(append(args$prioritized, "sro_prioritized"), "sick_notes_app")
   )
-  appt_measure_groups <- list(
-    # Plot 1: De-prioritized measures
-    deprioritized = append(args$deprioritized, "sro_deprioritized"),
-    # Plot 2: Prioritized measures
-    prioritized = append(append(args$prioritized, "sro_prioritized"), "sick_notes_app")
-  )
 } else if (args$set == "resp") {
   measure_groups <- list(
     # Plot 1: Flu/RSV/COVID measures
@@ -124,41 +118,27 @@ if (args$set == "all") {
 }
 
 
+# Setup output directory
+suffix <- if (args$test) "_test" else ""
+plots_dir <- glue("output/practice_measures_{args$set}/plots")
+if (!dir.exists(plots_dir)) {
+  dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
+}
+
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
   measures_subset <- measure_groups[[group_name]]
+  create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix)
+}
 
-  # Create the plot for this group
-  plot <- ggplot(
-    filter(practice_deciles, measure %in% measures_subset),
-    aes(
-      x = interval_start, y = rate_per_1000,
-      group = factor(decile),
-      linetype = decile,
-      color = decile
-    )
-  ) +
-    geom_line() +
-    scale_linetype_manual(values = line_types) +
-    scale_color_manual(values = line_colors) +
-    labs(
-      title = glue("Decile Charts for {group_name}_rate_mp6"),
-      x = "Interval Start",
-      y = "Rate per 1000"
-    ) +
-    facet_wrap(vars(measure), scales = "free_y") +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+# Also create decile charts for the appointment-prefixed measures (appt_...)
+if ((args$set == "sro") | (args$set == "resp")) {
 
-  # Save the plot for this group
-  suffix <- if (args$test) "_test" else ""
-  # Ensure plots directory exists
-  plots_dir <- glue("output/practice_measures_{args$set}/plots")
-  if (!dir.exists(plots_dir)) {
-    dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
+  # Build appt_measure_groups by prepending 'appt_' to each measure in measure_groups
+  appt_measure_groups <- lapply(measure_groups, function(x) paste0("appt_", x))
+
+  for (group_name in names(appt_measure_groups)) {
+    measures_subset <- appt_measure_groups[[group_name]]
+    create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix, title_prefix = "appt_")
   }
-
-  ggsave(glue("{plots_dir}/decile_chart_{group_name}_rate_mp6{suffix}.png"),
-    plot = plot, width = 20, height = 12, dpi = 400
-  )
 }
