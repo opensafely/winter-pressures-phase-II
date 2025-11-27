@@ -1,4 +1,4 @@
-# This script rounds the numerator and list size of the processed 
+# This script rounds the numerator and list size of the processed
 # practice, patient, and ungrouped measures dataframes to midpoint 6.
 
 library(tidyr)
@@ -17,15 +17,15 @@ source("analysis/config.r")
 input_path <- glue("output/{args$group}_measures_{args$set}/proc_{args$group}_measures")
 output_path <- glue("output/{args$group}_measures_{args$set}/proc_{args$group}_measures_midpoint6")
 
-df_to_round <- read_write('read', input_path)
+df_to_round <- read_write("read", input_path)
 df_to_round <- tibble(df_to_round)
 print("Before rounding:")
 print(head(df_to_round))
 
 # Select required columns and round their values
-df_to_round <- round_columns(df = df_to_round, cols_to_round = c('numerator', 'list_size'))
+df_to_round <- round_columns(df = df_to_round, cols_to_round = c("numerator", "list_size"))
 # Save the rounded dataframe to a new CSV file
 print("After rounding:")
 print(head(df_to_round))
 
-read_write('write', output_path, df = df_to_round)
+read_write("write", output_path, df = df_to_round)

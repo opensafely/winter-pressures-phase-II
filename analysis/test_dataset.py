@@ -444,7 +444,7 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"flu_sensitive_with_appt": 0},
+        "expected_columns": {"appt_flu_sensitive": 0},
     },
     19: {  # Flu with same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
@@ -467,7 +467,7 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"flu_sensitive_with_appt": 1},
+        "expected_columns": {"appt_flu_sensitive": 1},
     },
     20: {  # No Overall resp as no same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
@@ -486,7 +486,7 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"overall_resp_sensitive_with_appt": 0},
+        "expected_columns": {"appt_overall_resp_sensitive": 0},
     },
     21: {  # Overall resp with same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
@@ -507,7 +507,7 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"overall_resp_sensitive_with_appt": 1},
+        "expected_columns": {"appt_overall_resp_sensitive": 1},
     },
     22: {  # Sro prioritized
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
@@ -557,6 +557,9 @@ test_data = {
             "sro_prioritized": 0,
             "sro_deprioritized": 1,
             "alt_test": 1,
+            "appt_sro_prioritized": 0,
+            "appt_sro_deprioritized": 0,
+            "appt_alt_test": 0,
         },
     },
     24: {  # 2 Sick notes - 3 events but 2 appts linking them
@@ -589,7 +592,7 @@ test_data = {
         "vaccinations": [],
         "emergency_care_attendances": [],
         "expected_in_population": True,
-        "expected_columns": {"sick_notes_app": 2},
+        "expected_columns": {"appt_sick_notes": 2},
     },
     25: {  # Secondary care appts
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
@@ -618,5 +621,44 @@ test_data = {
         "emergency_care_attendances": [],
         "expected_in_population": True,
         "expected_columns": {"secondary_appt": 1, "secondary_referral": 0},
+    },
+    26: {  # Sro de-prioritized WITH appt
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [
+            {"date": date(2022, 1, 15), "snomedct_code": "1013211000000103"},
+            {"date": date(2022, 1, 16), "snomedct_code": "1013211000000103"},
+            {"date": date(2022, 1, 17), "snomedct_code": "1013211000000103"}
+        ],  # alt
+        "addresses": [{"start_date": date(2010, 1, 1), "imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [
+            {
+                "start_date": date(2010, 1, 1),
+                "end_date": date(2025, 1, 1),
+                "practice_nuts1_region_name": "West Midlands",
+            }
+        ],
+        "appointments": [
+            {
+                "start_date": date(2022, 1, 15),
+                "seen_date": date(2022, 1, 15),
+            },
+            {
+                "start_date": date(2022, 1, 17),
+                "seen_date": date(2022, 1, 17),
+            },
+        ],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+            "sro_prioritized": 0,
+            "sro_deprioritized": 3,
+            "alt_test": 3,
+            "appt_sro_prioritized": 0,
+            "appt_sro_deprioritized": 2,
+            "appt_alt_test": 2,
+        },
     },
 }

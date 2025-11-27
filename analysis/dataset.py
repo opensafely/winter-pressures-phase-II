@@ -201,8 +201,31 @@ for key in sro_dict.keys():
     )
     dataset.add_column(key, result)
 
-dataset.sro_prioritized = sum([dataset.asthma_review, dataset.med_review])
-dataset.sro_deprioritized = sum([dataset.cvd_10yr, dataset.alt_test])
+# Combine prioritized and deprioritized sro measures (match wp_measures behaviour)
+prioritized_sum = sum(
+    [count_clinical_consultations(sro_dict[sro], "many_pp", study_start_date, study_end_date) for sro in args.prioritized]
+)
+deprioritized_sum = sum(
+    [count_clinical_consultations(sro_dict[sro], "many_pp", study_start_date, study_end_date) for sro in args.deprioritized]
+)
+
+dataset.add_column("sro_prioritized", prioritized_sum)
+dataset.add_column("sro_deprioritized", deprioritized_sum)
+
+# Count sro measures with appt in interval (appt_<measure>) to match wp_measures
+for key in sro_dict.keys():
+    appt_series = restrict_to_seen_appts(
+        count_clinical_consultations(sro_dict[key], "many_pp", study_start_date, study_end_date),
+        seen_appts_in_interval,
+    )
+    dataset.add_column(f"appt_{key}", appt_series)
+
+dataset.add_column(
+    "appt_sro_prioritized", restrict_to_seen_appts(prioritized_sum, seen_appts_in_interval)
+)
+dataset.add_column(
+    "appt_sro_deprioritized", restrict_to_seen_appts(deprioritized_sum, seen_appts_in_interval)
+)
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
 
@@ -245,27 +268,6 @@ dataset.overall_resp_sensitive = count_mild_overall_resp_illness(
     age,
 )
 
-dataset.overall_resp_sensitive_with_appt = count_mild_overall_resp_illness(
-    study_start_date,
-    study_end_date,
-    dataset.flu_sensitive,
-    dataset.covid_sensitive,
-    dataset.rsv_sensitive,
-    age,
-    seen_appts_in_interval=seen_appts_in_interval,
-)
-
-dataset.flu_sensitive_with_appt = count_seasonal_illness_sensitive(
-    study_start_date,
-    study_end_date,
-    "flu",
-    resp_dict["flu_sensitive"],
-    flu_med_codelist,
-    flu_sensitive_exclusion,
-    resp_dict["flu_specific"],
-    seen_appts_in_interval=seen_appts_in_interval,
-)
-
 # Max specificity
 
 for codelist in resp_dict.keys():
@@ -274,6 +276,28 @@ for codelist in resp_dict.keys():
             resp_dict[codelist], "one_pp", study_start_date, study_end_date
         )
         dataset.add_column(codelist, counts)
+
+# Limit to cases with appt in the same interval to reduce secondary discharge codes
+resp_measures = ['overall_resp_sensitive']
+diseases = ["flu", "rsv", "covid"]
+sensitivities = ["specific", "sensitive"]
+for illness in diseases:
+    for sensitivity in sensitivities:
+        resp_measures.append(f"{illness}_{sensitivity}")
+
+# Dynamically reference each respiratory measure and create appt_ variant
+for resp_measure in resp_measures:
+    measure = getattr(dataset, resp_measure)
+    dataset.add_column(f"appt_{resp_measure}", restrict_to_seen_appts(measure, seen_appts_in_interval))
+
+# Count number of appts for sick notes
+dataset.sick_notes = count_clinical_consultations(
+    app_reason_dict["sick_notes"],
+    'many_pp',
+    study_start_date,
+    study_end_date,
+)
+dataset.add_column("appt_sick_notes", restrict_to_seen_appts(dataset.sick_notes, seen_appts_in_interval))
 
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and
@@ -298,16 +322,6 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 prescription_counts = count_prescriptions(study_start_date, study_end_date, med_dict)
 for prescription in prescription_counts.keys():
     dataset.add_column(prescription, prescription_counts[prescription])
-
-# Adding reason for appointment (inferred from appointment and reason being on the same day)
-for reason in app_reason_dict.keys():
-    result = count_reason_for_app(
-        study_start_date,
-        study_end_date,
-        app_reason_dict[reason],
-        seen_appts_in_interval,
-    )
-    dataset.add_column(reason, result)
 
 # Count prescriptions for each indication
 indication_counts = appointments_with_indication_and_prescription(

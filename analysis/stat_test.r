@@ -9,14 +9,14 @@ library(broom)
 source("analysis/utils.r")
 source("analysis/config.r")
 
-practice_counts_df <- read_write('read', glue("output/{args$group}_measures/practice_level_counts"))
+practice_counts_df <- read_write("read", glue("output/{args$group}_measures/practice_level_counts"))
 
 # --- 1. Filter data: remove tiny practices / summer zeros ---
 
 df_filtered <- practice_counts_df %>%
   filter(
     !is.na(numerator_midpoint6_sum_prev_summr),
-    numerator_midpoint6_sum_prev_summr > 0,  # remove summer zeros if needed
+    numerator_midpoint6_sum_prev_summr > 0, # remove summer zeros if needed
     !is.na(numerator_midpoint6_sum),
     numerator_midpoint6_sum > 0,
   )
@@ -29,8 +29,10 @@ df_long <- df_filtered %>%
     numerator = numerator_midpoint6_sum,
     list_size = list_size_midpoint6_sum
   ) %>%
-  select(practice_id = practice_pseudo_id, measure, pandemic, season,
-         numerator, list_size)
+  select(
+    practice_id = practice_pseudo_id, measure, pandemic, season,
+    numerator, list_size
+  )
 print("2- complete")
 
 # Combine previous summer counts as “winter” (or alternative) if needed
@@ -63,9 +65,11 @@ print("4- complete")
 
 # --- 5. Multiple testing adjustment ---
 results_per_practice <- results_per_practice %>%
-  mutate(p_adj = p.adjust(p.value, method = "BH"),
-         signif = p.value < 0.05,
-         signif_adj = p_adj < 0.05)
+  mutate(
+    p_adj = p.adjust(p.value, method = "BH"),
+    signif = p.value < 0.05,
+    signif_adj = p_adj < 0.05
+  )
 
 print("5- complete")
 # --- 6. Compute proportion significant per measure ---

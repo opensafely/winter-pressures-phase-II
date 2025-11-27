@@ -33,7 +33,7 @@ app_reason_dict = {
     "ARI": "codelists/opensafely-acute-respiratory-illness-primary-care.csv",  # not a good codelist - misses many pneumonia codes
     "pneum_broad": "codelists/bristol-pneumonia.csv",  # pneumonia specific codelist to compensate for above
     "neurological_app": "codelists/ons-neurological-disorders.csv",
-    "sick_notes_app": "codelists/opensafely-sick-notes-snomed.csv",
+    "sick_notes": "codelists/opensafely-sick-notes-snomed.csv",
 }
 app_reason_dict = create_codelist_dict(app_reason_dict)
 
@@ -106,11 +106,6 @@ comorbid_dict = create_codelist_dict(comorbid_dict)
 
 # SRO measures
 sro_dict = create_codelist_dict(args.sro_dict)
-
-# Combine medication review codelists into one codelist
-sro_dict["med_review"] = sro_dict["med_review1"] + sro_dict["med_review2"]
-del sro_dict["med_review1"]
-del sro_dict["med_review2"]
 
 # Seasonal respiratory illness
 resp_dict = {

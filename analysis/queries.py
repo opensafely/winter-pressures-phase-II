@@ -11,6 +11,7 @@ from ehrql import (
     INTERVAL,
     create_measures,
     minimum_of,
+    query_language
 )
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
@@ -37,6 +38,39 @@ def create_seen_appts_in_interval(interval_start, interval_end):
         appointments.seen_date.is_on_or_between(interval_start, interval_end)
     )
 
+
+def restrict_to_seen_appts(series, seen_appts_in_interval):
+    """
+    Restrict a PatientSeries (boolean or numeric) to patients who have an appointment in the interval.
+
+    Behavior:
+        - For boolean series: returns `series & has_appt`
+        - For numeric series: returns `series` for patients with an appt
+
+    Args:
+        series: PatientSeries (boolean or numeric)
+        seen_appts_in_interval: appointments table filtered to interval or None
+
+    Returns:
+        BoolPatientSeries or IntPatientSeries
+    """
+
+    # If BoolPatientSeries, check if patient has appt in interval
+    if isinstance(series, query_language.BoolPatientSeries):
+
+        has_appt_in_interval = seen_appts_in_interval.exists_for_patient()
+        return has_appt_in_interval
+
+    # If IntPatientSeries, count only if patient has appt in interval
+    elif isinstance(series, query_language.IntPatientSeries):
+
+        # Number of appointments in interval
+        n_appts = count_seen_in_interval(seen_appts_in_interval)
+
+        # Number of clinical events for reason that match appointment dates
+        n_event_and_appt = minimum_of(series, n_appts)
+
+        return n_event_and_appt
 
 # Note that all below measures use intervals as arguments
 def count_secondary_referral(interval_start, interval_end, type):
@@ -88,33 +122,6 @@ def count_follow_up(interval_start, seen_appts_in_interval):
         appointments.app_prev_month & appointments.app_curr_week
     ).exists_for_patient()
     return follow_up
-
-
-def count_reason_for_app(interval_start, interval_end, reason, seen_appts_in_interval):
-    """
-    Counts the number of appointments for different clinical events,
-    where reason and event are assumed to be linked if they occur in the same interval.
-    Args:
-        reason: clinical event that could be linked to appointment
-        seen_appts_in_interval: appointments with seen date in interval
-    Returns:
-        Count of number of appointments for each reason
-    """
-
-    # Number of clinical events for reason in interval
-    n_event = clinical_events.where(
-        (clinical_events.snomedct_code.is_in(reason))
-        & (clinical_events.date.is_on_or_between(interval_start, interval_end))
-    ).count_for_patient()
-
-    # Number of appointments in interval
-    n_appts = count_seen_in_interval(seen_appts_in_interval)
-
-    # Number of clinical events for reason that match appointment dates
-    n_event_and_appt = minimum_of(n_event, n_appts)
-
-    return n_event_and_appt
-
 
 def count_seen_in_interval(seen_appts_in_interval):
     """
@@ -474,10 +481,9 @@ def count_seasonal_illness_sensitive(
         )
 
     if seen_appts_in_interval != None:
-
-        has_appt_in_interval = seen_appts_in_interval.exists_for_patient()
-
-        has_max_sensitivity = has_max_sensitivity & has_appt_in_interval
+        has_max_sensitivity = restrict_to_seen_appts(
+            has_max_sensitivity, seen_appts_in_interval
+        )
 
     return has_max_sensitivity
 
@@ -492,7 +498,6 @@ def count_mild_overall_resp_illness(
     codelist_overall_max_sens=resp_dict["overall_sensitive"],
     codelist_exclusion=overall_exclusion,
     asthma_copd_exacerbation_codelist=asthma_copd_exacerbation_codelist,
-    seen_appts_in_interval=None,
     flu_specific_codelist=resp_dict["flu_specific"],
     rsv_specific_codelist=resp_dict["rsv_specific"],
     covid_specific_codelist=resp_dict["covid_specific"],
@@ -544,13 +549,5 @@ def count_mild_overall_resp_illness(
         )
         & (~(has_exclusion))
     )
-
-    if seen_appts_in_interval != None:
-
-        has_appt_in_interval = seen_appts_in_interval.exists_for_patient()
-
-        has_max_sens_overall_resp_ill = (
-            has_max_sens_overall_resp_ill & has_appt_in_interval
-        )
 
     return has_max_sens_overall_resp_ill
