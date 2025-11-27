@@ -22,7 +22,6 @@ roundmid_any <- function(x, to = 6) {
 # Returns:
 #   Dataframe with specified columns rounded to the nearest multiple of 6
 round_columns <- function(df, cols_to_round) {
-
   rounded_df <- df %>%
     # Select required columns and round their values
     mutate(across(all_of(cols_to_round), ~ roundmid_any(.x))) %>%
@@ -33,7 +32,7 @@ round_columns <- function(df, cols_to_round) {
 }
 
 read_write <- function(read_or_write, path, test = args$test, file_type = args$file_type, df = NULL, dtype = NULL, ...) {
-  # Add '_test' suffix to path if test flag is TRUE  
+  # Add '_test' suffix to path if test flag is TRUE
 
   if (test) {
     path <- paste0(path, "_test")
@@ -44,7 +43,7 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
       df <- readr::read_csv(paste0(path, ".csv"), ...)
     } else if (file_type == "arrow") {
       df <- arrow::read_feather(paste0(path, ".arrow"))
-      
+
       # Apply dtype coercion if provided
       if (!is.null(dtype)) {
         for (col in names(dtype)) {
@@ -82,4 +81,3 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
     }
   }
 }
-

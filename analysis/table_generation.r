@@ -14,12 +14,18 @@ library(arrow)
 
 # Define option list
 option_list <- list(
-  make_option("--test", action = "store_true", default = FALSE, 
-              help = "Uses test data instead of full data"),
-  make_option("--comorbid", action = "store_true", default = FALSE,
-              help = "Uses comorbid data"),
-  make_option("--demograph", action = "store_true", default = FALSE,
-              help = "Uses demographic data")
+  make_option("--test",
+    action = "store_true", default = FALSE,
+    help = "Uses test data instead of full data"
+  ),
+  make_option("--comorbid",
+    action = "store_true", default = FALSE,
+    help = "Uses comorbid data"
+  ),
+  make_option("--demograph",
+    action = "store_true", default = FALSE,
+    help = "Uses demographic data"
+  )
 )
 # Parse arguments
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -49,7 +55,7 @@ if (opt$test) {
 
 # ------------ Functions -----------------------------------------------------------
 
-aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, folder, suffix) {
+aggregate_trends_by_facet <- function(df, main_col, facet_col, filter_col, folder, suffix) {
 
   # Aggregates timetrends for patient charcteristics (col_name), faceted by another characteristics, & can be filtered to only some population
   # Args:
@@ -87,7 +93,7 @@ aggregate_trends_by_facet <- function (df, main_col, facet_col, filter_col, fold
   # Summarise by numerator, denominator, and calculate rate per 1000
   df <- df %>%
     group_by(across(all_of(group_vars))) %>%
-    summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), measure_rate_per_1000=(sum(numerator_midpoint6)/sum(list_size_midpoint6))*1000, .groups = 'drop')
+    summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), measure_rate_per_1000 = (sum(numerator_midpoint6) / sum(list_size_midpoint6)) * 1000, .groups = "drop")
 
   write.csv(df, glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
 }
@@ -118,11 +124,13 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
   df <- read.csv(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
   df$interval_start <- as.Date(df$interval_start)
   # Plot
-  p <- ggplot(df, aes(x=interval_start, y=measure_rate_per_1000, 
-              color = factor(.data[[main_col]]), group = factor(.data[[main_col]]))) +
+  p <- ggplot(df, aes(
+    x = interval_start, y = measure_rate_per_1000,
+    color = factor(.data[[main_col]]), group = factor(.data[[main_col]])
+  )) +
     geom_line() +
     geom_point() +
-    labs(title=glue("{main_col} by {facet_col} for {filter_col}"), x="Interval Start", y="Rate per 1000") +
+    labs(title = glue("{main_col} by {facet_col} for {filter_col}"), x = "Interval Start", y = "Rate per 1000") +
     scale_x_date(date_breaks = "1 year", date_labels = "%b %Y") +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -133,36 +141,39 @@ plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, su
   }
   # Save plot
   ggsave(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"),
-  plot = p, width = 20, height = 10, dpi = 400)
+    plot = p, width = 20, height = 10, dpi = 400
+  )
 }
 
 
-calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix){
-  
-  if(is.null(main_col)){
-    stats_df<- df %>% 
-      mutate(measure_rate_per_1000 = (numerator_midpoint6/ list_size_midpoint6)*1000) %>%
+calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix) {
+  if (is.null(main_col)) {
+    stats_df <- df %>%
+      mutate(measure_rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
       group_by(measure) %>%
-      summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), 
-                measure_rate_per_1000=(sum(numerator_midpoint6)/sum(list_size_midpoint6))*1000,
-                min = min(measure_rate_per_1000), max= max(measure_rate_per_1000),
-                avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
-                IQR(measure_rate_per_1000), .groups = 'drop')
-    
+      summarise(
+        numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6),
+        measure_rate_per_1000 = (sum(numerator_midpoint6) / sum(list_size_midpoint6)) * 1000,
+        min = min(measure_rate_per_1000), max = max(measure_rate_per_1000),
+        avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
+        IQR(measure_rate_per_1000), .groups = "drop"
+      )
+
     write.csv(stats_df, glue("output/{folder}/summary_stats{suffix}.csv"))
   } else {
-  stats_df<- df %>% 
-    mutate(measure_rate_per_1000 = (numerator_midpoint6/ list_size_midpoint6)*1000) %>%
-    group_by(measure, main_col) %>%
-    summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), 
-              measure_rate_per_1000=(sum(numerator_midpoint6)/sum(list_size_midpoint6))*1000,
-              min = min(measure_rate_per_1000), max= max(measure_rate_per_1000),
-              avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
-              IQR(measure_rate_per_1000), .groups = 'drop')
-  
-  write.csv(stats_df, glue("output/{folder}/summary_stats_{main_col}_{suffix}.csv"))
+    stats_df <- df %>%
+      mutate(measure_rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+      group_by(measure, main_col) %>%
+      summarise(
+        numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6),
+        measure_rate_per_1000 = (sum(numerator_midpoint6) / sum(list_size_midpoint6)) * 1000,
+        min = min(measure_rate_per_1000), max = max(measure_rate_per_1000),
+        avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
+        IQR(measure_rate_per_1000), .groups = "drop"
+      )
+
+    write.csv(stats_df, glue("output/{folder}/summary_stats_{main_col}_{suffix}.csv"))
   }
-  
 }
 
 
@@ -176,27 +187,27 @@ measures$interval_start <- as.Date(measures$interval_start)
 
 # Create plots for different patient characteristic
 # length - 1 to avoid plot for practice_pseudo_id
-start_index = which(names(measures) == "interval_start") + 1
-end_index = which(names(measures) == "numerator_midpoint6") - 1
-for(col in colnames(measures)[start_index:end_index]){
+start_index <- which(names(measures) == "interval_start") + 1
+end_index <- which(names(measures) == "numerator_midpoint6") - 1
+for (col in colnames(measures)[start_index:end_index]) {
   aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
   plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
-  #calculate_stats(measures, main_col = col, folder = "patient_measures", suffix)
+  # calculate_stats(measures, main_col = col, folder = "patient_measures", suffix)
 }
 
 # --- Aggregating measures stratified by vax status and comorbidities ------------------------------------------------
 
 # Aggregating vax trends by age, no filter
-#lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) aggregate_trends_by_facet(measures, main_col = vax, facet_col = "age", filter_col = NULL, folder = "patient_measures"))
+# lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) aggregate_trends_by_facet(measures, main_col = vax, facet_col = "age", filter_col = NULL, folder = "patient_measures"))
 
 # Aggregating vax trends by age & indication (comorbidity)
-#for (disease in c("comorbid_chronic_resp", "comorbid_copd", "comorbid_asthma")) {
+# for (disease in c("comorbid_chronic_resp", "comorbid_copd", "comorbid_asthma")) {
 #  lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) aggregate_trends_by_facet(measures, main_col = vax, facet_col = "age", filter_col = disease, folder = "patient_measures"))
-#}
+# }
 
 # Aggregating comorbid trends by age
-#comorbid_any <- c("comorbid_chronic_resp","comorbid_copd", "comorbid_asthma", "comorbid_dm", "comorbid_htn", "comorbid_depres", "comorbid_mh", "comorbid_neuro", "comorbid_immuno")
-#lapply(comorbid_any, function(comorbid) aggregate_trends_by_facet(measures, main_col = comorbid, facet_col = "age", filter_col = NULL, folder = "patient_measures"))
+# comorbid_any <- c("comorbid_chronic_resp","comorbid_copd", "comorbid_asthma", "comorbid_dm", "comorbid_htn", "comorbid_depres", "comorbid_mh", "comorbid_neuro", "comorbid_immuno")
+# lapply(comorbid_any, function(comorbid) aggregate_trends_by_facet(measures, main_col = comorbid, facet_col = "age", filter_col = NULL, folder = "patient_measures"))
 
 # Aggregating comorbid trends by imd
-#lapply(comorbid_any, function(comorbid) aggregate_trends_by_facet(measures, main_col = comorbid, facet_col = "imd_quintile", filter_col = NULL, folder = "patient_measures"))
+# lapply(comorbid_any, function(comorbid) aggregate_trends_by_facet(measures, main_col = comorbid, facet_col = "imd_quintile", filter_col = NULL, folder = "patient_measures"))
