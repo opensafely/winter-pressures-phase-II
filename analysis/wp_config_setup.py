@@ -53,6 +53,13 @@ parser.add_argument(
     help="Sets lowest time intervals for lightweight testing",
 )
 
+# Restrict measure to those with an appt
+parser.add_argument(
+    "--appt",
+    action="store_true",
+    help="Restrict measures to those with an appointment in interval",
+) 
+
 args = parser.parse_args()  # Stores arguments in 'args'
 
 # ----------------- Configuration of constants for pipeline -------------------
@@ -72,7 +79,10 @@ args.dtype_dict = {
     "numerator": "int64",
     "denominator": "int64",
 }
-
+if args.appt:
+    args.appt_suffix = "_appt"
+else:
+    args.appt_suffix = ""
 args.dtype_dict = {
     "measure": "category",
     "interval_start": "string",

@@ -33,8 +33,8 @@ log_memory_usage(label="Before loading data")
 for date in dates:
 
     print(f"Loading {args.group} measures {date}", flush=True)
-    input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{date}"
-    output_path = f"output/{args.group}_measures_{args.set}/proc_{args.group}_measures"
+    input_path = f"output/{args.group}_measures_{args.set}{args.appt_suffix}/{args.group}_measures_{date}"
+    output_path = f"output/{args.group}_measures_{args.set}{args.appt_suffix}/proc_{args.group}_measures"
     # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=args.dtype_dict)
     log_memory_usage(label=f"After loading measures {date}")

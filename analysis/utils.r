@@ -83,7 +83,7 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
 }
 
 # Helper function to create and save decile plots
-create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, suffix, title_prefix = "") {
+create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, suffix) {
   # Create the plot
   plot <- ggplot(
     filter(practice_deciles, measure %in% measures_subset),
@@ -98,7 +98,7 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     scale_linetype_manual(values = line_types) +
     scale_color_manual(values = line_colors) +
     labs(
-      title = glue("Decile Charts for {title_prefix}{group_name}_rate_mp6"),
+      title = glue("Decile Charts for {plots_dir}_rate_mp6"),
       x = "Interval Start",
       y = "Rate per 1000"
     ) +
@@ -107,11 +107,7 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   # Save the plot
-  filename <- if (title_prefix == "appt_") {
-    glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6{suffix}.png")
-  } else {
-    glue("{plots_dir}/decile_chart_{group_name}_rate_mp6{suffix}.png")
-  }
-
+  filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6{suffix}.png")
+  
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
 }

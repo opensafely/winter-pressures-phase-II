@@ -210,13 +210,6 @@ measures_to_add["sro_deprioritized"] = sum(
     [measures_to_add[sro] for sro in args.deprioritized]
 )
 
-# Count sro measures with appt in interval
-for key in sro_dict.keys():
-    measures_to_add[f"appt_{key}"] = restrict_to_seen_appts(measures_to_add[key], seen_appts_in_interval)
-
-measures_to_add["appt_sro_prioritized"] = restrict_to_seen_appts(measures_to_add["sro_prioritized"], seen_appts_in_interval)
-measures_to_add["appt_sro_deprioritized"] = restrict_to_seen_appts(measures_to_add["sro_deprioritized"], seen_appts_in_interval)
-
 # Number of appointments in interval
 measures_to_add["seen_in_interval"] = count_seen_in_interval(seen_appts_in_interval)
 measures_to_add["start_in_interval"] = count_start_in_interval(
@@ -254,7 +247,6 @@ measures_to_add["sick_notes"] = count_clinical_consultations(
     INTERVAL.start_date,
     INTERVAL.end_date,
 )
-measures_to_add["appt_sick_notes"] = restrict_to_seen_appts(measures_to_add["sick_notes"], seen_appts_in_interval)
 
 # Count number of appointments with cancelled/waiting status during interval
 app_status_code = [
@@ -298,7 +290,6 @@ if args.add_reason == True:
             INTERVAL.start_date,
             INTERVAL.end_date,
         )
-        measures_to_add[reason] = restrict_to_seen_appts(measures_to_add[reason], seen_appts_in_interval)
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
 
@@ -358,9 +349,6 @@ sensitivities = ["specific", "sensitive"]
 for illness in diseases:
     for sensitivity in sensitivities:
         resp_measures.append(f"{illness}_{sensitivity}")
-
-for resp_measure in resp_measures:
-    measures_to_add[f"appt_{resp_measure}"] = restrict_to_seen_appts(measures_to_add[resp_measure], seen_appts_in_interval)
 
 # ---------------------- Define measures --------------------------------
 
@@ -449,7 +437,18 @@ if args.set == "sro":
     for measure in list(measures_to_add.keys()):
         if measure not in measures_to_keep:
             del measures_to_add[measure]
-print(measures_to_add)
+
+# Restrict measures to those with an appointment in interval
+if args.appt:
+
+    for measure in list(measures_to_add.keys()):
+        # Restrict measure to appts in interval
+        measures_to_add[f"appt_{measure}"] = restrict_to_seen_appts(
+            measures_to_add[measure], seen_appts_in_interval
+        )
+        # Delete original measure
+        del measures_to_add[measure]
+
 # Adding measures
 for measure in measures_to_add.keys():
     measures.define_measure(

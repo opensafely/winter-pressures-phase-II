@@ -36,19 +36,21 @@ actions:
 flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
 # Set of measures to loop
 measure_sets = ["all", "sro", "resp"]
+# Appt variants
+appt_variants = ["", "_appt"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_measures_template = """
-  generate_{flag}_{set}_{date}:
+  generate_{flag}_{set}_{date}{appt_suffix}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}_{set}/{flag}_{date}.arrow
+      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
       --
       --{flag}
       --start_intv {date}
-      --set {set}
+      --set {set}{appt_flag}
     outputs:
       highly_sensitive:
-        dataset: output/{flag}_{set}/{flag}_{date}.arrow
+        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
 """
 
 yaml_measures = ""
@@ -60,61 +62,65 @@ for flag in flags:
     # Iterate over sets of measures
     for set in measure_sets:
 
-        needs[f"{flag}_{set}"] = []
+        # Iterate over appt variants
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
 
-        # Iterate over dates and generate yaml list of needs for each combination
-        for date in dates:
+            needs[f"{flag}_{set}{appt_suffix}"] = []
 
-            yaml_measures += yaml_measures_template.format(
-                flag=flag, date=date, set=set
-            )
-            needs[f"{flag}_{set}"].append(f"generate_{flag}_{set}_{date}")
+            # Iterate over dates and generate yaml list of needs for each combination
+            for date in dates:
 
-        # Join list into string for each flag
-        needs[f"{flag}_{set}"] = ", ".join(needs[f"{flag}_{set}"])
+                yaml_measures += yaml_measures_template.format(
+                    flag=flag, date=date, set=set, appt_suffix=appt_suffix, appt_flag=appt_flag
+                )
+                needs[f"{flag}_{set}{appt_suffix}"].append(f"generate_{flag}_{set}_{date}{appt_suffix}")
+
+            # Join list into string for each flag
+            needs[f"{flag}_{set}{appt_suffix}"] = ", ".join(needs[f"{flag}_{set}{appt_suffix}"])
 
 yaml_measures_test_template = """
 # --------------- TEST ACTIONS ------------------------------------------
 
-  generate_demograph_measures_{set}_test:
+  generate_demograph_measures_{set}{appt_suffix}_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_{set}/demograph_measures_{start_date}_test.arrow
+      --output output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
       --
       --demograph_measures
       --start_intv {start_date}
       --test
-      --set {set}
+      --set {set}{appt_flag}
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_{set}/demograph_measures_{start_date}_test.arrow
-  generate_practice_measures_{set}_test:
+        dataset: output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
+  generate_practice_measures_{set}{appt_suffix}_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_{set}/practice_measures_{start_date}_test.arrow
+      --output output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}_test.arrow
       --
       --practice_measures
       --start_intv {start_date}
       --test
-      --set {set}
+      --set {set}{appt_flag}
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_{set}/practice_measures_{start_date}_test.arrow
-  generate_comorbid_measures_{set}_test:
+        dataset: output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}_test.arrow
+  generate_comorbid_measures_{set}{appt_suffix}_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_{set}/comorbid_measures_{start_date}_test.arrow
+      --output output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
       --
       --comorbid_measures
       --start_intv {start_date}
       --test
-      --set {set}
+      --set {set}{appt_flag}
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_{set}/comorbid_measures_{start_date}_test.arrow
+        dataset: output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
 """
 yaml_measures_test = ""
 for set in measure_sets:
-    yaml_measures_test += yaml_measures_test_template.format(
-        start_date=args.test_start_date, set=set
-    )
+    for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+        yaml_measures_test += yaml_measures_test_template.format(
+            start_date=args.test_start_date, set=set, appt_suffix=appt_suffix, appt_flag=appt_flag
+        )
 
 # --------------- YAML APPT REPORT ------------------------------------------
 yaml_appt_report = ""
@@ -162,70 +168,76 @@ yaml_appt_report += (
 
 groups = ["demograph", "practice", "comorbid"]
 yaml_processing_template = """
-  generate_freq_table_{group}_{set}{test_suffix}:
-    run: python:v2 analysis/freq_table.py --{group}_measures --set {set} {test_flag}
+  generate_freq_table_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/freq_table.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [{needs}{test_suffix}]
     outputs:
       moderately_sensitive:
-        freq_table: output/{group}_measures_{set}/freq_table_{group}{test_suffix}.csv
-  generate_pre_processing_{group}_{set}{test_suffix}:
-    run: python:v2 analysis/pre_processing.py --{group}_measures --set {set} {test_flag}
+        freq_table: output/{group}_measures_{set}{appt_suffix}/freq_table_{group}{test_suffix}.csv
+  generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/pre_processing.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
-        measures: output/{group}_measures_{set}/proc_{group}_measures{test_suffix}.arrow
-  generate_rounding_{group}_{set}{test_suffix}:
-    run: r:v2 analysis/round_measures.r --{group}_measures --set {set} {test_flag}
-    needs: [generate_pre_processing_{group}_{set}{test_suffix}]
+        measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures{test_suffix}.arrow
+  generate_rounding_{group}_{set}{appt_suffix}{test_suffix}:
+    run: r:v2 analysis/round_measures.r --{group}_measures --set {set}{appt_flag}{test_flag}
+    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
     outputs:
       highly_sensitive:
-        rounded_measures: output/{group}_measures_{set}/proc_{group}_measures_midpoint6{test_suffix}.arrow
-  generate_normalization_{group}_{set}{test_suffix}:
-    run: python:v2 analysis/normalization.py --{group}_measures --set {set} {test_flag}
-    needs: [generate_rounding_{group}_{set}{test_suffix}]
+        rounded_measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures_midpoint6{test_suffix}.arrow
+  generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
+    needs: [generate_rounding_{group}_{set}{appt_suffix}{test_suffix}]
     outputs:
       highly_sensitive:
-        practice_level_tables: output/{group}_measures_{set}/practice_level_counts{test_suffix}.arrow
+        practice_level_tables: output/{group}_measures_{set}{appt_suffix}/practice_level_counts{test_suffix}.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/{group}_measures_{set}/Results*{test_suffix}.csv
+        seasonal_tables_tables: output/{group}_measures_{set}{appt_suffix}/Results*{test_suffix}.csv
 """
 
 yaml_processing = ""
 yaml_processing_test = ""
 for group in groups:
     for set in measure_sets:
-        # Actions for processing real data
-        yaml_processing += yaml_processing_template.format(
-            group=group,
-            needs=needs[f"{group}_measures_{set}"],
-            test_suffix="",
-            test_flag="",
-            set=set,
-        )
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            # Actions for processing real data
+            yaml_processing += yaml_processing_template.format(
+                group=group,
+                needs=needs[f"{group}_measures_{set}{appt_suffix}"],
+                test_suffix="",
+                test_flag="",
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
+            )
 
 for group in groups:
     for set in measure_sets:
-        # Actions for processing test data
-        yaml_processing_test += yaml_processing_template.format(
-            group=group,
-            needs=f"generate_{group}_measures_{set}",
-            test_suffix="_test",
-            test_flag="--test",
-            set=set,
-        )
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            # Actions for processing test data
+            yaml_processing_test += yaml_processing_template.format(
+                group=group,
+                needs=f"generate_{group}_measures_{set}{appt_suffix}",
+                test_suffix="_test",
+                test_flag=" --test",
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
+            )
 
 yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
 
 yaml_viz_template = """
 
-  generate_deciles_charts_{set}{test_suffix}:
+  generate_deciles_charts_{set}{appt_suffix}{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r {test_flag} --set {set}
-    needs: [generate_rounding_practice_{set}{test_suffix}] 
+      r:v2 analysis/decile_charts.r {test_flag} --set {set}{appt_flag}
+    needs: [generate_rounding_practice_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_{set}/plots/decile_chart_*_rate_mp6{test_suffix}.png
-        deciles_table: output/practice_measures_{set}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+        deciles_charts: output/practice_measures_{set}{appt_suffix}/plots/decile_chart_*_rate_mp6{test_suffix}.png
+        deciles_table: output/practice_measures_{set}{appt_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
 """
 
 """ TEMPORARILY COMMENTED OUT:
@@ -260,9 +272,10 @@ suffixes = ["", "_test"]
 test_flags = ["", "--test"]
 for test_suffix, test_flag in zip(suffixes, test_flags):
     for set in measure_sets:
-        yaml_viz += yaml_viz_template.format(
-            test_suffix=test_suffix, test_flag=test_flag, set=set
-        )
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            yaml_viz += yaml_viz_template.format(
+                test_suffix=test_suffix, test_flag=test_flag, set=set, appt_suffix=appt_suffix, appt_flag=appt_flag
+            )
 
 yaml_test = """
 

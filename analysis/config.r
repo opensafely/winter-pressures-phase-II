@@ -50,6 +50,10 @@ option_list <- list(
   make_option("--set",
     type = "character",
     default = FALSE, help = "Choose set of measures between 1) all 2) sro 3) resp."
+  ),
+  make_option("--appt",
+    action = "store_true",
+    default = FALSE, help = "Restrict measures to those with an appointment in interval"
   )
 )
 
@@ -93,6 +97,12 @@ if (args$demograph_measures) {
   args$group <- "practice"
 } else if (args$comorbid_measures) {
   args$group <- "comorbid"
+}
+
+if (args$appt) {
+  args$appt_suffix <- "_appt"
+} else {
+  args$appt_suffix <- ""
 }
 
 if (args$use_csv) {

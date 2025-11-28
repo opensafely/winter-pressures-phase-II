@@ -38,7 +38,6 @@ def create_seen_appts_in_interval(interval_start, interval_end):
         appointments.seen_date.is_on_or_between(interval_start, interval_end)
     )
 
-
 def restrict_to_seen_appts(series, seen_appts_in_interval):
     """
     Restrict a PatientSeries (boolean or numeric) to patients who have an appointment in the interval.

@@ -19,7 +19,7 @@ source("analysis/config.r")
 print(if (args$test) "Using test data" else "Using full data")
 
 # Determine file paths
-input_path <- glue("output/practice_measures_{args$set}/proc_practice_measures_midpoint6")
+input_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/proc_practice_measures_midpoint6")
 practice_measures <- read_write("read", input_path)
 
 if (args$test) {
@@ -59,7 +59,7 @@ for (measure in unique(practice_deciles$measure)) {
   measure_data <- practice_deciles %>% filter(measure == !!measure)
 
   read_write("write",
-    glue("output/practice_measures_{args$set}/decile_tables/decile_table_{measure}_rate_mp6"),
+    glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
     df = measure_data,
     file_type = "csv"
   )
@@ -117,10 +117,16 @@ if (args$set == "all") {
   )
 }
 
+# Update measure names if restricting to appts in interval
+if (args$appt) {
+  for (group_name in names(measure_groups)) {
+    measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
+  }
+}
 
 # Setup output directory
 suffix <- if (args$test) "_test" else ""
-plots_dir <- glue("output/practice_measures_{args$set}/plots")
+plots_dir <- glue("output/practice_measures_{args$set}{args$appt_suffix}/plots")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }
@@ -131,14 +137,3 @@ for (group_name in names(measure_groups)) {
   create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix)
 }
 
-# Also create decile charts for the appointment-prefixed measures (appt_...)
-if ((args$set == "sro") | (args$set == "resp")) {
-
-  # Build appt_measure_groups by prepending 'appt_' to each measure in measure_groups
-  appt_measure_groups <- lapply(measure_groups, function(x) paste0("appt_", x))
-
-  for (group_name in names(appt_measure_groups)) {
-    measures_subset <- appt_measure_groups[[group_name]]
-    create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix, title_prefix = "appt_")
-  }
-}
