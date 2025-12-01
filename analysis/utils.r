@@ -108,6 +108,6 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
 
   # Save the plot
   filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6{suffix}.png")
-  
+
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
 }
