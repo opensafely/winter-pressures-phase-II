@@ -95,11 +95,13 @@ if (args$set == "all") {
     )
   )
 } else if (args$set == "sro") {
+  sro_measures <- append(args$prioritized, "sro_prioritized")
+  sro_measures <- append(sro_measures, "sick_notes")
   measure_groups <- list(
     # Plot 1: De-prioritized measures
     deprioritized = append(args$deprioritized, "sro_deprioritized"),
     # Plot 2: Prioritized measures
-    prioritized = append(append(args$prioritized, "sro_prioritized"), "sick_notes_app")
+    prioritized = sro_measures
   )
 } else if (args$set == "resp") {
   measure_groups <- list(
@@ -116,7 +118,7 @@ if (args$set == "all") {
     )
   )
 }
-
+print(measure_groups$prioritized)
 # Update measure names if restricting to appts in interval
 if (args$appt) {
   for (group_name in names(measure_groups)) {
@@ -136,4 +138,3 @@ for (group_name in names(measure_groups)) {
   measures_subset <- measure_groups[[group_name]]
   create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix)
 }
-
