@@ -58,7 +58,7 @@ parser.add_argument(
     "--appt",
     action="store_true",
     help="Restrict measures to those with an appointment in interval",
-) 
+)
 
 args = parser.parse_args()  # Stores arguments in 'args'
 
@@ -140,10 +140,7 @@ args.sro_dict = {
     "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv",
 }
 args.prioritized = ["copd_review", "asthma_review"]
-args.deprioritized = (
-    set(args.sro_dict.keys())
-    - set(args.prioritized)
-)
+args.deprioritized = set(args.sro_dict.keys()) - set(args.prioritized)
 
 if args.use_csv:
     args.file_type = "csv"

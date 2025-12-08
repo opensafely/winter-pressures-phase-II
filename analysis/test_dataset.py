@@ -628,7 +628,7 @@ test_data = {
         "clinical_events": [
             {"date": date(2022, 1, 15), "snomedct_code": "1013211000000103"},
             {"date": date(2022, 1, 16), "snomedct_code": "1013211000000103"},
-            {"date": date(2022, 1, 17), "snomedct_code": "1013211000000103"}
+            {"date": date(2022, 1, 17), "snomedct_code": "1013211000000103"},
         ],  # alt
         "addresses": [{"start_date": date(2010, 1, 1), "imd_rounded": 200}],
         "opa_cost": [],
@@ -659,6 +659,35 @@ test_data = {
             "appt_sro_prioritized": 0,
             "appt_sro_deprioritized": 2,
             "appt_alt_test": 2,
+        },
+    },
+    27: {  # ili but not flu
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [
+            {"date": date(2022, 1, 15), "snomedct_code": "10151000132103"},  # fever
+            {"date": date(2022, 1, 16), "snomedct_code": "10509002"},  # ari
+            {
+                "date": date(2022, 1, 16),
+                "snomedct_code": "1002141000000100",
+            },  # flu exclusion
+        ],
+        "addresses": [{"start_date": date(2010, 1, 1), "imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [
+            {
+                "start_date": date(2010, 1, 1),
+                "end_date": date(2025, 1, 1),
+                "practice_nuts1_region_name": "West Midlands",
+            }
+        ],
+        "appointments": [],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {
+            "ili": 1,
+            "flu_sensitive": 0,
         },
     },
 }

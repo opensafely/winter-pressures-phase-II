@@ -71,12 +71,20 @@ for flag in flags:
             for date in dates:
 
                 yaml_measures += yaml_measures_template.format(
-                    flag=flag, date=date, set=set, appt_suffix=appt_suffix, appt_flag=appt_flag
+                    flag=flag,
+                    date=date,
+                    set=set,
+                    appt_suffix=appt_suffix,
+                    appt_flag=appt_flag,
                 )
-                needs[f"{flag}_{set}{appt_suffix}"].append(f"generate_{flag}_{set}_{date}{appt_suffix}")
+                needs[f"{flag}_{set}{appt_suffix}"].append(
+                    f"generate_{flag}_{set}_{date}{appt_suffix}"
+                )
 
             # Join list into string for each flag
-            needs[f"{flag}_{set}{appt_suffix}"] = ", ".join(needs[f"{flag}_{set}{appt_suffix}"])
+            needs[f"{flag}_{set}{appt_suffix}"] = ", ".join(
+                needs[f"{flag}_{set}{appt_suffix}"]
+            )
 
 yaml_measures_test_template = """
 # --------------- TEST ACTIONS ------------------------------------------
@@ -119,7 +127,10 @@ yaml_measures_test = ""
 for set in measure_sets:
     for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
         yaml_measures_test += yaml_measures_test_template.format(
-            start_date=args.test_start_date, set=set, appt_suffix=appt_suffix, appt_flag=appt_flag
+            start_date=args.test_start_date,
+            set=set,
+            appt_suffix=appt_suffix,
+            appt_flag=appt_flag,
         )
 
 # --------------- YAML APPT REPORT ------------------------------------------
@@ -274,7 +285,11 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
     for set in measure_sets:
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
             yaml_viz += yaml_viz_template.format(
-                test_suffix=test_suffix, test_flag=test_flag, set=set, appt_suffix=appt_suffix, appt_flag=appt_flag
+                test_suffix=test_suffix,
+                test_flag=test_flag,
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
             )
 
 yaml_test = """

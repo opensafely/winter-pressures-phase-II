@@ -11,7 +11,7 @@ from ehrql import (
     INTERVAL,
     create_measures,
     minimum_of,
-    query_language
+    query_language,
 )
 from ehrql.tables.core import medications, patients
 from ehrql.tables.tpp import (
@@ -37,6 +37,7 @@ def create_seen_appts_in_interval(interval_start, interval_end):
     return appointments.where(
         appointments.seen_date.is_on_or_between(interval_start, interval_end)
     )
+
 
 def restrict_to_seen_appts(series, seen_appts_in_interval):
     """
@@ -70,6 +71,7 @@ def restrict_to_seen_appts(series, seen_appts_in_interval):
         n_event_and_appt = minimum_of(series, n_appts)
 
         return n_event_and_appt
+
 
 # Note that all below measures use intervals as arguments
 def count_secondary_referral(interval_start, interval_end, type):
@@ -121,6 +123,7 @@ def count_follow_up(interval_start, seen_appts_in_interval):
         appointments.app_prev_month & appointments.app_curr_week
     ).exists_for_patient()
     return follow_up
+
 
 def count_seen_in_interval(seen_appts_in_interval):
     """
@@ -382,18 +385,18 @@ def count_seasonal_illness_sensitive(
     seen_appts_in_interval=None,
 ):
     """
-    Counts the number of patients who had a flu, identified with maximal sensitivity
+    Counts the number of patients who had a respiratory illness, identified with maximal sensitivity
     Args:
-        disease: flu, rsv or covid
+        disease: flu, ili, rsv or covid
         codelist_ari: Acute Respiratory Disease codelist
         codelist_fever: Fever codelist
-        codelist_max_sens: Max sensitivity flu codelist
-        codelist_med: Flu antiviral codelist
-        codelist_exclusion: Non-flu respiratory illness
-        codelist_max_spec: Max specificity rsv codelist
+        codelist_max_sens: Max sensitivity codelist
+        codelist_med: antiviral codelist
+        codelist_exclusion: Exclusion codelists
+        codelist_max_spec: Max specificity codelist
         seen_appts_in_interval: Filtered appointments table, used if filtering events to those paired with an appt
     Returns:
-        Count the number of patients who had a flu, RSV or covid case.
+        Count the number of patients who had a flu, ili, RSV or covid case.
     """
 
     # Max specificity event
@@ -448,7 +451,7 @@ def count_seasonal_illness_sensitive(
             & (~(has_exclusion))
         )
 
-    if disease == "flu":
+    else:  # disease == "flu" or "ili"
 
         # ILI 1 - ARI and then fever in same episode
         has_ari_symptom_this_week = filter_events_in_interval(
@@ -473,11 +476,16 @@ def count_seasonal_illness_sensitive(
             has_fever_symptom_this_week & has_ari_symptom_in_episode
         )
 
+    if disease == "flu":
+
         # Max sensitive flu = Max specificty case OR ((ILI, flu code, or flu medication) AND not a different respiratory illness)
         has_max_sensitivity = (has_max_spec_event) | (
             ((has_ili) | (max_sens_event_count >= 1) | (has_prescription))
             & (~(has_exclusion))
         )
+
+    elif disease == "ili":
+        has_max_sensitivity = has_ili
 
     if seen_appts_in_interval != None:
         has_max_sensitivity = restrict_to_seen_appts(
