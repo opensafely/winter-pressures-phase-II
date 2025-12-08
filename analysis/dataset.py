@@ -203,10 +203,20 @@ for key in sro_dict.keys():
 
 # Combine prioritized and deprioritized sro measures (match wp_measures behaviour)
 prioritized_sum = sum(
-    [count_clinical_consultations(sro_dict[sro], "many_pp", study_start_date, study_end_date) for sro in args.prioritized]
+    [
+        count_clinical_consultations(
+            sro_dict[sro], "many_pp", study_start_date, study_end_date
+        )
+        for sro in args.prioritized
+    ]
 )
 deprioritized_sum = sum(
-    [count_clinical_consultations(sro_dict[sro], "many_pp", study_start_date, study_end_date) for sro in args.deprioritized]
+    [
+        count_clinical_consultations(
+            sro_dict[sro], "many_pp", study_start_date, study_end_date
+        )
+        for sro in args.deprioritized
+    ]
 )
 
 dataset.add_column("sro_prioritized", prioritized_sum)
@@ -215,16 +225,20 @@ dataset.add_column("sro_deprioritized", deprioritized_sum)
 # Count sro measures with appt in interval (appt_<measure>) to match wp_measures
 for key in sro_dict.keys():
     appt_series = restrict_to_seen_appts(
-        count_clinical_consultations(sro_dict[key], "many_pp", study_start_date, study_end_date),
+        count_clinical_consultations(
+            sro_dict[key], "many_pp", study_start_date, study_end_date
+        ),
         seen_appts_in_interval,
     )
     dataset.add_column(f"appt_{key}", appt_series)
 
 dataset.add_column(
-    "appt_sro_prioritized", restrict_to_seen_appts(prioritized_sum, seen_appts_in_interval)
+    "appt_sro_prioritized",
+    restrict_to_seen_appts(prioritized_sum, seen_appts_in_interval),
 )
 dataset.add_column(
-    "appt_sro_deprioritized", restrict_to_seen_appts(deprioritized_sum, seen_appts_in_interval)
+    "appt_sro_deprioritized",
+    restrict_to_seen_appts(deprioritized_sum, seen_appts_in_interval),
 )
 
 # ---- SPECIFIC AND SENSITIVE SEASONAL ILLNESSES ------------------
@@ -259,6 +273,18 @@ dataset.covid_sensitive = count_seasonal_illness_sensitive(
     resp_dict["covid_specific"],
 )
 
+dataset.ili = count_seasonal_illness_sensitive(
+    study_start_date,
+    study_end_date,
+    "ili",
+    resp_dict[
+        "flu_sensitive"
+    ],  # these arguments and below not actually used in ili measure
+    flu_med_codelist,
+    flu_sensitive_exclusion,
+    resp_dict["flu_specific"],
+)
+
 dataset.overall_resp_sensitive = count_mild_overall_resp_illness(
     study_start_date,
     study_end_date,
@@ -278,7 +304,7 @@ for codelist in resp_dict.keys():
         dataset.add_column(codelist, counts)
 
 # Limit to cases with appt in the same interval to reduce secondary discharge codes
-resp_measures = ['overall_resp_sensitive']
+resp_measures = ["overall_resp_sensitive"]
 diseases = ["flu", "rsv", "covid"]
 sensitivities = ["specific", "sensitive"]
 for illness in diseases:
@@ -288,16 +314,21 @@ for illness in diseases:
 # Dynamically reference each respiratory measure and create appt_ variant
 for resp_measure in resp_measures:
     measure = getattr(dataset, resp_measure)
-    dataset.add_column(f"appt_{resp_measure}", restrict_to_seen_appts(measure, seen_appts_in_interval))
+    dataset.add_column(
+        f"appt_{resp_measure}", restrict_to_seen_appts(measure, seen_appts_in_interval)
+    )
 
 # Count number of appts for sick notes
 dataset.sick_notes = count_clinical_consultations(
     app_reason_dict["sick_notes"],
-    'many_pp',
+    "many_pp",
     study_start_date,
     study_end_date,
 )
-dataset.add_column("appt_sick_notes", restrict_to_seen_appts(dataset.sick_notes, seen_appts_in_interval))
+dataset.add_column(
+    "appt_sick_notes",
+    restrict_to_seen_appts(dataset.sick_notes, seen_appts_in_interval),
+)
 
 # Number of secondary care referrals during intervals
 # Note that opa table is unsuitable for regional comparisons and

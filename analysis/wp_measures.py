@@ -243,7 +243,7 @@ measures_to_add["secondary_appt"] = count_secondary_referral(
 # Count number of appts for sick notes
 measures_to_add["sick_notes"] = count_clinical_consultations(
     app_reason_dict["sick_notes"],
-    'many_pp',
+    "many_pp",
     INTERVAL.start_date,
     INTERVAL.end_date,
 )
@@ -286,7 +286,7 @@ if args.add_reason == True:
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_clinical_consultations(
             app_reason_dict[reason],
-            'many_pp',
+            "many_pp",
             INTERVAL.start_date,
             INTERVAL.end_date,
         )
@@ -334,6 +334,18 @@ measures_to_add["overall_resp_sensitive"] = count_mild_overall_resp_illness(
     age,
 )
 
+measures_to_add["ili"] = count_seasonal_illness_sensitive(
+    INTERVAL.start_date,
+    INTERVAL.end_date,
+    "ili",
+    resp_dict[
+        "flu_sensitive"
+    ],  # these arguments and below not actually used in ili measure
+    flu_med_codelist,
+    flu_sensitive_exclusion,
+    resp_dict["flu_specific"],
+)
+
 # Max specificity
 
 for codelist in resp_dict.keys():
@@ -343,7 +355,7 @@ for codelist in resp_dict.keys():
         )
 
 # Limit to cases with appt in the same interval to reduce secondary discharge codes
-resp_measures = ['overall_resp_sensitive']
+resp_measures = ["overall_resp_sensitive"]
 diseases = ["flu", "rsv", "covid"]
 sensitivities = ["specific", "sensitive"]
 for illness in diseases:
@@ -404,21 +416,16 @@ elif args.comorbid_measures:
 
 if args.set == "resp":
     for measure in list(measures_to_add.keys()):
+        # Remove non-respiratory measures
         if (
             ("sensitive" not in measure)
             and ("specific" not in measure)
-            and (
-                measure
-                not in [
-                    "secondary_referral",
-                    "secondary_appt",
-                ]
-            )
+            and (measure not in ["secondary_referral", "secondary_appt", "ili"])
         ):
             del measures_to_add[measure]
 
 if args.set == "sro":
-    
+
     # Build a set of measures to keep. Convert dict keys to a set first
     # to avoid depending on dict view methods and to allow set operations.
     measures_to_keep = (
