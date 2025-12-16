@@ -22,7 +22,6 @@ roundmid_any <- function(x, to = 6) {
 # Returns:
 #   Dataframe with specified columns rounded to the nearest multiple of 6
 round_columns <- function(df, cols_to_round) {
-
   rounded_df <- df %>%
     # Select required columns and round their values
     mutate(across(all_of(cols_to_round), ~ roundmid_any(.x))) %>%
@@ -33,7 +32,7 @@ round_columns <- function(df, cols_to_round) {
 }
 
 read_write <- function(read_or_write, path, test = args$test, file_type = args$file_type, df = NULL, dtype = NULL, ...) {
-  # Add '_test' suffix to path if test flag is TRUE  
+  # Add '_test' suffix to path if test flag is TRUE
 
   if (test) {
     path <- paste0(path, "_test")
@@ -44,7 +43,7 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
       df <- readr::read_csv(paste0(path, ".csv"), ...)
     } else if (file_type == "arrow") {
       df <- arrow::read_feather(paste0(path, ".arrow"))
-      
+
       # Apply dtype coercion if provided
       if (!is.null(dtype)) {
         for (col in names(dtype)) {
@@ -63,11 +62,52 @@ read_write <- function(read_or_write, path, test = args$test, file_type = args$f
 
   if (read_or_write == "write") {
     if (file_type == "csv") {
-      readr::write_csv(df, paste0(path, ".csv"), ...)
+      # Ensure the parent directory exists before writing the CSV
+      out_path <- paste0(path, ".csv")
+      out_dir <- dirname(out_path)
+      if (!dir.exists(out_dir)) {
+        dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+      }
+      readr::write_csv(df, out_path, ...)
     } else if (file_type == "arrow") {
+      # Ensure the parent directory exists before writing the Arrow file
+      out_path <- paste0(path, ".arrow")
+      out_dir <- dirname(out_path)
+      if (!dir.exists(out_dir)) {
+        dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
+      }
       # Arrow in R supports logicals directly, no need to convert unless mimicking Python logic
-      arrow::write_feather(df, paste0(path, ".arrow"))
+      arrow::write_feather(df, out_path)
     }
   }
 }
 
+# Helper function to create and save decile plots
+create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, suffix) {
+  # Create the plot
+  plot <- ggplot(
+    filter(practice_deciles, measure %in% measures_subset),
+    aes(
+      x = interval_start, y = rate_per_1000,
+      group = factor(decile),
+      linetype = decile,
+      color = decile
+    )
+  ) +
+    geom_line() +
+    scale_linetype_manual(values = line_types) +
+    scale_color_manual(values = line_colors) +
+    labs(
+      title = glue("Decile Charts for {plots_dir}_rate_mp6"),
+      x = "Interval Start",
+      y = "Rate per 1000"
+    ) +
+    facet_wrap(vars(measure), scales = "free_y") +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+  # Save the plot
+  filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6{suffix}.png")
+
+  ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
+}

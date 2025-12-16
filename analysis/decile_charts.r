@@ -1,6 +1,7 @@
 # This script generates decile charts for practice measures.
 # USAGE: Rscript analysis/decile_charts.r
 # Option --test uses test data
+# Option --set specifies the measure set (all, sro, resp)
 # Option --RR uses Rate Ratio data
 
 # ------------ Configuration -----------------------------------------------------------
@@ -18,18 +19,18 @@ source("analysis/config.r")
 print(if (args$test) "Using test data" else "Using full data")
 
 # Determine file paths
-practice_measures <- read_write('read', 'output/practice_measures/proc_practice_measures_midpoint6')
+input_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/proc_practice_measures_midpoint6")
+practice_measures <- read_write("read", input_path)
 
 if (args$test) {
-  
+
   # Generate simulated rate data (since dummy data contains too many 0's to graph)
-  practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)  
-  practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)  
-  
+  practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
+  practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)
 }
 
 # Calculate rate per 1000
-practice_measures <- mutate(practice_measures, rate_per_1000=(numerator_midpoint6/list_size_midpoint6)*1000)
+practice_measures <- mutate(practice_measures, rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
 
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
@@ -44,7 +45,7 @@ practice_deciles <- practice_measures %>%
     d2 = quantile(rate_per_1000, 0.2, na.rm = TRUE),
     d3 = quantile(rate_per_1000, 0.3, na.rm = TRUE),
     d4 = quantile(rate_per_1000, 0.4, na.rm = TRUE),
-    d5 = quantile(rate_per_1000, 0.5, na.rm = TRUE),  # Median
+    d5 = quantile(rate_per_1000, 0.5, na.rm = TRUE), # Median
     d6 = quantile(rate_per_1000, 0.6, na.rm = TRUE),
     d7 = quantile(rate_per_1000, 0.7, na.rm = TRUE),
     d8 = quantile(rate_per_1000, 0.8, na.rm = TRUE),
@@ -55,59 +56,85 @@ practice_deciles <- practice_measures %>%
 
 # Save tables, generating a separate file for each measure
 for (measure in unique(practice_deciles$measure)) {
-
   measure_data <- practice_deciles %>% filter(measure == !!measure)
 
-  read_write('write', 
-    glue("output/practice_measures/decile_tables/decile_table_{measure}_rate_mp6"), 
+  read_write("write",
+    glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
     df = measure_data,
-    file_type = 'csv')
+    file_type = "csv"
+  )
 }
 
 # Define line types
-line_types <- c("d1" = "dashed", "d3" = "dashed",  
-                "d5" = "solid",  # Median (d5) is solid
-                "d7" = "dashed", "d9" = "dashed")
+line_types <- c(
+  "d1" = "dashed", "d3" = "dashed",
+  "d5" = "solid", # Median (d5) is solid
+  "d7" = "dashed", "d9" = "dashed"
+)
 
 # Define colors
-line_colors <- c("d1" = "black", "d3" = "black", 
-                 "d5" = "red",  # d5 is red
-                 "d7" = "black", "d9" = "black")
+line_colors <- c(
+  "d1" = "black", "d3" = "black",
+  "d5" = "red", # d5 is red
+  "d7" = "black", "d9" = "black"
+)
 
 # Define your groups of measures dynamically
-measure_groups <- list(
-  # Plot 1: Appointments table measures
-  appts_table = c('CancelledbyPatient', 'CancelledbyUnit', 'DidNotAttend', 'Waiting', 
-                  'follow_up_app', 'seen_in_interval', 'start_in_interval'),  
-  # Plot 2: Other measures
-  not_appts_table = c('call_from_gp', 'call_from_patient',
-                      'emergency_care', 'online_consult', 'secondary_referral',
-                      'tele_consult', 'vax_app', 'vax_app_covid', 'vax_app_flu')
-)
+if (args$set == "all") {
+  measure_groups <- list(
+    # Plot 1: Appointments table measures
+    appts_table = c(
+      "CancelledbyPatient", "CancelledbyUnit", "DidNotAttend", "Waiting",
+      "follow_up_app", "seen_in_interval", "start_in_interval"
+    ),
+    # Plot 2: Other measures
+    not_appts_table = c(
+      "call_from_gp", "call_from_patient",
+      "emergency_care", "online_consult", "secondary_referral",
+      "tele_consult", "vax_app", "vax_app_covid", "vax_app_flu"
+    )
+  )
+} else if (args$set == "sro") {
+  sro_measures <- append(args$prioritized, "sro_prioritized")
+  sro_measures <- append(sro_measures, "sick_notes")
+  measure_groups <- list(
+    # Plot 1: De-prioritized measures
+    deprioritized = append(args$deprioritized, "sro_deprioritized"),
+    # Plot 2: Prioritized measures
+    prioritized = sro_measures
+  )
+} else if (args$set == "resp") {
+  measure_groups <- list(
+    # Plot 1: Flu/RSV/COVID measures
+    flu_rsv_covid = c(
+      "flu_sensitive", "rsv_sensitive", "covid_sensitive",
+      "flu_sensitive_with_appt", "rsv_sensitive_with_appt", "covid_sensitive_with_appt",
+      "flu_specific", "rsv_specific", "covid_specific"
+    ),
+    # Plot 2: Other measures
+    other = c(
+      "overall_resp_sensitive", "overall_resp_sensitive_with_appt", "secondary_referral",
+      "secondary_referral"
+    )
+  )
+}
+print(measure_groups$prioritized)
+# Update measure names if restricting to appts in interval
+if (args$appt) {
+  for (group_name in names(measure_groups)) {
+    measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
+  }
+}
+
+# Setup output directory
+suffix <- if (args$test) "_test" else ""
+plots_dir <- glue("output/practice_measures_{args$set}{args$appt_suffix}/plots")
+if (!dir.exists(plots_dir)) {
+  dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
+}
 
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
   measures_subset <- measure_groups[[group_name]]
-  
-  # Create the plot for this group
-  plot <- ggplot(filter(practice_deciles, measure %in% measures_subset), 
-                 aes(x = interval_start, y = rate_per_1000, 
-                     group = factor(decile),
-                     linetype = decile,
-                     color = decile)) +
-    geom_line() +
-    scale_linetype_manual(values = line_types) + 
-    scale_color_manual(values = line_colors) + 
-    labs(title = glue("Decile Charts for {group_name}_rate_mp6"),
-         x = "Interval Start",
-         y = "Rate per 1000") +
-    facet_wrap(vars(measure), scales = "free_y") +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-  # Save the plot for this group
-  suffix <- if (args$test) "_test" else ""
-  ggsave(glue("output/practice_measures/plots/decile_chart_{group_name}_rate_mp6{suffix}.png"),
-         plot = plot, width = 20, height = 12, dpi = 400)
+  create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix)
 }
-

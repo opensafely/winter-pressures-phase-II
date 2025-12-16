@@ -4,7 +4,7 @@ library(glue)
 library(reshape2)
 
 # Import appointments data
-appointments <- read.csv('output/appointments/app_pivot_counts.csv')
+appointments <- read.csv("output/appointments/app_pivot_counts.csv")
 appointments$interval_start <- as.Date(appointments$interval_start)
 
 # Heatmap
@@ -17,13 +17,13 @@ for (i in 1:length(intervals)) {
   df_melted <- melt(appointments_filtered)
   df_prop <- df_melted %>%
     group_by(measure) %>%
-      mutate(prop = value / sum(value)) %>%
-       ungroup() %>%
-          mutate(prop_label = case_when(
-              prop > 0.001 ~ scales::percent(prop, accuracy = 0.001),  # Show proportion if > 0.001%
-              prop > 0     ~ "<0.001%",  # Label trace values
-              TRUE         ~ "0%"       # Ensure zeros display as "0%"
-            ))
+    mutate(prop = value / sum(value)) %>%
+    ungroup() %>%
+    mutate(prop_label = case_when(
+      prop > 0.001 ~ scales::percent(prop, accuracy = 0.001), # Show proportion if > 0.001%
+      prop > 0 ~ "<0.001%", # Label trace values
+      TRUE ~ "0%" # Ensure zeros display as "0%"
+    ))
   ggplot(df_prop, aes(x = measure, y = variable, fill = prop)) +
     geom_tile() +
     scale_fill_gradient(low = "white", high = "red") +

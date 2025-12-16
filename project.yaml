@@ -6,305 +6,1985 @@ expectations:
 
 actions:
 
-  generate_practice_measures_2016-04-11:
+  generate_practice_measures_all_2016-04-11:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-04-11.arrow
+      --output output/practice_measures_all/practice_measures_2016-04-11.arrow
       --
       --practice_measures
       --start_intv 2016-04-11
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-04-11.arrow
+        dataset: output/practice_measures_all/practice_measures_2016-04-11.arrow
 
-  generate_practice_measures_2017-04-10:
+  generate_practice_measures_all_2017-04-10:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2017-04-10.arrow
+      --output output/practice_measures_all/practice_measures_2017-04-10.arrow
       --
       --practice_measures
       --start_intv 2017-04-10
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2017-04-10.arrow
+        dataset: output/practice_measures_all/practice_measures_2017-04-10.arrow
 
-  generate_practice_measures_2018-04-09:
+  generate_practice_measures_all_2018-04-09:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2018-04-09.arrow
+      --output output/practice_measures_all/practice_measures_2018-04-09.arrow
       --
       --practice_measures
       --start_intv 2018-04-09
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2018-04-09.arrow
+        dataset: output/practice_measures_all/practice_measures_2018-04-09.arrow
 
-  generate_practice_measures_2019-04-08:
+  generate_practice_measures_all_2019-04-08:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2019-04-08.arrow
+      --output output/practice_measures_all/practice_measures_2019-04-08.arrow
       --
       --practice_measures
       --start_intv 2019-04-08
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2019-04-08.arrow
+        dataset: output/practice_measures_all/practice_measures_2019-04-08.arrow
 
-  generate_practice_measures_2020-04-06:
+  generate_practice_measures_all_2020-04-06:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2020-04-06.arrow
+      --output output/practice_measures_all/practice_measures_2020-04-06.arrow
       --
       --practice_measures
       --start_intv 2020-04-06
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2020-04-06.arrow
+        dataset: output/practice_measures_all/practice_measures_2020-04-06.arrow
 
-  generate_practice_measures_2021-04-05:
+  generate_practice_measures_all_2021-04-05:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2021-04-05.arrow
+      --output output/practice_measures_all/practice_measures_2021-04-05.arrow
       --
       --practice_measures
       --start_intv 2021-04-05
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2021-04-05.arrow
+        dataset: output/practice_measures_all/practice_measures_2021-04-05.arrow
 
-  generate_practice_measures_2022-04-04:
+  generate_practice_measures_all_2022-04-04:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2022-04-04.arrow
+      --output output/practice_measures_all/practice_measures_2022-04-04.arrow
       --
       --practice_measures
       --start_intv 2022-04-04
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2022-04-04.arrow
+        dataset: output/practice_measures_all/practice_measures_2022-04-04.arrow
 
-  generate_practice_measures_2023-04-03:
+  generate_practice_measures_all_2023-04-03:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2023-04-03.arrow
+      --output output/practice_measures_all/practice_measures_2023-04-03.arrow
       --
       --practice_measures
       --start_intv 2023-04-03
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2023-04-03.arrow
+        dataset: output/practice_measures_all/practice_measures_2023-04-03.arrow
 
-  generate_practice_measures_2024-04-01:
+  generate_practice_measures_all_2024-04-01:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2024-04-01.arrow
+      --output output/practice_measures_all/practice_measures_2024-04-01.arrow
       --
       --practice_measures
       --start_intv 2024-04-01
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2024-04-01.arrow
+        dataset: output/practice_measures_all/practice_measures_2024-04-01.arrow
 
-  generate_practice_measures_2025-03-31:
+  generate_practice_measures_all_2025-03-31:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2025-03-31.arrow
+      --output output/practice_measures_all/practice_measures_2025-03-31.arrow
       --
       --practice_measures
       --start_intv 2025-03-31
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2025-03-31.arrow
+        dataset: output/practice_measures_all/practice_measures_2025-03-31.arrow
 
-  generate_demograph_measures_2016-04-11:
+  generate_practice_measures_all_2016-04-11_appt:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2016-04-11.arrow
+      --output output/practice_measures_all_appt/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_all_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_all_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_all_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_all_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_all_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_all_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_all_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_all_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_all_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_sro_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_sro_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_sro_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_sro_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_sro_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_sro_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_sro_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_sro_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_sro_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_sro_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_sro_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_sro_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_sro_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_sro_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_sro_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_sro_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_sro_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_sro_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_sro_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_sro_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_resp_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_resp_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_resp_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_resp_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_resp_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_resp_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_resp_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_resp_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_resp_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_resp_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_resp_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_resp_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_resp_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_resp_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_resp_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_resp_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_resp_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_resp_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_resp_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_resp_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2025-03-31.arrow
+
+  generate_demograph_measures_all_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all/demograph_measures_2016-04-11.arrow
       --
       --demograph_measures
       --start_intv 2016-04-11
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2016-04-11.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2016-04-11.arrow
 
-  generate_demograph_measures_2017-04-10:
+  generate_demograph_measures_all_2017-04-10:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2017-04-10.arrow
+      --output output/demograph_measures_all/demograph_measures_2017-04-10.arrow
       --
       --demograph_measures
       --start_intv 2017-04-10
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2017-04-10.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2017-04-10.arrow
 
-  generate_demograph_measures_2018-04-09:
+  generate_demograph_measures_all_2018-04-09:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2018-04-09.arrow
+      --output output/demograph_measures_all/demograph_measures_2018-04-09.arrow
       --
       --demograph_measures
       --start_intv 2018-04-09
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2018-04-09.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2018-04-09.arrow
 
-  generate_demograph_measures_2019-04-08:
+  generate_demograph_measures_all_2019-04-08:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2019-04-08.arrow
+      --output output/demograph_measures_all/demograph_measures_2019-04-08.arrow
       --
       --demograph_measures
       --start_intv 2019-04-08
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2019-04-08.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2019-04-08.arrow
 
-  generate_demograph_measures_2020-04-06:
+  generate_demograph_measures_all_2020-04-06:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2020-04-06.arrow
+      --output output/demograph_measures_all/demograph_measures_2020-04-06.arrow
       --
       --demograph_measures
       --start_intv 2020-04-06
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2020-04-06.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2020-04-06.arrow
 
-  generate_demograph_measures_2021-04-05:
+  generate_demograph_measures_all_2021-04-05:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2021-04-05.arrow
+      --output output/demograph_measures_all/demograph_measures_2021-04-05.arrow
       --
       --demograph_measures
       --start_intv 2021-04-05
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2021-04-05.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2021-04-05.arrow
 
-  generate_demograph_measures_2022-04-04:
+  generate_demograph_measures_all_2022-04-04:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2022-04-04.arrow
+      --output output/demograph_measures_all/demograph_measures_2022-04-04.arrow
       --
       --demograph_measures
       --start_intv 2022-04-04
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2022-04-04.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2022-04-04.arrow
 
-  generate_demograph_measures_2023-04-03:
+  generate_demograph_measures_all_2023-04-03:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2023-04-03.arrow
+      --output output/demograph_measures_all/demograph_measures_2023-04-03.arrow
       --
       --demograph_measures
       --start_intv 2023-04-03
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2023-04-03.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2023-04-03.arrow
 
-  generate_demograph_measures_2024-04-01:
+  generate_demograph_measures_all_2024-04-01:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2024-04-01.arrow
+      --output output/demograph_measures_all/demograph_measures_2024-04-01.arrow
       --
       --demograph_measures
       --start_intv 2024-04-01
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2024-04-01.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2024-04-01.arrow
 
-  generate_demograph_measures_2025-03-31:
+  generate_demograph_measures_all_2025-03-31:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/demograph_measures/demograph_measures_2025-03-31.arrow
+      --output output/demograph_measures_all/demograph_measures_2025-03-31.arrow
       --
       --demograph_measures
       --start_intv 2025-03-31
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2025-03-31.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2025-03-31.arrow
 
-  generate_comorbid_measures_2016-04-11:
+  generate_demograph_measures_all_2016-04-11_appt:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2016-04-11.arrow
+      --output output/demograph_measures_all_appt/demograph_measures_2016-04-11.arrow
+      --
+      --demograph_measures
+      --start_intv 2016-04-11
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2016-04-11.arrow
+
+  generate_demograph_measures_all_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2017-04-10.arrow
+      --
+      --demograph_measures
+      --start_intv 2017-04-10
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2017-04-10.arrow
+
+  generate_demograph_measures_all_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2018-04-09.arrow
+      --
+      --demograph_measures
+      --start_intv 2018-04-09
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2018-04-09.arrow
+
+  generate_demograph_measures_all_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2019-04-08.arrow
+      --
+      --demograph_measures
+      --start_intv 2019-04-08
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2019-04-08.arrow
+
+  generate_demograph_measures_all_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2020-04-06.arrow
+      --
+      --demograph_measures
+      --start_intv 2020-04-06
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2020-04-06.arrow
+
+  generate_demograph_measures_all_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2021-04-05.arrow
+      --
+      --demograph_measures
+      --start_intv 2021-04-05
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2021-04-05.arrow
+
+  generate_demograph_measures_all_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2022-04-04.arrow
+      --
+      --demograph_measures
+      --start_intv 2022-04-04
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2022-04-04.arrow
+
+  generate_demograph_measures_all_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2023-04-03.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-04-03
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2023-04-03.arrow
+
+  generate_demograph_measures_all_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2024-04-01.arrow
+      --
+      --demograph_measures
+      --start_intv 2024-04-01
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2024-04-01.arrow
+
+  generate_demograph_measures_all_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_all_appt/demograph_measures_2025-03-31.arrow
+      --
+      --demograph_measures
+      --start_intv 2025-03-31
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2025-03-31.arrow
+
+  generate_demograph_measures_sro_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2016-04-11.arrow
+      --
+      --demograph_measures
+      --start_intv 2016-04-11
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2016-04-11.arrow
+
+  generate_demograph_measures_sro_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2017-04-10.arrow
+      --
+      --demograph_measures
+      --start_intv 2017-04-10
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2017-04-10.arrow
+
+  generate_demograph_measures_sro_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2018-04-09.arrow
+      --
+      --demograph_measures
+      --start_intv 2018-04-09
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2018-04-09.arrow
+
+  generate_demograph_measures_sro_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2019-04-08.arrow
+      --
+      --demograph_measures
+      --start_intv 2019-04-08
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2019-04-08.arrow
+
+  generate_demograph_measures_sro_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2020-04-06.arrow
+      --
+      --demograph_measures
+      --start_intv 2020-04-06
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2020-04-06.arrow
+
+  generate_demograph_measures_sro_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2021-04-05.arrow
+      --
+      --demograph_measures
+      --start_intv 2021-04-05
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2021-04-05.arrow
+
+  generate_demograph_measures_sro_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2022-04-04.arrow
+      --
+      --demograph_measures
+      --start_intv 2022-04-04
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2022-04-04.arrow
+
+  generate_demograph_measures_sro_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2023-04-03.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-04-03
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2023-04-03.arrow
+
+  generate_demograph_measures_sro_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2024-04-01.arrow
+      --
+      --demograph_measures
+      --start_intv 2024-04-01
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2024-04-01.arrow
+
+  generate_demograph_measures_sro_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro/demograph_measures_2025-03-31.arrow
+      --
+      --demograph_measures
+      --start_intv 2025-03-31
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2025-03-31.arrow
+
+  generate_demograph_measures_sro_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2016-04-11.arrow
+      --
+      --demograph_measures
+      --start_intv 2016-04-11
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2016-04-11.arrow
+
+  generate_demograph_measures_sro_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2017-04-10.arrow
+      --
+      --demograph_measures
+      --start_intv 2017-04-10
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2017-04-10.arrow
+
+  generate_demograph_measures_sro_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2018-04-09.arrow
+      --
+      --demograph_measures
+      --start_intv 2018-04-09
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2018-04-09.arrow
+
+  generate_demograph_measures_sro_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2019-04-08.arrow
+      --
+      --demograph_measures
+      --start_intv 2019-04-08
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2019-04-08.arrow
+
+  generate_demograph_measures_sro_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2020-04-06.arrow
+      --
+      --demograph_measures
+      --start_intv 2020-04-06
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2020-04-06.arrow
+
+  generate_demograph_measures_sro_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2021-04-05.arrow
+      --
+      --demograph_measures
+      --start_intv 2021-04-05
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2021-04-05.arrow
+
+  generate_demograph_measures_sro_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2022-04-04.arrow
+      --
+      --demograph_measures
+      --start_intv 2022-04-04
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2022-04-04.arrow
+
+  generate_demograph_measures_sro_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2023-04-03.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-04-03
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2023-04-03.arrow
+
+  generate_demograph_measures_sro_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2024-04-01.arrow
+      --
+      --demograph_measures
+      --start_intv 2024-04-01
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2024-04-01.arrow
+
+  generate_demograph_measures_sro_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_sro_appt/demograph_measures_2025-03-31.arrow
+      --
+      --demograph_measures
+      --start_intv 2025-03-31
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2025-03-31.arrow
+
+  generate_demograph_measures_resp_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2016-04-11.arrow
+      --
+      --demograph_measures
+      --start_intv 2016-04-11
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2016-04-11.arrow
+
+  generate_demograph_measures_resp_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2017-04-10.arrow
+      --
+      --demograph_measures
+      --start_intv 2017-04-10
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2017-04-10.arrow
+
+  generate_demograph_measures_resp_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2018-04-09.arrow
+      --
+      --demograph_measures
+      --start_intv 2018-04-09
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2018-04-09.arrow
+
+  generate_demograph_measures_resp_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2019-04-08.arrow
+      --
+      --demograph_measures
+      --start_intv 2019-04-08
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2019-04-08.arrow
+
+  generate_demograph_measures_resp_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2020-04-06.arrow
+      --
+      --demograph_measures
+      --start_intv 2020-04-06
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2020-04-06.arrow
+
+  generate_demograph_measures_resp_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2021-04-05.arrow
+      --
+      --demograph_measures
+      --start_intv 2021-04-05
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2021-04-05.arrow
+
+  generate_demograph_measures_resp_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2022-04-04.arrow
+      --
+      --demograph_measures
+      --start_intv 2022-04-04
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2022-04-04.arrow
+
+  generate_demograph_measures_resp_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2023-04-03.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-04-03
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2023-04-03.arrow
+
+  generate_demograph_measures_resp_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2024-04-01.arrow
+      --
+      --demograph_measures
+      --start_intv 2024-04-01
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2024-04-01.arrow
+
+  generate_demograph_measures_resp_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp/demograph_measures_2025-03-31.arrow
+      --
+      --demograph_measures
+      --start_intv 2025-03-31
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2025-03-31.arrow
+
+  generate_demograph_measures_resp_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2016-04-11.arrow
+      --
+      --demograph_measures
+      --start_intv 2016-04-11
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2016-04-11.arrow
+
+  generate_demograph_measures_resp_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2017-04-10.arrow
+      --
+      --demograph_measures
+      --start_intv 2017-04-10
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2017-04-10.arrow
+
+  generate_demograph_measures_resp_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2018-04-09.arrow
+      --
+      --demograph_measures
+      --start_intv 2018-04-09
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2018-04-09.arrow
+
+  generate_demograph_measures_resp_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2019-04-08.arrow
+      --
+      --demograph_measures
+      --start_intv 2019-04-08
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2019-04-08.arrow
+
+  generate_demograph_measures_resp_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2020-04-06.arrow
+      --
+      --demograph_measures
+      --start_intv 2020-04-06
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2020-04-06.arrow
+
+  generate_demograph_measures_resp_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2021-04-05.arrow
+      --
+      --demograph_measures
+      --start_intv 2021-04-05
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2021-04-05.arrow
+
+  generate_demograph_measures_resp_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2022-04-04.arrow
+      --
+      --demograph_measures
+      --start_intv 2022-04-04
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2022-04-04.arrow
+
+  generate_demograph_measures_resp_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2023-04-03.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-04-03
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2023-04-03.arrow
+
+  generate_demograph_measures_resp_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2024-04-01.arrow
+      --
+      --demograph_measures
+      --start_intv 2024-04-01
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2024-04-01.arrow
+
+  generate_demograph_measures_resp_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/demograph_measures_resp_appt/demograph_measures_2025-03-31.arrow
+      --
+      --demograph_measures
+      --start_intv 2025-03-31
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2025-03-31.arrow
+
+  generate_comorbid_measures_all_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all/comorbid_measures_2016-04-11.arrow
       --
       --comorbid_measures
       --start_intv 2016-04-11
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2016-04-11.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2016-04-11.arrow
 
-  generate_comorbid_measures_2017-04-10:
+  generate_comorbid_measures_all_2017-04-10:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2017-04-10.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2017-04-10.arrow
       --
       --comorbid_measures
       --start_intv 2017-04-10
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2017-04-10.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2017-04-10.arrow
 
-  generate_comorbid_measures_2018-04-09:
+  generate_comorbid_measures_all_2018-04-09:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2018-04-09.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2018-04-09.arrow
       --
       --comorbid_measures
       --start_intv 2018-04-09
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2018-04-09.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2018-04-09.arrow
 
-  generate_comorbid_measures_2019-04-08:
+  generate_comorbid_measures_all_2019-04-08:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2019-04-08.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2019-04-08.arrow
       --
       --comorbid_measures
       --start_intv 2019-04-08
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2019-04-08.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2019-04-08.arrow
 
-  generate_comorbid_measures_2020-04-06:
+  generate_comorbid_measures_all_2020-04-06:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2020-04-06.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2020-04-06.arrow
       --
       --comorbid_measures
       --start_intv 2020-04-06
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2020-04-06.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2020-04-06.arrow
 
-  generate_comorbid_measures_2021-04-05:
+  generate_comorbid_measures_all_2021-04-05:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2021-04-05.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2021-04-05.arrow
       --
       --comorbid_measures
       --start_intv 2021-04-05
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2021-04-05.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2021-04-05.arrow
 
-  generate_comorbid_measures_2022-04-04:
+  generate_comorbid_measures_all_2022-04-04:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2022-04-04.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2022-04-04.arrow
       --
       --comorbid_measures
       --start_intv 2022-04-04
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2022-04-04.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2022-04-04.arrow
 
-  generate_comorbid_measures_2023-04-03:
+  generate_comorbid_measures_all_2023-04-03:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2023-04-03.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2023-04-03.arrow
       --
       --comorbid_measures
       --start_intv 2023-04-03
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2023-04-03.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2023-04-03.arrow
 
-  generate_comorbid_measures_2024-04-01:
+  generate_comorbid_measures_all_2024-04-01:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2024-04-01.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2024-04-01.arrow
       --
       --comorbid_measures
       --start_intv 2024-04-01
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2024-04-01.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2024-04-01.arrow
 
-  generate_comorbid_measures_2025-03-31:
+  generate_comorbid_measures_all_2025-03-31:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2025-03-31.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2025-03-31.arrow
       --
       --comorbid_measures
       --start_intv 2025-03-31
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2025-03-31.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2025-03-31.arrow
+
+  generate_comorbid_measures_all_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2016-04-11.arrow
+      --
+      --comorbid_measures
+      --start_intv 2016-04-11
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2016-04-11.arrow
+
+  generate_comorbid_measures_all_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2017-04-10.arrow
+      --
+      --comorbid_measures
+      --start_intv 2017-04-10
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2017-04-10.arrow
+
+  generate_comorbid_measures_all_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2018-04-09.arrow
+      --
+      --comorbid_measures
+      --start_intv 2018-04-09
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2018-04-09.arrow
+
+  generate_comorbid_measures_all_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2019-04-08.arrow
+      --
+      --comorbid_measures
+      --start_intv 2019-04-08
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2019-04-08.arrow
+
+  generate_comorbid_measures_all_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2020-04-06.arrow
+      --
+      --comorbid_measures
+      --start_intv 2020-04-06
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2020-04-06.arrow
+
+  generate_comorbid_measures_all_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2021-04-05.arrow
+      --
+      --comorbid_measures
+      --start_intv 2021-04-05
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2021-04-05.arrow
+
+  generate_comorbid_measures_all_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2022-04-04.arrow
+      --
+      --comorbid_measures
+      --start_intv 2022-04-04
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2022-04-04.arrow
+
+  generate_comorbid_measures_all_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2023-04-03.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-04-03
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2023-04-03.arrow
+
+  generate_comorbid_measures_all_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2024-04-01.arrow
+      --
+      --comorbid_measures
+      --start_intv 2024-04-01
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2024-04-01.arrow
+
+  generate_comorbid_measures_all_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2025-03-31.arrow
+      --
+      --comorbid_measures
+      --start_intv 2025-03-31
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2025-03-31.arrow
+
+  generate_comorbid_measures_sro_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2016-04-11.arrow
+      --
+      --comorbid_measures
+      --start_intv 2016-04-11
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2016-04-11.arrow
+
+  generate_comorbid_measures_sro_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2017-04-10.arrow
+      --
+      --comorbid_measures
+      --start_intv 2017-04-10
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2017-04-10.arrow
+
+  generate_comorbid_measures_sro_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2018-04-09.arrow
+      --
+      --comorbid_measures
+      --start_intv 2018-04-09
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2018-04-09.arrow
+
+  generate_comorbid_measures_sro_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2019-04-08.arrow
+      --
+      --comorbid_measures
+      --start_intv 2019-04-08
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2019-04-08.arrow
+
+  generate_comorbid_measures_sro_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2020-04-06.arrow
+      --
+      --comorbid_measures
+      --start_intv 2020-04-06
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2020-04-06.arrow
+
+  generate_comorbid_measures_sro_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2021-04-05.arrow
+      --
+      --comorbid_measures
+      --start_intv 2021-04-05
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2021-04-05.arrow
+
+  generate_comorbid_measures_sro_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2022-04-04.arrow
+      --
+      --comorbid_measures
+      --start_intv 2022-04-04
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2022-04-04.arrow
+
+  generate_comorbid_measures_sro_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2023-04-03.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-04-03
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2023-04-03.arrow
+
+  generate_comorbid_measures_sro_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2024-04-01.arrow
+      --
+      --comorbid_measures
+      --start_intv 2024-04-01
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2024-04-01.arrow
+
+  generate_comorbid_measures_sro_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2025-03-31.arrow
+      --
+      --comorbid_measures
+      --start_intv 2025-03-31
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2025-03-31.arrow
+
+  generate_comorbid_measures_sro_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2016-04-11.arrow
+      --
+      --comorbid_measures
+      --start_intv 2016-04-11
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2016-04-11.arrow
+
+  generate_comorbid_measures_sro_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2017-04-10.arrow
+      --
+      --comorbid_measures
+      --start_intv 2017-04-10
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2017-04-10.arrow
+
+  generate_comorbid_measures_sro_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2018-04-09.arrow
+      --
+      --comorbid_measures
+      --start_intv 2018-04-09
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2018-04-09.arrow
+
+  generate_comorbid_measures_sro_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2019-04-08.arrow
+      --
+      --comorbid_measures
+      --start_intv 2019-04-08
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2019-04-08.arrow
+
+  generate_comorbid_measures_sro_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2020-04-06.arrow
+      --
+      --comorbid_measures
+      --start_intv 2020-04-06
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2020-04-06.arrow
+
+  generate_comorbid_measures_sro_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2021-04-05.arrow
+      --
+      --comorbid_measures
+      --start_intv 2021-04-05
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2021-04-05.arrow
+
+  generate_comorbid_measures_sro_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2022-04-04.arrow
+      --
+      --comorbid_measures
+      --start_intv 2022-04-04
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2022-04-04.arrow
+
+  generate_comorbid_measures_sro_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2023-04-03.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-04-03
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2023-04-03.arrow
+
+  generate_comorbid_measures_sro_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2024-04-01.arrow
+      --
+      --comorbid_measures
+      --start_intv 2024-04-01
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2024-04-01.arrow
+
+  generate_comorbid_measures_sro_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2025-03-31.arrow
+      --
+      --comorbid_measures
+      --start_intv 2025-03-31
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2025-03-31.arrow
+
+  generate_comorbid_measures_resp_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2016-04-11.arrow
+      --
+      --comorbid_measures
+      --start_intv 2016-04-11
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2016-04-11.arrow
+
+  generate_comorbid_measures_resp_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2017-04-10.arrow
+      --
+      --comorbid_measures
+      --start_intv 2017-04-10
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2017-04-10.arrow
+
+  generate_comorbid_measures_resp_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2018-04-09.arrow
+      --
+      --comorbid_measures
+      --start_intv 2018-04-09
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2018-04-09.arrow
+
+  generate_comorbid_measures_resp_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2019-04-08.arrow
+      --
+      --comorbid_measures
+      --start_intv 2019-04-08
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2019-04-08.arrow
+
+  generate_comorbid_measures_resp_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2020-04-06.arrow
+      --
+      --comorbid_measures
+      --start_intv 2020-04-06
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2020-04-06.arrow
+
+  generate_comorbid_measures_resp_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2021-04-05.arrow
+      --
+      --comorbid_measures
+      --start_intv 2021-04-05
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2021-04-05.arrow
+
+  generate_comorbid_measures_resp_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2022-04-04.arrow
+      --
+      --comorbid_measures
+      --start_intv 2022-04-04
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2022-04-04.arrow
+
+  generate_comorbid_measures_resp_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2023-04-03.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-04-03
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2023-04-03.arrow
+
+  generate_comorbid_measures_resp_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2024-04-01.arrow
+      --
+      --comorbid_measures
+      --start_intv 2024-04-01
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2024-04-01.arrow
+
+  generate_comorbid_measures_resp_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2025-03-31.arrow
+      --
+      --comorbid_measures
+      --start_intv 2025-03-31
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2025-03-31.arrow
+
+  generate_comorbid_measures_resp_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2016-04-11.arrow
+      --
+      --comorbid_measures
+      --start_intv 2016-04-11
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2016-04-11.arrow
+
+  generate_comorbid_measures_resp_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2017-04-10.arrow
+      --
+      --comorbid_measures
+      --start_intv 2017-04-10
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2017-04-10.arrow
+
+  generate_comorbid_measures_resp_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2018-04-09.arrow
+      --
+      --comorbid_measures
+      --start_intv 2018-04-09
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2018-04-09.arrow
+
+  generate_comorbid_measures_resp_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2019-04-08.arrow
+      --
+      --comorbid_measures
+      --start_intv 2019-04-08
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2019-04-08.arrow
+
+  generate_comorbid_measures_resp_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2020-04-06.arrow
+      --
+      --comorbid_measures
+      --start_intv 2020-04-06
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2020-04-06.arrow
+
+  generate_comorbid_measures_resp_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2021-04-05.arrow
+      --
+      --comorbid_measures
+      --start_intv 2021-04-05
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2021-04-05.arrow
+
+  generate_comorbid_measures_resp_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2022-04-04.arrow
+      --
+      --comorbid_measures
+      --start_intv 2022-04-04
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2022-04-04.arrow
+
+  generate_comorbid_measures_resp_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2023-04-03.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-04-03
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2023-04-03.arrow
+
+  generate_comorbid_measures_resp_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2024-04-01.arrow
+      --
+      --comorbid_measures
+      --start_intv 2024-04-01
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2024-04-01.arrow
+
+  generate_comorbid_measures_resp_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2025-03-31.arrow
+      --
+      --comorbid_measures
+      --start_intv 2025-03-31
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2025-03-31.arrow
 
   generate_app_measures_intv_1:
      run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
@@ -351,224 +2031,1333 @@ actions:
  
  # --------------- PROCESSING ------------------------------------------
 
-  generate_freq_table_demograph:
-    run: python:v2 analysis/freq_table.py --demograph_measures  
-    needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
+  generate_freq_table_demograph_all:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set all
+    needs: [generate_demograph_measures_all_2016-04-11, generate_demograph_measures_all_2017-04-10, generate_demograph_measures_all_2018-04-09, generate_demograph_measures_all_2019-04-08, generate_demograph_measures_all_2020-04-06, generate_demograph_measures_all_2021-04-05, generate_demograph_measures_all_2022-04-04, generate_demograph_measures_all_2023-04-03, generate_demograph_measures_all_2024-04-01, generate_demograph_measures_all_2025-03-31]
     outputs:
       moderately_sensitive:
-        freq_table: output/demograph_measures/freq_table_demograph.csv
+        freq_table: output/demograph_measures_all/freq_table_demograph.csv
+  generate_pre_processing_demograph_all:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set all
+    needs: [generate_demograph_measures_all_2016-04-11, generate_demograph_measures_all_2017-04-10, generate_demograph_measures_all_2018-04-09, generate_demograph_measures_all_2019-04-08, generate_demograph_measures_all_2020-04-06, generate_demograph_measures_all_2021-04-05, generate_demograph_measures_all_2022-04-04, generate_demograph_measures_all_2023-04-03, generate_demograph_measures_all_2024-04-01, generate_demograph_measures_all_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_all/proc_demograph_measures.arrow
+  generate_rounding_demograph_all:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set all
+    needs: [generate_pre_processing_demograph_all]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_all/proc_demograph_measures_midpoint6.arrow
+  generate_normalization_demograph_all:
+    run: python:v2 analysis/normalization.py --demograph_measures --set all
+    needs: [generate_rounding_demograph_all]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_all/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_all/Results*.csv
 
-  generate_pre_processing_demograph:
-    run: python:v2 analysis/pre_processing.py --demograph_measures 
-    needs: [generate_demograph_measures_2016-04-11, generate_demograph_measures_2017-04-10, generate_demograph_measures_2018-04-09, generate_demograph_measures_2019-04-08, generate_demograph_measures_2020-04-06, generate_demograph_measures_2021-04-05, generate_demograph_measures_2022-04-04, generate_demograph_measures_2023-04-03, generate_demograph_measures_2024-04-01, generate_demograph_measures_2025-03-31]
+  generate_freq_table_demograph_all_appt:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set all --appt
+    needs: [generate_demograph_measures_all_2016-04-11_appt, generate_demograph_measures_all_2017-04-10_appt, generate_demograph_measures_all_2018-04-09_appt, generate_demograph_measures_all_2019-04-08_appt, generate_demograph_measures_all_2020-04-06_appt, generate_demograph_measures_all_2021-04-05_appt, generate_demograph_measures_all_2022-04-04_appt, generate_demograph_measures_all_2023-04-03_appt, generate_demograph_measures_all_2024-04-01_appt, generate_demograph_measures_all_2025-03-31_appt]
     outputs:
-      highly_sensitive:
-        measures: output/demograph_measures/proc_demograph_measures.arrow
-  generate_rounding_demograph:
-    run: r:v2 analysis/round_measures.r --demograph_measures  
-    needs: [generate_pre_processing_demograph]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/demograph_measures/proc_demograph_measures_midpoint6.arrow
-  generate_normalization_demograph:
-    run: python:v2 analysis/normalization.py --demograph_measures 
-    needs: [generate_rounding_demograph]
-    outputs:
-      highly_sensitive:
-        practice_level_tables: output/demograph_measures/practice_level_counts.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/demograph_measures/Results*.csv
+        freq_table: output/demograph_measures_all_appt/freq_table_demograph.csv
+  generate_pre_processing_demograph_all_appt:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set all --appt
+    needs: [generate_demograph_measures_all_2016-04-11_appt, generate_demograph_measures_all_2017-04-10_appt, generate_demograph_measures_all_2018-04-09_appt, generate_demograph_measures_all_2019-04-08_appt, generate_demograph_measures_all_2020-04-06_appt, generate_demograph_measures_all_2021-04-05_appt, generate_demograph_measures_all_2022-04-04_appt, generate_demograph_measures_all_2023-04-03_appt, generate_demograph_measures_all_2024-04-01_appt, generate_demograph_measures_all_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_all_appt/proc_demograph_measures.arrow
+  generate_rounding_demograph_all_appt:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set all --appt
+    needs: [generate_pre_processing_demograph_all_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_all_appt/proc_demograph_measures_midpoint6.arrow
+  generate_normalization_demograph_all_appt:
+    run: python:v2 analysis/normalization.py --demograph_measures --set all --appt
+    needs: [generate_rounding_demograph_all_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_all_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_all_appt/Results*.csv
 
-  generate_freq_table_practice:
-    run: python:v2 analysis/freq_table.py --practice_measures  
-    needs: [generate_practice_measures_2016-04-11, generate_practice_measures_2017-04-10, generate_practice_measures_2018-04-09, generate_practice_measures_2019-04-08, generate_practice_measures_2020-04-06, generate_practice_measures_2021-04-05, generate_practice_measures_2022-04-04, generate_practice_measures_2023-04-03, generate_practice_measures_2024-04-01, generate_practice_measures_2025-03-31]
+  generate_freq_table_demograph_sro:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set sro
+    needs: [generate_demograph_measures_sro_2016-04-11, generate_demograph_measures_sro_2017-04-10, generate_demograph_measures_sro_2018-04-09, generate_demograph_measures_sro_2019-04-08, generate_demograph_measures_sro_2020-04-06, generate_demograph_measures_sro_2021-04-05, generate_demograph_measures_sro_2022-04-04, generate_demograph_measures_sro_2023-04-03, generate_demograph_measures_sro_2024-04-01, generate_demograph_measures_sro_2025-03-31]
     outputs:
       moderately_sensitive:
-        freq_table: output/practice_measures/freq_table_practice.csv
+        freq_table: output/demograph_measures_sro/freq_table_demograph.csv
+  generate_pre_processing_demograph_sro:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set sro
+    needs: [generate_demograph_measures_sro_2016-04-11, generate_demograph_measures_sro_2017-04-10, generate_demograph_measures_sro_2018-04-09, generate_demograph_measures_sro_2019-04-08, generate_demograph_measures_sro_2020-04-06, generate_demograph_measures_sro_2021-04-05, generate_demograph_measures_sro_2022-04-04, generate_demograph_measures_sro_2023-04-03, generate_demograph_measures_sro_2024-04-01, generate_demograph_measures_sro_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_sro/proc_demograph_measures.arrow
+  generate_rounding_demograph_sro:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set sro
+    needs: [generate_pre_processing_demograph_sro]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_sro/proc_demograph_measures_midpoint6.arrow
+  generate_normalization_demograph_sro:
+    run: python:v2 analysis/normalization.py --demograph_measures --set sro
+    needs: [generate_rounding_demograph_sro]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_sro/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_sro/Results*.csv
 
-  generate_pre_processing_practice:
-    run: python:v2 analysis/pre_processing.py --practice_measures 
-    needs: [generate_practice_measures_2016-04-11, generate_practice_measures_2017-04-10, generate_practice_measures_2018-04-09, generate_practice_measures_2019-04-08, generate_practice_measures_2020-04-06, generate_practice_measures_2021-04-05, generate_practice_measures_2022-04-04, generate_practice_measures_2023-04-03, generate_practice_measures_2024-04-01, generate_practice_measures_2025-03-31]
+  generate_freq_table_demograph_sro_appt:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set sro --appt
+    needs: [generate_demograph_measures_sro_2016-04-11_appt, generate_demograph_measures_sro_2017-04-10_appt, generate_demograph_measures_sro_2018-04-09_appt, generate_demograph_measures_sro_2019-04-08_appt, generate_demograph_measures_sro_2020-04-06_appt, generate_demograph_measures_sro_2021-04-05_appt, generate_demograph_measures_sro_2022-04-04_appt, generate_demograph_measures_sro_2023-04-03_appt, generate_demograph_measures_sro_2024-04-01_appt, generate_demograph_measures_sro_2025-03-31_appt]
     outputs:
-      highly_sensitive:
-        measures: output/practice_measures/proc_practice_measures.arrow
-  generate_rounding_practice:
-    run: r:v2 analysis/round_measures.r --practice_measures  
-    needs: [generate_pre_processing_practice]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures/proc_practice_measures_midpoint6.arrow
-  generate_normalization_practice:
-    run: python:v2 analysis/normalization.py --practice_measures 
-    needs: [generate_rounding_practice]
-    outputs:
-      highly_sensitive:
-        practice_level_tables: output/practice_measures/practice_level_counts.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures/Results*.csv
+        freq_table: output/demograph_measures_sro_appt/freq_table_demograph.csv
+  generate_pre_processing_demograph_sro_appt:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set sro --appt
+    needs: [generate_demograph_measures_sro_2016-04-11_appt, generate_demograph_measures_sro_2017-04-10_appt, generate_demograph_measures_sro_2018-04-09_appt, generate_demograph_measures_sro_2019-04-08_appt, generate_demograph_measures_sro_2020-04-06_appt, generate_demograph_measures_sro_2021-04-05_appt, generate_demograph_measures_sro_2022-04-04_appt, generate_demograph_measures_sro_2023-04-03_appt, generate_demograph_measures_sro_2024-04-01_appt, generate_demograph_measures_sro_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_sro_appt/proc_demograph_measures.arrow
+  generate_rounding_demograph_sro_appt:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set sro --appt
+    needs: [generate_pre_processing_demograph_sro_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_sro_appt/proc_demograph_measures_midpoint6.arrow
+  generate_normalization_demograph_sro_appt:
+    run: python:v2 analysis/normalization.py --demograph_measures --set sro --appt
+    needs: [generate_rounding_demograph_sro_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_sro_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_sro_appt/Results*.csv
 
-  generate_freq_table_comorbid:
-    run: python:v2 analysis/freq_table.py --comorbid_measures  
-    needs: [generate_comorbid_measures_2016-04-11, generate_comorbid_measures_2017-04-10, generate_comorbid_measures_2018-04-09, generate_comorbid_measures_2019-04-08, generate_comorbid_measures_2020-04-06, generate_comorbid_measures_2021-04-05, generate_comorbid_measures_2022-04-04, generate_comorbid_measures_2023-04-03, generate_comorbid_measures_2024-04-01, generate_comorbid_measures_2025-03-31]
+  generate_freq_table_demograph_resp:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set resp
+    needs: [generate_demograph_measures_resp_2016-04-11, generate_demograph_measures_resp_2017-04-10, generate_demograph_measures_resp_2018-04-09, generate_demograph_measures_resp_2019-04-08, generate_demograph_measures_resp_2020-04-06, generate_demograph_measures_resp_2021-04-05, generate_demograph_measures_resp_2022-04-04, generate_demograph_measures_resp_2023-04-03, generate_demograph_measures_resp_2024-04-01, generate_demograph_measures_resp_2025-03-31]
     outputs:
       moderately_sensitive:
-        freq_table: output/comorbid_measures/freq_table_comorbid.csv
+        freq_table: output/demograph_measures_resp/freq_table_demograph.csv
+  generate_pre_processing_demograph_resp:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set resp
+    needs: [generate_demograph_measures_resp_2016-04-11, generate_demograph_measures_resp_2017-04-10, generate_demograph_measures_resp_2018-04-09, generate_demograph_measures_resp_2019-04-08, generate_demograph_measures_resp_2020-04-06, generate_demograph_measures_resp_2021-04-05, generate_demograph_measures_resp_2022-04-04, generate_demograph_measures_resp_2023-04-03, generate_demograph_measures_resp_2024-04-01, generate_demograph_measures_resp_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_resp/proc_demograph_measures.arrow
+  generate_rounding_demograph_resp:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set resp
+    needs: [generate_pre_processing_demograph_resp]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_resp/proc_demograph_measures_midpoint6.arrow
+  generate_normalization_demograph_resp:
+    run: python:v2 analysis/normalization.py --demograph_measures --set resp
+    needs: [generate_rounding_demograph_resp]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_resp/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_resp/Results*.csv
 
-  generate_pre_processing_comorbid:
-    run: python:v2 analysis/pre_processing.py --comorbid_measures 
-    needs: [generate_comorbid_measures_2016-04-11, generate_comorbid_measures_2017-04-10, generate_comorbid_measures_2018-04-09, generate_comorbid_measures_2019-04-08, generate_comorbid_measures_2020-04-06, generate_comorbid_measures_2021-04-05, generate_comorbid_measures_2022-04-04, generate_comorbid_measures_2023-04-03, generate_comorbid_measures_2024-04-01, generate_comorbid_measures_2025-03-31]
+  generate_freq_table_demograph_resp_appt:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set resp --appt
+    needs: [generate_demograph_measures_resp_2016-04-11_appt, generate_demograph_measures_resp_2017-04-10_appt, generate_demograph_measures_resp_2018-04-09_appt, generate_demograph_measures_resp_2019-04-08_appt, generate_demograph_measures_resp_2020-04-06_appt, generate_demograph_measures_resp_2021-04-05_appt, generate_demograph_measures_resp_2022-04-04_appt, generate_demograph_measures_resp_2023-04-03_appt, generate_demograph_measures_resp_2024-04-01_appt, generate_demograph_measures_resp_2025-03-31_appt]
     outputs:
-      highly_sensitive:
-        measures: output/comorbid_measures/proc_comorbid_measures.arrow
-  generate_rounding_comorbid:
-    run: r:v2 analysis/round_measures.r --comorbid_measures  
-    needs: [generate_pre_processing_comorbid]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/comorbid_measures/proc_comorbid_measures_midpoint6.arrow
-  generate_normalization_comorbid:
-    run: python:v2 analysis/normalization.py --comorbid_measures 
-    needs: [generate_rounding_comorbid]
-    outputs:
-      highly_sensitive:
-        practice_level_tables: output/comorbid_measures/practice_level_counts.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/comorbid_measures/Results*.csv
+        freq_table: output/demograph_measures_resp_appt/freq_table_demograph.csv
+  generate_pre_processing_demograph_resp_appt:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set resp --appt
+    needs: [generate_demograph_measures_resp_2016-04-11_appt, generate_demograph_measures_resp_2017-04-10_appt, generate_demograph_measures_resp_2018-04-09_appt, generate_demograph_measures_resp_2019-04-08_appt, generate_demograph_measures_resp_2020-04-06_appt, generate_demograph_measures_resp_2021-04-05_appt, generate_demograph_measures_resp_2022-04-04_appt, generate_demograph_measures_resp_2023-04-03_appt, generate_demograph_measures_resp_2024-04-01_appt, generate_demograph_measures_resp_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_resp_appt/proc_demograph_measures.arrow
+  generate_rounding_demograph_resp_appt:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set resp --appt
+    needs: [generate_pre_processing_demograph_resp_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_resp_appt/proc_demograph_measures_midpoint6.arrow
+  generate_normalization_demograph_resp_appt:
+    run: python:v2 analysis/normalization.py --demograph_measures --set resp --appt
+    needs: [generate_rounding_demograph_resp_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_resp_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_resp_appt/Results*.csv
+
+  generate_freq_table_practice_all:
+    run: python:v2 analysis/freq_table.py --practice_measures --set all
+    needs: [generate_practice_measures_all_2016-04-11, generate_practice_measures_all_2017-04-10, generate_practice_measures_all_2018-04-09, generate_practice_measures_all_2019-04-08, generate_practice_measures_all_2020-04-06, generate_practice_measures_all_2021-04-05, generate_practice_measures_all_2022-04-04, generate_practice_measures_all_2023-04-03, generate_practice_measures_all_2024-04-01, generate_practice_measures_all_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_all/freq_table_practice.csv
+  generate_pre_processing_practice_all:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set all
+    needs: [generate_practice_measures_all_2016-04-11, generate_practice_measures_all_2017-04-10, generate_practice_measures_all_2018-04-09, generate_practice_measures_all_2019-04-08, generate_practice_measures_all_2020-04-06, generate_practice_measures_all_2021-04-05, generate_practice_measures_all_2022-04-04, generate_practice_measures_all_2023-04-03, generate_practice_measures_all_2024-04-01, generate_practice_measures_all_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_all/proc_practice_measures.arrow
+  generate_rounding_practice_all:
+    run: r:v2 analysis/round_measures.r --practice_measures --set all
+    needs: [generate_pre_processing_practice_all]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_all/proc_practice_measures_midpoint6.arrow
+  generate_normalization_practice_all:
+    run: python:v2 analysis/normalization.py --practice_measures --set all
+    needs: [generate_rounding_practice_all]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_all/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_all/Results*.csv
+
+  generate_freq_table_practice_all_appt:
+    run: python:v2 analysis/freq_table.py --practice_measures --set all --appt
+    needs: [generate_practice_measures_all_2016-04-11_appt, generate_practice_measures_all_2017-04-10_appt, generate_practice_measures_all_2018-04-09_appt, generate_practice_measures_all_2019-04-08_appt, generate_practice_measures_all_2020-04-06_appt, generate_practice_measures_all_2021-04-05_appt, generate_practice_measures_all_2022-04-04_appt, generate_practice_measures_all_2023-04-03_appt, generate_practice_measures_all_2024-04-01_appt, generate_practice_measures_all_2025-03-31_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_all_appt/freq_table_practice.csv
+  generate_pre_processing_practice_all_appt:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set all --appt
+    needs: [generate_practice_measures_all_2016-04-11_appt, generate_practice_measures_all_2017-04-10_appt, generate_practice_measures_all_2018-04-09_appt, generate_practice_measures_all_2019-04-08_appt, generate_practice_measures_all_2020-04-06_appt, generate_practice_measures_all_2021-04-05_appt, generate_practice_measures_all_2022-04-04_appt, generate_practice_measures_all_2023-04-03_appt, generate_practice_measures_all_2024-04-01_appt, generate_practice_measures_all_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_all_appt/proc_practice_measures.arrow
+  generate_rounding_practice_all_appt:
+    run: r:v2 analysis/round_measures.r --practice_measures --set all --appt
+    needs: [generate_pre_processing_practice_all_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_all_appt/proc_practice_measures_midpoint6.arrow
+  generate_normalization_practice_all_appt:
+    run: python:v2 analysis/normalization.py --practice_measures --set all --appt
+    needs: [generate_rounding_practice_all_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_all_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_all_appt/Results*.csv
+
+  generate_freq_table_practice_sro:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro
+    needs: [generate_practice_measures_sro_2016-04-11, generate_practice_measures_sro_2017-04-10, generate_practice_measures_sro_2018-04-09, generate_practice_measures_sro_2019-04-08, generate_practice_measures_sro_2020-04-06, generate_practice_measures_sro_2021-04-05, generate_practice_measures_sro_2022-04-04, generate_practice_measures_sro_2023-04-03, generate_practice_measures_sro_2024-04-01, generate_practice_measures_sro_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro/freq_table_practice.csv
+  generate_pre_processing_practice_sro:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro
+    needs: [generate_practice_measures_sro_2016-04-11, generate_practice_measures_sro_2017-04-10, generate_practice_measures_sro_2018-04-09, generate_practice_measures_sro_2019-04-08, generate_practice_measures_sro_2020-04-06, generate_practice_measures_sro_2021-04-05, generate_practice_measures_sro_2022-04-04, generate_practice_measures_sro_2023-04-03, generate_practice_measures_sro_2024-04-01, generate_practice_measures_sro_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro/proc_practice_measures.arrow
+  generate_rounding_practice_sro:
+    run: r:v2 analysis/round_measures.r --practice_measures --set sro
+    needs: [generate_pre_processing_practice_sro]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_sro/proc_practice_measures_midpoint6.arrow
+  generate_normalization_practice_sro:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro
+    needs: [generate_rounding_practice_sro]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_sro/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_sro/Results*.csv
+
+  generate_freq_table_practice_sro_appt:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro --appt
+    needs: [generate_practice_measures_sro_2016-04-11_appt, generate_practice_measures_sro_2017-04-10_appt, generate_practice_measures_sro_2018-04-09_appt, generate_practice_measures_sro_2019-04-08_appt, generate_practice_measures_sro_2020-04-06_appt, generate_practice_measures_sro_2021-04-05_appt, generate_practice_measures_sro_2022-04-04_appt, generate_practice_measures_sro_2023-04-03_appt, generate_practice_measures_sro_2024-04-01_appt, generate_practice_measures_sro_2025-03-31_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro_appt/freq_table_practice.csv
+  generate_pre_processing_practice_sro_appt:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro --appt
+    needs: [generate_practice_measures_sro_2016-04-11_appt, generate_practice_measures_sro_2017-04-10_appt, generate_practice_measures_sro_2018-04-09_appt, generate_practice_measures_sro_2019-04-08_appt, generate_practice_measures_sro_2020-04-06_appt, generate_practice_measures_sro_2021-04-05_appt, generate_practice_measures_sro_2022-04-04_appt, generate_practice_measures_sro_2023-04-03_appt, generate_practice_measures_sro_2024-04-01_appt, generate_practice_measures_sro_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro_appt/proc_practice_measures.arrow
+  generate_rounding_practice_sro_appt:
+    run: r:v2 analysis/round_measures.r --practice_measures --set sro --appt
+    needs: [generate_pre_processing_practice_sro_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6.arrow
+  generate_normalization_practice_sro_appt:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro --appt
+    needs: [generate_rounding_practice_sro_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_sro_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_sro_appt/Results*.csv
+
+  generate_freq_table_practice_resp:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp
+    needs: [generate_practice_measures_resp_2016-04-11, generate_practice_measures_resp_2017-04-10, generate_practice_measures_resp_2018-04-09, generate_practice_measures_resp_2019-04-08, generate_practice_measures_resp_2020-04-06, generate_practice_measures_resp_2021-04-05, generate_practice_measures_resp_2022-04-04, generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2024-04-01, generate_practice_measures_resp_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp/freq_table_practice.csv
+  generate_pre_processing_practice_resp:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp
+    needs: [generate_practice_measures_resp_2016-04-11, generate_practice_measures_resp_2017-04-10, generate_practice_measures_resp_2018-04-09, generate_practice_measures_resp_2019-04-08, generate_practice_measures_resp_2020-04-06, generate_practice_measures_resp_2021-04-05, generate_practice_measures_resp_2022-04-04, generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2024-04-01, generate_practice_measures_resp_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp/proc_practice_measures.arrow
+  generate_rounding_practice_resp:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp
+    needs: [generate_pre_processing_practice_resp]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6.arrow
+  generate_normalization_practice_resp:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp
+    needs: [generate_rounding_practice_resp]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_resp/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_resp/Results*.csv
+
+  generate_freq_table_practice_resp_appt:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp --appt
+    needs: [generate_practice_measures_resp_2016-04-11_appt, generate_practice_measures_resp_2017-04-10_appt, generate_practice_measures_resp_2018-04-09_appt, generate_practice_measures_resp_2019-04-08_appt, generate_practice_measures_resp_2020-04-06_appt, generate_practice_measures_resp_2021-04-05_appt, generate_practice_measures_resp_2022-04-04_appt, generate_practice_measures_resp_2023-04-03_appt, generate_practice_measures_resp_2024-04-01_appt, generate_practice_measures_resp_2025-03-31_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp_appt/freq_table_practice.csv
+  generate_pre_processing_practice_resp_appt:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --appt
+    needs: [generate_practice_measures_resp_2016-04-11_appt, generate_practice_measures_resp_2017-04-10_appt, generate_practice_measures_resp_2018-04-09_appt, generate_practice_measures_resp_2019-04-08_appt, generate_practice_measures_resp_2020-04-06_appt, generate_practice_measures_resp_2021-04-05_appt, generate_practice_measures_resp_2022-04-04_appt, generate_practice_measures_resp_2023-04-03_appt, generate_practice_measures_resp_2024-04-01_appt, generate_practice_measures_resp_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp_appt/proc_practice_measures.arrow
+  generate_rounding_practice_resp_appt:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --appt
+    needs: [generate_pre_processing_practice_resp_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6.arrow
+  generate_normalization_practice_resp_appt:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp --appt
+    needs: [generate_rounding_practice_resp_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_resp_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_resp_appt/Results*.csv
+
+  generate_freq_table_comorbid_all:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set all
+    needs: [generate_comorbid_measures_all_2016-04-11, generate_comorbid_measures_all_2017-04-10, generate_comorbid_measures_all_2018-04-09, generate_comorbid_measures_all_2019-04-08, generate_comorbid_measures_all_2020-04-06, generate_comorbid_measures_all_2021-04-05, generate_comorbid_measures_all_2022-04-04, generate_comorbid_measures_all_2023-04-03, generate_comorbid_measures_all_2024-04-01, generate_comorbid_measures_all_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_all/freq_table_comorbid.csv
+  generate_pre_processing_comorbid_all:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set all
+    needs: [generate_comorbid_measures_all_2016-04-11, generate_comorbid_measures_all_2017-04-10, generate_comorbid_measures_all_2018-04-09, generate_comorbid_measures_all_2019-04-08, generate_comorbid_measures_all_2020-04-06, generate_comorbid_measures_all_2021-04-05, generate_comorbid_measures_all_2022-04-04, generate_comorbid_measures_all_2023-04-03, generate_comorbid_measures_all_2024-04-01, generate_comorbid_measures_all_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_all/proc_comorbid_measures.arrow
+  generate_rounding_comorbid_all:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set all
+    needs: [generate_pre_processing_comorbid_all]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_all/proc_comorbid_measures_midpoint6.arrow
+  generate_normalization_comorbid_all:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set all
+    needs: [generate_rounding_comorbid_all]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_all/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_all/Results*.csv
+
+  generate_freq_table_comorbid_all_appt:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set all --appt
+    needs: [generate_comorbid_measures_all_2016-04-11_appt, generate_comorbid_measures_all_2017-04-10_appt, generate_comorbid_measures_all_2018-04-09_appt, generate_comorbid_measures_all_2019-04-08_appt, generate_comorbid_measures_all_2020-04-06_appt, generate_comorbid_measures_all_2021-04-05_appt, generate_comorbid_measures_all_2022-04-04_appt, generate_comorbid_measures_all_2023-04-03_appt, generate_comorbid_measures_all_2024-04-01_appt, generate_comorbid_measures_all_2025-03-31_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_all_appt/freq_table_comorbid.csv
+  generate_pre_processing_comorbid_all_appt:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set all --appt
+    needs: [generate_comorbid_measures_all_2016-04-11_appt, generate_comorbid_measures_all_2017-04-10_appt, generate_comorbid_measures_all_2018-04-09_appt, generate_comorbid_measures_all_2019-04-08_appt, generate_comorbid_measures_all_2020-04-06_appt, generate_comorbid_measures_all_2021-04-05_appt, generate_comorbid_measures_all_2022-04-04_appt, generate_comorbid_measures_all_2023-04-03_appt, generate_comorbid_measures_all_2024-04-01_appt, generate_comorbid_measures_all_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_all_appt/proc_comorbid_measures.arrow
+  generate_rounding_comorbid_all_appt:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set all --appt
+    needs: [generate_pre_processing_comorbid_all_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_all_appt/proc_comorbid_measures_midpoint6.arrow
+  generate_normalization_comorbid_all_appt:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set all --appt
+    needs: [generate_rounding_comorbid_all_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_all_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_all_appt/Results*.csv
+
+  generate_freq_table_comorbid_sro:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set sro
+    needs: [generate_comorbid_measures_sro_2016-04-11, generate_comorbid_measures_sro_2017-04-10, generate_comorbid_measures_sro_2018-04-09, generate_comorbid_measures_sro_2019-04-08, generate_comorbid_measures_sro_2020-04-06, generate_comorbid_measures_sro_2021-04-05, generate_comorbid_measures_sro_2022-04-04, generate_comorbid_measures_sro_2023-04-03, generate_comorbid_measures_sro_2024-04-01, generate_comorbid_measures_sro_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_sro/freq_table_comorbid.csv
+  generate_pre_processing_comorbid_sro:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set sro
+    needs: [generate_comorbid_measures_sro_2016-04-11, generate_comorbid_measures_sro_2017-04-10, generate_comorbid_measures_sro_2018-04-09, generate_comorbid_measures_sro_2019-04-08, generate_comorbid_measures_sro_2020-04-06, generate_comorbid_measures_sro_2021-04-05, generate_comorbid_measures_sro_2022-04-04, generate_comorbid_measures_sro_2023-04-03, generate_comorbid_measures_sro_2024-04-01, generate_comorbid_measures_sro_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_sro/proc_comorbid_measures.arrow
+  generate_rounding_comorbid_sro:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set sro
+    needs: [generate_pre_processing_comorbid_sro]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_sro/proc_comorbid_measures_midpoint6.arrow
+  generate_normalization_comorbid_sro:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set sro
+    needs: [generate_rounding_comorbid_sro]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_sro/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_sro/Results*.csv
+
+  generate_freq_table_comorbid_sro_appt:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set sro --appt
+    needs: [generate_comorbid_measures_sro_2016-04-11_appt, generate_comorbid_measures_sro_2017-04-10_appt, generate_comorbid_measures_sro_2018-04-09_appt, generate_comorbid_measures_sro_2019-04-08_appt, generate_comorbid_measures_sro_2020-04-06_appt, generate_comorbid_measures_sro_2021-04-05_appt, generate_comorbid_measures_sro_2022-04-04_appt, generate_comorbid_measures_sro_2023-04-03_appt, generate_comorbid_measures_sro_2024-04-01_appt, generate_comorbid_measures_sro_2025-03-31_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_sro_appt/freq_table_comorbid.csv
+  generate_pre_processing_comorbid_sro_appt:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set sro --appt
+    needs: [generate_comorbid_measures_sro_2016-04-11_appt, generate_comorbid_measures_sro_2017-04-10_appt, generate_comorbid_measures_sro_2018-04-09_appt, generate_comorbid_measures_sro_2019-04-08_appt, generate_comorbid_measures_sro_2020-04-06_appt, generate_comorbid_measures_sro_2021-04-05_appt, generate_comorbid_measures_sro_2022-04-04_appt, generate_comorbid_measures_sro_2023-04-03_appt, generate_comorbid_measures_sro_2024-04-01_appt, generate_comorbid_measures_sro_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_sro_appt/proc_comorbid_measures.arrow
+  generate_rounding_comorbid_sro_appt:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set sro --appt
+    needs: [generate_pre_processing_comorbid_sro_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_sro_appt/proc_comorbid_measures_midpoint6.arrow
+  generate_normalization_comorbid_sro_appt:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set sro --appt
+    needs: [generate_rounding_comorbid_sro_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_sro_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_sro_appt/Results*.csv
+
+  generate_freq_table_comorbid_resp:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set resp
+    needs: [generate_comorbid_measures_resp_2016-04-11, generate_comorbid_measures_resp_2017-04-10, generate_comorbid_measures_resp_2018-04-09, generate_comorbid_measures_resp_2019-04-08, generate_comorbid_measures_resp_2020-04-06, generate_comorbid_measures_resp_2021-04-05, generate_comorbid_measures_resp_2022-04-04, generate_comorbid_measures_resp_2023-04-03, generate_comorbid_measures_resp_2024-04-01, generate_comorbid_measures_resp_2025-03-31]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_resp/freq_table_comorbid.csv
+  generate_pre_processing_comorbid_resp:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set resp
+    needs: [generate_comorbid_measures_resp_2016-04-11, generate_comorbid_measures_resp_2017-04-10, generate_comorbid_measures_resp_2018-04-09, generate_comorbid_measures_resp_2019-04-08, generate_comorbid_measures_resp_2020-04-06, generate_comorbid_measures_resp_2021-04-05, generate_comorbid_measures_resp_2022-04-04, generate_comorbid_measures_resp_2023-04-03, generate_comorbid_measures_resp_2024-04-01, generate_comorbid_measures_resp_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_resp/proc_comorbid_measures.arrow
+  generate_rounding_comorbid_resp:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set resp
+    needs: [generate_pre_processing_comorbid_resp]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_resp/proc_comorbid_measures_midpoint6.arrow
+  generate_normalization_comorbid_resp:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set resp
+    needs: [generate_rounding_comorbid_resp]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_resp/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_resp/Results*.csv
+
+  generate_freq_table_comorbid_resp_appt:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set resp --appt
+    needs: [generate_comorbid_measures_resp_2016-04-11_appt, generate_comorbid_measures_resp_2017-04-10_appt, generate_comorbid_measures_resp_2018-04-09_appt, generate_comorbid_measures_resp_2019-04-08_appt, generate_comorbid_measures_resp_2020-04-06_appt, generate_comorbid_measures_resp_2021-04-05_appt, generate_comorbid_measures_resp_2022-04-04_appt, generate_comorbid_measures_resp_2023-04-03_appt, generate_comorbid_measures_resp_2024-04-01_appt, generate_comorbid_measures_resp_2025-03-31_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_resp_appt/freq_table_comorbid.csv
+  generate_pre_processing_comorbid_resp_appt:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set resp --appt
+    needs: [generate_comorbid_measures_resp_2016-04-11_appt, generate_comorbid_measures_resp_2017-04-10_appt, generate_comorbid_measures_resp_2018-04-09_appt, generate_comorbid_measures_resp_2019-04-08_appt, generate_comorbid_measures_resp_2020-04-06_appt, generate_comorbid_measures_resp_2021-04-05_appt, generate_comorbid_measures_resp_2022-04-04_appt, generate_comorbid_measures_resp_2023-04-03_appt, generate_comorbid_measures_resp_2024-04-01_appt, generate_comorbid_measures_resp_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_resp_appt/proc_comorbid_measures.arrow
+  generate_rounding_comorbid_resp_appt:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set resp --appt
+    needs: [generate_pre_processing_comorbid_resp_appt]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_resp_appt/proc_comorbid_measures_midpoint6.arrow
+  generate_normalization_comorbid_resp_appt:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set resp --appt
+    needs: [generate_rounding_comorbid_resp_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_resp_appt/practice_level_counts.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_resp_appt/Results*.csv
  
  # --------------- VISUALIZATION ACTIONS ------------------------------------------
 
-  generate_deciles_charts:
+  generate_deciles_charts_all:
     run: >
-      r:v2 analysis/decile_charts.r 
-    needs: [generate_rounding_practice] 
+      r:v2 analysis/decile_charts.r  --set all
+    needs: [generate_rounding_practice_all] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6.csv
+        deciles_charts: output/practice_measures_all/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_all/decile_tables/decile_table_*_rate_mp6.csv
 
 
-  generate_deciles_charts_test:
+  generate_deciles_charts_all_appt:
     run: >
-      r:v2 analysis/decile_charts.r --test
-    needs: [generate_rounding_practice_test] 
+      r:v2 analysis/decile_charts.r  --set all --appt
+    needs: [generate_rounding_practice_all_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures/plots/decile_chart_*_rate_mp6_test.png
-        deciles_table: output/practice_measures/decile_tables/decile_table_*_rate_mp6_test.csv
+        deciles_charts: output/practice_measures_all_appt/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_all_appt/decile_tables/decile_table_*_rate_mp6.csv
+
+
+  generate_deciles_charts_sro:
+    run: >
+      r:v2 analysis/decile_charts.r  --set sro
+    needs: [generate_rounding_practice_sro] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*_rate_mp6.csv
+
+
+  generate_deciles_charts_sro_appt:
+    run: >
+      r:v2 analysis/decile_charts.r  --set sro --appt
+    needs: [generate_rounding_practice_sro_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*_rate_mp6.csv
+
+
+  generate_deciles_charts_resp:
+    run: >
+      r:v2 analysis/decile_charts.r  --set resp
+    needs: [generate_rounding_practice_resp] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*_rate_mp6.csv
+
+
+  generate_deciles_charts_resp_appt:
+    run: >
+      r:v2 analysis/decile_charts.r  --set resp --appt
+    needs: [generate_rounding_practice_resp_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*_rate_mp6.csv
+
+
+  generate_deciles_charts_all_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test --set all
+    needs: [generate_rounding_practice_all_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_all/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures_all/decile_tables/decile_table_*_rate_mp6_test.csv
+
+
+  generate_deciles_charts_all_appt_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test --set all --appt
+    needs: [generate_rounding_practice_all_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_all_appt/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures_all_appt/decile_tables/decile_table_*_rate_mp6_test.csv
+
+
+  generate_deciles_charts_sro_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test --set sro
+    needs: [generate_rounding_practice_sro_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*_rate_mp6_test.csv
+
+
+  generate_deciles_charts_sro_appt_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test --set sro --appt
+    needs: [generate_rounding_practice_sro_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*_rate_mp6_test.csv
+
+
+  generate_deciles_charts_resp_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test --set resp
+    needs: [generate_rounding_practice_resp_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*_rate_mp6_test.csv
+
+
+  generate_deciles_charts_resp_appt_test:
+    run: >
+      r:v2 analysis/decile_charts.r --test --set resp --appt
+    needs: [generate_rounding_practice_resp_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*_rate_mp6_test.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*_rate_mp6_test.csv
 
 # --------------- TEST ACTIONS ------------------------------------------
 
-  generate_demograph_measures_test:
+  generate_demograph_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures/demograph_measures_2016-04-11_test.arrow
+      --output output/demograph_measures_all/demograph_measures_2023-01-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures/demograph_measures_2016-04-11_test.arrow
-  generate_practice_measures_test:
+        dataset: output/demograph_measures_all/demograph_measures_2023-01-08_test.arrow
+  generate_practice_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-04-11_test.arrow
+      --output output/practice_measures_all/practice_measures_2023-01-08_test.arrow
       --
       --practice_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-04-11_test.arrow
-  generate_comorbid_measures_test:
+        dataset: output/practice_measures_all/practice_measures_2023-01-08_test.arrow
+  generate_comorbid_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2023-01-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2016-04-11
+      --start_intv 2023-01-08
       --test
+      --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures/comorbid_measures_2016-04-11_test.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2023-01-08_test.arrow
 
-  generate_freq_table_demograph_test:
-    run: python:v2 analysis/freq_table.py --demograph_measures  --test
-    needs: [generate_demograph_measures_test]
+# --------------- TEST ACTIONS ------------------------------------------
+
+  generate_demograph_measures_all_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/demograph_measures_all_appt/demograph_measures_2023-01-08_test.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-01-08
+      --test
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_all_appt/demograph_measures_2023-01-08_test.arrow
+  generate_practice_measures_all_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_all_appt/practice_measures_2023-01-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-01-08
+      --test
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_all_appt/practice_measures_2023-01-08_test.arrow
+  generate_comorbid_measures_all_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_all_appt/comorbid_measures_2023-01-08_test.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-01-08
+      --test
+      --set all --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2023-01-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  generate_demograph_measures_sro_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/demograph_measures_sro/demograph_measures_2023-01-08_test.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-01-08
+      --test
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro/demograph_measures_2023-01-08_test.arrow
+  generate_practice_measures_sro_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2023-01-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-01-08
+      --test
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2023-01-08_test.arrow
+  generate_comorbid_measures_sro_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro/comorbid_measures_2023-01-08_test.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-01-08
+      --test
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro/comorbid_measures_2023-01-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  generate_demograph_measures_sro_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/demograph_measures_sro_appt/demograph_measures_2023-01-08_test.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-01-08
+      --test
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2023-01-08_test.arrow
+  generate_practice_measures_sro_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2023-01-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-01-08
+      --test
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2023-01-08_test.arrow
+  generate_comorbid_measures_sro_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2023-01-08_test.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-01-08
+      --test
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2023-01-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  generate_demograph_measures_resp_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/demograph_measures_resp/demograph_measures_2023-01-08_test.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-01-08
+      --test
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp/demograph_measures_2023-01-08_test.arrow
+  generate_practice_measures_resp_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2023-01-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-01-08
+      --test
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2023-01-08_test.arrow
+  generate_comorbid_measures_resp_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp/comorbid_measures_2023-01-08_test.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-01-08
+      --test
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp/comorbid_measures_2023-01-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  generate_demograph_measures_resp_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py 
+      --output output/demograph_measures_resp_appt/demograph_measures_2023-01-08_test.arrow
+      --
+      --demograph_measures
+      --start_intv 2023-01-08
+      --test
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2023-01-08_test.arrow
+  generate_practice_measures_resp_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2023-01-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-01-08
+      --test
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2023-01-08_test.arrow
+  generate_comorbid_measures_resp_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2023-01-08_test.arrow
+      --
+      --comorbid_measures
+      --start_intv 2023-01-08
+      --test
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2023-01-08_test.arrow
+
+  generate_freq_table_demograph_all_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set all --test
+    needs: [generate_demograph_measures_all_test]
     outputs:
       moderately_sensitive:
-        freq_table: output/demograph_measures/freq_table_demograph_test.csv
-
-  generate_pre_processing_demograph_test:
-    run: python:v2 analysis/pre_processing.py --demograph_measures --test
-    needs: [generate_demograph_measures_test]
+        freq_table: output/demograph_measures_all/freq_table_demograph_test.csv
+  generate_pre_processing_demograph_all_test:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set all --test
+    needs: [generate_demograph_measures_all_test]
     outputs:
       highly_sensitive:
-        measures: output/demograph_measures/proc_demograph_measures_test.arrow
-  generate_rounding_demograph_test:
-    run: r:v2 analysis/round_measures.r --demograph_measures  --test
-    needs: [generate_pre_processing_demograph_test]
+        measures: output/demograph_measures_all/proc_demograph_measures_test.arrow
+  generate_rounding_demograph_all_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set all --test
+    needs: [generate_pre_processing_demograph_all_test]
     outputs:
       highly_sensitive:
-        rounded_measures: output/demograph_measures/proc_demograph_measures_midpoint6_test.arrow
-  generate_normalization_demograph_test:
-    run: python:v2 analysis/normalization.py --demograph_measures --test
-    needs: [generate_rounding_demograph_test]
+        rounded_measures: output/demograph_measures_all/proc_demograph_measures_midpoint6_test.arrow
+  generate_normalization_demograph_all_test:
+    run: python:v2 analysis/normalization.py --demograph_measures --set all --test
+    needs: [generate_rounding_demograph_all_test]
     outputs:
       highly_sensitive:
-        practice_level_tables: output/demograph_measures/practice_level_counts_test.arrow
+        practice_level_tables: output/demograph_measures_all/practice_level_counts_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/demograph_measures/Results*_test.csv
+        seasonal_tables_tables: output/demograph_measures_all/Results*_test.csv
 
-  generate_freq_table_practice_test:
-    run: python:v2 analysis/freq_table.py --practice_measures  --test
-    needs: [generate_practice_measures_test]
-    outputs:
-      moderately_sensitive:
-        freq_table: output/practice_measures/freq_table_practice_test.csv
-
-  generate_pre_processing_practice_test:
-    run: python:v2 analysis/pre_processing.py --practice_measures --test
-    needs: [generate_practice_measures_test]
-    outputs:
-      highly_sensitive:
-        measures: output/practice_measures/proc_practice_measures_test.arrow
-  generate_rounding_practice_test:
-    run: r:v2 analysis/round_measures.r --practice_measures  --test
-    needs: [generate_pre_processing_practice_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures/proc_practice_measures_midpoint6_test.arrow
-  generate_normalization_practice_test:
-    run: python:v2 analysis/normalization.py --practice_measures --test
-    needs: [generate_rounding_practice_test]
-    outputs:
-      highly_sensitive:
-        practice_level_tables: output/practice_measures/practice_level_counts_test.arrow
-      moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures/Results*_test.csv
-
-  generate_freq_table_comorbid_test:
-    run: python:v2 analysis/freq_table.py --comorbid_measures  --test
-    needs: [generate_comorbid_measures_test]
+  generate_freq_table_demograph_all_appt_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set all --appt --test
+    needs: [generate_demograph_measures_all_appt_test]
     outputs:
       moderately_sensitive:
-        freq_table: output/comorbid_measures/freq_table_comorbid_test.csv
-
-  generate_pre_processing_comorbid_test:
-    run: python:v2 analysis/pre_processing.py --comorbid_measures --test
-    needs: [generate_comorbid_measures_test]
+        freq_table: output/demograph_measures_all_appt/freq_table_demograph_test.csv
+  generate_pre_processing_demograph_all_appt_test:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set all --appt --test
+    needs: [generate_demograph_measures_all_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/comorbid_measures/proc_comorbid_measures_test.arrow
-  generate_rounding_comorbid_test:
-    run: r:v2 analysis/round_measures.r --comorbid_measures  --test
-    needs: [generate_pre_processing_comorbid_test]
+        measures: output/demograph_measures_all_appt/proc_demograph_measures_test.arrow
+  generate_rounding_demograph_all_appt_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set all --appt --test
+    needs: [generate_pre_processing_demograph_all_appt_test]
     outputs:
       highly_sensitive:
-        rounded_measures: output/comorbid_measures/proc_comorbid_measures_midpoint6_test.arrow
-  generate_normalization_comorbid_test:
-    run: python:v2 analysis/normalization.py --comorbid_measures --test
-    needs: [generate_rounding_comorbid_test]
+        rounded_measures: output/demograph_measures_all_appt/proc_demograph_measures_midpoint6_test.arrow
+  generate_normalization_demograph_all_appt_test:
+    run: python:v2 analysis/normalization.py --demograph_measures --set all --appt --test
+    needs: [generate_rounding_demograph_all_appt_test]
     outputs:
       highly_sensitive:
-        practice_level_tables: output/comorbid_measures/practice_level_counts_test.arrow
+        practice_level_tables: output/demograph_measures_all_appt/practice_level_counts_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/comorbid_measures/Results*_test.csv
+        seasonal_tables_tables: output/demograph_measures_all_appt/Results*_test.csv
+
+  generate_freq_table_demograph_sro_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set sro --test
+    needs: [generate_demograph_measures_sro_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/demograph_measures_sro/freq_table_demograph_test.csv
+  generate_pre_processing_demograph_sro_test:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set sro --test
+    needs: [generate_demograph_measures_sro_test]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_sro/proc_demograph_measures_test.arrow
+  generate_rounding_demograph_sro_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set sro --test
+    needs: [generate_pre_processing_demograph_sro_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_sro/proc_demograph_measures_midpoint6_test.arrow
+  generate_normalization_demograph_sro_test:
+    run: python:v2 analysis/normalization.py --demograph_measures --set sro --test
+    needs: [generate_rounding_demograph_sro_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_sro/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_sro/Results*_test.csv
+
+  generate_freq_table_demograph_sro_appt_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set sro --appt --test
+    needs: [generate_demograph_measures_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/demograph_measures_sro_appt/freq_table_demograph_test.csv
+  generate_pre_processing_demograph_sro_appt_test:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set sro --appt --test
+    needs: [generate_demograph_measures_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_sro_appt/proc_demograph_measures_test.arrow
+  generate_rounding_demograph_sro_appt_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set sro --appt --test
+    needs: [generate_pre_processing_demograph_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_sro_appt/proc_demograph_measures_midpoint6_test.arrow
+  generate_normalization_demograph_sro_appt_test:
+    run: python:v2 analysis/normalization.py --demograph_measures --set sro --appt --test
+    needs: [generate_rounding_demograph_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_sro_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_sro_appt/Results*_test.csv
+
+  generate_freq_table_demograph_resp_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set resp --test
+    needs: [generate_demograph_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/demograph_measures_resp/freq_table_demograph_test.csv
+  generate_pre_processing_demograph_resp_test:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set resp --test
+    needs: [generate_demograph_measures_resp_test]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_resp/proc_demograph_measures_test.arrow
+  generate_rounding_demograph_resp_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set resp --test
+    needs: [generate_pre_processing_demograph_resp_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_resp/proc_demograph_measures_midpoint6_test.arrow
+  generate_normalization_demograph_resp_test:
+    run: python:v2 analysis/normalization.py --demograph_measures --set resp --test
+    needs: [generate_rounding_demograph_resp_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_resp/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_resp/Results*_test.csv
+
+  generate_freq_table_demograph_resp_appt_test:
+    run: python:v2 analysis/freq_table.py --demograph_measures --set resp --appt --test
+    needs: [generate_demograph_measures_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/demograph_measures_resp_appt/freq_table_demograph_test.csv
+  generate_pre_processing_demograph_resp_appt_test:
+    run: python:v2 analysis/pre_processing.py --demograph_measures --set resp --appt --test
+    needs: [generate_demograph_measures_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/demograph_measures_resp_appt/proc_demograph_measures_test.arrow
+  generate_rounding_demograph_resp_appt_test:
+    run: r:v2 analysis/round_measures.r --demograph_measures --set resp --appt --test
+    needs: [generate_pre_processing_demograph_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/demograph_measures_resp_appt/proc_demograph_measures_midpoint6_test.arrow
+  generate_normalization_demograph_resp_appt_test:
+    run: python:v2 analysis/normalization.py --demograph_measures --set resp --appt --test
+    needs: [generate_rounding_demograph_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/demograph_measures_resp_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/demograph_measures_resp_appt/Results*_test.csv
+
+  generate_freq_table_practice_all_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set all --test
+    needs: [generate_practice_measures_all_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_all/freq_table_practice_test.csv
+  generate_pre_processing_practice_all_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set all --test
+    needs: [generate_practice_measures_all_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_all/proc_practice_measures_test.arrow
+  generate_rounding_practice_all_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set all --test
+    needs: [generate_pre_processing_practice_all_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_all/proc_practice_measures_midpoint6_test.arrow
+  generate_normalization_practice_all_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set all --test
+    needs: [generate_rounding_practice_all_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_all/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_all/Results*_test.csv
+
+  generate_freq_table_practice_all_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set all --appt --test
+    needs: [generate_practice_measures_all_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_all_appt/freq_table_practice_test.csv
+  generate_pre_processing_practice_all_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set all --appt --test
+    needs: [generate_practice_measures_all_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_all_appt/proc_practice_measures_test.arrow
+  generate_rounding_practice_all_appt_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set all --appt --test
+    needs: [generate_pre_processing_practice_all_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_all_appt/proc_practice_measures_midpoint6_test.arrow
+  generate_normalization_practice_all_appt_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set all --appt --test
+    needs: [generate_rounding_practice_all_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_all_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_all_appt/Results*_test.csv
+
+  generate_freq_table_practice_sro_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro --test
+    needs: [generate_practice_measures_sro_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro/freq_table_practice_test.csv
+  generate_pre_processing_practice_sro_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro --test
+    needs: [generate_practice_measures_sro_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro/proc_practice_measures_test.arrow
+  generate_rounding_practice_sro_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set sro --test
+    needs: [generate_pre_processing_practice_sro_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_sro/proc_practice_measures_midpoint6_test.arrow
+  generate_normalization_practice_sro_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro --test
+    needs: [generate_rounding_practice_sro_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_sro/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_sro/Results*_test.csv
+
+  generate_freq_table_practice_sro_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro --appt --test
+    needs: [generate_practice_measures_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro_appt/freq_table_practice_test.csv
+  generate_pre_processing_practice_sro_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro --appt --test
+    needs: [generate_practice_measures_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro_appt/proc_practice_measures_test.arrow
+  generate_rounding_practice_sro_appt_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set sro --appt --test
+    needs: [generate_pre_processing_practice_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6_test.arrow
+  generate_normalization_practice_sro_appt_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro --appt --test
+    needs: [generate_rounding_practice_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_sro_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_sro_appt/Results*_test.csv
+
+  generate_freq_table_practice_resp_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp --test
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp/freq_table_practice_test.csv
+  generate_pre_processing_practice_resp_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --test
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp/proc_practice_measures_test.arrow
+  generate_rounding_practice_resp_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --test
+    needs: [generate_pre_processing_practice_resp_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6_test.arrow
+  generate_normalization_practice_resp_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp --test
+    needs: [generate_rounding_practice_resp_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_resp/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_resp/Results*_test.csv
+
+  generate_freq_table_practice_resp_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp --appt --test
+    needs: [generate_practice_measures_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp_appt/freq_table_practice_test.csv
+  generate_pre_processing_practice_resp_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --appt --test
+    needs: [generate_practice_measures_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp_appt/proc_practice_measures_test.arrow
+  generate_rounding_practice_resp_appt_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --appt --test
+    needs: [generate_pre_processing_practice_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6_test.arrow
+  generate_normalization_practice_resp_appt_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp --appt --test
+    needs: [generate_rounding_practice_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/practice_measures_resp_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/practice_measures_resp_appt/Results*_test.csv
+
+  generate_freq_table_comorbid_all_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set all --test
+    needs: [generate_comorbid_measures_all_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_all/freq_table_comorbid_test.csv
+  generate_pre_processing_comorbid_all_test:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set all --test
+    needs: [generate_comorbid_measures_all_test]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_all/proc_comorbid_measures_test.arrow
+  generate_rounding_comorbid_all_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set all --test
+    needs: [generate_pre_processing_comorbid_all_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_all/proc_comorbid_measures_midpoint6_test.arrow
+  generate_normalization_comorbid_all_test:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set all --test
+    needs: [generate_rounding_comorbid_all_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_all/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_all/Results*_test.csv
+
+  generate_freq_table_comorbid_all_appt_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set all --appt --test
+    needs: [generate_comorbid_measures_all_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_all_appt/freq_table_comorbid_test.csv
+  generate_pre_processing_comorbid_all_appt_test:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set all --appt --test
+    needs: [generate_comorbid_measures_all_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_all_appt/proc_comorbid_measures_test.arrow
+  generate_rounding_comorbid_all_appt_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set all --appt --test
+    needs: [generate_pre_processing_comorbid_all_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_all_appt/proc_comorbid_measures_midpoint6_test.arrow
+  generate_normalization_comorbid_all_appt_test:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set all --appt --test
+    needs: [generate_rounding_comorbid_all_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_all_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_all_appt/Results*_test.csv
+
+  generate_freq_table_comorbid_sro_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set sro --test
+    needs: [generate_comorbid_measures_sro_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_sro/freq_table_comorbid_test.csv
+  generate_pre_processing_comorbid_sro_test:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set sro --test
+    needs: [generate_comorbid_measures_sro_test]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_sro/proc_comorbid_measures_test.arrow
+  generate_rounding_comorbid_sro_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set sro --test
+    needs: [generate_pre_processing_comorbid_sro_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_sro/proc_comorbid_measures_midpoint6_test.arrow
+  generate_normalization_comorbid_sro_test:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set sro --test
+    needs: [generate_rounding_comorbid_sro_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_sro/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_sro/Results*_test.csv
+
+  generate_freq_table_comorbid_sro_appt_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set sro --appt --test
+    needs: [generate_comorbid_measures_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_sro_appt/freq_table_comorbid_test.csv
+  generate_pre_processing_comorbid_sro_appt_test:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set sro --appt --test
+    needs: [generate_comorbid_measures_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_sro_appt/proc_comorbid_measures_test.arrow
+  generate_rounding_comorbid_sro_appt_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set sro --appt --test
+    needs: [generate_pre_processing_comorbid_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_sro_appt/proc_comorbid_measures_midpoint6_test.arrow
+  generate_normalization_comorbid_sro_appt_test:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set sro --appt --test
+    needs: [generate_rounding_comorbid_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_sro_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_sro_appt/Results*_test.csv
+
+  generate_freq_table_comorbid_resp_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set resp --test
+    needs: [generate_comorbid_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_resp/freq_table_comorbid_test.csv
+  generate_pre_processing_comorbid_resp_test:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set resp --test
+    needs: [generate_comorbid_measures_resp_test]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_resp/proc_comorbid_measures_test.arrow
+  generate_rounding_comorbid_resp_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set resp --test
+    needs: [generate_pre_processing_comorbid_resp_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_resp/proc_comorbid_measures_midpoint6_test.arrow
+  generate_normalization_comorbid_resp_test:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set resp --test
+    needs: [generate_rounding_comorbid_resp_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_resp/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_resp/Results*_test.csv
+
+  generate_freq_table_comorbid_resp_appt_test:
+    run: python:v2 analysis/freq_table.py --comorbid_measures --set resp --appt --test
+    needs: [generate_comorbid_measures_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/comorbid_measures_resp_appt/freq_table_comorbid_test.csv
+  generate_pre_processing_comorbid_resp_appt_test:
+    run: python:v2 analysis/pre_processing.py --comorbid_measures --set resp --appt --test
+    needs: [generate_comorbid_measures_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/comorbid_measures_resp_appt/proc_comorbid_measures_test.arrow
+  generate_rounding_comorbid_resp_appt_test:
+    run: r:v2 analysis/round_measures.r --comorbid_measures --set resp --appt --test
+    needs: [generate_pre_processing_comorbid_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/comorbid_measures_resp_appt/proc_comorbid_measures_midpoint6_test.arrow
+  generate_normalization_comorbid_resp_appt_test:
+    run: python:v2 analysis/normalization.py --comorbid_measures --set resp --appt --test
+    needs: [generate_rounding_comorbid_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_tables: output/comorbid_measures_resp_appt/practice_level_counts_test.arrow
+      moderately_sensitive:
+        seasonal_tables_tables: output/comorbid_measures_resp_appt/Results*_test.csv
+
+
+  # --------------- OTHER ACTIONS ------------------------------------------
+
+  # Assurance test
+  generate_dataset:
+    run: >
+        ehrql:v1 generate-dataset
+        analysis/dataset.py
+        --test-data-file analysis/test_dataset.py
+        --output output/dataset.csv
+    outputs:
+      highly_sensitive:
+        population: output/dataset.csv
+
+  # Sense check
+  generate_sense_check:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set resp
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_resp/sense_check*.csv
