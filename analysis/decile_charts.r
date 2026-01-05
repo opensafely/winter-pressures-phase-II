@@ -108,24 +108,22 @@ if (args$set == "all") {
     # Plot 1: Flu/RSV/COVID measures
     flu_rsv_covid = c(
       "flu_sensitive", "rsv_sensitive", "covid_sensitive",
-      "flu_sensitive_with_appt", "rsv_sensitive_with_appt", "covid_sensitive_with_appt",
       "flu_specific", "rsv_specific", "covid_specific"
     ),
     # Plot 2: Other measures
     other = c(
-      "overall_resp_sensitive", "overall_resp_sensitive_with_appt", "secondary_referral",
-      "secondary_referral"
+      "ili", "overall_resp_sensitive", "secondary_referral", "secondary_appt"
     )
   )
 }
-print(measure_groups$prioritized)
+print(measure_groups)
 # Update measure names if restricting to appts in interval
 if (args$appt) {
   for (group_name in names(measure_groups)) {
     measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
   }
 }
-
+print(measure_groups)
 # Setup output directory
 suffix <- if (args$test) "_test" else ""
 plots_dir <- glue("output/practice_measures_{args$set}{args$appt_suffix}/plots")
