@@ -10,8 +10,8 @@ import numpy as np
 
 # Load and format data for each interval
 print(f"Loading {args.group} measures {args.test_start_date}", flush=True)
-input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{args.test_start_date}"
-output_path = f"output/{args.group}_measures_{args.set}/sense_check_{args.group}_{args.test_start_date}"
+input_path = f"output/{args.group}_measures_{args.set}{args.appt_suffix}/{args.group}_measures_{args.test_start_date}"
+output_path = f"output/{args.group}_measures_{args.set}{args.appt_suffix}/sense_check_{args.group}_{args.test_start_date}"
 df = read_write(read_or_write="read", path=input_path)
 
 # Aggregate data to national level
