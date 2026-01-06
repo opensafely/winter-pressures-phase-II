@@ -292,6 +292,26 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
                 appt_flag=appt_flag,
             )
 
+yaml_sense_check = " \n # --------------- SENSE CHECK ACTIONS ------------------------------------------"
+
+yaml_sense_check_template = """
+
+  generate_sense_check_{set}{appt_suffix}:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set {set}{appt_flag}
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_{set}{appt_suffix}/sense_check*.csv
+"""
+
+for set in measure_sets:
+    for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+          yaml_sense_check += yaml_sense_check_template.format(
+              set=set,
+              appt_suffix=appt_suffix,
+              appt_flag=appt_flag,
+            )
+
 yaml_test = """
 
   # --------------- OTHER ACTIONS ------------------------------------------
@@ -306,14 +326,6 @@ yaml_test = """
     outputs:
       highly_sensitive:
         population: output/dataset.csv
-
-  # Sense check
-  generate_sense_check:
-    run: python:v2 analysis/sense_check.py --test --practice_measures --set resp
-    needs: [generate_practice_measures_resp_test]
-    outputs:
-      moderately_sensitive:
-        totals: output/practice_measures_resp/sense_check*.csv
 """
 
 # -------- Combine scripts and print file -----------
@@ -326,6 +338,7 @@ yaml = (
     + yaml_viz
     + yaml_measures_test
     + yaml_processing_test
+    + yaml_sense_check
     + yaml_test
 )
 
