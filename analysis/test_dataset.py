@@ -469,7 +469,28 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"appt_flu_sensitive": 1},
     },
-    20: {  # No Overall resp as no same day appt
+    20: {  # No flu but appt exists - should not be counted
+        "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
+        "medications": [],
+        "clinical_events": [],
+        "addresses": [{"start_date": date(2010, 1, 1), "imd_rounded": 200}],
+        "opa_cost": [],
+        "practice_registrations": [
+            {
+                "start_date": date(2010, 1, 1),
+                "end_date": date(2025, 1, 1),
+                "practice_nuts1_region_name": "West Midlands",
+            }
+        ],
+        "appointments": [
+            {"start_date": date(2022, 1, 15), "seen_date": date(2022, 1, 15)}
+        ],
+        "vaccinations": [],
+        "emergency_care_attendances": [],
+        "expected_in_population": True,
+        "expected_columns": {"appt_flu_sensitive": 0},
+    },
+    21: {  # No Overall resp as no same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "102453009"}],
@@ -488,7 +509,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"appt_overall_resp_sensitive": 0},
     },
-    21: {  # Overall resp with same day appt
+    22: {  # Overall resp with same day appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [{"date": date(2022, 1, 15), "snomedct_code": "102453009"}],
@@ -509,7 +530,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"appt_overall_resp_sensitive": 1},
     },
-    22: {  # Sro prioritized
+    23: {  # Sro prioritized
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -534,7 +555,7 @@ test_data = {
             "asthma_review": 1,
         },
     },
-    23: {  # Sro de-prioritized
+    24: {  # Sro de-prioritized
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -562,7 +583,7 @@ test_data = {
             "appt_alt_test": 0,
         },
     },
-    24: {  # 2 Sick notes - 3 events but 2 appts linking them
+    25: {  # 2 Sick notes - 3 events but 2 appts linking them
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -594,7 +615,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"appt_sick_notes": 2},
     },
-    25: {  # Secondary care appts
+    26: {  # Secondary care appts
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [],
@@ -622,7 +643,7 @@ test_data = {
         "expected_in_population": True,
         "expected_columns": {"secondary_appt": 1, "secondary_referral": 0},
     },
-    26: {  # Sro de-prioritized WITH appt
+    27: {  # Sro de-prioritized WITH appt
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
@@ -661,7 +682,7 @@ test_data = {
             "appt_alt_test": 2,
         },
     },
-    27: {  # ili but not flu
+    28: {  # ili but not flu
         "patients": {"date_of_birth": date(1950, 1, 1), "sex": "male"},
         "medications": [],
         "clinical_events": [
