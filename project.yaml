@@ -3344,7 +3344,7 @@ actions:
 
   generate_sense_check_all:
     run: python:v2 analysis/sense_check.py --test --practice_measures --set all
-    needs: [generate_practice_measures_resp_test]
+    needs: [generate_practice_measures_all_test]
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_all/sense_check*.csv
@@ -3352,7 +3352,7 @@ actions:
 
   generate_sense_check_all_appt:
     run: python:v2 analysis/sense_check.py --test --practice_measures --set all --appt
-    needs: [generate_practice_measures_resp_test]
+    needs: [generate_practice_measures_all_appt_test]
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_all_appt/sense_check*.csv
@@ -3360,7 +3360,7 @@ actions:
 
   generate_sense_check_sro:
     run: python:v2 analysis/sense_check.py --test --practice_measures --set sro
-    needs: [generate_practice_measures_resp_test]
+    needs: [generate_practice_measures_sro_test]
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_sro/sense_check*.csv
@@ -3368,7 +3368,7 @@ actions:
 
   generate_sense_check_sro_appt:
     run: python:v2 analysis/sense_check.py --test --practice_measures --set sro --appt
-    needs: [generate_practice_measures_resp_test]
+    needs: [generate_practice_measures_sro_appt_test]
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_sro_appt/sense_check*.csv
@@ -3384,7 +3384,7 @@ actions:
 
   generate_sense_check_resp_appt:
     run: python:v2 analysis/sense_check.py --test --practice_measures --set resp --appt
-    needs: [generate_practice_measures_resp_test]
+    needs: [generate_practice_measures_resp_appt_test]
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_resp_appt/sense_check*.csv
