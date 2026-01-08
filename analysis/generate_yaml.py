@@ -298,7 +298,7 @@ yaml_sense_check_template = """
 
   generate_sense_check_{set}{appt_suffix}:
     run: python:v2 analysis/sense_check.py --test --practice_measures --set {set}{appt_flag}
-    needs: [generate_practice_measures_resp_test]
+    needs: [generate_practice_measures_{set}{appt_suffix}_test]
     outputs:
       moderately_sensitive:
         totals: output/practice_measures_{set}{appt_suffix}/sense_check*.csv
