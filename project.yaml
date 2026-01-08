@@ -2527,6 +2527,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_all/decile_tables/decile_table_*_rate_mp6.csv
+  
+  generate_decomposition_plots_all:
+    run: >
+      r:v2 analysis/decomposition.r  --set all
+    needs: [generate_rounding_practice_all]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_all/national_decomposition_plot.png
 
 
   generate_deciles_charts_all_appt:
@@ -2537,6 +2545,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all_appt/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_all_appt/decile_tables/decile_table_*_rate_mp6.csv
+  
+  generate_decomposition_plots_all_appt:
+    run: >
+      r:v2 analysis/decomposition.r  --set all --appt
+    needs: [generate_rounding_practice_all_appt]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_all_appt/national_decomposition_plot.png
 
 
   generate_deciles_charts_sro:
@@ -2547,6 +2563,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*_rate_mp6.csv
+  
+  generate_decomposition_plots_sro:
+    run: >
+      r:v2 analysis/decomposition.r  --set sro
+    needs: [generate_rounding_practice_sro]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_sro/national_decomposition_plot.png
 
 
   generate_deciles_charts_sro_appt:
@@ -2557,6 +2581,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*_rate_mp6.csv
+  
+  generate_decomposition_plots_sro_appt:
+    run: >
+      r:v2 analysis/decomposition.r  --set sro --appt
+    needs: [generate_rounding_practice_sro_appt]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_sro_appt/national_decomposition_plot.png
 
 
   generate_deciles_charts_resp:
@@ -2567,6 +2599,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*_rate_mp6.csv
+  
+  generate_decomposition_plots_resp:
+    run: >
+      r:v2 analysis/decomposition.r  --set resp
+    needs: [generate_rounding_practice_resp]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_resp/national_decomposition_plot.png
 
 
   generate_deciles_charts_resp_appt:
@@ -2577,6 +2617,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*_rate_mp6.csv
+  
+  generate_decomposition_plots_resp_appt:
+    run: >
+      r:v2 analysis/decomposition.r  --set resp --appt
+    needs: [generate_rounding_practice_resp_appt]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_resp_appt/national_decomposition_plot.png
 
 
   generate_deciles_charts_all_test:
@@ -2587,6 +2635,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all/plots/decile_chart_*_rate_mp6_test.png
         deciles_table: output/practice_measures_all/decile_tables/decile_table_*_rate_mp6_test.csv
+  
+  generate_decomposition_plots_all_test:
+    run: >
+      r:v2 analysis/decomposition.r --test --set all
+    needs: [generate_rounding_practice_all_test]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_all/national_decomposition_plot_test.png
 
 
   generate_deciles_charts_all_appt_test:
@@ -2597,6 +2653,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all_appt/plots/decile_chart_*_rate_mp6_test.png
         deciles_table: output/practice_measures_all_appt/decile_tables/decile_table_*_rate_mp6_test.csv
+  
+  generate_decomposition_plots_all_appt_test:
+    run: >
+      r:v2 analysis/decomposition.r --test --set all --appt
+    needs: [generate_rounding_practice_all_appt_test]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_all_appt/national_decomposition_plot_test.png
 
 
   generate_deciles_charts_sro_test:
@@ -2607,6 +2671,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro/plots/decile_chart_*_rate_mp6_test.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*_rate_mp6_test.csv
+  
+  generate_decomposition_plots_sro_test:
+    run: >
+      r:v2 analysis/decomposition.r --test --set sro
+    needs: [generate_rounding_practice_sro_test]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_sro/national_decomposition_plot_test.png
 
 
   generate_deciles_charts_sro_appt_test:
@@ -2617,6 +2689,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*_rate_mp6_test.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*_rate_mp6_test.csv
+  
+  generate_decomposition_plots_sro_appt_test:
+    run: >
+      r:v2 analysis/decomposition.r --test --set sro --appt
+    needs: [generate_rounding_practice_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_sro_appt/national_decomposition_plot_test.png
 
 
   generate_deciles_charts_resp_test:
@@ -2627,6 +2707,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp/plots/decile_chart_*_rate_mp6_test.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*_rate_mp6_test.csv
+  
+  generate_decomposition_plots_resp_test:
+    run: >
+      r:v2 analysis/decomposition.r --test --set resp
+    needs: [generate_rounding_practice_resp_test]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_resp/national_decomposition_plot_test.png
 
 
   generate_deciles_charts_resp_appt_test:
@@ -2637,6 +2725,14 @@ actions:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*_rate_mp6_test.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*_rate_mp6_test.csv
+  
+  generate_decomposition_plots_resp_appt_test:
+    run: >
+      r:v2 analysis/decomposition.r --test --set resp --appt
+    needs: [generate_rounding_practice_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_resp_appt/national_decomposition_plot_test.png
 
 # --------------- TEST ACTIONS ------------------------------------------
 

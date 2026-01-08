@@ -249,6 +249,14 @@ yaml_viz_template = """
       moderately_sensitive:
         deciles_charts: output/practice_measures_{set}{appt_suffix}/plots/decile_chart_*_rate_mp6{test_suffix}.png
         deciles_table: output/practice_measures_{set}{appt_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+  
+  generate_decomposition_plots_{set}{appt_suffix}{test_suffix}:
+    run: >
+      r:v2 analysis/decomposition.r {test_flag} --set {set}{appt_flag}
+    needs: [generate_rounding_practice_{set}{appt_suffix}{test_suffix}]
+    outputs:
+      moderately_sensitive:
+        decomposition_plots: output/practice_measures_{set}{appt_suffix}/national_decomposition_plot{test_suffix}.png
 """
 
 """ TEMPORARILY COMMENTED OUT:
