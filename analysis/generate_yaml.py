@@ -256,7 +256,8 @@ yaml_viz_template = """
     needs: [generate_rounding_practice_{set}{appt_suffix}{test_suffix}]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_{set}{appt_suffix}/national_decomposition_plot{test_suffix}.png
+        decomposition_plots: output/practice_measures_{set}{appt_suffix}/decompositions/*{test_suffix}.png
+        decomposition_summaries: output/practice_measures_{set}{appt_suffix}/decompositions/summary_*{test_suffix}.txt
 """
 
 """ TEMPORARILY COMMENTED OUT:

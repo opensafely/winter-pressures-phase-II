@@ -2534,7 +2534,8 @@ actions:
     needs: [generate_rounding_practice_all]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_all/national_decomposition_plot.png
+        decomposition_plots: output/practice_measures_all/decompositions/*.png
+        decomposition_summaries: output/practice_measures_all/decompositions/summary_*.txt
 
 
   generate_deciles_charts_all_appt:
@@ -2552,7 +2553,8 @@ actions:
     needs: [generate_rounding_practice_all_appt]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_all_appt/national_decomposition_plot.png
+        decomposition_plots: output/practice_measures_all_appt/decompositions/*.png
+        decomposition_summaries: output/practice_measures_all_appt/decompositions/summary_*.txt
 
 
   generate_deciles_charts_sro:
@@ -2570,7 +2572,8 @@ actions:
     needs: [generate_rounding_practice_sro]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_sro/national_decomposition_plot.png
+        decomposition_plots: output/practice_measures_sro/decompositions/*.png
+        decomposition_summaries: output/practice_measures_sro/decompositions/summary_*.txt
 
 
   generate_deciles_charts_sro_appt:
@@ -2588,7 +2591,8 @@ actions:
     needs: [generate_rounding_practice_sro_appt]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_sro_appt/national_decomposition_plot.png
+        decomposition_plots: output/practice_measures_sro_appt/decompositions/*.png
+        decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*.txt
 
 
   generate_deciles_charts_resp:
@@ -2606,7 +2610,8 @@ actions:
     needs: [generate_rounding_practice_resp]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_resp/national_decomposition_plot.png
+        decomposition_plots: output/practice_measures_resp/decompositions/*.png
+        decomposition_summaries: output/practice_measures_resp/decompositions/summary_*.txt
 
 
   generate_deciles_charts_resp_appt:
@@ -2624,7 +2629,8 @@ actions:
     needs: [generate_rounding_practice_resp_appt]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_resp_appt/national_decomposition_plot.png
+        decomposition_plots: output/practice_measures_resp_appt/decompositions/*.png
+        decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*.txt
 
 
   generate_deciles_charts_all_test:
@@ -2642,7 +2648,8 @@ actions:
     needs: [generate_rounding_practice_all_test]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_all/national_decomposition_plot_test.png
+        decomposition_plots: output/practice_measures_all/decompositions/*_test.png
+        decomposition_summaries: output/practice_measures_all/decompositions/summary_*_test.txt
 
 
   generate_deciles_charts_all_appt_test:
@@ -2660,7 +2667,8 @@ actions:
     needs: [generate_rounding_practice_all_appt_test]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_all_appt/national_decomposition_plot_test.png
+        decomposition_plots: output/practice_measures_all_appt/decompositions/*_test.png
+        decomposition_summaries: output/practice_measures_all_appt/decompositions/summary_*_test.txt
 
 
   generate_deciles_charts_sro_test:
@@ -2678,7 +2686,8 @@ actions:
     needs: [generate_rounding_practice_sro_test]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_sro/national_decomposition_plot_test.png
+        decomposition_plots: output/practice_measures_sro/decompositions/*_test.png
+        decomposition_summaries: output/practice_measures_sro/decompositions/summary_*_test.txt
 
 
   generate_deciles_charts_sro_appt_test:
@@ -2696,7 +2705,8 @@ actions:
     needs: [generate_rounding_practice_sro_appt_test]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_sro_appt/national_decomposition_plot_test.png
+        decomposition_plots: output/practice_measures_sro_appt/decompositions/*_test.png
+        decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*_test.txt
 
 
   generate_deciles_charts_resp_test:
@@ -2714,7 +2724,8 @@ actions:
     needs: [generate_rounding_practice_resp_test]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_resp/national_decomposition_plot_test.png
+        decomposition_plots: output/practice_measures_resp/decompositions/*_test.png
+        decomposition_summaries: output/practice_measures_resp/decompositions/summary_*_test.txt
 
 
   generate_deciles_charts_resp_appt_test:
@@ -2732,7 +2743,8 @@ actions:
     needs: [generate_rounding_practice_resp_appt_test]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_resp_appt/national_decomposition_plot_test.png
+        decomposition_plots: output/practice_measures_resp_appt/decompositions/*_test.png
+        decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*_test.txt
 
 # --------------- TEST ACTIONS ------------------------------------------
 

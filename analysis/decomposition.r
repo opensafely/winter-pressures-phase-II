@@ -51,7 +51,8 @@ for (measure_name in unique(data$measure)) {
   
   # Plot the decomposition
   output_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/decompositions/{measure_name}{ifelse(args$test, '_test', '')}.png")
-  
+  dir.create(dirname(output_path), recursive = TRUE, showWarnings = FALSE)
+
   p <- autoplot(decomposed) + ggtitle(glue("Decomposition of {measure_name}"))
   ggsave(filename = output_path, plot = p, width = 10, height = 6)
 
