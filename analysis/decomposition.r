@@ -37,26 +37,28 @@ data <- data %>%
   ) %>%
   arrange(interval_start)
 
-data <- filter(data, measure == unique(data$measure)[1]) # Select first measure for decomposition example
+# Iteratively decompose each measure's time series
+for (measure_name in unique(data$measure)) {
+  measure_data <- filter(data, measure == measure_name)
+  
+  # Convert to time series object
+  start_date <- min(measure_data$interval_start, na.rm = TRUE)
+  ts_start <- c(as.integer(format(start_date, "%Y")), as.integer(format(start_date, "%m")))
+  ts_data <- ts(measure_data$rate_per_1000_midpoint6_derived, frequency = 52, start = ts_start)
+  
+  # Perform time series decomposition
+  decomposed <- stl(ts_data, s.window = "periodic")
+  
+  # Plot the decomposition
+  output_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/decompositions/{measure_name}{ifelse(args$test, '_test', '')}.png")
+  
+  p <- autoplot(decomposed) + ggtitle(glue("Decomposition of {measure_name}"))
+  ggsave(filename = output_path, plot = p, width = 10, height = 6)
 
-# Convert to time series object
-start_date <- min(data$interval_start, na.rm = TRUE)
-ts_start <- c(as.integer(format(start_date, "%Y")), as.integer(format(start_date, "%m")))
-ts_data <- ts(data$rate_per_1000_midpoint6_derived, frequency = 52, start = ts_start)
+  # Display summary
+  summary(decomposed)
 
-# Perform time series decomposition
-decomposed <- stl(ts_data, s.window = "periodic") # periodic = classical decomoposition
-
-# Plot the decomposition. Use ggplot autoplot when available (returns a ggplot object);
-output_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/national_decomposition_plot{ifelse(args$test, '_test', '')}.png")
-
-p <- autoplot(decomposed)
-ggsave(filename = output_path, plot = p, width = 10, height = 6)
-
-# Access individual components
-trend <- decomposed$trend
-seasonal <- decomposed$seasonal
-random <- decomposed$random
-
-# Display summary
-summary(decomposed)
+  # Save model summary
+  summary_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/decompositions/summary_{measure_name}{ifelse(args$test, '_test', '')}.txt")
+  capture.output(summary(decomposed), file = summary_path)
+}
