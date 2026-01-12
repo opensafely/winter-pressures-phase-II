@@ -5,7 +5,7 @@ library(optparse)
 library(styler)
 
 # Run >R config.r to lint repo
-styler::style_dir("analysis")
+#styler::style_dir("analysis")
 
 # ----------------- Parse user arguments -------------------------------
 

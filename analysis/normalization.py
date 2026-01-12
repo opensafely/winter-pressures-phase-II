@@ -68,20 +68,30 @@ choices = ["Before", "During", "After"]
 practice_interval_df["pandemic"] = np.select(pandemic_conditions, choices)
 
 # Remove interval containing xmas shutdown
-practice_interval_df = practice_interval_df.loc[
-    ~(
-        (practice_interval_df["interval_start"].dt.month == 12)
-        & (
-            (practice_interval_df["interval_start"].dt.day >= 19)
-            & (practice_interval_df["interval_start"].dt.day <= 26)
-        )
-    )
-]
+date_col = practice_interval_df["interval_start"]
+exclude_mask = (
+    ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26))
+    | (date_col >= pd.Timestamp("2025-06-01"))
+)
+practice_interval_df = practice_interval_df.loc[~exclude_mask]
+
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
 # Only keep intervals inside the periods of interest
 practice_interval_df = practice_interval_df.loc[
-    practice_interval_df["season"].isin(["Jun-Jul", "Sep-Oct", "Nov-Dec", "Jan-Feb"])
+        practice_interval_df["season"].isin(
+            ["Jun-Jul", "Sep-Oct", "Nov-Dec", "Jan-Feb"]
+        )
+    ]
+
+# Separate pandemic period from main dataset
+pandemic_df = practice_interval_df.loc[
+        practice_interval_df["pandemic"].isin(
+            ["During"]
+        )
+    ]
+practice_interval_df = practice_interval_df.loc[
+    ~practice_interval_df["pandemic"].isin(["During"])
 ]
 
 # ----------------------- Seasonality analysis ----------------------------------
@@ -90,13 +100,9 @@ practice_interval_df = practice_interval_df.loc[
 
 non_summer = {}
 summer = {}
-seasonal_groups = [non_summer, summer]
-non_summer["practice_interval_df"] = practice_interval_df[
-    practice_interval_df["season"] != "Jun-Jul"
-]
-summer["practice_interval_df"] = practice_interval_df[
-    practice_interval_df["season"] == "Jun-Jul"
-]
+seasonal_groups = [summer, non_summer]
+non_summer['practice_interval_df'] = practice_interval_df[practice_interval_df['season'] != 'Jun-Jul']
+summer['practice_interval_df'] = practice_interval_df[practice_interval_df['season'] == 'Jun-Jul']
 
 for seasonal_group in seasonal_groups:
 
@@ -116,14 +122,14 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_df"] = build_aggregate_df(
         seasonal_group["interval_season_df"],
         ["measure", "season", "pandemic"],
-        {"rate_per_1000_midpoint6_derived_var": ["mean", "count"]},
+        {"rate_per_1000_midpoint6_derived_var": ["median", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_df"].rename(
         columns={
-            "rate_per_1000_midpoint6_derived_var_mean": "rate_var_btwn_prac_mean",
-            "rate_per_1000_midpoint6_derived_var_count": "rate_var_btwn_prac_n_intervals",
+            "rate_per_1000_midpoint6_derived_var_median": "rate_var_btwn_prac_median",
+            "rate_per_1000_midpoint6_derived_var_count": "rate_var_btwn_prac_n_intervals"
         },
         inplace=True,
     )
@@ -142,17 +148,14 @@ summer["zero_or_nan_df"] = summer["practice_season_df"][
     (summer["practice_season_df"]["numerator_midpoint6_sum"] == 0)
     | (summer["practice_season_df"]["numerator_midpoint6_sum"].isna())
 ]
-to_remove = summer["zero_or_nan_df"][
-    ["measure", "season", "summer_year", "practice_pseudo_id", "pandemic"]
-]
 
 for seasonal_group in seasonal_groups:
 
-    # Remove seasons without a valid baseline rate
-    seasonal_group["practice_season_df"] = pd.concat(
-        [seasonal_group["practice_season_df"], to_remove]
-    ).drop_duplicates(keep=False)
-
+    # Remove practice seasons without a valid baseline rate
+    keys = ['measure', 'summer_year', 'practice_pseudo_id']
+    seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'].merge(summer['zero_or_nan_df'][keys], on=keys, how='left', indicator=True)
+    seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'][seasonal_group['practice_season_df']['_merge'] == 'left_only'].drop(columns='_merge')
+    
     # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
 
     seasonal_group["season_df"] = build_aggregate_df(
@@ -164,6 +167,8 @@ for seasonal_group in seasonal_groups:
             "list_size_midpoint6_count": ["sum"],
         },
     )
+long_df = pd.concat([summer['practice_season_df'], non_summer['practice_season_df']])
+read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_weighted_long", df=long_df, file_type = 'csv')    
 
 combined_seasons_df = merge_seasons(
     summer["season_df"], non_summer["season_df"], practice_level=False
@@ -231,7 +236,7 @@ read_write(
     file_type="csv",
 )
 
-# Check means and var ratio
+# Check medians and var ratio
 # practice_season_df["var/mean"] = (
 #     practice_season_df["rate_per_1000_midpoint6_derived_var_mean"]
 #     / practice_season_df["rate_per_1000_midpoint6_derived_mean_mean"]
@@ -269,48 +274,36 @@ combined_practice_seasons_df["RD_first_summr"] = (
     - combined_practice_seasons_df["Rate_per_1000_first_summr"]
 )
 
-# Save practice-level counts for downstream stat testing
-read_write(
-    read_or_write="write",
-    path=f"output/{args.group}_measures_{args.set}/practice_level_counts",
-    df=combined_practice_seasons_df,
-    file_type="arrow",
-)
+# Visualise distributions of rates and RRs
+rate_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "Rate_per_1000", facet_var = 'measure')
+plt.savefig("output/practice_measures/plots/rates.png")
+RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_summr", facet_var = 'measure')
+plt.savefig("output/practice_measures/plots/RR_prev_summer.png")
+read_write(read_or_write="write", path=f"output/{args.group}_measures/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
 
 # Aggregate from practice level to pandemic level
 combined_seasons_df_results = build_aggregate_df(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic"],
-    {
-        "RR_prev_summr": ["mean"],
-        "RR_first_summr": ["mean"],
-        "list_size_midpoint6_count_first_summr": ["sum"],
-        "list_size_midpoint6_count_prev_summr": ["sum"],
-        "RD_prev_summr": ["mean"],
-        "RD_first_summr": ["mean"],
-    },
+    {"RR_prev_summr": ["median"], "RR_first_summr": ["median"], "list_size_midpoint6_count_first_summr": ['sum'], "list_size_midpoint6_count_prev_summr": ["sum"],
+     "RD_prev_summr": ["median"], "RD_first_summr": ["median"]},
 )
 
 # Save unweighted RRs per season
 rename_map = {
     # rate ratios
-    "RR_prev_summr_mean": "RR_prev_mean",
-    "RR_first_summr_mean": "RR_first_mean",
+    "RR_prev_summr_median": "RR_prev_median",
+    "RR_first_summr_median": "RR_first_median",
+
     # list sizes (counts of practices contributing)
     "list_size_midpoint6_count_first_summr_sum": "list_count_first",
     "list_size_midpoint6_count_prev_summr_sum": "list_count_prev",
     # rate differences
-    "RD_prev_summr_mean": "RD_prev_mean",
-    "RD_first_summr_mean": "RD_first_mean",
+    "RD_prev_summr_median": "RD_prev_median",
+    "RD_first_summr_median": "RD_first_median",
 }
 combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-read_write(
-    read_or_write="write",
-    path=f"output/{args.group}_measures_{args.set}/Results_unweighted",
-    df=combined_seasons_df_results,
-    file_type="csv",
-)
-
+read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats
