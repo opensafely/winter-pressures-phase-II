@@ -2750,217 +2750,217 @@ actions:
 
   generate_demograph_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_all/demograph_measures_2023-01-08_test.arrow
+      --output output/demograph_measures_all/demograph_measures_2023-05-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set all
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_all/demograph_measures_2023-01-08_test.arrow
+        dataset: output/demograph_measures_all/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_all/practice_measures_2023-01-08_test.arrow
+      --output output/practice_measures_all/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set all
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_all/practice_measures_2023-01-08_test.arrow
+        dataset: output/practice_measures_all/practice_measures_2023-05-08_test.arrow
   generate_comorbid_measures_all_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_all/comorbid_measures_2023-01-08_test.arrow
+      --output output/comorbid_measures_all/comorbid_measures_2023-05-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set all
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_all/comorbid_measures_2023-01-08_test.arrow
+        dataset: output/comorbid_measures_all/comorbid_measures_2023-05-08_test.arrow
 
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_all_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_all_appt/demograph_measures_2023-01-08_test.arrow
+      --output output/demograph_measures_all_appt/demograph_measures_2023-05-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set all --appt
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_all_appt/demograph_measures_2023-01-08_test.arrow
+        dataset: output/demograph_measures_all_appt/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_all_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_all_appt/practice_measures_2023-01-08_test.arrow
+      --output output/practice_measures_all_appt/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set all --appt
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_all_appt/practice_measures_2023-01-08_test.arrow
+        dataset: output/practice_measures_all_appt/practice_measures_2023-05-08_test.arrow
   generate_comorbid_measures_all_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_all_appt/comorbid_measures_2023-01-08_test.arrow
+      --output output/comorbid_measures_all_appt/comorbid_measures_2023-05-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set all --appt
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_all_appt/comorbid_measures_2023-01-08_test.arrow
+        dataset: output/comorbid_measures_all_appt/comorbid_measures_2023-05-08_test.arrow
 
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_sro_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_sro/demograph_measures_2023-01-08_test.arrow
+      --output output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set sro
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_sro/demograph_measures_2023-01-08_test.arrow
+        dataset: output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_sro_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_sro/practice_measures_2023-01-08_test.arrow
+      --output output/practice_measures_sro/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set sro
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_sro/practice_measures_2023-01-08_test.arrow
+        dataset: output/practice_measures_sro/practice_measures_2023-05-08_test.arrow
   generate_comorbid_measures_sro_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_sro/comorbid_measures_2023-01-08_test.arrow
+      --output output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set sro
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_sro/comorbid_measures_2023-01-08_test.arrow
+        dataset: output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
 
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_sro_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_sro_appt/demograph_measures_2023-01-08_test.arrow
+      --output output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set sro --appt
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_sro_appt/demograph_measures_2023-01-08_test.arrow
+        dataset: output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_sro_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_sro_appt/practice_measures_2023-01-08_test.arrow
+      --output output/practice_measures_sro_appt/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set sro --appt
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_sro_appt/practice_measures_2023-01-08_test.arrow
+        dataset: output/practice_measures_sro_appt/practice_measures_2023-05-08_test.arrow
   generate_comorbid_measures_sro_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_sro_appt/comorbid_measures_2023-01-08_test.arrow
+      --output output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set sro --appt
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2023-01-08_test.arrow
+        dataset: output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
 
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_resp_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_resp/demograph_measures_2023-01-08_test.arrow
+      --output output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set resp
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_resp/demograph_measures_2023-01-08_test.arrow
+        dataset: output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_resp_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_resp/practice_measures_2023-01-08_test.arrow
+      --output output/practice_measures_resp/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set resp
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_resp/practice_measures_2023-01-08_test.arrow
+        dataset: output/practice_measures_resp/practice_measures_2023-05-08_test.arrow
   generate_comorbid_measures_resp_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_resp/comorbid_measures_2023-01-08_test.arrow
+      --output output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set resp
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_resp/comorbid_measures_2023-01-08_test.arrow
+        dataset: output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
 
 # --------------- TEST ACTIONS ------------------------------------------
 
   generate_demograph_measures_resp_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_resp_appt/demograph_measures_2023-01-08_test.arrow
+      --output output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
       --
       --demograph_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set resp --appt
     outputs:
       highly_sensitive:
-        dataset: output/demograph_measures_resp_appt/demograph_measures_2023-01-08_test.arrow
+        dataset: output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_resp_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_resp_appt/practice_measures_2023-01-08_test.arrow
+      --output output/practice_measures_resp_appt/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set resp --appt
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_resp_appt/practice_measures_2023-01-08_test.arrow
+        dataset: output/practice_measures_resp_appt/practice_measures_2023-05-08_test.arrow
   generate_comorbid_measures_resp_appt_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_resp_appt/comorbid_measures_2023-01-08_test.arrow
+      --output output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
       --
       --comorbid_measures
-      --start_intv 2023-01-08
+      --start_intv 2023-05-08
       --test
       --set resp --appt
     outputs:
       highly_sensitive:
-        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2023-01-08_test.arrow
+        dataset: output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
 
   generate_freq_table_demograph_all_test:
     run: python:v2 analysis/freq_table.py --demograph_measures --set all --test

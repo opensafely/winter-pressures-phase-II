@@ -43,9 +43,9 @@ for (measure_name in unique(data$measure)) {
   
   # Convert to time series object
   start_date <- min(measure_data$interval_start, na.rm = TRUE)
-  ts_start <- c(as.integer(format(start_date, "%Y")), as.integer(format(start_date, "%m")))
+  ts_start <- c(as.integer(format(start_date, "%Y")), as.integer(format(start_date, "%V")))
   ts_data <- ts(measure_data$rate_per_1000_midpoint6_derived, frequency = 52, start = ts_start)
-  
+  print(ts_start)
   # Perform time series decomposition
   decomposed <- stl(ts_data, s.window = "periodic")
   

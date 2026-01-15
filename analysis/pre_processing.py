@@ -1,8 +1,6 @@
 # This script processes the raw measures output to generate patient-characteristic stratified measures
 # Usage python analysis/pre_processing.py
-# Option --comorbid_measures flag to aggregate by comorbidities
-# Option --demograph_measures flag to aggregate by demographics
-# Option --practice_measures flag to aggregate by practice
+# Option --comorbid_measures/demograph_measures/practice_measures to choose which type of measures to process
 # Option --test flag to run a lightweight test with a single date
 # Option --set all/sro/resp to choose which set of measures to process
 
