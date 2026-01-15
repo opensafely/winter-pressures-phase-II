@@ -71,7 +71,7 @@ args.pandemic_end = "2021-07-19"
 if args.test:
     args.pandemic_start = "2017-03-01"
     args.pandemic_end = "2018-05-17"
-args.test_start_date = "2023-01-08"
+args.test_start_date = "2023-05-08"
 args.n_years = 10
 args.dtype_dict = {
     "measure": "category",
