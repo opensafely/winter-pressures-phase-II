@@ -10,7 +10,7 @@ library(glue)
 library(ggplot2)
 library(ggfortify)
 source("analysis/utils.r")
-source("analysis/config.r")
+source("analysis/parse_args.r")
 
 # Read in CSV file
 

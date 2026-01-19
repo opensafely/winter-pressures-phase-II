@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import pyarrow.feather as feather
-from wp_config_setup import args
+from analysis.parse_args import args
 import seaborn as sns
 import matplotlib.pyplot as plt
 

@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import os
 from utils import *
 import pyarrow.feather as feather
-from wp_config_setup import args
+from analysis.parse_args import args
 
 # --------- Configuration ------------------------------------------------
 

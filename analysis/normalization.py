@@ -11,7 +11,7 @@
 import pandas as pd
 from utils import *
 import pyarrow.feather as feather
-from wp_config_setup import *
+from analysis.parse_args import *
 import numpy as np
 import random
 from datetime import datetime, timedelta

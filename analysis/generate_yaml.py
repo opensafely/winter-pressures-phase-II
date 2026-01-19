@@ -15,7 +15,7 @@ Output:
 
 from datetime import datetime, timedelta
 from utils import generate_annual_dates
-from wp_config_setup import args
+from analysis.parse_args import args
 
 dates = generate_annual_dates(args.study_end_date, args.n_years)
 

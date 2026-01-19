@@ -6,7 +6,7 @@ import argparse
 import json
 
 # Load default config from JSON
-with open("config.json", "r") as f:
+with open("analysis/config.json", "r") as f:
     config = json.load(f)
 
 parser = argparse.ArgumentParser()  # Instantiate parser

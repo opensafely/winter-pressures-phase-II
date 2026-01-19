@@ -9,7 +9,7 @@ library(broom)
 library(lme4)
 library(stringr)
 source("analysis/utils.r")
-source("analysis/config.r")
+source("analysis/parse_args.r")
 
 practice_counts_df <- read_write("read", glue("output/{args$group}_measures/Results_weighted_long"), file_type = "csv")
 

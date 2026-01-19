@@ -26,7 +26,7 @@ from ehrql.tables.tpp import (
 )
 from queries import *
 from codelist_definition import *
-from wp_config_setup import args
+from analysis.parse_args import args
 
 claim_permissions("appointments")
 

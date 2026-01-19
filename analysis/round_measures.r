@@ -10,7 +10,7 @@ library(dplyr)
 library(lubridate)
 library(purrr)
 source("analysis/utils.r")
-source("analysis/config.r")
+source("analysis/parse_args.r")
 
 # --------------------- Round processed measures ---------------------
 

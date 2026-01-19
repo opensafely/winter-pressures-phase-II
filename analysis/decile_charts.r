@@ -13,7 +13,7 @@ library(glue)
 library(optparse)
 library(arrow)
 source("analysis/utils.r")
-source("analysis/config.r")
+source("analysis/parse_args.r")
 
 # Message about test or full
 print(if (args$test) "Using test data" else "Using full data")

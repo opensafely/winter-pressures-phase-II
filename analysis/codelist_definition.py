@@ -1,5 +1,5 @@
 from ehrql import codelist_from_csv
-from wp_config_setup import args
+from analysis.parse_args import args
 
 
 def create_codelist_dict(dic: dict) -> dict:
