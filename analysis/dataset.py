@@ -207,7 +207,7 @@ prioritized_sum = sum(
         count_clinical_consultations(
             sro_dict[sro], "many_pp", study_start_date, study_end_date
         )
-        for sro in args.prioritized
+        for sro in config["prioritized"]
     ]
 )
 deprioritized_sum = sum(
@@ -215,7 +215,7 @@ deprioritized_sum = sum(
         count_clinical_consultations(
             sro_dict[sro], "many_pp", study_start_date, study_end_date
         )
-        for sro in args.deprioritized
+        for sro in config["deprioritized"]
     ]
 )
 

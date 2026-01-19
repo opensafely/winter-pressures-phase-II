@@ -1,26 +1,26 @@
 import pandas as pd
 from utils import *
 import pyarrow.feather as feather
-from analysis.parse_args import *
+from parse_args import *
 import numpy as np
 
-if args.test:
+if config["test"]:
     year = "2016"
 else:
     year = "2020"
 
-dates = generate_annual_dates(args.study_end_date, args.n_years)
+dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date = [date for date in dates if date.startswith(year)][0]
 
 # Load and format data for each interval
-print(f"Loading {args.group} measures {date}", flush=True)
-input_path = f"output/{args.group}_measures_{args.set}/{args.group}_measures_{date}"
-output_path = f"output/{args.group}_measures_{args.set}/freq_table_{args.group}"
+print(f"Loading {config['group']} measures {date}", flush=True)
+input_path = f"output/{config['group']}_measures_{config['set']}/{config['group']}_measures_{date}"
+output_path = f"output/{config['group']}_measures_{config['set']}/freq_table_{config['group']}"
 
 patient_df = read_write(
     read_or_write="read",
     path=input_path,
-    dtype=args.dtype_dict,
+    dtype=config["dtype_dict"],
     true_values=["T"],
     false_values=["F"],
 )
@@ -32,13 +32,13 @@ patient_df = patient_df[
 ]
 patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
 
-if args.test:
+if config["test"]:
     # Increase numerator and list_size for testing of downstream functions
     patient_df["numerator"] = np.random.randint(0, 1000, size=len(patient_df))
     patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
     output_path = output_path + "_test"
 
-if args.demograph_measures:
+if config["demograph_measures"]:
     # Replace numerical values with string values
     patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
 

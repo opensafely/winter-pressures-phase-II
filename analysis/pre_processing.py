@@ -12,16 +12,16 @@ from datetime import datetime, timedelta
 import os
 from utils import *
 import pyarrow.feather as feather
-from analysis.parse_args import args
+from parse_args import config
 
 # --------- Configuration ------------------------------------------------
 
-dates = generate_annual_dates(args.study_end_date, args.n_years)
+dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
-if args.test:
+if config["test"]:
     # For testing, use only one date
-    dates = [args.test_start_date]
+    dates = [config["test_config"]["start_date"]]
 
 # -------- Patient measures processing ----------------------------------
 
@@ -30,11 +30,11 @@ log_memory_usage(label="Before loading data")
 # Load and format data for each interval
 for date in dates:
 
-    print(f"Loading {args.group} measures {date}", flush=True)
-    input_path = f"output/{args.group}_measures_{args.set}{args.appt_suffix}/{args.group}_measures_{date}"
-    output_path = f"output/{args.group}_measures_{args.set}{args.appt_suffix}/proc_{args.group}_measures"
+    print(f"Loading {config['group']} measures {date}", flush=True)
+    input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/{config['group']}_measures_{date}"
+    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"
     # Read in measures
-    df = read_write(read_or_write="read", path=input_path, dtype=args.dtype_dict)
+    df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
     log_memory_usage(label=f"After loading measures {date}")
     print(f"Initial shape of input: {df.shape}", flush=True)
 
@@ -68,12 +68,12 @@ del df_list
 print(f"Data types of input: {proc_df.dtypes}", flush=True)
 log_memory_usage(label=f"After deletion of dataframes")
 
-if args.demograph_measures:
+if config["demograph_measures"]:
     # Replace numerical values with string values
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
 
 
-if args.test:
+if config["test"]:
     np.random.seed(42)  # For reproducibility in testing
     # Increase numerator and list_size for testing of downstream functions
     proc_df["numerator"] = np.random.randint(0, 500, size=len(proc_df))
@@ -131,7 +131,7 @@ if args.test:
 proc_df = proc_df[proc_df["interval_start"] > "2016-05-31"]
 
 # Remove practices with < 750 list size
-if args.practice_measures:
+if config["practice_measures"]:
     print(
         f"Number of practices before filtering: {proc_df['practice_pseudo_id'].nunique()}",
         flush=True,

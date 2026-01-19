@@ -26,7 +26,7 @@ from ehrql.tables.tpp import (
 )
 from queries import *
 from codelist_definition import *
-from analysis.parse_args import args
+from parse_args import config
 
 claim_permissions("appointments")
 
@@ -34,7 +34,7 @@ claim_permissions("appointments")
 measures = create_measures()
 measures.configure_dummy_data(population_size=100)
 measures.configure_disclosure_control(enabled=False)
-if args.test == True:
+if config["test"] == True:
     NUM_WEEKS = 6
 else:
     NUM_WEEKS = 52
@@ -204,10 +204,10 @@ for key in sro_dict.keys():
 
 # Combine prioritized and deprioritized sro measures
 measures_to_add["sro_prioritized"] = sum(
-    [measures_to_add[sro] for sro in args.prioritized]
+    [measures_to_add[sro] for sro in config["prioritized"]]
 )
 measures_to_add["sro_deprioritized"] = sum(
-    [measures_to_add[sro] for sro in args.deprioritized]
+    [measures_to_add[sro] for sro in config["deprioritized"]]
 )
 
 # Number of appointments in interval
@@ -263,7 +263,7 @@ for status_code, status_measure in zip(app_status_code, app_status_measure):
 
 # Configuration based on CLI arg. Add these measures if --add_measure flag called
 
-if args.add_indicat_prescript == True:
+if config["add_indicat_prescript"] == True:
     # Count appointments with an indication and prescription
     measures_to_add.update(
         appointments_with_indication_and_prescription(
@@ -275,13 +275,13 @@ if args.add_indicat_prescript == True:
         )
     )
 
-if args.add_prescriptions == True:
+if config["add_prescriptions"] == True:
     # Count prescriptions and add to measures
     measures_to_add.update(
         count_prescriptions(INTERVAL.start_date, INTERVAL.end_date, med_dict)
     )
 
-if args.add_reason == True:
+if config["add_reason"] == True:
     # Adding reason for appointment (inferred from appointment and reason being on the same day)
     for reason in app_reason_dict.keys():
         measures_to_add[reason] = count_clinical_consultations(
@@ -365,9 +365,9 @@ for illness in diseases:
 # ---------------------- Define measures --------------------------------
 
 inclusion_criteria = has_known_sex & age_filter & was_alive & was_registered
-intervals = weeks(NUM_WEEKS).starting_on(args.start_intv)
+intervals = weeks(NUM_WEEKS).starting_on(config["start_intv"])
 
-if args.demograph_measures:
+if config["demograph_measures"]:
     # Run patient script if patient flag called
     measures.define_defaults(
         denominator=inclusion_criteria,
@@ -383,14 +383,14 @@ if args.demograph_measures:
         },
         intervals=intervals,
     )
-elif args.practice_measures:
+elif config["practice_measures"]:
     # Run practice script if practice flag called
     measures.define_defaults(
         denominator=inclusion_criteria,
         group_by={"practice_pseudo_id": practice_id},
         intervals=intervals,
     )
-elif args.comorbid_measures:
+elif config["comorbid_measures"]:
     # Run comorbid script if comorbid flag called
     measures.define_defaults(
         denominator=inclusion_criteria,
@@ -414,7 +414,7 @@ elif args.comorbid_measures:
 
 # Filtering out measures to select pipeline
 
-if args.set == "resp":
+if config["set"] == "resp":
     for measure in list(measures_to_add.keys()):
         # Remove non-respiratory measures
         if (
@@ -424,7 +424,7 @@ if args.set == "resp":
         ):
             del measures_to_add[measure]
 
-if args.set == "sro":
+if config["set"] == "sro":
 
     # Build a set of measures to keep. Convert dict keys to a set first
     # to avoid depending on dict view methods and to allow set operations.
@@ -446,7 +446,7 @@ if args.set == "sro":
             del measures_to_add[measure]
 
 # Restrict measures to those with an appointment in interval
-if args.appt:
+if config["appt"]:
 
     for measure in list(measures_to_add.keys()):
         # Restrict measure to appts in interval

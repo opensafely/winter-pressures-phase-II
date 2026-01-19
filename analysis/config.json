@@ -13,7 +13,6 @@
   "study_end_date": "2025-03-31",
   "pandemic_start": "2020-03-23",
   "pandemic_end": "2021-07-19",
-  "test_start_date": "2023-05-08",
   "n_years": 10,
   "base_dtype_dict": {
     "measure": "category",
@@ -23,7 +22,6 @@
   },
   "groups": {
     "demograph": {
-      "group": "demograph",
       "dtype_dict": {
         "age": "category",
         "sex": "category",
@@ -36,13 +34,11 @@
       }
     },
     "practice": {
-      "group": "practice",
       "dtype_dict": {
         "practice_pseudo_id": "int16"
       }
     },
     "comorbid": {
-      "group": "comorbid",
       "dtype_dict": {
         "age": "category",
         "comorbid_chronic_resp": "bool",
@@ -73,5 +69,10 @@
   },
   "prioritized": ["copd_review", "asthma_review"],
   "deprioritized": ["sodium_test", "alt_test", "sys_bp_test", "chol_test", "rbc_test", "hba1c_test", "cvd_10yr", "thy_test"],
-  "file_type": "arrow"
+  "file_type": "arrow",
+  "test_config": {
+    "start_date": "2023-05-08",
+    "pandemic_start": "2017-03-01",
+    "pandemic_end": "2018-05-17"
+  }
 }

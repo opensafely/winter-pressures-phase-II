@@ -13,9 +13,11 @@ source("analysis/utils.r")
 source("analysis/parse_args.r")
 
 # --------------------- Round processed measures ---------------------
-
-input_path <- glue("output/{args$group}_measures_{args$set}{args$appt_suffix}/proc_{args$group}_measures")
-output_path <- glue("output/{args$group}_measures_{args$set}{args$appt_suffix}/proc_{args$group}_measures_midpoint6")
+print(config$group)
+print(config$set)
+print(config$appt_suffix)
+input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}/proc_{config$group}_measures")
+output_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}/proc_{config$group}_measures_midpoint6")
 
 df_to_round <- read_write("read", input_path)
 df_to_round <- tibble(df_to_round)

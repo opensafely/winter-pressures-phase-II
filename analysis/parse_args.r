@@ -66,31 +66,34 @@ option_list <- list(
 parser <- OptionParser(option_list = option_list)
 args <- parse_args(parser)
 
-# ----------------- Configuration of constants for pipeline -------------------
-
-# Set constants from config
-args$study_end_date <- config$study_end_date
-args$n_years <- config$n_years
-args$sro_dict <- config$sro_dict
-args$prioritized <- config$prioritized
-args$deprioritized <- setdiff(names(args$sro_dict), args$prioritized)
-args$file_type <- config$file_type
-
-# Initialize dtype_dict with base (not used in R, but for consistency)
-args$dtype_dict <- config$base_dtype_dict
-
-# Apply group-specific configuration
-if (args$demograph_measures) {
-  group_config <- config$groups$demograph
-  args$group <- group_config$group
-} else if (args$practice_measures) {
-  group_config <- config$groups$practice
-  args$group <- group_config$group
-} else if (args$comorbid_measures) {
-  group_config <- config$groups$comorbid
-  args$group <- group_config$group
+# Override config with provided args
+args_list <- as.list(args)
+for (key in names(args_list)) {
+  config[[key]] <- args_list[[key]]
 }
 
-if (args$appt) {
-  args$appt_suffix <- "_appt"
+# ----------------- Apply conditional logic to config -------------------
+
+# Configure dates (not needed in R)
+
+# Initialize dtype_dict with base (not used in R, but for consistency)
+config$dtype_dict <- config$base_dtype_dict
+
+# Apply group-specific configuration
+for (group in c("demograph", "practice", "comorbid")) {
+  group_flag <- paste0(group, "_measures")
+  if (config[[group_flag]]) {
+    config$group <- group
+    config$dtype_dict <- c(config$dtype_dict, config$groups[[group]]$dtype_dict)
+  }
+}
+
+if (config$appt) {
+  config$appt_suffix <- "_appt"
+} 
+
+config$deprioritized <- setdiff(names(config$sro_dict), config$prioritized)
+
+if (config$use_csv) {
+  config$file_type <- "csv"
 }

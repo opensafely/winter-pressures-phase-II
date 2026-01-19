@@ -1,5 +1,5 @@
 from ehrql import codelist_from_csv
-from analysis.parse_args import args
+from parse_args import config
 
 
 def create_codelist_dict(dic: dict) -> dict:
@@ -105,7 +105,7 @@ comorbid_dict = {
 comorbid_dict = create_codelist_dict(comorbid_dict)
 
 # SRO measures
-sro_dict = create_codelist_dict(args.sro_dict)
+sro_dict = create_codelist_dict(config["sro_dict"])
 
 # Seasonal respiratory illness
 resp_dict = {

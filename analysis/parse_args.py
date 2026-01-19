@@ -83,39 +83,27 @@ parser.add_argument(
 
 args = parser.parse_args()  # Stores arguments in 'args'
 
-# Set defaults from config
-for key, value in config.items():
-    if not hasattr(args, key):
-        setattr(args, key, value)
+# Override config with provided args
+for key, value in vars(args).items():
+    config[key] = value
 
-# ----------------- Configuration of constants for pipeline -------------------
-
-# Configure dates
-if args.test:
-    args.pandemic_start = "2017-03-01"
-    args.pandemic_end = "2018-05-17"
+# ----------------- Apply conditional logic to config -------------------
 
 # Initialize dtype_dict with base
-args.dtype_dict = config["base_dtype_dict"].copy()
+config["dtype_dict"] = config["base_dtype_dict"].copy()
 
 # Apply group-specific configuration
-if args.demograph_measures:
-    group_config = config["groups"]["demograph"]
-    args.group = group_config["group"]
-    args.dtype_dict.update(group_config["dtype_dict"])
-elif args.practice_measures:
-    group_config = config["groups"]["practice"]
-    args.group = group_config["group"]
-    args.dtype_dict.update(group_config["dtype_dict"])
-elif args.comorbid_measures:
-    group_config = config["groups"]["comorbid"]
-    args.group = group_config["group"]
-    args.dtype_dict.update(group_config["dtype_dict"])
+for group in ["demograph", "practice", "comorbid"]:
+    if config.get(f"{group}_measures", False):
+        # Set group in config and update dtype_dict
+        config["group"] = group
+        config["dtype_dict"].update(config["groups"][group]["dtype_dict"])
+        break  # Only one group can be selected
 
-if args.appt:
-    args.appt_suffix = "_appt"
+if config.get("appt", False):
+    config["appt_suffix"] = "_appt"
 
-args.deprioritized = set(args.sro_dict.keys()) - set(args.prioritized)
+config["deprioritized"] = set(config["sro_dict"].keys()) - set(config["prioritized"])
 
-if args.use_csv:
-    args.file_type = "csv"
+if config.get("use_csv", False):
+    config["file_type"] = "csv"
