@@ -3,7 +3,8 @@
 # Option --test uses test data
 # Option --set specifies the measure set (all, sro, resp)
 # Option --RR uses Rate Ratio data
-# Option --released uses released decile table, so skips decile table generation
+# Option --released uses already released data
+# Option --appt restricts measures to those with an appointment in interval
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -19,61 +20,57 @@ source("analysis/config.r")
 # Message about test or full
 print(if (args$test) "Using test data" else "Using full data")
 
-# If using released decile tables, skip decile table generation
-if (args$released != TRUE){
+# ------------ Generate decile tables ----------------------------------------------------
 
-# Determine file paths
-input_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/proc_practice_measures_midpoint6")
-practice_measures <- read_write("read", input_path)
+if (args$released == FALSE){
+
+  # Determine file paths
+  input_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/proc_practice_measures_midpoint6")
+  practice_measures <- read_write("read", input_path)
 
   if (args$test) {
-    
+
     # Generate simulated rate data (since dummy data contains too many 0's to graph)
-    practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)  
-    practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)  
-    
+    practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
+    practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)
   }
 
-# Calculate rate per 1000
-practice_measures <- mutate(practice_measures, rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
+  # Calculate rate per 1000
+  practice_measures <- mutate(practice_measures, rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
 
   practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
-  # ------------ Create decile charts -----------------------------------------------------------
+  # Create deciles for practice measures
+  practice_deciles <- practice_measures %>%
+    group_by(interval_start, measure) %>%
+    summarise(
+      d1 = quantile(rate_per_1000, 0.1, na.rm = TRUE),
+      d2 = quantile(rate_per_1000, 0.2, na.rm = TRUE),
+      d3 = quantile(rate_per_1000, 0.3, na.rm = TRUE),
+      d4 = quantile(rate_per_1000, 0.4, na.rm = TRUE),
+      d5 = quantile(rate_per_1000, 0.5, na.rm = TRUE), # Median
+      d6 = quantile(rate_per_1000, 0.6, na.rm = TRUE),
+      d7 = quantile(rate_per_1000, 0.7, na.rm = TRUE),
+      d8 = quantile(rate_per_1000, 0.8, na.rm = TRUE),
+      d9 = quantile(rate_per_1000, 0.9, na.rm = TRUE)
+    ) %>%
+    ungroup() %>%
+    pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = "rate_per_1000")
 
-print(head(practice_measures))
-# Create deciles for practice measures
-practice_deciles <- practice_measures %>%
-  group_by(interval_start, measure) %>%
-  summarise(
-    d1 = quantile(rate_per_1000, 0.1, na.rm = TRUE),
-    d2 = quantile(rate_per_1000, 0.2, na.rm = TRUE),
-    d3 = quantile(rate_per_1000, 0.3, na.rm = TRUE),
-    d4 = quantile(rate_per_1000, 0.4, na.rm = TRUE),
-    d5 = quantile(rate_per_1000, 0.5, na.rm = TRUE), # Median
-    d6 = quantile(rate_per_1000, 0.6, na.rm = TRUE),
-    d7 = quantile(rate_per_1000, 0.7, na.rm = TRUE),
-    d8 = quantile(rate_per_1000, 0.8, na.rm = TRUE),
-    d9 = quantile(rate_per_1000, 0.9, na.rm = TRUE)
-  ) %>%
-  ungroup() %>%
-  pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = "rate_per_1000")
-
-# Save tables, generating a separate file for each measure
-for (measure in unique(practice_deciles$measure)) {
-  measure_data <- practice_deciles %>% filter(measure == !!measure)
+  # Save tables, generating a separate file for each measure
+  for (measure in unique(practice_deciles$measure)) {
+    measure_data <- practice_deciles %>% filter(measure == !!measure)
 
     read_write("write",
       glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
       df = measure_data,
       file_type = "csv"
-  )
+    )
   }
-} else {
-  
+} else if (args$released == TRUE) {
+
   # List all measure-specific files
-  files <- list.files("output/practice_measures/decile_tables/", 
-                      pattern = "^decile_table_.*_rate_mp6\\.csv$", 
+  files <- list.files(glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/"), 
                       full.names = TRUE)
 
   # Read and combine into one dataframe
@@ -81,11 +78,8 @@ for (measure in unique(practice_deciles$measure)) {
     lapply(read_csv) %>%
     bind_rows()
 }
-
-# Remove intervals after the current date
-practice_deciles <- practice_deciles %>%
-  filter(interval_start <= Sys.Date())
-
+# ------------ Create decile charts -----------------------------------------------------------
+print(head(practice_deciles))
 # Define line types
 line_types <- c(
   "d1" = "dashed", "d3" = "dashed",
@@ -151,7 +145,7 @@ plots_dir <- glue("output/practice_measures_{args$set}{args$appt_suffix}/plots")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }
-
+print(practice_deciles)
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
   measures_subset <- measure_groups[[group_name]]

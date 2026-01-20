@@ -11,26 +11,53 @@ library(styler)
 
 # Define list of options
 option_list <- list(
-  make_option("--add_indicat_prescript", action = "store_true",
-              default = FALSE, help = "Adds indicat/prescript if flag is added to action."),
-  make_option("--add_prescriptions", action = "store_true",
-              default = FALSE, help = "Adds prescriptions if flag is added to action."),
-  make_option("--add_reason", action = "store_true",
-              default = FALSE, help = "Adds reason if flag is added to action."),
-  make_option("--demograph_measures", action = "store_true",
-              default = FALSE, help = "Sets measures defaults to demographic-level subgroups."),
-  make_option("--practice_measures", action = "store_true",
-              default = FALSE, help = "Sets measures defaults to practice-level subgroups."),
-  make_option("--comorbid_measures", action = "store_true",
-              default = FALSE, help = "Sets measures defaults to comorbidity-level subgroups."),
-  make_option("--start_intv", type = "character", default = NULL,
-              help = "Interval start date."),
-  make_option("--test", action = "store_true",
-              default = FALSE, help = "Sets lowest time intervals for lightweight testing."),
-  make_option("--use_csv", action = "store_true", default = FALSE,
-              help = "Use CSV files instead of Arrow for reading/writing data."),
-  make_option("--released", action = "store_true", default = FALSE,
-              help = "Use already released data")
+   make_option("--add_indicat_prescript",
+    action = "store_true",
+    default = FALSE, help = "Adds indicat/prescript if flag is added to action."
+  ),
+  make_option("--add_prescriptions",
+    action = "store_true",
+    default = FALSE, help = "Adds prescriptions if flag is added to action."
+  ),
+  make_option("--add_reason",
+    action = "store_true",
+    default = FALSE, help = "Adds reason if flag is added to action."
+  ),
+  make_option("--demograph_measures",
+    action = "store_true",
+    default = FALSE, help = "Sets measures defaults to demographic-level subgroups."
+  ),
+  make_option("--practice_measures",
+    action = "store_true",
+    default = FALSE, help = "Sets measures defaults to practice-level subgroups."
+  ),
+  make_option("--comorbid_measures",
+    action = "store_true",
+    default = FALSE, help = "Sets measures defaults to comorbidity-level subgroups."
+  ),
+  make_option("--start_intv",
+    type = "character", default = NULL,
+    help = "Interval start date."
+  ),
+  make_option("--test",
+    action = "store_true",
+    default = FALSE, help = "Sets lowest time intervals for lightweight testing."
+  ),
+  make_option("--use_csv",
+    action = "store_true", default = FALSE,
+    help = "Use CSV files instead of Arrow for reading/writing data."
+  ),
+  make_option("--set",
+    type = "character",
+    default = FALSE, help = "Choose set of measures between 1) all 2) sro 3) resp."
+  ),
+  make_option("--appt",
+    action = "store_true",
+    default = FALSE, help = "Restrict measures to those with an appointment in interval"
+  ),
+  make_option("--released", 
+    action = "store_true", 
+    default = FALSE, help = "Use already released data")
 )
 
 # Parse options
