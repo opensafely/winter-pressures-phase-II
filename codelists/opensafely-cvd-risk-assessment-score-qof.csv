@@ -1,0 +1,62 @@
+code,term
+100801000000103,Framingham coronary heart disease 10 year adjusted risk score
+1085161000000106,QRISK2 cardiovascular disease 10 year risk calculator
+1085271000000106,Assessment using Framingham coronary heart disease 10 year risk score
+1085771000000100,QRISK3 cardiovascular disease 10 year risk calculator
+1085781000000103,Assessment using QRISK3 cardiovascular disease 10 year risk calculator
+1085871000000105,QRISK3 cardiovascular disease 10 year risk calculator score
+1085961000000109,QRISK cardiovascular disease 10 year risk calculator score
+1085971000000102,Assessment using QRISK cardiovascular disease 10 year risk calculator
+1089081000000103,Framingham Coronary Heart Disease 5 year risk score
+1090061000000102,Framingham Coronary Heart Disease or Cardiovascular Disease 10 year risk adjusted to Joint British Societies 2 guidelines score
+1099281000000109,Assessment using Joint British Societies cardiovascular disease risk calculator
+142609009,Framingham coronary heart disease 5 year risk score
+142610004,Framingham coronary heart disease 10 year risk score
+165210006,Framingham coronary heart disease 5 year risk score
+165211005,Framingham coronary heart disease 10 year risk score
+166701000000106,Joint British Societies cardiovascular disease risk
+166711000000108,Joint British Societies cardiovascular disease risk less than ten percent over next ten years
+166721000000102,Joint British Societies cardiovascular disease risk ten percent to twenty percent over next ten years
+166731000000100,Joint British Societies cardiovascular disease risk greater than twenty percent up to thirty percent over next ten years
+166741000000109,Joint British Societies cardiovascular disease risk greater than thirty percent over next ten years
+169521000000102,Joint British Societies cardiovascular disease risk less than ten percent over next ten years
+169531000000100,Joint British Societies cardiovascular disease risk ten percent to twenty percent over next ten years
+169541000000109,Joint British Societies cardiovascular disease risk greater than twenty percent up to thirty percent over next ten years
+169551000000107,Joint British Societies cardiovascular disease risk greater than thirty percent over next ten years
+174101000000108,Joint British Societies cardiovascular disease risk less than ten percent over next ten years
+174111000000105,Joint British Societies cardiovascular disease risk ten percent to twenty percent over next ten years
+174121000000104,Joint British Societies cardiovascular disease risk greater than twenty percent up to thirty percent over next ten years
+174131000000102,Joint British Societies cardiovascular disease risk greater than thirty percent over next ten years
+315038009,Framingham coronary heart disease 5 year risk score
+315039001,Framingham coronary heart disease 10 year risk score
+353641000000105,QRISK cardiovascular disease 10 year risk score
+353651000000108,QRISK cardiovascular disease 10 year risk score 
+353661000000106,QRISK cardiovascular disease 10 year risk score 
+375091000000105,Cardiovascular disease risk assessment done
+375101000000102,Cardiovascular disease risk assessment completed 
+375111000000100,Cardiovascular disease risk assessment completed 
+376011000000107,Cardiovascular disease risk assessment
+407612004,Framingham coronary heart disease 10 year adjusted risk score
+439827008,QRISK cardiovascular disease risk score
+450759008,Framingham coronary heart disease 10 year risk score
+506671000000104,QRISK2 cardiovascular disease 10 year risk score
+506681000000102,QRISK2 cardiovascular disease 10 year risk score 
+506691000000100,QRISK2 cardiovascular disease 10 year risk score 
+514891000000105,Framingham coronary heart disease 10 year risk score adjusted to Joint British Societies 2 guidelines
+715323006,Assessment using QRISK2 cardiovascular disease 10 year risk scale
+718087004,QRISK2 cardiovascular disease 10 year risk score
+752451000000100,Cardiovascular disease risk assessment by third party
+763000000,Assessment using Framingham coronary heart disease 10 year risk score
+763243004,Assessment using QRISK cardiovascular disease 10 year risk calculator
+763244005,QRISK cardiovascular disease 10 year risk calculator score
+763245006,QRISK2 cardiovascular disease 10 year risk calculator
+804051000000105,Framingham coronary heart disease 10 year risk score
+809311000000105,Joint British Societies cardiovascular disease risk score
+809321000000104,Joint British Societies cardiovascular disease risk score 
+809331000000102,Joint British Societies cardiovascular disease risk assessment
+817291000000101,Joint British Societies cardiovascular disease risk score
+855961000000100,Framingham coronary heart disease 10 year risk score adjusted to Joint British Societies 2 guidelines
+95921000000102,Framingham coronary heart disease 10 year adjusted risk score
+966421000000109,QRISK2 cardiovascular disease 10 year risk score
+977071000000107,Assessment using QRISK2 cardiovascular disease 10 year risk scale
+990301000000105,Cardiovascular disease risk assessment done
