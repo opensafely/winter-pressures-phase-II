@@ -9,9 +9,9 @@ library(broom)
 library(lme4)
 library(stringr)
 source("analysis/utils.r")
-source("analysis/config.r")
+source("analysis/parse_args.r")
 
-practice_counts_df <- read_write("read", glue("output/{args$group}_measures/Results_weighted_long"), file_type = "csv")
+practice_counts_df <- read_write("read", glue("output/{config$group}_measures/Results_weighted_long"), file_type = "csv")
 
 practice_counts_df$rate_per_1000 <- (practice_counts_df$numerator_midpoint6_sum / practice_counts_df$list_size_midpoint6_sum) * 1000
 practice_counts_df$major_season <- ifelse(practice_counts_df$season == "Jun-Jul", "Summer", "Winter")
@@ -50,7 +50,7 @@ results_table <- results_table %>%
   mutate(
     measure = str_extract(term, paste(unique(practice_counts_df$measure), collapse = "|"))
   )
-read_write("write", "output/{args$group}_measures/summary_results", file_type = "csv", df = results_table)
+read_write("write", "output/{config$group}_measures/summary_results", file_type = "csv", df = results_table)
 
 # Define sets of terms
 measure_terms <- paste0("measure", unique(practice_counts_df$measure))
@@ -94,4 +94,4 @@ results_agg <- results_wide %>%
   ) # %>%
 # mutate(signif_propn = (signif_count/test_count)*100)
 
-read_write("write", "output/{args$group}_measures/summary_results_agg", file_type = "csv", df = results_agg)
+read_write("write", "output/{config$group}_measures/summary_results_agg", file_type = "csv", df = results_agg)

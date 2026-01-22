@@ -15,9 +15,9 @@ Output:
 
 from datetime import datetime, timedelta
 from utils import generate_annual_dates
-from wp_config_setup import args
+from parse_args import config
 
-dates = generate_annual_dates(args.study_end_date, args.n_years)
+dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 
 # --- YAML HEADER ---
 
@@ -127,7 +127,7 @@ yaml_measures_test = ""
 for set in measure_sets:
     for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
         yaml_measures_test += yaml_measures_test_template.format(
-            start_date=args.test_start_date,
+            start_date=config["test_config"]["start_date"],
             set=set,
             appt_suffix=appt_suffix,
             appt_flag=appt_flag,

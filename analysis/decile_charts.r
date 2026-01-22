@@ -13,16 +13,16 @@ library(glue)
 library(optparse)
 library(arrow)
 source("analysis/utils.r")
-source("analysis/config.r")
+source("analysis/parse_args.r")
 
 # Message about test or full
-print(if (args$test) "Using test data" else "Using full data")
+print(if (config$test) "Using test data" else "Using full data")
 
 # Determine file paths
-input_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/proc_practice_measures_midpoint6")
+input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}/proc_practice_measures_midpoint6")
 practice_measures <- read_write("read", input_path)
 
-if (args$test) {
+if (config$test) {
 
   # Generate simulated rate data (since dummy data contains too many 0's to graph)
   practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
@@ -59,7 +59,7 @@ for (measure in unique(practice_deciles$measure)) {
   measure_data <- practice_deciles %>% filter(measure == !!measure)
 
   read_write("write",
-    glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
+    glue("output/practice_measures_{config$set}{config$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
     df = measure_data,
     file_type = "csv"
   )
@@ -80,7 +80,7 @@ line_colors <- c(
 )
 
 # Define your groups of measures dynamically
-if (args$set == "all") {
+if (config$set == "all") {
   measure_groups <- list(
     # Plot 1: Appointments table measures
     appts_table = c(
@@ -94,16 +94,16 @@ if (args$set == "all") {
       "tele_consult", "vax_app", "vax_app_covid", "vax_app_flu"
     )
   )
-} else if (args$set == "sro") {
-  sro_measures <- append(args$prioritized, "sro_prioritized")
+} else if (config$set == "sro") {
+  sro_measures <- append(config$prioritized, "sro_prioritized")
   sro_measures <- append(sro_measures, "sick_notes")
   measure_groups <- list(
     # Plot 1: De-prioritized measures
-    deprioritized = append(args$deprioritized, "sro_deprioritized"),
+    deprioritized = append(config$deprioritized, "sro_deprioritized"),
     # Plot 2: Prioritized measures
     prioritized = sro_measures
   )
-} else if (args$set == "resp") {
+} else if (config$set == "resp") {
   measure_groups <- list(
     # Plot 1: Flu/RSV/COVID measures
     flu_rsv_covid = c(
@@ -118,15 +118,15 @@ if (args$set == "all") {
 }
 print(measure_groups)
 # Update measure names if restricting to appts in interval
-if (args$appt) {
+if (config$appt) {
   for (group_name in names(measure_groups)) {
     measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
   }
 }
 print(measure_groups)
 # Setup output directory
-suffix <- if (args$test) "_test" else ""
-plots_dir <- glue("output/practice_measures_{args$set}{args$appt_suffix}/plots")
+suffix <- if (config$test) "_test" else ""
+plots_dir <- glue("output/practice_measures_{config$set}{config$appt_suffix}/plots")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }

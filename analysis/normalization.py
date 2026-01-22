@@ -11,7 +11,7 @@
 import pandas as pd
 from utils import *
 import pyarrow.feather as feather
-from wp_config_setup import *
+from parse_args import *
 import numpy as np
 import random
 from datetime import datetime, timedelta
@@ -24,13 +24,13 @@ from scipy.stats import pearsonr, spearmanr
 # -------- Load data ----------------------------------
 
 # Generate dates
-dates = generate_annual_dates(args.study_end_date, args.n_years)
+dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 log_memory_usage(label="Before loading data")
 
 input_path = (
-    f"output/{args.group}_measures_{args.set}/proc_{args.group}_measures_midpoint6"
+    f"output/{config['group']}_measures_{config['set']}/proc_{config['group']}_measures_midpoint6"
 )
 practice_interval_df = read_write("read", input_path)
 
@@ -59,10 +59,10 @@ practice_interval_df["rate_per_1000_midpoint6_derived"] = (
 
 # Define pandemic dates
 pandemic_conditions = [
-    practice_interval_df["interval_start"] < pd.to_datetime(args.pandemic_start),
-    (practice_interval_df["interval_start"] >= pd.to_datetime(args.pandemic_start))
-    & (practice_interval_df["interval_start"] <= pd.to_datetime(args.pandemic_end)),
-    practice_interval_df["interval_start"] > pd.to_datetime(args.pandemic_end),
+    practice_interval_df["interval_start"] < pd.to_datetime(config["pandemic_start"]),
+    (practice_interval_df["interval_start"] >= pd.to_datetime(config["pandemic_start"]))
+    & (practice_interval_df["interval_start"] <= pd.to_datetime(config["pandemic_end"])),
+    practice_interval_df["interval_start"] > pd.to_datetime(config["pandemic_end"]),
 ]
 choices = ["Before", "During", "After"]
 practice_interval_df["pandemic"] = np.select(pandemic_conditions, choices)
@@ -168,7 +168,7 @@ for seasonal_group in seasonal_groups:
         },
     )
 long_df = pd.concat([summer['practice_season_df'], non_summer['practice_season_df']])
-read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_weighted_long", df=long_df, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures/Results_weighted_long", df=long_df, file_type = 'csv')    
 
 combined_seasons_df = merge_seasons(
     summer["season_df"], non_summer["season_df"], practice_level=False
@@ -220,7 +220,7 @@ combined_seasons_df = combined_seasons_df.drop(
 )
 read_write(
     read_or_write="write",
-    path=f"output/{args.group}_measures_{args.set}/Results_weighted",
+    path=f"output/{config['group']}_measures_{config['set']}/Results_weighted",
     df=combined_seasons_df,
     file_type="csv",
 )
@@ -231,7 +231,7 @@ combined_var_df = summer["season_var_df"].merge(
 
 read_write(
     read_or_write="write",
-    path=f"output/{args.group}_measures_{args.set}/Results_variance",
+    path=f"output/{config['group']}_measures_{config['set']}/Results_variance",
     df=combined_var_df,
     file_type="csv",
 )
@@ -279,7 +279,7 @@ rate_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "Rate_p
 plt.savefig("output/practice_measures/plots/rates.png")
 RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_summr", facet_var = 'measure')
 plt.savefig("output/practice_measures/plots/RR_prev_summer.png")
-read_write(read_or_write="write", path=f"output/{args.group}_measures/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
 
 # Aggregate from practice level to pandemic level
 combined_seasons_df_results = build_aggregate_df(
@@ -303,7 +303,7 @@ rename_map = {
     "RD_first_summr_median": "RD_first_median",
 }
 combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-read_write(read_or_write="write", path=f"output/{args.group}_measures/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats

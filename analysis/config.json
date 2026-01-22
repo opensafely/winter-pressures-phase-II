@@ -1,0 +1,78 @@
+{
+  "add_indicat_prescript": false,
+  "add_prescriptions": false,
+  "add_reason": false,
+  "demograph_measures": false,
+  "practice_measures": false,
+  "comorbid_measures": false,
+  "use_csv": false,
+  "set": null,
+  "start_intv": null,
+  "test": false,
+  "appt": false,
+  "study_end_date": "2025-03-31",
+  "pandemic_start": "2020-03-23",
+  "pandemic_end": "2021-07-19",
+  "n_years": 10,
+  "base_dtype_dict": {
+    "measure": "category",
+    "interval_start": "string",
+    "numerator": "int64",
+    "denominator": "int64"
+  },
+  "groups": {
+    "demograph": {
+      "dtype_dict": {
+        "age": "category",
+        "sex": "category",
+        "ethnicity": "string",
+        "ethnicity_sus": "string",
+        "imd_quintile": "int8",
+        "carehome": "category",
+        "region": "category",
+        "rur_urb_class": "Int8"
+      }
+    },
+    "practice": {
+      "dtype_dict": {
+        "practice_pseudo_id": "int16"
+      }
+    },
+    "comorbid": {
+      "dtype_dict": {
+        "age": "category",
+        "comorbid_chronic_resp": "bool",
+        "comorbid_copd": "bool",
+        "comorbid_asthma": "bool",
+        "comorbid_dm": "bool",
+        "comorbid_htn": "bool",
+        "comorbid_immuno": "bool",
+        "vax_flu_12m": "bool",
+        "vax_covid_12m": "bool",
+        "vax_pneum_12m": "bool"
+      }
+    }
+  },
+  "appt_suffix": "",
+  "group": null,
+  "sro_dict": {
+    "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",
+    "alt_test": "codelists/opensafely-alanine-aminotransferase-alt-tests.csv",
+    "sys_bp_test": "codelists/opensafely-systolic-blood-pressure-qof.csv",
+    "chol_test": "codelists/opensafely-cholesterol-tests.csv",
+    "rbc_test": "codelists/opensafely-red-blood-cell-rbc-tests.csv",
+    "hba1c_test": "codelists/opensafely-glycated-haemoglobin-hba1c-tests.csv",
+    "cvd_10yr": "codelists/opensafely-cvd-risk-assessment-score-qof.csv",
+    "thy_test": "codelists/opensafely-thyroid-stimulating-hormone-tsh-testing.csv",
+    "asthma_review": "codelists/opensafely-asthma-annual-review-qof.csv",
+    "copd_review": "codelists/opensafely-chronic-obstructive-pulmonary-disease-copd-review-qof.csv"
+  },
+  "prioritized": ["copd_review", "asthma_review"],
+  "deprioritized": ["sodium_test", "alt_test", "sys_bp_test", "chol_test", "rbc_test", "hba1c_test", "cvd_10yr", "thy_test"],
+  "file_type": "arrow",
+  "test_config": {
+    "start_date": "2023-05-08",
+    "pandemic_start": "2017-03-01",
+    "pandemic_end": "2018-05-17"
+  }
+}

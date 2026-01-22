@@ -31,7 +31,7 @@ round_columns <- function(df, cols_to_round) {
   return(rounded_df)
 }
 
-read_write <- function(read_or_write, path, test = args$test, file_type = args$file_type, df = NULL, dtype = NULL, ...) {
+read_write <- function(read_or_write, path, test = config$test, file_type = config$file_type, df = NULL, dtype = NULL, ...) {
   # Add '_test' suffix to path if test flag is TRUE
 
   if (test) {

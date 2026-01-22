@@ -4,9 +4,9 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 import pyarrow.feather as feather
-from wp_config_setup import args
 import seaborn as sns
 import matplotlib.pyplot as plt
+from parse_args import config
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -236,7 +236,7 @@ def read_write(
     read_or_write,
     path,
     file_type="arrow",
-    test=args.test,
+    test=config["test"],
     df=None,
     dtype=None,
     **kwargs,
