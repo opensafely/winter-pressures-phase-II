@@ -3510,3 +3510,16 @@ actions:
     outputs:
       highly_sensitive:
         population: output/dataset.csv
+  
+  # Yearly practice version
+  generate_practice_measures_yearly:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_yearly.csv
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set resp
+      --yearly
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_yearly.csv      

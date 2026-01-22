@@ -335,7 +335,21 @@ yaml_test = """
     outputs:
       highly_sensitive:
         population: output/dataset.csv
+  
+  # Yearly practice version
+  generate_practice_measures_yearly:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_yearly.arrow
+      --
+      --practice_measures
+      --start_intv {date}
+      --set resp
+      --yearly
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_yearly.arrow      
 """
+yaml_test = yaml_test.format(date = dates[0])
 
 # -------- Combine scripts and print file -----------
 
