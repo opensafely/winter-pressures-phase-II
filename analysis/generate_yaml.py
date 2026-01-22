@@ -33,24 +33,27 @@ actions:
 # ------- YAML MEASURES --------------------------------------------
 
 # Patient and practice measures flags to loop
-flags = ["practice_measures", "demograph_measures", "comorbid_measures"]
+flags = ["practice_measures"]
 # Set of measures to loop
 measure_sets = ["all", "sro", "resp"]
 # Appt variants
 appt_variants = ["", "_appt"]
+# Yearly variant
+yearly_variant = ["", "_yearly"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_measures_template = """
-  generate_{flag}_{set}_{date}{appt_suffix}:
+  generate_{flag}_{set}_{date}{appt_suffix}{yearly_suffix}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
+      --output output/{flag}_{set}{appt_suffix}{yearly_suffix}/{flag}_{date}.arrow
       --
       --{flag}
       --start_intv {date}
-      --set {set}{appt_flag}
+      --set {set}{appt_flag}{yearly_flag}
+      
     outputs:
       highly_sensitive:
-        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
+        dataset: output/{flag}_{set}{appt_suffix}{yearly_suffix}/{flag}_{date}.arrow
 """
 
 yaml_measures = ""
@@ -64,74 +67,81 @@ for flag in flags:
 
         # Iterate over appt variants
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            
+            for yearly_suffix, yearly_flag in zip(yearly_variant, ["", " --yearly"]):
 
-            needs[f"{flag}_{set}{appt_suffix}"] = []
+              needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"] = []
 
-            # Iterate over dates and generate yaml list of needs for each combination
-            for date in dates:
+              # Iterate over dates and generate yaml list of needs for each combination
+              for date in dates:
 
-                yaml_measures += yaml_measures_template.format(
-                    flag=flag,
-                    date=date,
-                    set=set,
-                    appt_suffix=appt_suffix,
-                    appt_flag=appt_flag,
-                )
-                needs[f"{flag}_{set}{appt_suffix}"].append(
-                    f"generate_{flag}_{set}_{date}{appt_suffix}"
-                )
+                  yaml_measures += yaml_measures_template.format(
+                      flag=flag,
+                      date=date,
+                      set=set,
+                      appt_suffix=appt_suffix,
+                      appt_flag=appt_flag,
+                      yearly_suffix=yearly_suffix,
+                      yearly_flag=yearly_flag,
+                  )
+                  needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"].append(
+                      f"generate_{flag}_{set}_{date}{appt_suffix}{yearly_suffix}"
+                  )
 
-            # Join list into string for each flag
-            needs[f"{flag}_{set}{appt_suffix}"] = ", ".join(
-                needs[f"{flag}_{set}{appt_suffix}"]
-            )
+              # Join list into string for each flag
+              needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"] = ", ".join(
+                  needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"]
+              )
 
 yaml_measures_test_template = """
 # --------------- TEST ACTIONS ------------------------------------------
 
-  generate_demograph_measures_{set}{appt_suffix}_test:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
-      --
-      --demograph_measures
-      --start_intv {start_date}
-      --test
-      --set {set}{appt_flag}
-    outputs:
-      highly_sensitive:
-        dataset: output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
-  generate_practice_measures_{set}{appt_suffix}_test:
+  # generate_demograph_measures_{set}{appt_suffix}_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv {start_date}
+  #     --test
+  #     --set {set}{appt_flag}
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
+  generate_practice_measures_{set}{appt_suffix}{yearly_suffix}_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}_test.arrow
+      --output output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}{yearly_suffix}_test.arrow
       --
       --practice_measures
       --start_intv {start_date}
       --test
-      --set {set}{appt_flag}
+      --set {set}{appt_flag}{yearly_flag}
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}_test.arrow
-  generate_comorbid_measures_{set}{appt_suffix}_test:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
-      --
-      --comorbid_measures
-      --start_intv {start_date}
-      --test
-      --set {set}{appt_flag}
-    outputs:
-      highly_sensitive:
-        dataset: output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
+        dataset: output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}{yearly_suffix}_test.arrow
+  # generate_comorbid_measures_{set}{appt_suffix}_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv {start_date}
+  #     --test
+  #     --set {set}{appt_flag}
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
 """
 yaml_measures_test = ""
 for set in measure_sets:
     for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
-        yaml_measures_test += yaml_measures_test_template.format(
-            start_date=config["test_config"]["start_date"],
-            set=set,
-            appt_suffix=appt_suffix,
-            appt_flag=appt_flag,
-        )
+        for yearly_suffix, yearly_flag in zip(yearly_variant, ["", " --yearly"]):
+          yaml_measures_test += yaml_measures_test_template.format(
+              start_date=config["test_config"]["start_date"],
+              set=set,
+              appt_suffix=appt_suffix,
+              appt_flag=appt_flag,
+              yearly_suffix=yearly_suffix,
+              yearly_flag=yearly_flag,
+          )
 
 # --------------- YAML APPT REPORT ------------------------------------------
 yaml_appt_report = ""
@@ -177,7 +187,10 @@ yaml_appt_report += (
     " \n # --------------- PROCESSING ------------------------------------------\n"
 )
 
-groups = ["demograph", "practice", "comorbid"]
+groups = []
+for flag in flags:
+    groups.append(flag.replace("_measures", "")) # practice/demograph/comorbid
+
 yaml_processing_template = """
   generate_freq_table_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/freq_table.py --{group}_measures --set {set}{appt_flag}{test_flag}
@@ -334,22 +347,8 @@ yaml_test = """
         --output output/dataset.csv
     outputs:
       highly_sensitive:
-        population: output/dataset.csv
-  
-  # Yearly practice version
-  generate_practice_measures_yearly:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_resp/practice_measures_yearly.arrow
-      --
-      --practice_measures
-      --start_intv {date}
-      --set resp
-      --yearly
-    outputs:
-      highly_sensitive:
-        dataset: output/practice_measures_resp/practice_measures_yearly.arrow      
+        population: output/dataset.csv      
 """
-yaml_test = yaml_test.format(date = dates[0])
 
 # -------- Combine scripts and print file -----------
 

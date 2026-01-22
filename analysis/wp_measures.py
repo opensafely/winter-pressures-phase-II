@@ -379,7 +379,7 @@ for illness in diseases:
 
 inclusion_criteria = has_known_sex & age_filter & was_alive & was_registered
 if config["yearly"] == True:
-    intervals = years(8).starting_on(config["start_intv"])
+    intervals = years(1).starting_on(config["start_intv"])
 else:
     intervals = weeks(NUM_WEEKS).starting_on(config["start_intv"])
 
