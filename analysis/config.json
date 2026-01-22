@@ -1,4 +1,5 @@
 {
+  "_comment": "this file contains parameters for each pipeline. CLI args in parse_args.r/py will select the appropriate parameters from this file.",
   "add_indicat_prescript": false,
   "add_prescriptions": false,
   "add_reason": false,
@@ -74,5 +75,6 @@
     "start_date": "2023-05-08",
     "pandemic_start": "2017-03-01",
     "pandemic_end": "2018-05-17"
-  }
+  },
+  "yearly": false
 }

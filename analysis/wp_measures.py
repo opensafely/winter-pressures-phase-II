@@ -60,7 +60,7 @@ was_registered = (
 # No missing data: known sex
 has_known_sex = patients.sex.is_in(["female", "male", "intersex"])
 
-# ---------------------- Patient subgroups --------------------------------
+# ---------------------- Demographic status --------------------------------
 
 # Age subgroups
 age = age_at_interval_start
@@ -113,6 +113,19 @@ practice_id = practice_registrations.for_patient_on(
 region = practice_registrations.for_patient_on(
     INTERVAL.start_date
 ).practice_nuts1_region_name
+
+demograph_groupby_by_dict = {
+    "age": age_group,
+    "sex": patients.sex,
+    "ethnicity": ethnicity,
+    "ethnicity_sus": ethnicity_from_sus.code,
+    "imd_quintile": imd_quintile,
+    "carehome": carehome,
+    "region": region,
+    "rur_urb_class": rur_urb_class,
+}
+
+# ---------------------- Comorbidity and vaccination status --------------------------------
 
 # Vaccination status
 vax_status = {}
@@ -365,22 +378,16 @@ for illness in diseases:
 # ---------------------- Define measures --------------------------------
 
 inclusion_criteria = has_known_sex & age_filter & was_alive & was_registered
-intervals = weeks(NUM_WEEKS).starting_on(config["start_intv"])
+if config["yearly"] == True:
+    intervals = years(8).starting_on(config["start_intv"])
+else:
+    intervals = weeks(NUM_WEEKS).starting_on(config["start_intv"])
 
 if config["demograph_measures"]:
     # Run patient script if patient flag called
     measures.define_defaults(
         denominator=inclusion_criteria,
-        group_by={
-            "age": age_group,
-            "sex": patients.sex,
-            "ethnicity": ethnicity,
-            "ethnicity_sus": ethnicity_from_sus.code,
-            "imd_quintile": imd_quintile,
-            "carehome": carehome,
-            "region": region,
-            "rur_urb_class": rur_urb_class,
-        },
+        group_by= demograph_groupby_by_dict,
         intervals=intervals,
     )
 elif config["practice_measures"]:
@@ -458,7 +465,17 @@ if config["appt"]:
 
 # Adding measures
 for measure in measures_to_add.keys():
-    measures.define_measure(
-        name=measure,
-        numerator=measures_to_add[measure],
-    )
+    # Adding practice-demographic measures if yearly flag called
+    if config["yearly"] == True:
+        for subgroup, definition in demograph_groupby_by_dict.items():
+            measures.define_measure(
+                name=f"{measure}_{subgroup}",
+                numerator=measures_to_add[measure],
+                group_by= {"practice_pseudo_id": practice_id, 
+                           subgroup: definition},
+        )
+    else:
+        measures.define_measure(
+            name=measure,
+            numerator=measures_to_add[measure],
+        )

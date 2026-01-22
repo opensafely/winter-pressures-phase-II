@@ -67,6 +67,12 @@ parser.add_argument(
     "--start_intv", default=argparse.SUPPRESS, help="Interval start date"
 )
 parser.add_argument(
+    "--yearly",
+    action = "store_true",
+    default=argparse.SUPPRESS,
+    help="Set intervals to yearly instead of weekly",
+)
+parser.add_argument(
     "--test",
     action="store_true",
     default=argparse.SUPPRESS,
