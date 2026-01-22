@@ -3,6 +3,7 @@
 # Option --comorbid_measures/demograph_measures/practice_measures to choose which type of measures to process
 # Option --test flag to run a lightweight test with a single date
 # Option --set all/sro/resp to choose which set of measures to process
+# Option --yearly flag to process only yearly measures
 
 import pandas as pd
 from scipy import stats
@@ -17,9 +18,12 @@ from parse_args import config
 # --------- Configuration ------------------------------------------------
 
 dates = generate_annual_dates(config["study_end_date"], config["n_years"])
+
+print(dates)
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 if config["test"]:
+
     # For testing, use only one date
     dates = [config["test_config"]["start_date"]]
 
@@ -83,13 +87,19 @@ if config["test"]:
     print(proc_df["interval_start"].unique())
     print("Simulating practice measures data for testing")
 
-    n_weeks = 52 * 2
+    # Define number of repeats and time delta based on yearly or weekly config
+    if config["yearly"]:
+        n_intervals = 2     # 2 years
+        time_delta_weeks = 52     # 1 year gap between intervals
+    else:
+        n_intervals = 52 * 2     # 2 years
+        time_delta_weeks = 1     # 1 week gap between intervals
 
     # Generate extended rows by shifting weeks and randomizing values
     extended_rows = []
-    for i in range(1, n_weeks + 1):
+    for i in range(1, n_intervals + 1):
         df_copy = proc_df.copy()
-        df_copy["interval_start"] = df_copy["interval_start"] + timedelta(weeks=i)
+        df_copy["interval_start"] = df_copy["interval_start"] + timedelta(weeks=time_delta_weeks * i)
         df_copy["numerator"] = np.random.randint(0, 500, size=len(df_copy))
         df_copy["list_size"] = np.random.randint(500, 1000, size=len(df_copy))
         extended_rows.append(df_copy)
@@ -141,6 +151,6 @@ if config["practice_measures"]:
         f"Number of practices after filtering: {proc_df['practice_pseudo_id'].nunique()}",
         flush=True,
     )
-
+breakpoint()
 # Save processed file
 read_write(read_or_write="write", path=output_path, df=proc_df)
