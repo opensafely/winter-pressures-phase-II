@@ -33,7 +33,9 @@ round_columns <- function(df, cols_to_round) {
 
 read_write <- function(read_or_write, path, test = config$test, file_type = config$file_type, df = NULL, dtype = NULL, ...) {
   # Add '_test' suffix to path if test flag is TRUE
-
+  if (config$yearly) {
+    path = paste0(path, "_yearly")
+  }
   if (test) {
     path <- paste0(path, "_test")
   }

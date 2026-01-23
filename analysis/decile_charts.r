@@ -3,6 +3,8 @@
 # Option --test uses test data
 # Option --set specifies the measure set (all, sro, resp)
 # Option --RR uses Rate Ratio data
+# Option --appt restricts to appointments in interval
+# Option --yearly uses the yearly measures data
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -125,7 +127,9 @@ if (config$appt) {
 }
 print(measure_groups)
 # Setup output directory
-suffix <- if (config$test) "_test" else ""
+suffix = ""
+suffix <- if (config$yearly) paste(suffix, "_yearly") else suffix
+suffix <- if (config$test) paste(suffix, "_test") else suffix
 plots_dir <- glue("output/practice_measures_{config$set}{config$appt_suffix}/plots")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
