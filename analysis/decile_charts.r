@@ -18,17 +18,17 @@ source("analysis/utils.r")
 source("analysis/parse_args.r")
 
 # Message about test or full
-print(if (args$test) "Using test data" else "Using full data")
+print(if (config$test) "Using test data" else "Using full data")
 
 # ------------ Generate decile tables ----------------------------------------------------
 
-if (args$released == FALSE){
+if (config$released == FALSE){
 
   # Determine file paths
-  input_path <- glue("output/practice_measures_{args$set}{args$appt_suffix}/proc_practice_measures_midpoint6")
+  input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}/proc_practice_measures_midpoint6")
   practice_measures <- read_write("read", input_path)
 
-  if (args$test) {
+  if (config$test) {
 
     # Generate simulated rate data (since dummy data contains too many 0's to graph)
     practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
@@ -62,15 +62,15 @@ if (args$released == FALSE){
     measure_data <- practice_deciles %>% filter(measure == !!measure)
 
     read_write("write",
-      glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
+      glue("output/practice_measures_{config$set}{config$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
       df = measure_data,
       file_type = "csv"
     )
   }
-} else if (args$released == TRUE) {
+} else if (config$released == TRUE) {
 
   # List all measure-specific files
-  files <- list.files(glue("output/practice_measures_{args$set}{args$appt_suffix}/decile_tables/"), 
+  files <- list.files(glue("output/practice_measures_{config$set}{config$appt_suffix}/decile_tables/"), 
                       full.names = TRUE)
 
   # Read and combine into one dataframe
