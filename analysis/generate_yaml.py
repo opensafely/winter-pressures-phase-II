@@ -380,6 +380,11 @@ yaml_test = """
     outputs:
       moderately_sensitive:
         bar_plot: output/practice_measures_resp/zero_rate_practices.png
+  move_yearly_files:
+    run: python:v2 analysis/move_files_temp.py
+    outputs:
+      highly_sensitive:
+        moved_files: output/practice_measures_resp/*.arrow
 """
 yaml_test = yaml_test.format(needs_list=", ".join(needs_list))
 
