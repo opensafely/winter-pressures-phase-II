@@ -151,6 +151,6 @@ if config["practice_measures"]:
         f"Number of practices after filtering: {proc_df['practice_pseudo_id'].nunique()}",
         flush=True,
     )
-breakpoint()
+
 # Save processed file
 read_write(read_or_write="write", path=output_path, df=proc_df)

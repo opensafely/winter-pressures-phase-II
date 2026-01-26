@@ -59,7 +59,14 @@ option_list <- list(
   make_option("--appt",
     action = "store_true",
     default = config$appt, help = "Restrict measures to those with an appointment in interval"
-  )
+  ),
+  make_option("--yearly",
+    action = "store_true",
+    default = config$yearly, help = "Use yearly measures data"
+  ),
+  make_option("--released", 
+    action = "store_true", 
+    default = FALSE, help = "Use already released data")
 )
 
 # Parse options
