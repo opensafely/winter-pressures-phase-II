@@ -334,6 +334,9 @@ for set in measure_sets:
               appt_flag=appt_flag,
             )
 
+needs_list = []
+for date in dates:
+    needs_list.append(f"generate_practice_measures_resp_{date}_yearly")
 yaml_test = """
 
   # --------------- OTHER ACTIONS ------------------------------------------
@@ -347,8 +350,31 @@ yaml_test = """
         --output output/dataset.csv
     outputs:
       highly_sensitive:
-        population: output/dataset.csv      
+        population: output/dataset.csv  
+
+  # Yearly pipeline
+  generate_pre_processing_practice_resp_yearly:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly
+    needs: [{needs_list}]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp/proc_practice_measures_yearly.arrow
+  generate_rounding_practice_resp_yearly:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly
+    needs: [generate_pre_processing_practice_resp_yearly]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6_yearly.arrow
+  generate_deciles_charts_resp_yearly:
+    run: >
+      r:v2 analysis/decile_charts.r --set resp --yearly
+    needs: [generate_rounding_practice_resp_yearly] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_yearly/plots/decile_chart_*_rate_mp6_yearly.png
+        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6_yearly.csv
 """
+yaml_test = yaml_test.format(needs_list=", ".join(needs_list))
 
 # -------- Combine scripts and print file -----------
 

@@ -41,6 +41,26 @@ if (config$released == FALSE){
 
   practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
+  if (config$yearly) {
+
+    # Temp - filter out non-age measures
+    practice_measures <- filter(practice_measures, grepl("_age", measure))
+
+    # Aggregate measures-age groups to measure level
+    practice_measures <- practice_measures %>%
+      group_by(practice_pseudo_id, measure, interval_start) %>%
+      summarise(
+        numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
+        list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE)
+      ) %>%
+      mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+      ungroup()
+
+    # Remove "_age" suffix from measure names to match group definitions
+    practice_measures <- practice_measures %>%
+      mutate(measure = sub("_age$", "", measure))
+  }
+
   # Create deciles for practice measures
   practice_deciles <- practice_measures %>%
     group_by(interval_start, measure) %>%
@@ -132,14 +152,14 @@ if (config$set == "all") {
     )
   )
 }
-print(measure_groups)
+
 # Update measure names if restricting to appts in interval
 if (config$appt) {
   for (group_name in names(measure_groups)) {
     measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
   }
 }
-print(measure_groups)
+
 # Setup output directory
 suffix = ""
 suffix <- if (config$yearly) paste(suffix, "_yearly") else suffix
