@@ -355,7 +355,7 @@ yaml_test = """
   # Yearly pipeline
   generate_pre_processing_practice_resp_yearly:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly
-    needs: [{needs_list}]
+    needs: [move_yearly_files]
     outputs:
       highly_sensitive:
         measures: output/practice_measures_resp/proc_practice_measures_yearly.arrow

@@ -2542,7 +2542,7 @@ actions:
   # Yearly pipeline
   generate_pre_processing_practice_resp_yearly:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly
-    needs: [generate_practice_measures_resp_2016-04-11_yearly, generate_practice_measures_resp_2017-04-10_yearly, generate_practice_measures_resp_2018-04-09_yearly, generate_practice_measures_resp_2019-04-08_yearly, generate_practice_measures_resp_2020-04-06_yearly, generate_practice_measures_resp_2021-04-05_yearly, generate_practice_measures_resp_2022-04-04_yearly, generate_practice_measures_resp_2023-04-03_yearly, generate_practice_measures_resp_2024-04-01_yearly, generate_practice_measures_resp_2025-03-31_yearly]
+    needs: [move_yearly_files]
     outputs:
       highly_sensitive:
         measures: output/practice_measures_resp/proc_practice_measures_yearly.arrow
