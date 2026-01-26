@@ -373,6 +373,13 @@ yaml_test = """
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_yearly/plots/decile_chart_*_rate_mp6_yearly.png
         deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6_yearly.csv
+  generate_bar_plot_yearly:
+    run: >
+      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly
+    needs: [generate_rounding_practice_resp_yearly] 
+    outputs:
+      moderately_sensitive:
+        bar_plot: output/practice_measures_resp/zero_rate_practices.png
 """
 yaml_test = yaml_test.format(needs_list=", ".join(needs_list))
 
