@@ -39,6 +39,38 @@ practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
 # Temp - filter out non-age measures
 practice_measures <- filter(practice_measures, grepl("_age", measure))
-print(head(practice_measures$rate_per_1000))
-# Filter out any columns with NAs
 
+# Filter out any columns with NAs
+practice_measures <- Filter(function(x)!all(is.na(x)), practice_measures)
+
+# Set some rates to zero for testing
+if (config$test) {
+  random_indices <- sample(1:nrow(practice_measures), size = floor(0.1 * nrow(practice_measures)))
+  practice_measures$numerator_midpoint6[random_indices] <- 0
+  practice_measures$rate_per_1000[random_indices] <- 0
+}
+
+# Create indicator variable for rate = 0
+practice_measures <- practice_measures %>%
+  mutate(rate_zero = ifelse(rate_per_1000 == 0, 1, 0))
+
+# Aggregate measures-age groups to rate_zero indicator
+practice_measures <- practice_measures %>%
+  group_by(practice_pseudo_id, measure, interval_start, age) %>%
+  summarise(
+    numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
+    list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
+    rate_zero = max(rate_zero, na.rm = TRUE)
+  ) %>%
+  mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+  ungroup()
+
+# Create bar plot of list_sizes for each age group
+ggplot(practice_measures, aes(x = as.factor(rate_zero), y = list_size_midpoint6, fill = age)) +
+  geom_bar(position = 'dodge', stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(title = "Yearly Measures Analysis", x = "Zero Rate Indicator", y = "List Size")
+
+# Save plot
+output_plot_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}/zero_rate_practices.png")
+ggsave(output_plot_path)
