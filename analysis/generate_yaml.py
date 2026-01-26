@@ -45,7 +45,7 @@ yearly_variant = ["", "_yearly"]
 yaml_measures_template = """
   generate_{flag}_{set}_{date}{appt_suffix}{yearly_suffix}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}_{set}{appt_suffix}{yearly_suffix}/{flag}_{date}.arrow
+      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}{yearly_suffix}.arrow
       --
       --{flag}
       --start_intv {date}
@@ -53,7 +53,7 @@ yaml_measures_template = """
       
     outputs:
       highly_sensitive:
-        dataset: output/{flag}_{set}{appt_suffix}{yearly_suffix}/{flag}_{date}.arrow
+        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}{yearly_suffix}.arrow
 """
 
 yaml_measures = ""
@@ -355,7 +355,7 @@ yaml_test = """
   # Yearly pipeline
   generate_pre_processing_practice_resp_yearly:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly
-    needs: [{needs_list}]
+    needs: [move_yearly_files]
     outputs:
       highly_sensitive:
         measures: output/practice_measures_resp/proc_practice_measures_yearly.arrow
@@ -380,6 +380,11 @@ yaml_test = """
     outputs:
       moderately_sensitive:
         bar_plot: output/practice_measures_resp/zero_rate_practices.png
+  move_yearly_files:
+    run: python:v2 analysis/move_files_temp.py
+    outputs:
+      highly_sensitive:
+        moved_files: output/practice_measures_resp/*.arrow
 """
 yaml_test = yaml_test.format(needs_list=", ".join(needs_list))
 
