@@ -5,6 +5,7 @@
 # Option --RR uses Rate Ratio data
 # Option --released uses already released data
 # Option --appt restricts measures to those with an appointment in interval
+# Option --yearly uses yearly measures data
 
 # ------------ Configuration -----------------------------------------------------------
 

@@ -76,5 +76,6 @@
     "pandemic_start": "2017-03-01",
     "pandemic_end": "2018-05-17"
   },
-  "yearly": false
+  "yearly": false,
+  "released": false
 }

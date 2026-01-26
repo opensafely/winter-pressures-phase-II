@@ -63,7 +63,10 @@ option_list <- list(
   make_option("--yearly",
     action = "store_true",
     default = config$yearly, help = "Use yearly measures data"
-  )
+  ),
+  make_option("--released", 
+    action = "store_true", 
+    default = FALSE, help = "Use already released data")
 )
 
 # Parse options
