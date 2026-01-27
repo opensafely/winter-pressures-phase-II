@@ -252,9 +252,7 @@ def read_write(
     Returns:
         pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
     """
-    if yearly:
-        path = path + "_yearly"
-        
+
     if test:
         path = path + "_test"
 

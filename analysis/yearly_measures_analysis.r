@@ -23,7 +23,7 @@ print(if (config$test) "Using test data" else "Using full data")
 # ------------ Pre-processing ----------------------------------------------------
 
 # Determine file paths
-input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}/proc_practice_measures_midpoint6")
+input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/proc_practice_measures_midpoint6")
 practice_measures <- read_write("read", input_path)
 
 if (config$test) {
@@ -70,7 +70,7 @@ ggplot(practice_measures, aes(x = as.factor(rate_zero), y = list_size_midpoint6,
   geom_bar(position = 'dodge', stat = "identity") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   labs(title = "Yearly Measures Analysis", x = "Zero Rate Indicator", y = "List Size")
-
+print({config$test_suffix})
 # Save plot
-output_plot_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}/zero_rate_practices.png")
+output_plot_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/zero_rate_practices{config$test_suffix}.png")
 ggsave(output_plot_path)

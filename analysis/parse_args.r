@@ -99,6 +99,14 @@ if (config$appt) {
   config$appt_suffix <- "_appt"
 } 
 
+if (config$yearly) {
+  config$yearly_suffix <- "_yearly"
+}
+
+if (config$test) {
+  config$test_suffix <- "_test"
+}
+
 config$deprioritized <- setdiff(names(config$sro_dict), config$prioritized)
 
 if (config$use_csv) {
