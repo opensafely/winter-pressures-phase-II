@@ -45,7 +45,7 @@ yearly_variant = ["", "_yearly"]
 yaml_measures_template = """
   generate_{flag}_{set}_{date}{appt_suffix}{yearly_suffix}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}_{set}{appt_suffix}{yearly_suffix}/{flag}_{date}.arrow
+      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}{yearly_suffix}.arrow
       --
       --{flag}
       --start_intv {date}
@@ -53,7 +53,7 @@ yaml_measures_template = """
       
     outputs:
       highly_sensitive:
-        dataset: output/{flag}_{set}{appt_suffix}{yearly_suffix}/{flag}_{date}.arrow
+        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}{yearly_suffix}.arrow
 """
 
 yaml_measures = ""
