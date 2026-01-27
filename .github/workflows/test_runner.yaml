@@ -16,6 +16,6 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_practice_measures_resp_yearly_test
+        actions: generate_deciles_charts_resp_yearly_test generate_bar_plot_yearly_test
 
 

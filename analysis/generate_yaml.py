@@ -109,7 +109,7 @@ yaml_measures_test_template = """
   #       dataset: output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
   generate_practice_measures_{set}{appt_suffix}{yearly_suffix}_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}{yearly_suffix}_test.arrow
+      --output output/practice_measures_{set}{appt_suffix}{yearly_suffix}/practice_measures_{start_date}_test.arrow
       --
       --practice_measures
       --start_intv {start_date}
@@ -117,7 +117,7 @@ yaml_measures_test_template = """
       --set {set}{appt_flag}{yearly_flag}
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_{set}{appt_suffix}/practice_measures_{start_date}{yearly_suffix}_test.arrow
+        dataset: output/practice_measures_{set}{appt_suffix}{yearly_suffix}/practice_measures_{start_date}_test.arrow
   # generate_comorbid_measures_{set}{appt_suffix}_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
@@ -260,7 +260,7 @@ yaml_viz_template = """
     needs: [generate_rounding_practice_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_{set}{appt_suffix}/plots/decile_chart_*_rate_mp6{test_suffix}.png
+        deciles_charts: output/practice_measures_{set}{appt_suffix}/plots{test_suffix}/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_{set}{appt_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
   
   generate_decomposition_plots_{set}{appt_suffix}{test_suffix}:
@@ -334,10 +334,7 @@ for set in measure_sets:
               appt_flag=appt_flag,
             )
 
-needs_list = []
-for date in dates:
-    needs_list.append(f"generate_practice_measures_resp_{date}_yearly")
-yaml_test = """
+yaml_other = """
 
   # --------------- OTHER ACTIONS ------------------------------------------
 
@@ -351,37 +348,55 @@ yaml_test = """
     outputs:
       highly_sensitive:
         population: output/dataset.csv  
-
-  # Yearly pipeline
-  generate_pre_processing_practice_resp_yearly:
-    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly
-    needs: [{needs_list}]
-    outputs:
-      highly_sensitive:
-        measures: output/practice_measures_resp/proc_practice_measures_yearly.arrow
-  generate_rounding_practice_resp_yearly:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly
-    needs: [generate_pre_processing_practice_resp_yearly]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6_yearly.arrow
-  generate_deciles_charts_resp_yearly:
-    run: >
-      r:v2 analysis/decile_charts.r --set resp --yearly
-    needs: [generate_rounding_practice_resp_yearly] 
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_yearly/plots/decile_chart_*_rate_mp6_yearly.png
-        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6_yearly.csv
-  generate_bar_plot_yearly:
-    run: >
-      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly
-    needs: [generate_rounding_practice_resp_yearly] 
-    outputs:
-      moderately_sensitive:
-        bar_plot: output/practice_measures_resp/zero_rate_practices.png
 """
-yaml_test = yaml_test.format(needs_list=", ".join(needs_list))
+
+yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
+
+needs_list = []
+for date in dates:
+    needs_list.append(f"generate_practice_measures_resp_{date}_yearly")
+
+yaml_yearly_template = """
+    # Yearly pipeline
+  generate_pre_processing_practice_resp_yearly{test_suffix}:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly {test_flag}
+    needs: [{needs_str}]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp_yearly/proc_practice_measures{test_suffix}.arrow
+  generate_rounding_practice_resp_yearly{test_suffix}:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly {test_flag}
+    needs: [generate_pre_processing_practice_resp_yearly{test_suffix}]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp_yearly/proc_practice_measures_midpoint6{test_suffix}.arrow
+  generate_deciles_charts_resp_yearly{test_suffix}:
+    run: >
+      r:v2 analysis/decile_charts.r --set resp --yearly {test_flag}
+    needs: [generate_rounding_practice_resp_yearly{test_suffix}] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_yearly/plots{test_suffix}/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+  generate_bar_plot_yearly{test_suffix}:
+    run: >
+      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly {test_flag}
+    needs: [generate_rounding_practice_resp_yearly{test_suffix}] 
+    outputs:
+      moderately_sensitive:
+        bar_plot: output/practice_measures_resp_yearly/zero_rate_practices{test_suffix}.png
+"""
+
+for test_suffix, test_flag in zip(suffixes, test_flags):
+    if test_suffix == "_test":
+        needs_str = "generate_practice_measures_resp_yearly_test"
+    else:
+        needs_str = ", ".join(needs_list)
+    yaml_yearly += yaml_yearly_template.format(
+        needs_str=needs_str,
+        test_suffix=test_suffix,
+        test_flag=test_flag,
+    )
 
 # -------- Combine scripts and print file -----------
 
@@ -394,7 +409,8 @@ yaml = (
     + yaml_measures_test
     + yaml_processing_test
     + yaml_sense_check
-    + yaml_test
+    + yaml_other
+    + yaml_yearly
 )
 
 with open("/workspaces/winter-pressures-phase-II/project.yaml", "w") as file:

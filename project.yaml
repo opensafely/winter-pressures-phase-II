@@ -1775,7 +1775,7 @@ actions:
     needs: [generate_rounding_practice_all_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_all/plots/decile_chart_*_rate_mp6_test.png
+        deciles_charts: output/practice_measures_all/plots_test/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_all/decile_tables/decile_table_*_rate_mp6_test.csv
   
   generate_decomposition_plots_all_test:
@@ -1794,7 +1794,7 @@ actions:
     needs: [generate_rounding_practice_all_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_all_appt/plots/decile_chart_*_rate_mp6_test.png
+        deciles_charts: output/practice_measures_all_appt/plots_test/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_all_appt/decile_tables/decile_table_*_rate_mp6_test.csv
   
   generate_decomposition_plots_all_appt_test:
@@ -1813,7 +1813,7 @@ actions:
     needs: [generate_rounding_practice_sro_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots/decile_chart_*_rate_mp6_test.png
+        deciles_charts: output/practice_measures_sro/plots_test/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*_rate_mp6_test.csv
   
   generate_decomposition_plots_sro_test:
@@ -1832,7 +1832,7 @@ actions:
     needs: [generate_rounding_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*_rate_mp6_test.png
+        deciles_charts: output/practice_measures_sro_appt/plots_test/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*_rate_mp6_test.csv
   
   generate_decomposition_plots_sro_appt_test:
@@ -1851,7 +1851,7 @@ actions:
     needs: [generate_rounding_practice_resp_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots/decile_chart_*_rate_mp6_test.png
+        deciles_charts: output/practice_measures_resp/plots_test/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*_rate_mp6_test.csv
   
   generate_decomposition_plots_resp_test:
@@ -1870,7 +1870,7 @@ actions:
     needs: [generate_rounding_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*_rate_mp6_test.png
+        deciles_charts: output/practice_measures_resp_appt/plots_test/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*_rate_mp6_test.csv
   
   generate_decomposition_plots_resp_appt_test:
@@ -1933,7 +1933,7 @@ actions:
   #       dataset: output/demograph_measures_all/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_all_yearly_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_all/practice_measures_2023-05-08_yearly_test.arrow
+      --output output/practice_measures_all_yearly/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
       --start_intv 2023-05-08
@@ -1941,7 +1941,7 @@ actions:
       --set all --yearly
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_all/practice_measures_2023-05-08_yearly_test.arrow
+        dataset: output/practice_measures_all_yearly/practice_measures_2023-05-08_test.arrow
   # generate_comorbid_measures_all_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_all/comorbid_measures_2023-05-08_test.arrow
@@ -2005,7 +2005,7 @@ actions:
   #       dataset: output/demograph_measures_all_appt/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_all_appt_yearly_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_all_appt/practice_measures_2023-05-08_yearly_test.arrow
+      --output output/practice_measures_all_appt_yearly/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
       --start_intv 2023-05-08
@@ -2013,7 +2013,7 @@ actions:
       --set all --appt --yearly
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_all_appt/practice_measures_2023-05-08_yearly_test.arrow
+        dataset: output/practice_measures_all_appt_yearly/practice_measures_2023-05-08_test.arrow
   # generate_comorbid_measures_all_appt_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_all_appt/comorbid_measures_2023-05-08_test.arrow
@@ -2077,7 +2077,7 @@ actions:
   #       dataset: output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_sro_yearly_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_sro/practice_measures_2023-05-08_yearly_test.arrow
+      --output output/practice_measures_sro_yearly/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
       --start_intv 2023-05-08
@@ -2085,7 +2085,7 @@ actions:
       --set sro --yearly
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_sro/practice_measures_2023-05-08_yearly_test.arrow
+        dataset: output/practice_measures_sro_yearly/practice_measures_2023-05-08_test.arrow
   # generate_comorbid_measures_sro_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
@@ -2149,7 +2149,7 @@ actions:
   #       dataset: output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_sro_appt_yearly_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_sro_appt/practice_measures_2023-05-08_yearly_test.arrow
+      --output output/practice_measures_sro_appt_yearly/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
       --start_intv 2023-05-08
@@ -2157,7 +2157,7 @@ actions:
       --set sro --appt --yearly
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_sro_appt/practice_measures_2023-05-08_yearly_test.arrow
+        dataset: output/practice_measures_sro_appt_yearly/practice_measures_2023-05-08_test.arrow
   # generate_comorbid_measures_sro_appt_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
@@ -2221,7 +2221,7 @@ actions:
   #       dataset: output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_resp_yearly_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_resp/practice_measures_2023-05-08_yearly_test.arrow
+      --output output/practice_measures_resp_yearly/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
       --start_intv 2023-05-08
@@ -2229,7 +2229,7 @@ actions:
       --set resp --yearly
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_resp/practice_measures_2023-05-08_yearly_test.arrow
+        dataset: output/practice_measures_resp_yearly/practice_measures_2023-05-08_test.arrow
   # generate_comorbid_measures_resp_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
@@ -2293,7 +2293,7 @@ actions:
   #       dataset: output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
   generate_practice_measures_resp_appt_yearly_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_resp_appt/practice_measures_2023-05-08_yearly_test.arrow
+      --output output/practice_measures_resp_appt_yearly/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
       --start_intv 2023-05-08
@@ -2301,7 +2301,7 @@ actions:
       --set resp --appt --yearly
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_resp_appt/practice_measures_2023-05-08_yearly_test.arrow
+        dataset: output/practice_measures_resp_appt_yearly/practice_measures_2023-05-08_test.arrow
   # generate_comorbid_measures_resp_appt_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
@@ -2538,32 +2538,62 @@ actions:
     outputs:
       highly_sensitive:
         population: output/dataset.csv  
-
-  # Yearly pipeline
+ 
+ # --------------- VISUALIZATION ACTIONS ------------------------------------------
+    # Yearly pipeline
   generate_pre_processing_practice_resp_yearly:
-    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly 
     needs: [generate_practice_measures_resp_2016-04-11_yearly, generate_practice_measures_resp_2017-04-10_yearly, generate_practice_measures_resp_2018-04-09_yearly, generate_practice_measures_resp_2019-04-08_yearly, generate_practice_measures_resp_2020-04-06_yearly, generate_practice_measures_resp_2021-04-05_yearly, generate_practice_measures_resp_2022-04-04_yearly, generate_practice_measures_resp_2023-04-03_yearly, generate_practice_measures_resp_2024-04-01_yearly, generate_practice_measures_resp_2025-03-31_yearly]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp/proc_practice_measures_yearly.arrow
+        measures: output/practice_measures_resp_yearly/proc_practice_measures.arrow
   generate_rounding_practice_resp_yearly:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly 
     needs: [generate_pre_processing_practice_resp_yearly]
     outputs:
       highly_sensitive:
-        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6_yearly.arrow
+        rounded_measures: output/practice_measures_resp_yearly/proc_practice_measures_midpoint6.arrow
   generate_deciles_charts_resp_yearly:
     run: >
-      r:v2 analysis/decile_charts.r --set resp --yearly
+      r:v2 analysis/decile_charts.r --set resp --yearly 
     needs: [generate_rounding_practice_resp_yearly] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_yearly/plots/decile_chart_*_rate_mp6_yearly.png
-        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6_yearly.csv
+        deciles_charts: output/practice_measures_resp_yearly/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6.csv
   generate_bar_plot_yearly:
     run: >
-      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly
+      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly 
     needs: [generate_rounding_practice_resp_yearly] 
     outputs:
       moderately_sensitive:
-        bar_plot: output/practice_measures_resp/zero_rate_practices.png
+        bar_plot: output/practice_measures_resp_yearly/zero_rate_practices.png
+
+    # Yearly pipeline
+  generate_pre_processing_practice_resp_yearly_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly --test
+    needs: [generate_practice_measures_resp_yearly_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp_yearly/proc_practice_measures_test.arrow
+  generate_rounding_practice_resp_yearly_test:
+    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly --test
+    needs: [generate_pre_processing_practice_resp_yearly_test]
+    outputs:
+      highly_sensitive:
+        rounded_measures: output/practice_measures_resp_yearly/proc_practice_measures_midpoint6_test.arrow
+  generate_deciles_charts_resp_yearly_test:
+    run: >
+      r:v2 analysis/decile_charts.r --set resp --yearly --test
+    needs: [generate_rounding_practice_resp_yearly_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_yearly/plots_test/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6_test.csv
+  generate_bar_plot_yearly_test:
+    run: >
+      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly --test
+    needs: [generate_rounding_practice_resp_yearly_test] 
+    outputs:
+      moderately_sensitive:
+        bar_plot: output/practice_measures_resp_yearly/zero_rate_practices_test.png

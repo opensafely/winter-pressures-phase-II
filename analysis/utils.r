@@ -32,14 +32,12 @@ round_columns <- function(df, cols_to_round) {
 }
 
 read_write <- function(read_or_write, path, test = config$test, file_type = config$file_type, df = NULL, dtype = NULL, ...) {
+  
   # Add '_test' suffix to path if test flag is TRUE
-  if (config$yearly) {
-    path = paste0(path, "_yearly")
-  }
   if (test) {
     path <- paste0(path, "_test")
   }
-
+  print(path)
   if (read_or_write == "read") {
     if (file_type == "csv") {
       df <- readr::read_csv(paste0(path, ".csv"), ...)
@@ -85,7 +83,7 @@ read_write <- function(read_or_write, path, test = config$test, file_type = conf
 }
 
 # Helper function to create and save decile plots
-create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, suffix) {
+create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir) {
   # Create the plot
   plot <- ggplot(
     filter(practice_deciles, measure %in% measures_subset),
@@ -109,7 +107,7 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   # Save the plot
-  filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6{suffix}.png")
+  filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6.png")
 
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
 }

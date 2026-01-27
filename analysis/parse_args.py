@@ -109,6 +109,12 @@ for group in ["demograph", "practice", "comorbid"]:
 if config.get("appt", False):
     config["appt_suffix"] = "_appt"
 
+if config.get("yearly", False):
+    config["yearly_suffix"] = "_yearly"
+
+if config.get("test", False):
+    config["test_suffix"] = "_test"
+
 config["deprioritized"] = set(config["sro_dict"].keys()) - set(config["prioritized"])
 
 if config.get("use_csv", False):

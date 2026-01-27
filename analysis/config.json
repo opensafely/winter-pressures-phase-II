@@ -55,6 +55,8 @@
     }
   },
   "appt_suffix": "",
+  "yearly_suffix": "",
+  "test_suffix": "",
   "group": null,
   "sro_dict": {
     "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",

@@ -26,7 +26,7 @@ print(if (config$test) "Using test data" else "Using full data")
 if (config$released == FALSE){
 
   # Determine file paths
-  input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}/proc_practice_measures_midpoint6")
+  input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/proc_practice_measures_midpoint6")
   practice_measures <- read_write("read", input_path)
 
   if (config$test) {
@@ -81,9 +81,9 @@ if (config$released == FALSE){
   # Save tables, generating a separate file for each measure
   for (measure in unique(practice_deciles$measure)) {
     measure_data <- practice_deciles %>% filter(measure == !!measure)
-
+    
     read_write("write",
-      glue("output/practice_measures_{config$set}{config$appt_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
+      glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
       df = measure_data,
       file_type = "csv"
     )
@@ -91,7 +91,7 @@ if (config$released == FALSE){
 } else if (config$released == TRUE) {
 
   # List all measure-specific files
-  files <- list.files(glue("output/practice_measures_{config$set}{config$appt_suffix}/decile_tables/"), 
+  files <- list.files(glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/decile_tables/"), 
                       full.names = TRUE)
 
   # Read and combine into one dataframe
@@ -161,10 +161,7 @@ if (config$appt) {
 }
 
 # Setup output directory
-suffix = ""
-suffix <- if (config$yearly) paste(suffix, "_yearly") else suffix
-suffix <- if (config$test) paste(suffix, "_test") else suffix
-plots_dir <- glue("output/practice_measures_{config$set}{config$appt_suffix}/plots")
+plots_dir <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/plots{config$test_suffix}")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }
@@ -172,5 +169,5 @@ print(practice_deciles)
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
   measures_subset <- measure_groups[[group_name]]
-  create_and_save_decile_plot(group_name, measures_subset, plots_dir, suffix)
+  create_and_save_decile_plot(group_name, measures_subset, plots_dir)
 }
