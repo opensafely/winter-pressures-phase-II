@@ -111,3 +111,40 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir) 
 
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
 }
+
+summarise_demographics_rate_zero <-function(df, demo_var) {
+
+  # Filter to relevant demographic measures
+  df <- filter(df, grepl(paste0("_", demo_var, "$"), measure))
+  # Remove demo_Var suffix from measure names to match group definitions
+  df <- df %>%
+    mutate(measure = sub(paste0("_", demo_var, "$"), "", measure))
+  
+  # Sum up populations of each age for rate_zero vs non_zero practices
+  practice_measures <- df %>%
+    group_by(measure, .data[[demo_var]], rate_zero) %>%
+    summarise(
+      numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
+      list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
+    ) %>%
+    mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+    ungroup()
+
+  # Export measure-demo_var table
+  output_table_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/measure~{demo_var}") # Cant release as practice level
+  read_write("write", output_table_path, df = practice_measures, file_type = "csv")
+
+  # Filter to rsv and flu specific measures only for plotting
+  practice_measures <- filter(practice_measures, grepl("rsv_specific|flu_specific", measure))
+
+  # Create facet bar plot of list_sizes for each demographic group
+  ggplot(practice_measures, aes(x = as.factor(rate_zero), y = list_size_midpoint6, fill = .data[[demo_var]])) +
+    geom_bar(position = 'dodge', stat = "identity") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    facet_wrap(vars(measure), scales = "free_y") +
+    labs(title = "Yearly Measures Analysis", x = "Zero Rate Indicator", y = "List Size")
+
+  # Save plot
+  output_plot_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/bar_plot_{demo_var}{config$test_suffix}.png")
+  ggsave(output_plot_path)
+}
