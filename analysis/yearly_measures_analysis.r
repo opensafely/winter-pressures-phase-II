@@ -78,11 +78,15 @@ summarise_demographics_rate_zero(practice_measures, "region")
 
 # Export summary table of the total number and pct of practices with zero rates for each measure
 practice_measures_rate_zero_summary <- practice_measures_agg_rates %>%
-  group_by(measure, rate_zero) %>%
+  group_by(measure, interval_start, rate_zero) %>%
   summarise(
-    num_practices = n_distinct(practice_pseudo_id)
+    num_practices = n_distinct(practice_pseudo_id),
+    numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
+    list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
   ) %>%
-  mutate(pct_practices = (num_practices / sum(num_practices)) * 100)
+  mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+  mutate(pct_practices = (num_practices / sum(num_practices)) * 100) %>%
+  ungroup()
 
 output_summary_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/measure_rate_zero_summary{config$test_suffix}.csv")
 read_write("write", output_summary_path, df = practice_measures_rate_zero_summary, file_type = "csv")
