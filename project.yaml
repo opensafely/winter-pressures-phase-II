@@ -2567,7 +2567,8 @@ actions:
     needs: [generate_rounding_practice_resp_yearly] 
     outputs:
       moderately_sensitive:
-        bar_plot: output/practice_measures_resp_yearly/zero_rate_practices.png
+        bar_plots: output/practice_measures_resp_yearly/bar_plot*.png
+        summary_tables: output/practice_measures_resp_yearly/measure*.csv
 
     # Yearly pipeline
   generate_pre_processing_practice_resp_yearly_test:
@@ -2596,4 +2597,5 @@ actions:
     needs: [generate_rounding_practice_resp_yearly_test] 
     outputs:
       moderately_sensitive:
-        bar_plot: output/practice_measures_resp_yearly/zero_rate_practices_test.png
+        bar_plots: output/practice_measures_resp_yearly/bar_plot*_test.png
+        summary_tables: output/practice_measures_resp_yearly/measure*_test.csv

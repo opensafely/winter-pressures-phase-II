@@ -135,7 +135,7 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
   read_write("write", output_table_path, df = practice_measures, file_type = "csv")
 
   # Filter to rsv and flu specific measures only for plotting
-  practice_measures <- filter(practice_measures, grepl("rsv_specific|flu_specific", measure))
+  practice_measures <- filter(practice_measures, grepl("rsv|flu", measure))
 
   # Create facet bar plot of list_sizes for each demographic group
   ggplot(practice_measures, aes(x = as.factor(rate_zero), y = list_size_midpoint6, fill = .data[[demo_var]])) +
