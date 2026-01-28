@@ -37,40 +37,52 @@ if (config$test) {
 practice_measures <- mutate(practice_measures, rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
 practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
-# Temp - filter out non-age measures
-practice_measures <- filter(practice_measures, grepl("_age", measure))
+# Temp - filter out non-age or region measures
+practice_measures <- filter(practice_measures, grepl("_age|_region", measure))
 
 # Filter out any columns with NAs
 practice_measures <- Filter(function(x)!all(is.na(x)), practice_measures)
 
-# Set some rates to zero for testing
-if (config$test) {
-  random_indices <- sample(1:nrow(practice_measures), size = floor(0.1 * nrow(practice_measures)))
-  practice_measures$numerator_midpoint6[random_indices] <- 0
-  practice_measures$rate_per_1000[random_indices] <- 0
-}
+# ------------ Generate rate zero summaries ----------------------------------------------------
 
-# Create indicator variable for rate = 0
-practice_measures <- practice_measures %>%
-  mutate(rate_zero = ifelse(rate_per_1000 == 0, 1, 0))
-
-# Aggregate measures-age groups to rate_zero indicator
-practice_measures <- practice_measures %>%
-  group_by(practice_pseudo_id, measure, interval_start, age) %>%
+# Create lookup table for which practices have rates of 0
+practice_measures_agg_rates <- practice_measures %>%
+  group_by(practice_pseudo_id, measure, interval_start) %>%
   summarise(
     numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
     list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
-    rate_zero = max(rate_zero, na.rm = TRUE)
   ) %>%
   mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+  mutate(rate_zero = ifelse(rate_per_1000 == 0, "rate_zero", "rate_nonzero")) %>%
   ungroup()
 
-# Create bar plot of list_sizes for each age group
-ggplot(practice_measures, aes(x = as.factor(rate_zero), y = list_size_midpoint6, fill = age)) +
-  geom_bar(position = 'dodge', stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(title = "Yearly Measures Analysis", x = "Zero Rate Indicator", y = "List Size")
-print({config$test_suffix})
-# Save plot
-output_plot_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/zero_rate_practices{config$test_suffix}.png")
-ggsave(output_plot_path)
+# Set some rates to zero for testing
+if (config$test) {
+  random_indices <- sample(1:nrow(practice_measures_agg_rates), size = floor(0.1 * nrow(practice_measures_agg_rates)))
+  practice_measures_agg_rates$numerator_midpoint6[random_indices] <- 0
+  practice_measures_agg_rates$rate_per_1000[random_indices] <- 0
+  practice_measures_agg_rates$rate_zero[random_indices] <- "rate_zero"
+}
+
+# Join rate zero info back to main dataframe
+practice_measures <- practice_measures %>%
+  left_join(
+    practice_measures_agg_rates %>%
+      select(practice_pseudo_id, measure, interval_start, rate_zero),
+    by = c("practice_pseudo_id", "measure", "interval_start")
+  )
+
+# Generate plots and tables of list_sizes by rate_zero status
+summarise_demographics_rate_zero(practice_measures, "age")
+summarise_demographics_rate_zero(practice_measures, "region")
+
+# Export summary table of the total number and pct of practices with zero rates for each measure
+practice_measures_rate_zero_summary <- practice_measures_agg_rates %>%
+  group_by(measure, rate_zero) %>%
+  summarise(
+    num_practices = n_distinct(practice_pseudo_id)
+  ) %>%
+  mutate(pct_practices = (num_practices / sum(num_practices)) * 100)
+
+output_summary_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/measure_rate_zero_summary{config$test_suffix}.csv")
+read_write("write", output_summary_path, df = practice_measures_rate_zero_summary, file_type = "csv")

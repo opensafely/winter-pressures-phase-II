@@ -384,7 +384,8 @@ yaml_yearly_template = """
     needs: [generate_rounding_practice_resp_yearly{test_suffix}] 
     outputs:
       moderately_sensitive:
-        bar_plot: output/practice_measures_resp_yearly/zero_rate_practices{test_suffix}.png
+        bar_plots: output/practice_measures_resp_yearly/bar_plot*{test_suffix}.png
+        summary_tables: output/practice_measures_resp_yearly/measure*{test_suffix}.csv
 """
 
 for test_suffix, test_flag in zip(suffixes, test_flags):
