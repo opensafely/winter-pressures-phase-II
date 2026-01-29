@@ -73,6 +73,12 @@ parser.add_argument(
     help="Set intervals to yearly instead of weekly",
 )
 parser.add_argument(
+    "--weekly_agg",
+    action="store_true",
+    default=argparse.SUPPRESS,
+    help="Set yearly intervals to be aggregated from weekly measures",
+)
+parser.add_argument(
     "--test",
     action="store_true",
     default=argparse.SUPPRESS,
@@ -110,7 +116,10 @@ if config.get("appt", False):
     config["appt_suffix"] = "_appt"
 
 if config.get("yearly", False):
-    config["yearly_suffix"] = "_yearly"
+    if config.get("weekly_agg", False):
+        config["yearly_suffix"] = "_weeklyagg"
+    else:
+        config["yearly_suffix"] = "_yearly"
 
 if config.get("test", False):
     config["test_suffix"] = "_test"

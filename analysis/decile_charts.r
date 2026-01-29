@@ -6,6 +6,7 @@
 # Option --released uses already released data
 # Option --appt restricts measures to those with an appointment in interval
 # Option --yearly uses yearly measures data
+# Option --weekly_agg
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -40,8 +41,8 @@ if (config$released == FALSE){
   practice_measures <- mutate(practice_measures, rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
 
   practice_measures$interval_start <- as.Date(practice_measures$interval_start)
-
-  if (config$yearly) {
+  print(head(practice_measures))
+  if ((config$yearly) & (!config$weekly_agg)) {
 
     # Temp - filter out non-age measures
     practice_measures <- filter(practice_measures, grepl("_age", measure))

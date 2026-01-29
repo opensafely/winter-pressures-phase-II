@@ -66,7 +66,12 @@ option_list <- list(
   ),
   make_option("--released", 
     action = "store_true", 
-    default = FALSE, help = "Use already released data")
+    default = FALSE, help = "Use already released data"
+  ),
+  make_option("--weekly_agg", 
+    action = "store_true", 
+    default = config$weekly_agg, help = "Generate weekly aggregates"
+  )
 )
 
 # Parse options
@@ -100,7 +105,11 @@ if (config$appt) {
 } 
 
 if (config$yearly) {
-  config$yearly_suffix <- "_yearly"
+  if (config$weekly_agg) {
+    config$yearly_suffix <- "_weeklyagg"
+  } else {
+    config$yearly_suffix <- "_yearly"
+  }
 }
 
 if (config$test) {

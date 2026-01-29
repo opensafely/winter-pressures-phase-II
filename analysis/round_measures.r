@@ -35,4 +35,4 @@ df_to_round <- round_columns(df = df_to_round, cols_to_round = c("numerator", "l
 print("After rounding:")
 print(head(df_to_round))
 
-read_write("write", output_path, df = df_to_round)
+read_write("write", output_path, df = df_to_round, file_type = "arrow")
