@@ -392,7 +392,7 @@ yaml_yearly_template = """
     run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp {test_flag}
     needs: [generate_rounding_practice_resp{test_suffix}]
     outputs:
-      highly_sensitive:
+      moderately_sensitive:
         weekly_aggregates: output/practice_measures_resp/national_yearly_summary{test_suffix}.csv
 """
 

@@ -2575,7 +2575,7 @@ actions:
     run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp 
     needs: [generate_rounding_practice_resp]
     outputs:
-      highly_sensitive:
+      moderately_sensitive:
         weekly_aggregates: output/practice_measures_resp/national_yearly_summary.csv
 
     # Yearly pipeline
@@ -2613,5 +2613,5 @@ actions:
     run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp --test
     needs: [generate_rounding_practice_resp_test]
     outputs:
-      highly_sensitive:
+      moderately_sensitive:
         weekly_aggregates: output/practice_measures_resp/national_yearly_summary_test.csv
