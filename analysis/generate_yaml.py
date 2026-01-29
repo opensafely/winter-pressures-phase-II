@@ -389,11 +389,21 @@ yaml_yearly_template = """
 
   # Weekly aggregates
   generate_weekly_aggregates{test_suffix}:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp {test_flag}
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --yearly --weekly_agg --set resp {test_flag} 
     needs: [generate_rounding_practice_resp{test_suffix}]
     outputs:
       moderately_sensitive:
-        weekly_aggregates: output/practice_measures_resp/national_yearly_summary{test_suffix}.csv
+        national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*{test_suffix}.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*{test_suffix}.arrow
+  generate_deciles_charts_resp_weeklyagg{test_suffix}:
+    run: >
+      r:v2 analysis/decile_charts.r --set resp --yearly {test_flag} --weekly_agg
+    needs: [generate_weekly_aggregates{test_suffix}] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_weeklyagg/plots{test_suffix}/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
 """
 
 for test_suffix, test_flag in zip(suffixes, test_flags):

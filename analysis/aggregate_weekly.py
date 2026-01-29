@@ -6,6 +6,7 @@
 # Option --test flag to run a lightweight test with a single date
 # Option --set all/sro/resp to choose which set of measures to process
 # Option --yearly flag to process only yearly measures
+# Option --weekly_agg to indicate that yearly measures are to be aggregated from weekly measures
 
 import pandas as pd
 from utils import *
@@ -17,8 +18,9 @@ from datetime import datetime, timedelta
 from scipy import stats
 from itertools import product
 import pyarrow.feather as feather
-
-
+import seaborn as sns
+import matplotlib.pyplot as plt
+from pathlib import Path
 # -------- Load data ----------------------------------
 
 # Generate dates
@@ -26,7 +28,7 @@ dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 input_path = (
-    f"output/{config['group']}_measures_{config['set']}/proc_{config['group']}_measures_midpoint6"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_practice_measures_midpoint6"
 )
 
 practice_interval_df = read_write("read", input_path)
@@ -89,7 +91,32 @@ practice_yearly_df = practice_yearly_df.merge(
 practice_yearly_df['zero_indicator'] = np.where(
     practice_yearly_df['numerator_midpoint6_sum'] == 0, 1, 0
 )
+# Calculate rates = (number of cases / practice list size at start of yr) * 1000
+practice_yearly_df['rate_mp6'] = (
+    practice_yearly_df['numerator_midpoint6_sum'] /
+    practice_yearly_df['list_size_midpoint6_first']
+) * 1000
 print(practice_yearly_df.head())
+
+# Save practice yearly outputs
+output_path = (
+    f"output/practice_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/proc_practice_measures_midpoint6"
+)
+
+# Create directory for weekly agg results
+Path(f"output/practice_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}").mkdir(parents=True, exist_ok=True)
+
+# Rename columns to work with decile charts script
+output_df = practice_yearly_df.rename(
+    columns={
+        'numerator_midpoint6_sum': 'numerator_midpoint6',
+        'list_size_midpoint6_first': 'list_size_midpoint6',
+        'year': 'interval_start'
+    }
+)
+# Convert interval_start to datetime for decile charts script
+output_df['interval_start'] = pd.to_datetime(output_df['interval_start'], format='%Y')
+read_write("write", output_path, df = output_df, file_type = 'arrow')
 
 # -------- Aggregate practice-yearly to national-yearly ----------------------------------
 
@@ -127,7 +154,7 @@ print(national_yearly_df.head())
 
 # Save national yearly outputs
 output_path = (
-    f"output/{config['group']}_measures_{config['set']}/national_yearly_summary"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/national_yearly_summary"
 )
 read_write("write", output_path, df = national_yearly_df, file_type = 'csv')
 

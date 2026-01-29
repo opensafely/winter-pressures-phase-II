@@ -2572,11 +2572,21 @@ actions:
 
   # Weekly aggregates
   generate_weekly_aggregates:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp 
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --yearly --weekly_agg --set resp  
     needs: [generate_rounding_practice_resp]
     outputs:
       moderately_sensitive:
-        weekly_aggregates: output/practice_measures_resp/national_yearly_summary.csv
+        national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.arrow
+  generate_deciles_charts_resp_weeklyagg:
+    run: >
+      r:v2 analysis/decile_charts.r --set resp --yearly  --weekly_agg
+    needs: [generate_weekly_aggregates] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_weeklyagg/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6.csv
 
     # Yearly pipeline
   generate_pre_processing_practice_resp_yearly_test:
@@ -2610,8 +2620,18 @@ actions:
 
   # Weekly aggregates
   generate_weekly_aggregates_test:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp --test
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --yearly --weekly_agg --set resp --test 
     needs: [generate_rounding_practice_resp_test]
     outputs:
       moderately_sensitive:
-        weekly_aggregates: output/practice_measures_resp/national_yearly_summary_test.csv
+        national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.arrow
+  generate_deciles_charts_resp_weeklyagg_test:
+    run: >
+      r:v2 analysis/decile_charts.r --set resp --yearly --test --weekly_agg
+    needs: [generate_weekly_aggregates_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_weeklyagg/plots_test/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6_test.csv
