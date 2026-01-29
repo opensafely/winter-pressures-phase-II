@@ -359,12 +359,17 @@ measures_to_add["ili"] = count_seasonal_illness_sensitive(
     resp_dict["flu_specific"],
 )
 
-# Max specificity
+# Max specificity measures
+if config['yearly']:
+    # For yearly measures, allow counting multiple consultations per patient
+    n_per_patient = "many_pp" 
+else:
+    n_per_patient = "one_pp"
 
 for codelist in resp_dict.keys():
     if "specific" in codelist:
         measures_to_add[codelist] = count_clinical_consultations(
-            resp_dict[codelist], "one_pp", INTERVAL.start_date, INTERVAL.end_date
+            resp_dict[codelist], n_per_patient, INTERVAL.start_date, INTERVAL.end_date
         )
 
 # Limit to cases with appt in the same interval to reduce secondary discharge codes
