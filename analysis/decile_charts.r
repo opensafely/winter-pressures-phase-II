@@ -102,6 +102,7 @@ if (config$released == FALSE){
 }
 # ------------ Create decile charts -----------------------------------------------------------
 print(head(practice_deciles))
+
 # Define line types
 line_types <- c(
   "d1" = "dashed", "d3" = "dashed",
@@ -115,6 +116,13 @@ line_colors <- c(
   "d5" = "red", # d5 is red
   "d7" = "black", "d9" = "black"
 )
+
+# Add additional deciles for yearly data
+if (config$yearly) {
+  line_types <- c(line_types, "d2" = "dashed", "d4" = "dashed", "d6" = "dashed", "d8" = "dashed")
+  line_colors <- c(line_colors, "d2" = "black", "d4" = "black", "d6" = "black", "d8" = "black")
+} 
+print(line_types)
 
 # Define your groups of measures dynamically
 if (config$set == "all") {
