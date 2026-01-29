@@ -347,7 +347,7 @@ yaml_other = """
         --output output/dataset.csv
     outputs:
       highly_sensitive:
-        population: output/dataset.csv  
+        population: output/dataset.csv
 """
 
 yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
@@ -386,6 +386,14 @@ yaml_yearly_template = """
       moderately_sensitive:
         bar_plots: output/practice_measures_resp_yearly/bar_plot*{test_suffix}.png
         summary_tables: output/practice_measures_resp_yearly/measure*{test_suffix}.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates{test_suffix}:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp {test_flag}
+    needs: [generate_rounding_practice_resp{test_suffix}]
+    outputs:
+      highly_sensitive:
+        weekly_aggregates: output/practice_measures_resp/national_yearly_summary{test_suffix}.csv
 """
 
 for test_suffix, test_flag in zip(suffixes, test_flags):

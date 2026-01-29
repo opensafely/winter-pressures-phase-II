@@ -2537,7 +2537,7 @@ actions:
         --output output/dataset.csv
     outputs:
       highly_sensitive:
-        population: output/dataset.csv  
+        population: output/dataset.csv
  
  # --------------- VISUALIZATION ACTIONS ------------------------------------------
     # Yearly pipeline
@@ -2570,6 +2570,14 @@ actions:
         bar_plots: output/practice_measures_resp_yearly/bar_plot*.png
         summary_tables: output/practice_measures_resp_yearly/measure*.csv
 
+  # Weekly aggregates
+  generate_weekly_aggregates:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp 
+    needs: [generate_rounding_practice_resp]
+    outputs:
+      highly_sensitive:
+        weekly_aggregates: output/practice_measures_resp/national_yearly_summary.csv
+
     # Yearly pipeline
   generate_pre_processing_practice_resp_yearly_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly --test
@@ -2599,3 +2607,11 @@ actions:
       moderately_sensitive:
         bar_plots: output/practice_measures_resp_yearly/bar_plot*_test.png
         summary_tables: output/practice_measures_resp_yearly/measure*_test.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates_test:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp --test
+    needs: [generate_rounding_practice_resp_test]
+    outputs:
+      highly_sensitive:
+        weekly_aggregates: output/practice_measures_resp/national_yearly_summary_test.csv
