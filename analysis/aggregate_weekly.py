@@ -54,14 +54,35 @@ if config["test"]:
         practice_interval_df['numerator_midpoint6']
     )
 
+    # 3 - COVID specific where all practices have list size = 100
+    practice_interval_df['list_size_midpoint6'] = np.where(
+        (practice_interval_df['measure'] == 'covid_specific'),
+        100,
+        practice_interval_df['list_size_midpoint6']
+    )
+
 # -------- Aggregate practice-weekly to practice-yearly ----------------------------------
 
 practice_interval_df['year'] = practice_interval_df['interval_start'].dt.year
 
-practice_yearly_df= build_aggregate_df(
+practice_yearly_df = build_aggregate_df(
     practice_interval_df,
     ["measure", "practice_pseudo_id", "year"],
-    {"numerator_midpoint6": ["sum"], "list_size_midpoint6": ["sum"]},
+    {"numerator_midpoint6": ["sum"]},
+)
+
+# For list size we want the value from the earliest interval in the year
+list_size_df = (
+    practice_interval_df
+    .sort_values(by=["measure", "practice_pseudo_id", "year", "interval_start"])
+    .drop_duplicates(subset=["measure", "practice_pseudo_id", "year"], keep="first")
+    [["measure", "practice_pseudo_id", "year", "list_size_midpoint6"]]
+    .rename(columns={"list_size_midpoint6": "list_size_midpoint6_first"})
+)
+
+# Merge earliest list size into practice-yearly frame
+practice_yearly_df = practice_yearly_df.merge(
+    list_size_df, on=["measure", "practice_pseudo_id", "year"], how="left"
 )
 
 # Identify practices with zero counts for the year
@@ -72,22 +93,34 @@ print(practice_yearly_df.head())
 
 # -------- Aggregate practice-yearly to national-yearly ----------------------------------
 
+# Aggregate practice-yearly to national-yearly, summing the earliest practice list sizes
 national_yearly_df= build_aggregate_df(
     practice_yearly_df,
     ["measure", "year"],
-    {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_sum": ["sum", "count"], "zero_indicator": ["sum"]},
+    {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_first": ["sum", "count"], "zero_indicator": ["sum"]},
+)
+
+# Rename columns for clarity
+national_yearly_df.rename(
+    columns={
+        'numerator_midpoint6_sum_sum': 'cum_sum_numerator_mp6',
+        'list_size_midpoint6_first_sum': 'initial_national_list_size_mp6',
+        'list_size_midpoint6_first_count': 'n_practices',
+        'zero_indicator_sum': 'n_practices_zero_rate'
+    },
+    inplace=True
 )
 
 # Recalculate rates
-national_yearly_df['rate_midpoint6'] = (
-    national_yearly_df['numerator_midpoint6_sum_sum'] /
-    national_yearly_df['list_size_midpoint6_sum_sum']
+national_yearly_df['rate_mp6'] = (
+    national_yearly_df['cum_sum_numerator_mp6'] /
+    national_yearly_df['initial_national_list_size_mp6']
 ) * 1000
 
 # Calculate proportion of practices with zero counts
 national_yearly_df['propn_prac_zero_rate'] = (
-    national_yearly_df['zero_indicator_sum'] /
-    national_yearly_df['list_size_midpoint6_sum_count']
+    national_yearly_df['n_practices_zero_rate'] /
+    national_yearly_df['n_practices']
 )
 
 print(national_yearly_df.head())
@@ -110,8 +143,8 @@ if config["test"]:
     ]
     print("Test Output for flu_specific in 2023:")
     print(test_output)
-    assert test_output['numerator_midpoint6_sum_sum'].values[0] == 0
-    assert test_output['rate_midpoint6'].values[0] == 0
+    assert test_output['cum_sum_numerator_mp6'].values[0] == 0
+    assert test_output['rate_mp6'].values[0] == 0
     assert test_output['propn_prac_zero_rate'].values[0] == 1
 
     # 2 - Numerator > 0, List size > 0, Rate > 0, Proportion of practices with zero count = very low
@@ -121,6 +154,19 @@ if config["test"]:
     ]
     print("Test Output for rsv_specific in 2024:")
     print(test_output)
-    assert test_output['numerator_midpoint6_sum_sum'].values[0] > 0
-    assert test_output['rate_midpoint6'].values[0] > 0
+    assert test_output['cum_sum_numerator_mp6'].values[0] > 0
+    assert test_output['rate_mp6'].values[0] > 0
     assert test_output['propn_prac_zero_rate'].values[0] < 0.5
+
+    # 3 - All practices have list size = 100 for covid_specific
+    test_output = national_yearly_df[
+        (national_yearly_df['measure'] == 'covid_specific')
+    ]
+    print("Test Output for covid_specific:")
+    print(test_output)
+    expected_list_size = (
+        practice_yearly_df[
+            practice_yearly_df['measure'] == 'covid_specific'
+        ]['practice_pseudo_id'].nunique() * 100
+    )
+    assert test_output['initial_national_list_size_mp6'].values[0] == expected_list_size
