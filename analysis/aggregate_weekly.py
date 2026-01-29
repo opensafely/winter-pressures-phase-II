@@ -97,7 +97,7 @@ print(practice_yearly_df.head())
 national_yearly_df= build_aggregate_df(
     practice_yearly_df,
     ["measure", "year"],
-    {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_first": ["sum", "count"], "zero_indicator": ["sum"]},
+    {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_first": ["sum"], "zero_indicator": ["sum", "count"]},
 )
 
 # Rename columns for clarity
@@ -105,13 +105,13 @@ national_yearly_df.rename(
     columns={
         'numerator_midpoint6_sum_sum': 'cum_sum_numerator_mp6',
         'list_size_midpoint6_first_sum': 'initial_national_list_size_mp6',
-        'list_size_midpoint6_first_count': 'n_practices',
+        'zero_indicator_count': 'n_practices',
         'zero_indicator_sum': 'n_practices_zero_rate'
     },
     inplace=True
 )
 
-# Recalculate rates
+# Recalculate rates = (total number of cases / national list size at start of yr) * 1000
 national_yearly_df['rate_mp6'] = (
     national_yearly_df['cum_sum_numerator_mp6'] /
     national_yearly_df['initial_national_list_size_mp6']
