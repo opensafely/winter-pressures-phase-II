@@ -376,3 +376,8 @@ def generate_dist_plot(df, var, facet_var, **kwargs):
     facet_plot.map_dataframe(sns.histplot, x = var, element="bars")
 
     return facet_plot
+
+def roundmid_any(x, to=6):
+    x = np.asarray(x)
+    return np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+
