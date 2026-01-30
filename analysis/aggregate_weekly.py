@@ -127,13 +127,19 @@ national_yearly_df= build_aggregate_df(
     {"numerator_midpoint6_sum": ["sum"], "list_size_midpoint6_first": ["sum"], "zero_indicator": ["sum", "count"]},
 )
 
+# Apply midpoint 6 rounding to zero_indicator columns
+national_yearly_df['zero_indicator_sum_mp6'] = roundmid_any(national_yearly_df['zero_indicator_sum'], to=6)
+national_yearly_df['zero_indicator_count_mp6'] = roundmid_any(national_yearly_df['zero_indicator_count'], to=6)
+# Drop original zero_indicator columns
+national_yearly_df.drop(columns=['zero_indicator_sum', 'zero_indicator_count'], inplace=True)
+
 # Rename columns for clarity
 national_yearly_df.rename(
     columns={
         'numerator_midpoint6_sum_sum': 'cum_sum_numerator_mp6',
         'list_size_midpoint6_first_sum': 'initial_national_list_size_mp6',
-        'zero_indicator_count': 'n_practices',
-        'zero_indicator_sum': 'n_practices_zero_rate'
+        'zero_indicator_count_mp6': 'n_practices_mp6',
+        'zero_indicator_sum_mp6': 'n_practices_zero_rate_mp6'
     },
     inplace=True
 )
@@ -145,9 +151,9 @@ national_yearly_df['rate_mp6'] = (
 ) * 1000
 
 # Calculate proportion of practices with zero counts
-national_yearly_df['propn_prac_zero_rate'] = (
-    national_yearly_df['n_practices_zero_rate'] /
-    national_yearly_df['n_practices']
+national_yearly_df['propn_prac_zero_rate_mp6'] = (
+    national_yearly_df['n_practices_zero_rate_mp6'] /
+    national_yearly_df['n_practices_mp6']
 )
 
 print(national_yearly_df.head())
@@ -172,7 +178,7 @@ if config["test"]:
     print(test_output)
     assert test_output['cum_sum_numerator_mp6'].values[0] == 0
     assert test_output['rate_mp6'].values[0] == 0
-    assert test_output['propn_prac_zero_rate'].values[0] == 1
+    assert test_output['propn_prac_zero_rate_mp6'].values[0] == 1
 
     # 2 - Numerator > 0, List size > 0, Rate > 0, Proportion of practices with zero count = very low
     test_output = national_yearly_df[
@@ -183,7 +189,7 @@ if config["test"]:
     print(test_output)
     assert test_output['cum_sum_numerator_mp6'].values[0] > 0
     assert test_output['rate_mp6'].values[0] > 0
-    assert test_output['propn_prac_zero_rate'].values[0] < 0.5
+    assert test_output['propn_prac_zero_rate_mp6'].values[0] < 0.5
 
     # 3 - All practices have list size = 100 for covid_specific
     test_output = national_yearly_df[
