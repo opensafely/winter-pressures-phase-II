@@ -1,6 +1,6 @@
 # This script processes the raw measures output to generate patient-characteristic stratified measures
 # Usage python analysis/pre_processing.py
-# Option --comorbid_measures/demograph_measures/practice_measures to choose which type of measures to process
+# Option --practice_measures/practice_subgroup_measures/comorbid_measures/demograph_measures to choose which type of measures to process
 # Option --test flag to run a lightweight test with a single date
 # Option --set all/sro/resp to choose which set of measures to process
 # Option --yearly flag to process only yearly measures
@@ -72,7 +72,7 @@ del df_list
 print(f"Data types of input: {proc_df.dtypes}", flush=True)
 log_memory_usage(label=f"After deletion of dataframes")
 
-if config["demograph_measures"]:
+if (config["demograph_measures"] or config["practice_subgroup_measures"]):
     # Replace numerical values with string values
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
 

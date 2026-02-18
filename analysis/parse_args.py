@@ -51,6 +51,12 @@ parser.add_argument(
     help="Sets measures defaults to comorbidity-level subgroups",
 )
 parser.add_argument(
+    "--practice_subgroup_measures",
+    action="store_true",
+    default=argparse.SUPPRESS,
+    help="Sets measures defaults to practice subgroup-level subgroups",
+)
+parser.add_argument(
     "--use_csv",
     action="store_true",
     default=argparse.SUPPRESS,
@@ -105,7 +111,7 @@ for key, value in vars(args).items():
 config["dtype_dict"] = config["base_dtype_dict"].copy()
 
 # Apply group-specific configuration
-for group in ["demograph", "practice", "comorbid"]:
+for group in ["demograph", "practice", "comorbid", "practice_subgroup"]:
     if config.get(f"{group}_measures", False):
         # Set group in config and update dtype_dict
         config["group"] = group

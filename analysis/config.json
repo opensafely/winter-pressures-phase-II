@@ -6,6 +6,7 @@
   "demograph_measures": false,
   "practice_measures": false,
   "comorbid_measures": false,
+  "practice_subgroup_measures": false,
   "use_csv": false,
   "set": null,
   "start_intv": null,
@@ -50,7 +51,31 @@
         "comorbid_immuno": "bool",
         "vax_flu_12m": "bool",
         "vax_covid_12m": "bool",
-        "vax_pneum_12m": "bool"
+        "vax_pneum_ever": "bool",
+        "vax_rsv_ever": "bool"
+      }
+    },
+    "practice_subgroup": {
+      "dtype_dict": {
+        "age": "category",
+        "sex": "category",
+        "ethnicity": "string",
+        "ethnicity_sus": "string",
+        "imd_quintile": "Int8",
+        "carehome": "category",
+        "region": "category",
+        "rur_urb_class": "Int8",
+        "stp": "category",
+        "comorbid_chronic_resp": "bool",
+        "comorbid_copd": "bool",
+        "comorbid_asthma": "bool",
+        "comorbid_dm": "bool",
+        "comorbid_htn": "bool",
+        "comorbid_immuno": "bool",
+        "vax_flu_12m": "bool",
+        "vax_covid_12m": "bool",
+        "vax_pneum_ever": "bool",
+        "vax_rsv_ever": "bool"
       }
     }
   },

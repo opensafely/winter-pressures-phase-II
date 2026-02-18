@@ -1,4 +1,11 @@
 # This script defines the measures for the analysis pipeline.
+# Options
+# --practice_measures / --demograph_measures / --comorbid_measures / --practice_subgroup_measures 
+# --test uses test data
+# --set specifies the measure set (all, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --yearly uses yearly measures data (REQUIRED)
 
 from ehrql import (
     case,
@@ -114,16 +121,10 @@ region = practice_registrations.for_patient_on(
     INTERVAL.start_date
 ).practice_nuts1_region_name
 
-demograph_groupby_by_dict = {
-    "age": age_group,
-    "sex": patients.sex,
-    "ethnicity": ethnicity,
-    "ethnicity_sus": ethnicity_from_sus.code,
-    "imd_quintile": imd_quintile,
-    "carehome": carehome,
-    "region": region,
-    "rur_urb_class": rur_urb_class,
-}
+# Practice stp
+stp = practice_registrations.for_patient_on(
+    INTERVAL.start_date
+).practice_stp
 
 # ---------------------- Comorbidity and vaccination status --------------------------------
 
@@ -183,6 +184,36 @@ comorbid_chronic_resp = check_chronic_condition(
 comorbid_immuno = check_chronic_condition(
     comorbid_dict["immuno_sup"], INTERVAL.start_date
 )
+
+demograph_dict = {
+    "age": age_group,
+    "sex": patients.sex,
+    "ethnicity": ethnicity,
+    "ethnicity_sus": ethnicity_from_sus.code,
+    "imd_quintile": imd_quintile,
+    "carehome": carehome,
+    "region": region,
+    "rur_urb_class": rur_urb_class,
+}
+comorbid_dict = {
+    "age": age_group,
+    "comorbid_chronic_resp": comorbid_chronic_resp,
+    "comorbid_copd": comorbid_copd,
+    "comorbid_asthma": comorbid_asthma,
+    "comorbid_dm": comorbid_dm,
+    "comorbid_htn": comorbid_htn,
+    "comorbid_immuno": comorbid_immuno,
+    "vax_flu_12m": vax_status["INFLUENZA"],
+    "vax_covid_12m": vax_status["SARS-2 CORONAVIRUS"],
+    "vax_pneum_ever": vax_status["PNEUMOCOCCAL"],
+    "vax_rsv_ever": vax_status[
+        "Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer)"
+    ],
+}
+practice_subgroup_dict = demograph_dict | comorbid_dict
+practice_subgroup_dict['practice_pseudo_id'] = practice_id
+practice_subgroup_dict.pop('ethnicity_sus')
+practice_subgroup_dict['stp'] = stp
 
 # ---------------------- Measures --------------------------------
 
@@ -388,40 +419,25 @@ if config["yearly"] == True:
 else:
     intervals = weeks(NUM_WEEKS).starting_on(config["start_intv"])
 
+measures.define_defaults(
+        denominator=inclusion_criteria,
+        intervals=intervals,
+    )
+
 if config["demograph_measures"]:
     # Run patient script if patient flag called
     measures.define_defaults(
-        denominator=inclusion_criteria,
-        group_by= demograph_groupby_by_dict,
-        intervals=intervals,
+        group_by= demograph_dict,
     )
 elif config["practice_measures"]:
     # Run practice script if practice flag called
     measures.define_defaults(
-        denominator=inclusion_criteria,
         group_by={"practice_pseudo_id": practice_id},
-        intervals=intervals,
     )
 elif config["comorbid_measures"]:
     # Run comorbid script if comorbid flag called
     measures.define_defaults(
-        denominator=inclusion_criteria,
-        group_by={
-            "age": age_group,
-            "comorbid_chronic_resp": comorbid_chronic_resp,
-            "comorbid_copd": comorbid_copd,
-            "comorbid_asthma": comorbid_asthma,
-            "comorbid_dm": comorbid_dm,
-            "comorbid_htn": comorbid_htn,
-            "comorbid_immuno": comorbid_immuno,
-            "vax_flu_12m": vax_status["INFLUENZA"],
-            "vax_covid_12m": vax_status["SARS-2 CORONAVIRUS"],
-            "vax_pneum_ever": vax_status["PNEUMOCOCCAL"],
-            "vax_rsv_ever": vax_status[
-                "Abrysvo vaccine powder and solvent for solution for injection 0.5ml vials (Pfizer)"
-            ],
-        },
-        intervals=intervals,
+        group_by=comorbid_dict,
     )
 
 # Filtering out measures to select pipeline
@@ -471,16 +487,26 @@ if config["appt"]:
 # Adding measures
 for measure in measures_to_add.keys():
     # Adding practice-demographic measures if yearly flag called
-    if config["yearly"] == True:
-        for subgroup, definition in demograph_groupby_by_dict.items():
+    if (config["yearly"] == True) or (config["practice_subgroup_measures"]):
+        for subgroup, definition in practice_subgroup_dict.items():
+
+            # If ethnicity, also groupby sus ethnicity for imputation
+            if subgroup == "ethnicity":
+                group_by= {"practice_pseudo_id": practice_id, 
+                           subgroup: definition,
+                           "ethnicity_sus": ethnicity_from_sus.code}
+            else:
+                group_by= {"practice_pseudo_id": practice_id, 
+                           subgroup: definition}
+                
             measures.define_measure(
                 name=f"{measure}_{subgroup}",
                 numerator=measures_to_add[measure],
-                group_by= {"practice_pseudo_id": practice_id, 
-                           subgroup: definition},
+                group_by= group_by,
         )
     else:
         measures.define_measure(
             name=measure,
             numerator=measures_to_add[measure],
         )
+

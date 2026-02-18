@@ -1,5 +1,3 @@
-# TODO:
-# 1. Add support for .csv.gz measures
 """
 Description:
 - This script generates the YAML file for the project.
@@ -33,27 +31,28 @@ actions:
 # ------- YAML MEASURES --------------------------------------------
 
 # Patient and practice measures flags to loop
-flags = ["practice_measures"]
+flags = ["practice_measures", "practice_subgroup_measures"]
+groups = []
+for flag in flags:
+    groups.append(flag.replace("_measures", "")) # practice/demograph/comorbid
 # Set of measures to loop
 measure_sets = ["all", "sro", "resp"]
 # Appt variants
 appt_variants = ["", "_appt"]
-# Yearly variant
-yearly_variant = ["", "_yearly"]
 
 # Temple for measures generation, for each combination of patient/practice measure and start_intv date
 yaml_measures_template = """
-  generate_{flag}_{set}_{date}{appt_suffix}{yearly_suffix}:
+  generate_{flag}_{set}_{date}{appt_suffix}:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}{yearly_suffix}.arrow
+      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
       --
       --{flag}
       --start_intv {date}
-      --set {set}{appt_flag}{yearly_flag}
+      --set {set}{appt_flag}
       
     outputs:
       highly_sensitive:
-        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}{yearly_suffix}.arrow
+        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
 """
 
 yaml_measures = ""
@@ -67,31 +66,27 @@ for flag in flags:
 
         # Iterate over appt variants
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
-            
-            for yearly_suffix, yearly_flag in zip(yearly_variant, ["", " --yearly"]):
 
-              needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"] = []
+            needs[f"{flag}_{set}{appt_suffix}"] = []
 
-              # Iterate over dates and generate yaml list of needs for each combination
-              for date in dates:
+            # Iterate over dates and generate yaml list of needs for each combination
+            for date in dates:
 
-                  yaml_measures += yaml_measures_template.format(
-                      flag=flag,
-                      date=date,
-                      set=set,
-                      appt_suffix=appt_suffix,
-                      appt_flag=appt_flag,
-                      yearly_suffix=yearly_suffix,
-                      yearly_flag=yearly_flag,
-                  )
-                  needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"].append(
-                      f"generate_{flag}_{set}_{date}{appt_suffix}{yearly_suffix}"
-                  )
+                yaml_measures += yaml_measures_template.format(
+                    flag=flag,
+                    date=date,
+                    set=set,
+                    appt_suffix=appt_suffix,
+                    appt_flag=appt_flag,
+                )
+                needs[f"{flag}_{set}{appt_suffix}"].append(
+                    f"generate_{flag}_{set}_{date}{appt_suffix}"
+                )
 
-              # Join list into string for each flag
-              needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"] = ", ".join(
-                  needs[f"{flag}_{set}{appt_suffix}{yearly_suffix}"]
-              )
+            # Join list into string for each flag
+            needs[f"{flag}_{set}{appt_suffix}"] = ", ".join(
+                needs[f"{flag}_{set}{appt_suffix}"]
+            )
 
 yaml_measures_test_template = """
 # --------------- TEST ACTIONS ------------------------------------------
@@ -107,17 +102,17 @@ yaml_measures_test_template = """
   #   outputs:
   #     highly_sensitive:
   #       dataset: output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
-  generate_practice_measures_{set}{appt_suffix}{yearly_suffix}_test:
+  generate_{group}_measures_{set}{appt_suffix}_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures_{set}{appt_suffix}{yearly_suffix}/practice_measures_{start_date}_test.arrow
+      --output output/{group}_measures_{set}{appt_suffix}/{group}_measures_{start_date}_test.arrow
       --
-      --practice_measures
+      --{group}_measures
       --start_intv {start_date}
       --test
-      --set {set}{appt_flag}{yearly_flag}
+      --set {set}{appt_flag}
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures_{set}{appt_suffix}{yearly_suffix}/practice_measures_{start_date}_test.arrow
+        dataset: output/{group}_measures_{set}{appt_suffix}/{group}_measures_{start_date}_test.arrow
   # generate_comorbid_measures_{set}{appt_suffix}_test:
   #   run: ehrql:v1 generate-measures analysis/wp_measures.py
   #     --output output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
@@ -133,14 +128,13 @@ yaml_measures_test_template = """
 yaml_measures_test = ""
 for set in measure_sets:
     for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
-        for yearly_suffix, yearly_flag in zip(yearly_variant, ["", " --yearly"]):
+      for group in groups:
           yaml_measures_test += yaml_measures_test_template.format(
               start_date=config["test_config"]["start_date"],
               set=set,
               appt_suffix=appt_suffix,
               appt_flag=appt_flag,
-              yearly_suffix=yearly_suffix,
-              yearly_flag=yearly_flag,
+              group=group
           )
 
 # --------------- YAML APPT REPORT ------------------------------------------
@@ -186,10 +180,6 @@ yaml_appt_report = yaml_appt_report + yaml_appt_processing
 yaml_appt_report += (
     " \n # --------------- PROCESSING ------------------------------------------\n"
 )
-
-groups = []
-for flag in flags:
-    groups.append(flag.replace("_measures", "")) # practice/demograph/comorbid
 
 yaml_processing_template = """
   generate_freq_table_{group}_{set}{appt_suffix}{test_suffix}:
@@ -350,46 +340,12 @@ yaml_other = """
         population: output/dataset.csv
 """
 
-yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
-
-needs_list = []
-for date in dates:
-    needs_list.append(f"generate_practice_measures_resp_{date}_yearly")
+yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------"
 
 yaml_yearly_template = """
-    # Yearly pipeline
-  generate_pre_processing_practice_resp_yearly{test_suffix}:
-    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --yearly {test_flag}
-    needs: [{needs_str}]
-    outputs:
-      highly_sensitive:
-        measures: output/practice_measures_resp_yearly/proc_practice_measures{test_suffix}.arrow
-  generate_rounding_practice_resp_yearly{test_suffix}:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp --yearly {test_flag}
-    needs: [generate_pre_processing_practice_resp_yearly{test_suffix}]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_resp_yearly/proc_practice_measures_midpoint6{test_suffix}.arrow
-  generate_deciles_charts_resp_yearly{test_suffix}:
-    run: >
-      r:v2 analysis/decile_charts.r --set resp --yearly {test_flag}
-    needs: [generate_rounding_practice_resp_yearly{test_suffix}] 
-    outputs:
-      moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_yearly/plots{test_suffix}/decile_chart_*_rate_mp6.png
-        deciles_table: output/practice_measures_resp_yearly/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
-  generate_bar_plot_yearly{test_suffix}:
-    run: >
-      r:v2 analysis/yearly_measures_analysis.r --set resp --yearly {test_flag}
-    needs: [generate_rounding_practice_resp_yearly{test_suffix}] 
-    outputs:
-      moderately_sensitive:
-        bar_plots: output/practice_measures_resp_yearly/bar_plot*{test_suffix}.png
-        summary_tables: output/practice_measures_resp_yearly/measure*{test_suffix}.csv
-
   # Weekly aggregates
   generate_weekly_aggregates{test_suffix}:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --yearly --weekly_agg --set resp {test_flag} 
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --weekly_agg --set resp {test_flag} 
     needs: [generate_rounding_practice_resp{test_suffix}]
     outputs:
       moderately_sensitive:
@@ -398,7 +354,7 @@ yaml_yearly_template = """
         practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*{test_suffix}.arrow
   generate_deciles_charts_resp_weeklyagg{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --set resp --yearly {test_flag} --weekly_agg
+      r:v2 analysis/decile_charts.r --set resp{test_flag} --weekly_agg
     needs: [generate_weekly_aggregates{test_suffix}] 
     outputs:
       moderately_sensitive:
@@ -407,12 +363,8 @@ yaml_yearly_template = """
 """
 
 for test_suffix, test_flag in zip(suffixes, test_flags):
-    if test_suffix == "_test":
-        needs_str = "generate_practice_measures_resp_yearly_test"
-    else:
-        needs_str = ", ".join(needs_list)
+
     yaml_yearly += yaml_yearly_template.format(
-        needs_str=needs_str,
         test_suffix=test_suffix,
         test_flag=test_flag,
     )
