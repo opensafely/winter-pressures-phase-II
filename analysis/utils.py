@@ -7,6 +7,7 @@ import pyarrow.feather as feather
 import seaborn as sns
 import matplotlib.pyplot as plt
 from parse_args import config
+import pickle
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -258,7 +259,7 @@ def read_write(
     """
     Function to read or write a file based on the test flag.
     Args:
-        df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
+        df (pd.DataFrame/Dict): DataFrame/Dict to write if read_or_write is 'write'.
         read_or_write (str): 'read' or 'write' to specify the operation.
         test (bool): If True, use test versions of datasets.
         path (str): Path to the file.
@@ -274,6 +275,9 @@ def read_write(
         if file_type == "csv":
             df = pd.read_csv(path + ".csv", **kwargs)
 
+        elif file_type == "csv.gz":
+            df = pd.read_csv(path + ".csv.gz", compression="gzip", **kwargs)
+
         elif file_type == "arrow":
             df = feather.read_feather(path + ".arrow")
 
@@ -288,6 +292,11 @@ def read_write(
 
             return df
 
+        elif file_type == "dict":
+            with open(path + ".pickle", 'rb') as handle:
+                df = pickle.load(handle)
+            return df
+
     elif read_or_write == "write":
 
         if df is None:
@@ -295,10 +304,17 @@ def read_write(
 
         if file_type == "csv":
             df.to_csv(path + ".csv", **kwargs)
+        
+        elif file_type == "csv.gz":
+            df.to_csv(path + ".csv.gz", compression="gzip", **kwargs)
 
         elif file_type == "arrow":
             # Convert boolean columns to string type
             feather.write_feather(df, path + ".arrow")
+
+        elif file_type == "pickle":
+            with open(path + ".pickle", 'wb') as handle:
+                pickle.dump(df, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def simulate_dataframe(dtype_dict, n_rows):

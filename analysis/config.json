@@ -43,16 +43,16 @@
     "comorbid": {
       "dtype_dict": {
         "age": "category",
-        "comorbid_chronic_resp": "bool",
-        "comorbid_copd": "bool",
-        "comorbid_asthma": "bool",
-        "comorbid_dm": "bool",
-        "comorbid_htn": "bool",
-        "comorbid_immuno": "bool",
-        "vax_flu_12m": "bool",
-        "vax_covid_12m": "bool",
-        "vax_pneum_ever": "bool",
-        "vax_rsv_ever": "bool"
+        "comorbid_chronic_resp": "boolean",
+        "comorbid_copd": "boolean",
+        "comorbid_asthma": "boolean",
+        "comorbid_dm": "boolean",
+        "comorbid_htn": "boolean",
+        "comorbid_immuno": "boolean",
+        "vax_flu_12m": "boolean",
+        "vax_covid_12m": "boolean",
+        "vax_pneum_ever": "boolean",
+        "vax_rsv_ever": "boolean"
       }
     },
     "practice_subgroup": {
@@ -66,16 +66,16 @@
         "region": "category",
         "rur_urb_class": "Int8",
         "stp": "category",
-        "comorbid_chronic_resp": "bool",
-        "comorbid_copd": "bool",
-        "comorbid_asthma": "bool",
-        "comorbid_dm": "bool",
-        "comorbid_htn": "bool",
-        "comorbid_immuno": "bool",
-        "vax_flu_12m": "bool",
-        "vax_covid_12m": "bool",
-        "vax_pneum_ever": "bool",
-        "vax_rsv_ever": "bool"
+        "comorbid_chronic_resp": "boolean",
+        "comorbid_copd": "boolean",
+        "comorbid_asthma": "boolean",
+        "comorbid_dm": "boolean",
+        "comorbid_htn": "boolean",
+        "comorbid_immuno": "boolean",
+        "vax_flu_12m": "boolean",
+        "vax_covid_12m": "boolean",
+        "vax_pneum_ever": "boolean",
+        "vax_rsv_ever": "boolean"
       }
     }
   },

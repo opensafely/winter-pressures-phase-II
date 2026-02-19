@@ -419,25 +419,32 @@ if config["yearly"] == True:
 else:
     intervals = weeks(NUM_WEEKS).starting_on(config["start_intv"])
 
-measures.define_defaults(
-        denominator=inclusion_criteria,
-        intervals=intervals,
-    )
-
 if config["demograph_measures"]:
     # Run patient script if patient flag called
     measures.define_defaults(
+        denominator=inclusion_criteria,
+        intervals=intervals,
         group_by= demograph_dict,
     )
 elif config["practice_measures"]:
     # Run practice script if practice flag called
     measures.define_defaults(
+        denominator=inclusion_criteria,
+        intervals=intervals,
         group_by={"practice_pseudo_id": practice_id},
     )
 elif config["comorbid_measures"]:
     # Run comorbid script if comorbid flag called
     measures.define_defaults(
+        denominator=inclusion_criteria,
+        intervals=intervals,
         group_by=comorbid_dict,
+    )
+elif config["practice_subgroup_measures"]:
+    # Run practice subgroup script if practice subgroup flag called
+    measures.define_defaults(
+        denominator=inclusion_criteria,
+        intervals=intervals,
     )
 
 # Filtering out measures to select pipeline
