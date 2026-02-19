@@ -65,7 +65,7 @@ parser.add_argument(
 parser.add_argument(
     "--set",
     default=argparse.SUPPRESS,
-    help="Choose which set of measures to extract: all, sro, resp",
+    help="Choose which set of measures to extract: appts_table, sro, resp",
 )
 
 # Configuration for interval date input
@@ -134,3 +134,10 @@ config["deprioritized"] = set(config["sro_dict"].keys()) - set(config["prioritiz
 
 if config.get("use_csv", False):
     config["file_type"] = "csv"
+
+if config.get("set") == "sro":
+    config["pipeline_measures"] = config["measures_list"]["sro"]
+elif config.get("set") == "resp":
+    config["pipeline_measures"] = config["measures_list"]["resp"]
+elif config.get("set") == "appts_table":
+    config["pipeline_measures"] = config["measures_list"]["appts_table"]

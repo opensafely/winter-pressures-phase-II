@@ -22,7 +22,7 @@ Use the `--test` flag with any script to run the lightweight test pipeline (usef
 
 ### Measure sets
 There are currently three sets of measures:
-- `--set all` - runs all measures  
+- `--set appts_table` - runs appts_table measures  
 - `--set sro` - runs sro measures (+ secondary referral measures)
 - `--set resp` - runs respiratory illness measures (rsv/flu/covid)
 

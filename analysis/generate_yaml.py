@@ -36,7 +36,7 @@ groups = []
 for flag in flags:
     groups.append(flag.replace("_measures", "")) # practice/demograph/comorbid
 # Set of measures to loop
-measure_sets = ["all", "sro", "resp"]
+measure_sets = ["appts_table", "sro", "resp"]
 # Appt variants
 appt_variants = ["", "_appt"]
 
@@ -193,7 +193,7 @@ yaml_processing_template = """
     needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
-        measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures_midpoint6{test_suffix}.arrow
+        measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures_midpoint6{test_suffix}.pickle
   generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]

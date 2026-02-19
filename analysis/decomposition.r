@@ -1,7 +1,7 @@
 # Run using Rscript analysis/decomposition.r
 # Options
 # --practice_measures/comorbid_measures/demograph_measures
-# --set: all/sro/resp
+# --set: appts_table/sro/resp
 # --test: (True/False)
 # Depends on round_measures.r
 

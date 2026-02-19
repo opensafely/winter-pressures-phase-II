@@ -105,5 +105,37 @@
     "pandemic_end": "2018-05-17"
   },
   "yearly": false,
-  "released": false
+  "released": false,
+  "measures_list":
+  {
+    "resp": [
+      "overall_resp_sensitive",
+      "flu_sensitive",
+      "rsv_sensitive",
+      "flu_specific",
+      "rsv_specific"
+    ],
+    "appts_table": [
+      "seen_in_interval",
+      "start_in_interval",
+      "follow_up_app",
+      "CancelledbyPatient",
+      "CancelledbyUnit",
+      "DidNotAttend"
+    ],
+    "sro": [
+      "sodium_test",
+      "alt_test",
+      "sys_bp_test",
+      "chol_test",
+      "rbc_test",
+      "hba1c_test",
+      "cvd_10yr",
+      "thy_test",
+      "asthma_review",
+      "copd_review",
+      "sro_prioritized",
+      "sro_deprioritized"
+    ]
+  }
 }

@@ -16,6 +16,6 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_weekly_aggregates_test
+        actions: generate_pre_processing_practice_subgroup_measures_appts_table
 
 

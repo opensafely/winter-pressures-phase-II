@@ -2,7 +2,7 @@
 # Usage python analysis/pre_processing.py
 # Option --practice_measures/practice_subgroup_measures/comorbid_measures/demograph_measures to choose which type of measures to process
 # Option --test flag to run a lightweight test with a single date
-# Option --set all/sro/resp to choose which set of measures to process
+# Option --set appts_table/sro/resp to choose which set of measures to process
 
 import json
 
@@ -157,7 +157,8 @@ if config["practice_measures"]:
 print(f"Before rounding: {proc_df.head()}")
 
 # Round the numerator and list_size columns
-proc_df[["numerator", "list_size"]] = roundmid_any(proc_df[["numerator", "list_size"]], to=6)
+proc_df[["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(proc_df[["numerator", "list_size"]], to=6)
+proc_df.drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
 
 print(f"After rounding: {proc_df.head()}")
 
@@ -200,7 +201,7 @@ if config['practice_subgroup_measures']:
     # Drop unneeded columns from each measure dataframe
         for col in measures_dict[subgroup].columns:
             if (not subgroup.endswith(col)) and col not in ['measure', 'interval_start', 'interval_end', 
-                                                            'ratio', 'numerator', 'list_size', 
+                                                            'rate_per_1000_midpoint6_derived', 'numerator_midpoint6', 'list_size_midpoint6',
                                                             'practice_pseudo_id',]:
                 measures_dict[subgroup] = measures_dict[subgroup].drop(columns=[col])
     

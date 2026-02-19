@@ -2,7 +2,7 @@
 # Options
 # --practice_measures / --demograph_measures / --comorbid_measures / --practice_subgroup_measures 
 # --test uses test data
-# --set specifies the measure set (all, sro, resp)
+# --set specifies the measure set (appts_table, sro, resp)
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
 # --yearly uses yearly measures data (REQUIRED)
@@ -448,37 +448,9 @@ elif config["practice_subgroup_measures"]:
     )
 
 # Filtering out measures to select pipeline
-
-if config["set"] == "resp":
-    for measure in list(measures_to_add.keys()):
-        # Remove non-respiratory measures
-        if (
-            ("sensitive" not in measure)
-            and ("specific" not in measure)
-            and (measure not in ["secondary_referral", "secondary_appt", "ili"])
-        ):
-            del measures_to_add[measure]
-
-if config["set"] == "sro":
-
-    # Build a set of measures to keep. Convert dict keys to a set first
-    # to avoid depending on dict view methods and to allow set operations.
-    measures_to_keep = (
-        set(sro_dict.keys())
-        | {
-            "sick_notes",
-            "sro_prioritized",
-            "sro_deprioritized",
-            "appt_sick_notes",
-            "appt_sro_prioritized",
-            "appt_sro_deprioritized",
-        }
-        | {f"appt_{sro}" for sro in sro_dict.keys()}
-    )
-
-    for measure in list(measures_to_add.keys()):
-        if measure not in measures_to_keep:
-            del measures_to_add[measure]
+for measure in list(measures_to_add.keys()):
+    if measure not in config['pipeline_measures']:
+        del measures_to_add[measure]
 
 # Restrict measures to those with an appointment in interval
 if config["appt"]:
@@ -512,6 +484,7 @@ for measure in measures_to_add.keys():
                 group_by= group_by,
         )
     else:
+        # For non-yearly measures, don't include demographic breakdowns to save memory
         measures.define_measure(
             name=measure,
             numerator=measures_to_add[measure],
