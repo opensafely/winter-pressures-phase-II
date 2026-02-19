@@ -51,6 +51,12 @@ parser.add_argument(
     help="Sets measures defaults to comorbidity-level subgroups",
 )
 parser.add_argument(
+    "--practice_subgroup_measures",
+    action="store_true",
+    default=argparse.SUPPRESS,
+    help="Sets measures defaults to practice subgroup-level subgroups",
+)
+parser.add_argument(
     "--use_csv",
     action="store_true",
     default=argparse.SUPPRESS,
@@ -59,7 +65,7 @@ parser.add_argument(
 parser.add_argument(
     "--set",
     default=argparse.SUPPRESS,
-    help="Choose which set of measures to extract: all, sro, resp",
+    help="Choose which set of measures to extract: appts_table, sro, resp",
 )
 
 # Configuration for interval date input
@@ -105,7 +111,7 @@ for key, value in vars(args).items():
 config["dtype_dict"] = config["base_dtype_dict"].copy()
 
 # Apply group-specific configuration
-for group in ["demograph", "practice", "comorbid"]:
+for group in ["demograph", "practice", "comorbid", "practice_subgroup"]:
     if config.get(f"{group}_measures", False):
         # Set group in config and update dtype_dict
         config["group"] = group
@@ -128,3 +134,10 @@ config["deprioritized"] = set(config["sro_dict"].keys()) - set(config["prioritiz
 
 if config.get("use_csv", False):
     config["file_type"] = "csv"
+
+if config.get("set") == "sro":
+    config["pipeline_measures"] = config["measures_list"]["sro"]
+elif config.get("set") == "resp":
+    config["pipeline_measures"] = config["measures_list"]["resp"]
+elif config.get("set") == "appts_table":
+    config["pipeline_measures"] = config["measures_list"]["appts_table"]

@@ -4,7 +4,7 @@
 # Run using python analysis/aggregate_weekly.py
 # Option --comorbid_measures/demograph_measures/practice_measures to choose which type of measures to process
 # Option --test flag to run a lightweight test with a single date
-# Option --set all/sro/resp to choose which set of measures to process
+# Option --set appts_table/sro/resp to choose which set of measures to process
 # Option --yearly flag to process only yearly measures
 # Option --weekly_agg to indicate that yearly measures are to be aggregated from weekly measures
 

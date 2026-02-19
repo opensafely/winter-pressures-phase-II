@@ -125,7 +125,7 @@ if (config$yearly) {
 print(line_types)
 
 # Define your groups of measures dynamically
-if (config$set == "all") {
+if (config$set == "appts_table") {
   measure_groups <- list(
     # Plot 1: Appointments table measures
     appts_table = c(

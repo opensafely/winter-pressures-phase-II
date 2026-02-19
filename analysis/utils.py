@@ -7,6 +7,7 @@ import pyarrow.feather as feather
 import seaborn as sns
 import matplotlib.pyplot as plt
 from parse_args import config
+import pickle
 
 # --------- Pre-processing functions ------------------------------------------------
 
@@ -52,7 +53,7 @@ def log_memory_usage(label=""):
     print(f"usage at {label}: {usage} mb", flush=True)
 
 
-def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
+def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
     """
     Replaces numerical values with their corresponding string values for the following columns:
     - Rural urban classification
@@ -93,59 +94,72 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True):
         print(f"Post-replace values:, {df['rur_urb_class'].unique()}")
 
     if replace_ethnicity:
-        print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
-        # Identify missing values
-        df["ethnicity"].replace("6", pd.NA, inplace=True)
-        print(f"Prior Nan count: {df['ethnicity'].isna().sum()}")
-        # Fill missing values with values from sus_ethnicity
-        df["ethnicity"] = df["ethnicity"].fillna(df["ethnicity_sus"])
-        # Convert string col to category for efficiency
-        df["ethnicity"] = df["ethnicity"].astype("category")
-        # Reformat ethnicity data
-        df["ethnicity"] = df["ethnicity"].cat.add_categories(
-            ["White", "Mixed", "South Asian", "Black", "Other", "Not stated"]
-        )
-        df["ethnicity"].replace(
-            {
-                "1": "White",
-                "2": "Mixed",
-                "3": "South Asian",
-                "4": "Black",
-                "5": "Other",
-                "A": "White",
-                "B": "White",
-                "C": "White",
-                "D": "Mixed",
-                "E": "Mixed",
-                "F": "Mixed",
-                "G": "Mixed",
-                "H": "South Asian",
-                "J": "South Asian",
-                "K": "South Asian",
-                "L": "South Asian",
-                "M": "Black",
-                "N": "Black",
-                "P": "Black",
-                "R": "Other",
-                "S": "Other",
-                "Z": "Not stated",
-            },
-            inplace=True,
-        )
-        # Fill missing values with 'Not stated'
-        df["ethnicity"].fillna("Not stated", inplace=True)
-        print(f"New datatype of ethnicity: {df['ethnicity'].dtype}")
-        print(f"Post-replace Nan count: {df['ethnicity'].isna().sum()}")
-        print(f"Post-replace values:, {df['ethnicity'].unique()}")
-        df = df.drop("ethnicity_sus", axis=1)
-        # Aggregate ethnicity categories
-        group_cols = [
-            col for col in df.columns if col not in ["numerator", "list_size"]
-        ]
-        df = df.groupby(group_cols, as_index=False, observed=True)[
-            ["numerator", "list_size"]
-        ].sum()
-        print(f"Post-replace df: {df.head()}")
+        
+        # 'Demograph measures' will require not filtering on measures with 'ethnicity' in the name
+        if config["practice_subgroup_measures"] == True:
+
+            print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
+            df_ethnicity = df[df["measure"].str.contains("ethnicity", case=False, na=False)]
+            # Identify missing values
+            df_ethnicity["ethnicity"].replace("6", pd.NA, inplace=True)
+            print(f"Prior Nan count: {df_ethnicity['ethnicity'].isna().sum()}")
+            # Fill missing values with values from sus_ethnicity
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(df_ethnicity["ethnicity_sus"])
+            # Convert string col to category for efficiency
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].astype("category")
+            # Reformat ethnicity data
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].cat.add_categories(
+                ["White", "Mixed", "South Asian", "Black", "Other", "Not stated"]
+            )
+            df_ethnicity["ethnicity"].replace(
+                {
+                    "1": "White",
+                    "2": "Mixed",
+                    "3": "South Asian",
+                    "4": "Black",
+                    "5": "Other",
+                    "A": "White",
+                    "B": "White",
+                    "C": "White",
+                    "D": "Mixed",
+                    "E": "Mixed",
+                    "F": "Mixed",
+                    "G": "Mixed",
+                    "H": "South Asian",
+                    "J": "South Asian",
+                    "K": "South Asian",
+                    "L": "South Asian",
+                    "M": "Black",
+                    "N": "Black",
+                    "P": "Black",
+                    "R": "Other",
+                    "S": "Other",
+                    "Z": "Not stated",
+                },
+                inplace=True,
+            )
+            # Impute missing ethnicity with ethnicity sus
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(df_ethnicity["ethnicity_sus"])
+            print(f"New datatype of ethnicity: {df_ethnicity['ethnicity'].dtype}")
+            print(f"Post-replace Nan count: {df_ethnicity['ethnicity'].isna().sum()}")
+            print(f"Post-replace ehtnicity values:, {df_ethnicity['ethnicity'].unique()}")
+            df = df.drop("ethnicity_sus", axis=1)
+            df_ethnicity = df_ethnicity.drop("ethnicity_sus", axis=1)
+
+            # Aggregate ethnicity categories
+            group_cols = [
+                col for col in df_ethnicity.columns if col not in ["numerator", "list_size"]
+            ]
+            df_ethnicity = df_ethnicity.groupby(group_cols, as_index=False, observed=True, dropna=False)[
+                ["numerator", "list_size"]
+            ].sum()
+            
+            # Drop original ethnicity measures and merge back aggregated measures
+            df = df[~df["measure"].str.contains("ethnicity", case=False, na=False)]
+            df = pd.concat([df, df_ethnicity], ignore_index=True)
+
+            print(f"Post-aggregation values:, {df['ethnicity'].unique()}")
+            print(f"Post-replace df: {df.head()}")
 
     return df
 
@@ -245,7 +259,7 @@ def read_write(
     """
     Function to read or write a file based on the test flag.
     Args:
-        df (pd.DataFrame): DataFrame to write if read_or_write is 'write'.
+        df (pd.DataFrame/Dict): DataFrame/Dict to write if read_or_write is 'write'.
         read_or_write (str): 'read' or 'write' to specify the operation.
         test (bool): If True, use test versions of datasets.
         path (str): Path to the file.
@@ -261,6 +275,9 @@ def read_write(
         if file_type == "csv":
             df = pd.read_csv(path + ".csv", **kwargs)
 
+        elif file_type == "csv.gz":
+            df = pd.read_csv(path + ".csv.gz", compression="gzip", **kwargs)
+
         elif file_type == "arrow":
             df = feather.read_feather(path + ".arrow")
 
@@ -275,6 +292,11 @@ def read_write(
 
             return df
 
+        elif file_type == "dict":
+            with open(path + ".pickle", 'rb') as handle:
+                df = pickle.load(handle)
+            return df
+
     elif read_or_write == "write":
 
         if df is None:
@@ -282,10 +304,17 @@ def read_write(
 
         if file_type == "csv":
             df.to_csv(path + ".csv", **kwargs)
+        
+        elif file_type == "csv.gz":
+            df.to_csv(path + ".csv.gz", compression="gzip", **kwargs)
 
         elif file_type == "arrow":
             # Convert boolean columns to string type
             feather.write_feather(df, path + ".arrow")
+
+        elif file_type == "pickle":
+            with open(path + ".pickle", 'wb') as handle:
+                pickle.dump(df, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def simulate_dataframe(dtype_dict, n_rows):

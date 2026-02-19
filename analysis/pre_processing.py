@@ -1,9 +1,10 @@
 # This script processes the raw measures output to generate patient-characteristic stratified measures
 # Usage python analysis/pre_processing.py
-# Option --comorbid_measures/demograph_measures/practice_measures to choose which type of measures to process
+# Option --practice_measures/practice_subgroup_measures/comorbid_measures/demograph_measures to choose which type of measures to process
 # Option --test flag to run a lightweight test with a single date
-# Option --set all/sro/resp to choose which set of measures to process
-# Option --yearly flag to process only yearly measures
+# Option --set appts_table/sro/resp to choose which set of measures to process
+
+import json
 
 import pandas as pd
 from scipy import stats
@@ -36,9 +37,9 @@ for date in dates:
 
     print(f"Loading {config['group']} measures {date}", flush=True)
     input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/{config['group']}_measures_{date}"
-    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/proc_{config['group']}_measures"
-    # Read in measures
+    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
+    df.drop(columns=["interval_end", "ratio"], inplace=True)  # Drop interval end column as not needed for analysis and saves memory
     log_memory_usage(label=f"After loading measures {date}")
     print(f"Initial shape of input: {df.shape}", flush=True)
 
@@ -72,7 +73,7 @@ del df_list
 print(f"Data types of input: {proc_df.dtypes}", flush=True)
 log_memory_usage(label=f"After deletion of dataframes")
 
-if config["demograph_measures"]:
+if (config["demograph_measures"] or config["practice_subgroup_measures"]):
     # Replace numerical values with string values
     proc_df = replace_nums(proc_df, replace_ethnicity=True, replace_rur_urb=True)
 
@@ -152,5 +153,64 @@ if config["practice_measures"]:
         flush=True,
     )
 
+# Round measures using midpoint 6 rounding
+print(f"Before rounding: {proc_df.head()}")
+
+# Round the numerator and list_size columns
+proc_df[["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(proc_df[["numerator", "list_size"]], to=6)
+proc_df.drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
+
+print(f"After rounding: {proc_df.head()}")
+
+# Ensure correct datetime format
+proc_df["interval_start"] = pd.to_datetime(
+    proc_df["interval_start"]
+).dt.tz_localize(None)
+proc_df["month"] = proc_df["interval_start"].dt.month
+# If Jan - May, RR is relative to prev years summer. If June - Dec, RR is relative to same years summer.
+proc_df["summer_year"] = np.where(
+    proc_df["month"] <= 5,
+    proc_df["interval_start"].dt.year - 1,
+    proc_df["interval_start"].dt.year,
+)
+
+# Calculate rate per 1000
+proc_df["rate_per_1000_midpoint6_derived"] = (
+    proc_df["numerator_midpoint6"]
+    / proc_df["list_size_midpoint6"]
+    * 1000
+)
+
+# Define pandemic dates
+pandemic_conditions = [
+    proc_df["interval_start"] < pd.to_datetime(config["pandemic_start"]),
+    (proc_df["interval_start"] >= pd.to_datetime(config["pandemic_start"]))
+    & (proc_df["interval_start"] <= pd.to_datetime(config["pandemic_end"])),
+    proc_df["interval_start"] > pd.to_datetime(config["pandemic_end"]),
+]
+choices = ["Before", "During", "After"]
+proc_df["pandemic"] = np.select(pandemic_conditions, choices)
+
+# Convert to dictionary of dataframes for each subgroup to save memory
+if config['practice_subgroup_measures']:
+
+    measures_dict = {}
+    for subgroup in config['groups']["practice_subgroup"]['dtype_dict'].keys():
+        measures_dict[subgroup] = proc_df[proc_df['measure'].str.endswith(subgroup)]
+
+    # Drop unneeded columns from each measure dataframe
+        for col in measures_dict[subgroup].columns:
+            if (not subgroup.endswith(col)) and col not in ['measure', 'interval_start', 'interval_end', 
+                                                            'rate_per_1000_midpoint6_derived', 'numerator_midpoint6', 'list_size_midpoint6',
+                                                            'practice_pseudo_id',]:
+                measures_dict[subgroup] = measures_dict[subgroup].drop(columns=[col])
+    
+    proc_df = measures_dict
+    file_type = "pickle"
+else:
+    file_type = "arrow"
+
+log_memory_usage(label=f"Final memory usage") # test is 10 times higher for practice_subgroups
+
 # Save processed file
-read_write(read_or_write="write", path=output_path, df=proc_df)
+read_write(read_or_write="write", path=output_path, df=proc_df, file_type=file_type)

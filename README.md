@@ -22,7 +22,7 @@ Use the `--test` flag with any script to run the lightweight test pipeline (usef
 
 ### Measure sets
 There are currently three sets of measures:
-- `--set all` - runs all measures  
+- `--set appts_table` - runs appts_table measures  
 - `--set sro` - runs sro measures (+ secondary referral measures)
 - `--set resp` - runs respiratory illness measures (rsv/flu/covid)
 
@@ -57,19 +57,13 @@ There are currently three sets of measures:
      ```
      Runs `freq_table.py`.
 
-3. **Pre-process measures into a single file**
+3. **Pre-process and round measures into a single file**
    - Example:  
      ```bash
      opensafely run generate_pre_processing_practice
      ```
      Runs `pre_processing.py`.
 
-4. **Round and redact measures**
-   - Example:  
-     ```bash
-     opensafely run generate_rounding_practice
-     ```
-     Runs `round_measures.r`.
    - From rounded measures, you can generate decile tables and charts for local visualisation:
      - `opensafely run generate_deciles_charts` → `decile_charts.r`
      - For demographic/comorbidity pipelines, line plots are generated via `table_generation.r` *(action not yet available)*
