@@ -193,16 +193,10 @@ yaml_processing_template = """
     needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
-        measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures{test_suffix}.arrow
-  generate_rounding_{group}_{set}{appt_suffix}{test_suffix}:
-    run: r:v2 analysis/round_measures.r --{group}_measures --set {set}{appt_flag}{test_flag}
-    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures_midpoint6{test_suffix}.arrow
+        measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures_midpoint6{test_suffix}.arrow
   generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
-    needs: [generate_rounding_{group}_{set}{appt_suffix}{test_suffix}]
+    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
     outputs:
       highly_sensitive:
         practice_level_tables: output/{group}_measures_{set}{appt_suffix}/practice_level_counts{test_suffix}.arrow
@@ -247,7 +241,7 @@ yaml_viz_template = """
   generate_deciles_charts_{set}{appt_suffix}{test_suffix}:
     run: >
       r:v2 analysis/decile_charts.r {test_flag} --set {set}{appt_flag}
-    needs: [generate_rounding_practice_{set}{appt_suffix}{test_suffix}] 
+    needs: [generate_pre_processing_practice_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_{set}{appt_suffix}/plots{test_suffix}/decile_chart_*_rate_mp6.png
@@ -256,7 +250,7 @@ yaml_viz_template = """
   generate_decomposition_plots_{set}{appt_suffix}{test_suffix}:
     run: >
       r:v2 analysis/decomposition.r {test_flag} --set {set}{appt_flag}
-    needs: [generate_rounding_practice_{set}{appt_suffix}{test_suffix}]
+    needs: [generate_pre_processing_practice_{set}{appt_suffix}{test_suffix}]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_{set}{appt_suffix}/decompositions/*{test_suffix}.png
@@ -268,14 +262,14 @@ yaml_viz_template = """
   # Visualisation
   generate_tables_demograph{test_suffix}:
     run: r:v2 analysis/table_generation.r --demograph_measures {test_flag}
-    needs: [generate_rounding{test_suffix}]
+    needs: [generate_pre_processing_demograph_{set}{appt_suffix}{test_suffix}]
     outputs:
      moderately_sensitive:
        tables: output/demograph_measures/plots/*_demograph{test_suffix}.csv
        plots: output/demograph_measures/plots/*_demograph{test_suffix}.png
   generate_tables_comorbid{test_suffix}:
     run: r:v2 analysis/table_generation.r --comorbid_measures {test_flag}
-    needs: [generate_rounding{test_suffix}]
+    needs: [generate_pre_processing_comorbid_{set}{appt_suffix}{test_suffix}]
     outputs:
      moderately_sensitive:
         tables: output/comorbid_measures/plots/*_comorbid{test_suffix}.csv
@@ -346,7 +340,7 @@ yaml_yearly_template = """
   # Weekly aggregates
   generate_weekly_aggregates{test_suffix}:
     run: python:v2 analysis/aggregate_weekly.py --practice_measures --weekly_agg --set resp {test_flag} 
-    needs: [generate_rounding_practice_resp{test_suffix}]
+    needs: [generate_pre_processing_practice_resp{test_suffix}]
     outputs:
       moderately_sensitive:
         national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*{test_suffix}.csv

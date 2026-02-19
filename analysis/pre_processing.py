@@ -161,6 +161,35 @@ proc_df[["numerator", "list_size"]] = roundmid_any(proc_df[["numerator", "list_s
 
 print(f"After rounding: {proc_df.head()}")
 
+# Ensure correct datetime format
+proc_df["interval_start"] = pd.to_datetime(
+    proc_df["interval_start"]
+).dt.tz_localize(None)
+proc_df["month"] = proc_df["interval_start"].dt.month
+# If Jan - May, RR is relative to prev years summer. If June - Dec, RR is relative to same years summer.
+proc_df["summer_year"] = np.where(
+    proc_df["month"] <= 5,
+    proc_df["interval_start"].dt.year - 1,
+    proc_df["interval_start"].dt.year,
+)
+
+# Calculate rate per 1000
+proc_df["rate_per_1000_midpoint6_derived"] = (
+    proc_df["numerator_midpoint6"]
+    / proc_df["list_size_midpoint6"]
+    * 1000
+)
+
+# Define pandemic dates
+pandemic_conditions = [
+    proc_df["interval_start"] < pd.to_datetime(config["pandemic_start"]),
+    (proc_df["interval_start"] >= pd.to_datetime(config["pandemic_start"]))
+    & (proc_df["interval_start"] <= pd.to_datetime(config["pandemic_end"])),
+    proc_df["interval_start"] > pd.to_datetime(config["pandemic_end"]),
+]
+choices = ["Before", "During", "After"]
+proc_df["pandemic"] = np.select(pandemic_conditions, choices)
+
 # Convert to dictionary of dataframes for each subgroup to save memory
 if config['practice_subgroup_measures']:
 

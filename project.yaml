@@ -1502,16 +1502,10 @@ actions:
     needs: [generate_practice_measures_all_2016-04-11, generate_practice_measures_all_2017-04-10, generate_practice_measures_all_2018-04-09, generate_practice_measures_all_2019-04-08, generate_practice_measures_all_2020-04-06, generate_practice_measures_all_2021-04-05, generate_practice_measures_all_2022-04-04, generate_practice_measures_all_2023-04-03, generate_practice_measures_all_2024-04-01, generate_practice_measures_all_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_all/proc_practice_measures.arrow
-  generate_rounding_practice_all:
-    run: r:v2 analysis/round_measures.r --practice_measures --set all
-    needs: [generate_pre_processing_practice_all]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_all/proc_practice_measures_midpoint6.arrow
+        measures: output/practice_measures_all/proc_practice_measures_midpoint6.arrow
   generate_normalization_practice_all:
     run: python:v2 analysis/normalization.py --practice_measures --set all
-    needs: [generate_rounding_practice_all]
+    needs: [generate_pre_processing_practice_all]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_all/practice_level_counts.arrow
@@ -1529,16 +1523,10 @@ actions:
     needs: [generate_practice_measures_all_2016-04-11_appt, generate_practice_measures_all_2017-04-10_appt, generate_practice_measures_all_2018-04-09_appt, generate_practice_measures_all_2019-04-08_appt, generate_practice_measures_all_2020-04-06_appt, generate_practice_measures_all_2021-04-05_appt, generate_practice_measures_all_2022-04-04_appt, generate_practice_measures_all_2023-04-03_appt, generate_practice_measures_all_2024-04-01_appt, generate_practice_measures_all_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_all_appt/proc_practice_measures.arrow
-  generate_rounding_practice_all_appt:
-    run: r:v2 analysis/round_measures.r --practice_measures --set all --appt
-    needs: [generate_pre_processing_practice_all_appt]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_all_appt/proc_practice_measures_midpoint6.arrow
+        measures: output/practice_measures_all_appt/proc_practice_measures_midpoint6.arrow
   generate_normalization_practice_all_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set all --appt
-    needs: [generate_rounding_practice_all_appt]
+    needs: [generate_pre_processing_practice_all_appt]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_all_appt/practice_level_counts.arrow
@@ -1556,16 +1544,10 @@ actions:
     needs: [generate_practice_measures_sro_2016-04-11, generate_practice_measures_sro_2017-04-10, generate_practice_measures_sro_2018-04-09, generate_practice_measures_sro_2019-04-08, generate_practice_measures_sro_2020-04-06, generate_practice_measures_sro_2021-04-05, generate_practice_measures_sro_2022-04-04, generate_practice_measures_sro_2023-04-03, generate_practice_measures_sro_2024-04-01, generate_practice_measures_sro_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro/proc_practice_measures.arrow
-  generate_rounding_practice_sro:
-    run: r:v2 analysis/round_measures.r --practice_measures --set sro
-    needs: [generate_pre_processing_practice_sro]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_sro/proc_practice_measures_midpoint6.arrow
+        measures: output/practice_measures_sro/proc_practice_measures_midpoint6.arrow
   generate_normalization_practice_sro:
     run: python:v2 analysis/normalization.py --practice_measures --set sro
-    needs: [generate_rounding_practice_sro]
+    needs: [generate_pre_processing_practice_sro]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro/practice_level_counts.arrow
@@ -1583,16 +1565,10 @@ actions:
     needs: [generate_practice_measures_sro_2016-04-11_appt, generate_practice_measures_sro_2017-04-10_appt, generate_practice_measures_sro_2018-04-09_appt, generate_practice_measures_sro_2019-04-08_appt, generate_practice_measures_sro_2020-04-06_appt, generate_practice_measures_sro_2021-04-05_appt, generate_practice_measures_sro_2022-04-04_appt, generate_practice_measures_sro_2023-04-03_appt, generate_practice_measures_sro_2024-04-01_appt, generate_practice_measures_sro_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro_appt/proc_practice_measures.arrow
-  generate_rounding_practice_sro_appt:
-    run: r:v2 analysis/round_measures.r --practice_measures --set sro --appt
-    needs: [generate_pre_processing_practice_sro_appt]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6.arrow
+        measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6.arrow
   generate_normalization_practice_sro_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --appt
-    needs: [generate_rounding_practice_sro_appt]
+    needs: [generate_pre_processing_practice_sro_appt]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro_appt/practice_level_counts.arrow
@@ -1610,16 +1586,10 @@ actions:
     needs: [generate_practice_measures_resp_2016-04-11, generate_practice_measures_resp_2017-04-10, generate_practice_measures_resp_2018-04-09, generate_practice_measures_resp_2019-04-08, generate_practice_measures_resp_2020-04-06, generate_practice_measures_resp_2021-04-05, generate_practice_measures_resp_2022-04-04, generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2024-04-01, generate_practice_measures_resp_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp/proc_practice_measures.arrow
-  generate_rounding_practice_resp:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp
-    needs: [generate_pre_processing_practice_resp]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6.arrow
+        measures: output/practice_measures_resp/proc_practice_measures_midpoint6.arrow
   generate_normalization_practice_resp:
     run: python:v2 analysis/normalization.py --practice_measures --set resp
-    needs: [generate_rounding_practice_resp]
+    needs: [generate_pre_processing_practice_resp]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp/practice_level_counts.arrow
@@ -1637,16 +1607,10 @@ actions:
     needs: [generate_practice_measures_resp_2016-04-11_appt, generate_practice_measures_resp_2017-04-10_appt, generate_practice_measures_resp_2018-04-09_appt, generate_practice_measures_resp_2019-04-08_appt, generate_practice_measures_resp_2020-04-06_appt, generate_practice_measures_resp_2021-04-05_appt, generate_practice_measures_resp_2022-04-04_appt, generate_practice_measures_resp_2023-04-03_appt, generate_practice_measures_resp_2024-04-01_appt, generate_practice_measures_resp_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp_appt/proc_practice_measures.arrow
-  generate_rounding_practice_resp_appt:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp --appt
-    needs: [generate_pre_processing_practice_resp_appt]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6.arrow
+        measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6.arrow
   generate_normalization_practice_resp_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --appt
-    needs: [generate_rounding_practice_resp_appt]
+    needs: [generate_pre_processing_practice_resp_appt]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp_appt/practice_level_counts.arrow
@@ -1664,16 +1628,10 @@ actions:
     needs: [generate_practice_subgroup_measures_all_2016-04-11, generate_practice_subgroup_measures_all_2017-04-10, generate_practice_subgroup_measures_all_2018-04-09, generate_practice_subgroup_measures_all_2019-04-08, generate_practice_subgroup_measures_all_2020-04-06, generate_practice_subgroup_measures_all_2021-04-05, generate_practice_subgroup_measures_all_2022-04-04, generate_practice_subgroup_measures_all_2023-04-03, generate_practice_subgroup_measures_all_2024-04-01, generate_practice_subgroup_measures_all_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_all/proc_practice_subgroup_measures.arrow
-  generate_rounding_practice_subgroup_all:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set all
-    needs: [generate_pre_processing_practice_subgroup_all]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_all/proc_practice_subgroup_measures_midpoint6.arrow
+        measures: output/practice_subgroup_measures_all/proc_practice_subgroup_measures_midpoint6.arrow
   generate_normalization_practice_subgroup_all:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set all
-    needs: [generate_rounding_practice_subgroup_all]
+    needs: [generate_pre_processing_practice_subgroup_all]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_all/practice_level_counts.arrow
@@ -1691,16 +1649,10 @@ actions:
     needs: [generate_practice_subgroup_measures_all_2016-04-11_appt, generate_practice_subgroup_measures_all_2017-04-10_appt, generate_practice_subgroup_measures_all_2018-04-09_appt, generate_practice_subgroup_measures_all_2019-04-08_appt, generate_practice_subgroup_measures_all_2020-04-06_appt, generate_practice_subgroup_measures_all_2021-04-05_appt, generate_practice_subgroup_measures_all_2022-04-04_appt, generate_practice_subgroup_measures_all_2023-04-03_appt, generate_practice_subgroup_measures_all_2024-04-01_appt, generate_practice_subgroup_measures_all_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_all_appt/proc_practice_subgroup_measures.arrow
-  generate_rounding_practice_subgroup_all_appt:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set all --appt
-    needs: [generate_pre_processing_practice_subgroup_all_appt]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_all_appt/proc_practice_subgroup_measures_midpoint6.arrow
+        measures: output/practice_subgroup_measures_all_appt/proc_practice_subgroup_measures_midpoint6.arrow
   generate_normalization_practice_subgroup_all_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set all --appt
-    needs: [generate_rounding_practice_subgroup_all_appt]
+    needs: [generate_pre_processing_practice_subgroup_all_appt]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_all_appt/practice_level_counts.arrow
@@ -1718,16 +1670,10 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_2016-04-11, generate_practice_subgroup_measures_sro_2017-04-10, generate_practice_subgroup_measures_sro_2018-04-09, generate_practice_subgroup_measures_sro_2019-04-08, generate_practice_subgroup_measures_sro_2020-04-06, generate_practice_subgroup_measures_sro_2021-04-05, generate_practice_subgroup_measures_sro_2022-04-04, generate_practice_subgroup_measures_sro_2023-04-03, generate_practice_subgroup_measures_sro_2024-04-01, generate_practice_subgroup_measures_sro_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures.arrow
-  generate_rounding_practice_subgroup_sro:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set sro
-    needs: [generate_pre_processing_practice_subgroup_sro]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6.arrow
+        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6.arrow
   generate_normalization_practice_subgroup_sro:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro
-    needs: [generate_rounding_practice_subgroup_sro]
+    needs: [generate_pre_processing_practice_subgroup_sro]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro/practice_level_counts.arrow
@@ -1745,16 +1691,10 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_2016-04-11_appt, generate_practice_subgroup_measures_sro_2017-04-10_appt, generate_practice_subgroup_measures_sro_2018-04-09_appt, generate_practice_subgroup_measures_sro_2019-04-08_appt, generate_practice_subgroup_measures_sro_2020-04-06_appt, generate_practice_subgroup_measures_sro_2021-04-05_appt, generate_practice_subgroup_measures_sro_2022-04-04_appt, generate_practice_subgroup_measures_sro_2023-04-03_appt, generate_practice_subgroup_measures_sro_2024-04-01_appt, generate_practice_subgroup_measures_sro_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures.arrow
-  generate_rounding_practice_subgroup_sro_appt:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set sro --appt
-    needs: [generate_pre_processing_practice_subgroup_sro_appt]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6.arrow
+        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6.arrow
   generate_normalization_practice_subgroup_sro_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt
-    needs: [generate_rounding_practice_subgroup_sro_appt]
+    needs: [generate_pre_processing_practice_subgroup_sro_appt]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro_appt/practice_level_counts.arrow
@@ -1772,16 +1712,10 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_2016-04-11, generate_practice_subgroup_measures_resp_2017-04-10, generate_practice_subgroup_measures_resp_2018-04-09, generate_practice_subgroup_measures_resp_2019-04-08, generate_practice_subgroup_measures_resp_2020-04-06, generate_practice_subgroup_measures_resp_2021-04-05, generate_practice_subgroup_measures_resp_2022-04-04, generate_practice_subgroup_measures_resp_2023-04-03, generate_practice_subgroup_measures_resp_2024-04-01, generate_practice_subgroup_measures_resp_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures.arrow
-  generate_rounding_practice_subgroup_resp:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set resp
-    needs: [generate_pre_processing_practice_subgroup_resp]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6.arrow
+        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6.arrow
   generate_normalization_practice_subgroup_resp:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp
-    needs: [generate_rounding_practice_subgroup_resp]
+    needs: [generate_pre_processing_practice_subgroup_resp]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp/practice_level_counts.arrow
@@ -1799,16 +1733,10 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_2016-04-11_appt, generate_practice_subgroup_measures_resp_2017-04-10_appt, generate_practice_subgroup_measures_resp_2018-04-09_appt, generate_practice_subgroup_measures_resp_2019-04-08_appt, generate_practice_subgroup_measures_resp_2020-04-06_appt, generate_practice_subgroup_measures_resp_2021-04-05_appt, generate_practice_subgroup_measures_resp_2022-04-04_appt, generate_practice_subgroup_measures_resp_2023-04-03_appt, generate_practice_subgroup_measures_resp_2024-04-01_appt, generate_practice_subgroup_measures_resp_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures.arrow
-  generate_rounding_practice_subgroup_resp_appt:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set resp --appt
-    needs: [generate_pre_processing_practice_subgroup_resp_appt]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6.arrow
+        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6.arrow
   generate_normalization_practice_subgroup_resp_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt
-    needs: [generate_rounding_practice_subgroup_resp_appt]
+    needs: [generate_pre_processing_practice_subgroup_resp_appt]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp_appt/practice_level_counts.arrow
@@ -1820,7 +1748,7 @@ actions:
   generate_deciles_charts_all:
     run: >
       r:v2 analysis/decile_charts.r  --set all
-    needs: [generate_rounding_practice_all] 
+    needs: [generate_pre_processing_practice_all] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all/plots/decile_chart_*_rate_mp6.png
@@ -1829,7 +1757,7 @@ actions:
   generate_decomposition_plots_all:
     run: >
       r:v2 analysis/decomposition.r  --set all
-    needs: [generate_rounding_practice_all]
+    needs: [generate_pre_processing_practice_all]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_all/decompositions/*.png
@@ -1839,7 +1767,7 @@ actions:
   generate_deciles_charts_all_appt:
     run: >
       r:v2 analysis/decile_charts.r  --set all --appt
-    needs: [generate_rounding_practice_all_appt] 
+    needs: [generate_pre_processing_practice_all_appt] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all_appt/plots/decile_chart_*_rate_mp6.png
@@ -1848,7 +1776,7 @@ actions:
   generate_decomposition_plots_all_appt:
     run: >
       r:v2 analysis/decomposition.r  --set all --appt
-    needs: [generate_rounding_practice_all_appt]
+    needs: [generate_pre_processing_practice_all_appt]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_all_appt/decompositions/*.png
@@ -1858,7 +1786,7 @@ actions:
   generate_deciles_charts_sro:
     run: >
       r:v2 analysis/decile_charts.r  --set sro
-    needs: [generate_rounding_practice_sro] 
+    needs: [generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro/plots/decile_chart_*_rate_mp6.png
@@ -1867,7 +1795,7 @@ actions:
   generate_decomposition_plots_sro:
     run: >
       r:v2 analysis/decomposition.r  --set sro
-    needs: [generate_rounding_practice_sro]
+    needs: [generate_pre_processing_practice_sro]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_sro/decompositions/*.png
@@ -1877,7 +1805,7 @@ actions:
   generate_deciles_charts_sro_appt:
     run: >
       r:v2 analysis/decile_charts.r  --set sro --appt
-    needs: [generate_rounding_practice_sro_appt] 
+    needs: [generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*_rate_mp6.png
@@ -1886,7 +1814,7 @@ actions:
   generate_decomposition_plots_sro_appt:
     run: >
       r:v2 analysis/decomposition.r  --set sro --appt
-    needs: [generate_rounding_practice_sro_appt]
+    needs: [generate_pre_processing_practice_sro_appt]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_sro_appt/decompositions/*.png
@@ -1896,7 +1824,7 @@ actions:
   generate_deciles_charts_resp:
     run: >
       r:v2 analysis/decile_charts.r  --set resp
-    needs: [generate_rounding_practice_resp] 
+    needs: [generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp/plots/decile_chart_*_rate_mp6.png
@@ -1905,7 +1833,7 @@ actions:
   generate_decomposition_plots_resp:
     run: >
       r:v2 analysis/decomposition.r  --set resp
-    needs: [generate_rounding_practice_resp]
+    needs: [generate_pre_processing_practice_resp]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_resp/decompositions/*.png
@@ -1915,7 +1843,7 @@ actions:
   generate_deciles_charts_resp_appt:
     run: >
       r:v2 analysis/decile_charts.r  --set resp --appt
-    needs: [generate_rounding_practice_resp_appt] 
+    needs: [generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*_rate_mp6.png
@@ -1924,7 +1852,7 @@ actions:
   generate_decomposition_plots_resp_appt:
     run: >
       r:v2 analysis/decomposition.r  --set resp --appt
-    needs: [generate_rounding_practice_resp_appt]
+    needs: [generate_pre_processing_practice_resp_appt]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_resp_appt/decompositions/*.png
@@ -1934,7 +1862,7 @@ actions:
   generate_deciles_charts_all_test:
     run: >
       r:v2 analysis/decile_charts.r --test --set all
-    needs: [generate_rounding_practice_all_test] 
+    needs: [generate_pre_processing_practice_all_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all/plots_test/decile_chart_*_rate_mp6.png
@@ -1943,7 +1871,7 @@ actions:
   generate_decomposition_plots_all_test:
     run: >
       r:v2 analysis/decomposition.r --test --set all
-    needs: [generate_rounding_practice_all_test]
+    needs: [generate_pre_processing_practice_all_test]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_all/decompositions/*_test.png
@@ -1953,7 +1881,7 @@ actions:
   generate_deciles_charts_all_appt_test:
     run: >
       r:v2 analysis/decile_charts.r --test --set all --appt
-    needs: [generate_rounding_practice_all_appt_test] 
+    needs: [generate_pre_processing_practice_all_appt_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_all_appt/plots_test/decile_chart_*_rate_mp6.png
@@ -1962,7 +1890,7 @@ actions:
   generate_decomposition_plots_all_appt_test:
     run: >
       r:v2 analysis/decomposition.r --test --set all --appt
-    needs: [generate_rounding_practice_all_appt_test]
+    needs: [generate_pre_processing_practice_all_appt_test]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_all_appt/decompositions/*_test.png
@@ -1972,7 +1900,7 @@ actions:
   generate_deciles_charts_sro_test:
     run: >
       r:v2 analysis/decile_charts.r --test --set sro
-    needs: [generate_rounding_practice_sro_test] 
+    needs: [generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro/plots_test/decile_chart_*_rate_mp6.png
@@ -1981,7 +1909,7 @@ actions:
   generate_decomposition_plots_sro_test:
     run: >
       r:v2 analysis/decomposition.r --test --set sro
-    needs: [generate_rounding_practice_sro_test]
+    needs: [generate_pre_processing_practice_sro_test]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_sro/decompositions/*_test.png
@@ -1991,7 +1919,7 @@ actions:
   generate_deciles_charts_sro_appt_test:
     run: >
       r:v2 analysis/decile_charts.r --test --set sro --appt
-    needs: [generate_rounding_practice_sro_appt_test] 
+    needs: [generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_sro_appt/plots_test/decile_chart_*_rate_mp6.png
@@ -2000,7 +1928,7 @@ actions:
   generate_decomposition_plots_sro_appt_test:
     run: >
       r:v2 analysis/decomposition.r --test --set sro --appt
-    needs: [generate_rounding_practice_sro_appt_test]
+    needs: [generate_pre_processing_practice_sro_appt_test]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_sro_appt/decompositions/*_test.png
@@ -2010,7 +1938,7 @@ actions:
   generate_deciles_charts_resp_test:
     run: >
       r:v2 analysis/decile_charts.r --test --set resp
-    needs: [generate_rounding_practice_resp_test] 
+    needs: [generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp/plots_test/decile_chart_*_rate_mp6.png
@@ -2019,7 +1947,7 @@ actions:
   generate_decomposition_plots_resp_test:
     run: >
       r:v2 analysis/decomposition.r --test --set resp
-    needs: [generate_rounding_practice_resp_test]
+    needs: [generate_pre_processing_practice_resp_test]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_resp/decompositions/*_test.png
@@ -2029,7 +1957,7 @@ actions:
   generate_deciles_charts_resp_appt_test:
     run: >
       r:v2 analysis/decile_charts.r --test --set resp --appt
-    needs: [generate_rounding_practice_resp_appt_test] 
+    needs: [generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_appt/plots_test/decile_chart_*_rate_mp6.png
@@ -2038,7 +1966,7 @@ actions:
   generate_decomposition_plots_resp_appt_test:
     run: >
       r:v2 analysis/decomposition.r --test --set resp --appt
-    needs: [generate_rounding_practice_resp_appt_test]
+    needs: [generate_pre_processing_practice_resp_appt_test]
     outputs:
       moderately_sensitive:
         decomposition_plots: output/practice_measures_resp_appt/decompositions/*_test.png
@@ -2487,16 +2415,10 @@ actions:
     needs: [generate_practice_measures_all_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_all/proc_practice_measures_test.arrow
-  generate_rounding_practice_all_test:
-    run: r:v2 analysis/round_measures.r --practice_measures --set all --test
-    needs: [generate_pre_processing_practice_all_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_all/proc_practice_measures_midpoint6_test.arrow
+        measures: output/practice_measures_all/proc_practice_measures_midpoint6_test.arrow
   generate_normalization_practice_all_test:
     run: python:v2 analysis/normalization.py --practice_measures --set all --test
-    needs: [generate_rounding_practice_all_test]
+    needs: [generate_pre_processing_practice_all_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_all/practice_level_counts_test.arrow
@@ -2514,16 +2436,10 @@ actions:
     needs: [generate_practice_measures_all_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_all_appt/proc_practice_measures_test.arrow
-  generate_rounding_practice_all_appt_test:
-    run: r:v2 analysis/round_measures.r --practice_measures --set all --appt --test
-    needs: [generate_pre_processing_practice_all_appt_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_all_appt/proc_practice_measures_midpoint6_test.arrow
+        measures: output/practice_measures_all_appt/proc_practice_measures_midpoint6_test.arrow
   generate_normalization_practice_all_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set all --appt --test
-    needs: [generate_rounding_practice_all_appt_test]
+    needs: [generate_pre_processing_practice_all_appt_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_all_appt/practice_level_counts_test.arrow
@@ -2541,16 +2457,10 @@ actions:
     needs: [generate_practice_measures_sro_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro/proc_practice_measures_test.arrow
-  generate_rounding_practice_sro_test:
-    run: r:v2 analysis/round_measures.r --practice_measures --set sro --test
-    needs: [generate_pre_processing_practice_sro_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_sro/proc_practice_measures_midpoint6_test.arrow
+        measures: output/practice_measures_sro/proc_practice_measures_midpoint6_test.arrow
   generate_normalization_practice_sro_test:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --test
-    needs: [generate_rounding_practice_sro_test]
+    needs: [generate_pre_processing_practice_sro_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro/practice_level_counts_test.arrow
@@ -2568,16 +2478,10 @@ actions:
     needs: [generate_practice_measures_sro_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro_appt/proc_practice_measures_test.arrow
-  generate_rounding_practice_sro_appt_test:
-    run: r:v2 analysis/round_measures.r --practice_measures --set sro --appt --test
-    needs: [generate_pre_processing_practice_sro_appt_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6_test.arrow
+        measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6_test.arrow
   generate_normalization_practice_sro_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --appt --test
-    needs: [generate_rounding_practice_sro_appt_test]
+    needs: [generate_pre_processing_practice_sro_appt_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro_appt/practice_level_counts_test.arrow
@@ -2595,16 +2499,10 @@ actions:
     needs: [generate_practice_measures_resp_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp/proc_practice_measures_test.arrow
-  generate_rounding_practice_resp_test:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp --test
-    needs: [generate_pre_processing_practice_resp_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_resp/proc_practice_measures_midpoint6_test.arrow
+        measures: output/practice_measures_resp/proc_practice_measures_midpoint6_test.arrow
   generate_normalization_practice_resp_test:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --test
-    needs: [generate_rounding_practice_resp_test]
+    needs: [generate_pre_processing_practice_resp_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp/practice_level_counts_test.arrow
@@ -2622,16 +2520,10 @@ actions:
     needs: [generate_practice_measures_resp_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp_appt/proc_practice_measures_test.arrow
-  generate_rounding_practice_resp_appt_test:
-    run: r:v2 analysis/round_measures.r --practice_measures --set resp --appt --test
-    needs: [generate_pre_processing_practice_resp_appt_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6_test.arrow
+        measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6_test.arrow
   generate_normalization_practice_resp_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --appt --test
-    needs: [generate_rounding_practice_resp_appt_test]
+    needs: [generate_pre_processing_practice_resp_appt_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp_appt/practice_level_counts_test.arrow
@@ -2649,16 +2541,10 @@ actions:
     needs: [generate_practice_subgroup_measures_all_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_all/proc_practice_subgroup_measures_test.arrow
-  generate_rounding_practice_subgroup_all_test:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set all --test
-    needs: [generate_pre_processing_practice_subgroup_all_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_all/proc_practice_subgroup_measures_midpoint6_test.arrow
+        measures: output/practice_subgroup_measures_all/proc_practice_subgroup_measures_midpoint6_test.arrow
   generate_normalization_practice_subgroup_all_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set all --test
-    needs: [generate_rounding_practice_subgroup_all_test]
+    needs: [generate_pre_processing_practice_subgroup_all_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_all/practice_level_counts_test.arrow
@@ -2676,16 +2562,10 @@ actions:
     needs: [generate_practice_subgroup_measures_all_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_all_appt/proc_practice_subgroup_measures_test.arrow
-  generate_rounding_practice_subgroup_all_appt_test:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set all --appt --test
-    needs: [generate_pre_processing_practice_subgroup_all_appt_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_all_appt/proc_practice_subgroup_measures_midpoint6_test.arrow
+        measures: output/practice_subgroup_measures_all_appt/proc_practice_subgroup_measures_midpoint6_test.arrow
   generate_normalization_practice_subgroup_all_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set all --appt --test
-    needs: [generate_rounding_practice_subgroup_all_appt_test]
+    needs: [generate_pre_processing_practice_subgroup_all_appt_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_all_appt/practice_level_counts_test.arrow
@@ -2703,16 +2583,10 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_test.arrow
-  generate_rounding_practice_subgroup_sro_test:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set sro --test
-    needs: [generate_pre_processing_practice_subgroup_sro_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6_test.arrow
+        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6_test.arrow
   generate_normalization_practice_subgroup_sro_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --test
-    needs: [generate_rounding_practice_subgroup_sro_test]
+    needs: [generate_pre_processing_practice_subgroup_sro_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro/practice_level_counts_test.arrow
@@ -2730,16 +2604,10 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_test.arrow
-  generate_rounding_practice_subgroup_sro_appt_test:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set sro --appt --test
-    needs: [generate_pre_processing_practice_subgroup_sro_appt_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6_test.arrow
+        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6_test.arrow
   generate_normalization_practice_subgroup_sro_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt --test
-    needs: [generate_rounding_practice_subgroup_sro_appt_test]
+    needs: [generate_pre_processing_practice_subgroup_sro_appt_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro_appt/practice_level_counts_test.arrow
@@ -2757,16 +2625,10 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_test.arrow
-  generate_rounding_practice_subgroup_resp_test:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set resp --test
-    needs: [generate_pre_processing_practice_subgroup_resp_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6_test.arrow
+        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6_test.arrow
   generate_normalization_practice_subgroup_resp_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --test
-    needs: [generate_rounding_practice_subgroup_resp_test]
+    needs: [generate_pre_processing_practice_subgroup_resp_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp/practice_level_counts_test.arrow
@@ -2784,16 +2646,10 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_test.arrow
-  generate_rounding_practice_subgroup_resp_appt_test:
-    run: r:v2 analysis/round_measures.r --practice_subgroup_measures --set resp --appt --test
-    needs: [generate_pre_processing_practice_subgroup_resp_appt_test]
-    outputs:
-      highly_sensitive:
-        rounded_measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6_test.arrow
+        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6_test.arrow
   generate_normalization_practice_subgroup_resp_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt --test
-    needs: [generate_rounding_practice_subgroup_resp_appt_test]
+    needs: [generate_pre_processing_practice_subgroup_resp_appt_test]
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp_appt/practice_level_counts_test.arrow
@@ -2867,7 +2723,7 @@ actions:
   # Weekly aggregates
   generate_weekly_aggregates:
     run: python:v2 analysis/aggregate_weekly.py --practice_measures --weekly_agg --set resp  
-    needs: [generate_rounding_practice_resp]
+    needs: [generate_pre_processing_practice_resp]
     outputs:
       moderately_sensitive:
         national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.csv
@@ -2885,7 +2741,7 @@ actions:
   # Weekly aggregates
   generate_weekly_aggregates_test:
     run: python:v2 analysis/aggregate_weekly.py --practice_measures --weekly_agg --set resp --test 
-    needs: [generate_rounding_practice_resp_test]
+    needs: [generate_pre_processing_practice_resp_test]
     outputs:
       moderately_sensitive:
         national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.csv

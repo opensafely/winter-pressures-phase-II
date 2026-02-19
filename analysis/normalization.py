@@ -36,36 +36,7 @@ practice_interval_df = read_write("read", input_path)
 
 log_memory_usage(label="After loading data")
 
-# -------- Define useful variables ----------------------------------
-
-# Ensure correct datetime format
-practice_interval_df["interval_start"] = pd.to_datetime(
-    practice_interval_df["interval_start"]
-).dt.tz_localize(None)
-practice_interval_df["month"] = practice_interval_df["interval_start"].dt.month
-# If Jan - May, RR is relative to prev years summer. If June - Dec, RR is relative to same years summer.
-practice_interval_df["summer_year"] = np.where(
-    practice_interval_df["month"] <= 5,
-    practice_interval_df["interval_start"].dt.year - 1,
-    practice_interval_df["interval_start"].dt.year,
-)
-
-# Calculate rate per 1000
-practice_interval_df["rate_per_1000_midpoint6_derived"] = (
-    practice_interval_df["numerator_midpoint6"]
-    / practice_interval_df["list_size_midpoint6"]
-    * 1000
-)
-
-# Define pandemic dates
-pandemic_conditions = [
-    practice_interval_df["interval_start"] < pd.to_datetime(config["pandemic_start"]),
-    (practice_interval_df["interval_start"] >= pd.to_datetime(config["pandemic_start"]))
-    & (practice_interval_df["interval_start"] <= pd.to_datetime(config["pandemic_end"])),
-    practice_interval_df["interval_start"] > pd.to_datetime(config["pandemic_end"]),
-]
-choices = ["Before", "During", "After"]
-practice_interval_df["pandemic"] = np.select(pandemic_conditions, choices)
+# -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
 
 # Remove interval containing xmas shutdown
 date_col = practice_interval_df["interval_start"]
