@@ -121,11 +121,8 @@ for group in ["demograph", "practice", "comorbid", "practice_subgroup"]:
 if config.get("appt", False):
     config["appt_suffix"] = "_appt"
 
-if config.get("yearly", False):
-    if config.get("weekly_agg", False):
-        config["yearly_suffix"] = "_weeklyagg"
-    else:
-        config["yearly_suffix"] = "_yearly"
+if config.get("weekly_agg", False):
+    config["agg_suffix"] = "_weeklyagg"
 
 if config.get("test", False):
     config["test_suffix"] = "_test"

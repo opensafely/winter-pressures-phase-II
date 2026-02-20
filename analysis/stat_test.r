@@ -1,7 +1,11 @@
 # USAGE: Rscript analysis/stat_test.r
-# Options:
-# --test: Use lightweight test data as input
-# --practice_measures OR --demograph_measures OR --comorbid_measures flags to select pipeline
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 
 library(dplyr)
 library(purrr)

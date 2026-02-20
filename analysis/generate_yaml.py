@@ -187,21 +187,21 @@ yaml_processing_template = """
     needs: [{needs}{test_suffix}]
     outputs:
       moderately_sensitive:
-        freq_table: output/{group}_measures_{set}{appt_suffix}/freq_table_{group}{test_suffix}.csv
+        freq_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/freq_table_{group}{test_suffix}.csv
   generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/pre_processing.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
-        measures: output/{group}_measures_{set}{appt_suffix}/proc_{group}_measures_midpoint6{test_suffix}.pickle
+        measures: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/proc_{group}_measures_midpoint6{test_suffix}.pickle
   generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
     outputs:
       highly_sensitive:
-        practice_level_tables: output/{group}_measures_{set}{appt_suffix}/practice_level_counts{test_suffix}.arrow
+        practice_level_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/practice_level_counts{test_suffix}.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/{group}_measures_{set}{appt_suffix}/Results*{test_suffix}.csv
+        seasonal_tables_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/Results*{test_suffix}.csv
 """
 
 yaml_processing = ""
@@ -218,6 +218,7 @@ for group in groups:
                 set=set,
                 appt_suffix=appt_suffix,
                 appt_flag=appt_flag,
+                agg_suffix="",
             )
 
 for group in groups:
@@ -232,6 +233,7 @@ for group in groups:
                 set=set,
                 appt_suffix=appt_suffix,
                 appt_flag=appt_flag,
+                agg_suffix="",
             )
 
 yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
@@ -244,8 +246,8 @@ yaml_viz_template = """
     needs: [generate_pre_processing_practice_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_{set}{appt_suffix}/plots{test_suffix}/decile_chart_*_rate_mp6.png
-        deciles_table: output/practice_measures_{set}{appt_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+        deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/decile_chart_*_rate_mp6.png
+        deciles_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
   
   generate_decomposition_plots_{set}{appt_suffix}{test_suffix}:
     run: >
@@ -253,8 +255,8 @@ yaml_viz_template = """
     needs: [generate_pre_processing_practice_{set}{appt_suffix}{test_suffix}]
     outputs:
       moderately_sensitive:
-        decomposition_plots: output/practice_measures_{set}{appt_suffix}/decompositions/*{test_suffix}.png
-        decomposition_summaries: output/practice_measures_{set}{appt_suffix}/decompositions/summary_*{test_suffix}.txt
+        decomposition_plots: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/*{test_suffix}.png
+        decomposition_summaries: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/summary_*{test_suffix}.txt
 """
 
 """ TEMPORARILY COMMENTED OUT:
@@ -296,6 +298,8 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
                 set=set,
                 appt_suffix=appt_suffix,
                 appt_flag=appt_flag,
+                group="practice",
+                agg_suffix="",
             )
 
 yaml_sense_check = " \n # --------------- SENSE CHECK ACTIONS ------------------------------------------"
@@ -307,7 +311,7 @@ yaml_sense_check_template = """
     needs: [generate_practice_measures_{set}{appt_suffix}_test]
     outputs:
       moderately_sensitive:
-        totals: output/practice_measures_{set}{appt_suffix}/sense_check*.csv
+        totals: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/sense_check*.csv
 """
 
 for set in measure_sets:
@@ -316,6 +320,8 @@ for set in measure_sets:
               set=set,
               appt_suffix=appt_suffix,
               appt_flag=appt_flag,
+              group="practice",
+              agg_suffix="",
             )
 
 yaml_other = """
@@ -332,6 +338,17 @@ yaml_other = """
     outputs:
       highly_sensitive:
         population: output/dataset.csv
+
+  # Analyse low appts practices
+  analyse_low_appts:
+    run: >
+      python:v2 analysis/analyse_low_appts.py
+      --set appts_table
+      --practice_subgroup_measures
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      moderately_sensitive:
+        low_appt_analysis: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_demographics.csv
 """
 
 yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------"
@@ -343,17 +360,17 @@ yaml_yearly_template = """
     needs: [generate_pre_processing_practice_resp{test_suffix}]
     outputs:
       moderately_sensitive:
-        national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*{test_suffix}.csv
+        national_weekly_aggregates: output/{group}_measures_resp{agg_suffix}/*{test_suffix}.csv
       highly_sensitive:
-        practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*{test_suffix}.arrow
+        practice_weekly_aggregates: output/{group}_measures_resp{agg_suffix}/*{test_suffix}.arrow
   generate_deciles_charts_resp_weeklyagg{test_suffix}:
     run: >
       r:v2 analysis/decile_charts.r --set resp{test_flag} --weekly_agg
     needs: [generate_weekly_aggregates{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_weeklyagg/plots{test_suffix}/decile_chart_*_rate_mp6.png
-        deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+        deciles_charts: output/{group}_measures_resp{agg_suffix}/plots{test_suffix}/decile_chart_*_rate_mp6.png
+        deciles_table: output/{group}_measures_resp{agg_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
 """
 
 for test_suffix, test_flag in zip(suffixes, test_flags):
@@ -361,6 +378,8 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
     yaml_yearly += yaml_yearly_template.format(
         test_suffix=test_suffix,
         test_flag=test_flag,
+        group="practice",
+        agg_suffix="_weeklyagg",
     )
 
 # -------- Combine scripts and print file -----------

@@ -1,12 +1,12 @@
 # This script generates decile charts for practice measures.
 # USAGE: Rscript analysis/decile_charts.r
-# Option --test uses test data
-# Option --set specifies the measure set (all, sro, resp)
-# Option --RR uses Rate Ratio data
-# Option --released uses already released data
-# Option --appt restricts measures to those with an appointment in interval
-# Option --yearly uses yearly measures data
-# Option --weekly_agg
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -27,7 +27,7 @@ print(if (config$test) "Using test data" else "Using full data")
 if (config$released == FALSE){
 
   # Determine file paths
-  input_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/proc_practice_measures_midpoint6")
+  input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/proc_{config$group}_measures_midpoint6")
   practice_measures <- read_write("read", input_path)
 
   if (config$test) {
@@ -84,7 +84,7 @@ if (config$released == FALSE){
     measure_data <- practice_deciles %>% filter(measure == !!measure)
     
     read_write("write",
-      glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
+      glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/decile_table_{measure}_rate_mp6"),
       df = measure_data,
       file_type = "csv"
     )
@@ -92,7 +92,7 @@ if (config$released == FALSE){
 } else if (config$released == TRUE) {
 
   # List all measure-specific files
-  files <- list.files(glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/decile_tables/"), 
+  files <- list.files(glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/"), 
                       full.names = TRUE)
 
   # Read and combine into one dataframe
@@ -170,7 +170,7 @@ if (config$appt) {
 }
 
 # Setup output directory
-plots_dir <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/plots{config$test_suffix}")
+plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/plots{config$test_suffix}")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }

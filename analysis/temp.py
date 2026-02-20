@@ -24,7 +24,7 @@ if config["test"]:
     # For testing, use only one date
     dates = [config["test_config"]["start_date"]]
 
-output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/proc_{config['group']}_measures"
+output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures"
 proc_df = read_write(read_or_write="read", path=output_path, file_type="dict")
 log_memory_usage(label="Before loading data")
 
