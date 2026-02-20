@@ -292,7 +292,7 @@ def read_write(
 
             return df
 
-        elif file_type == "dict":
+        elif file_type == "pickle":
             with open(path + ".pickle", 'rb') as handle:
                 df = pickle.load(handle)
             return df

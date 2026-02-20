@@ -338,6 +338,17 @@ yaml_other = """
     outputs:
       highly_sensitive:
         population: output/dataset.csv
+
+  # Analyse low appts practices
+  analyse_low_appts:
+    run: >
+      python:v2 analysis/analyse_low_appts.py
+      --set appts_table
+      --practice_subgroup_measures
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      moderately_sensitive:
+        low_appt_analysis: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_demographics.csv
 """
 
 yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------"
