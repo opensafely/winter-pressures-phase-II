@@ -2,11 +2,13 @@
 # Differs from direct yearly measures outputs by not including demographic breakdowns.
 # Instead, it has more accurate total counts by avoiding inclusion criteria issues.
 # Run using python analysis/aggregate_weekly.py
-# Option --comorbid_measures/demograph_measures/practice_measures to choose which type of measures to process
-# Option --test flag to run a lightweight test with a single date
-# Option --set appts_table/sro/resp to choose which set of measures to process
-# Option --yearly flag to process only yearly measures
-# Option --weekly_agg to indicate that yearly measures are to be aggregated from weekly measures
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 
 import pandas as pd
 from utils import *

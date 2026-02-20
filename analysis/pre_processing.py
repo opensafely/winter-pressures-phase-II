@@ -1,8 +1,12 @@
 # This script processes the raw measures output to generate patient-characteristic stratified measures
 # Usage python analysis/pre_processing.py
-# Option --practice_measures/practice_subgroup_measures/comorbid_measures/demograph_measures to choose which type of measures to process
-# Option --test flag to run a lightweight test with a single date
-# Option --set appts_table/sro/resp to choose which set of measures to process
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 
 import json
 

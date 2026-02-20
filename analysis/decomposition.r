@@ -1,8 +1,11 @@
 # Run using Rscript analysis/decomposition.r
 # Options
-# --practice_measures/comorbid_measures/demograph_measures
-# --set: appts_table/sro/resp
-# --test: (True/False)
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 # Depends on round_measures.r
 
 library(dplyr)

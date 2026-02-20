@@ -1,12 +1,12 @@
 # This script generates decile charts for practice measures.
 # USAGE: Rscript analysis/decile_charts.r
-# Option --test uses test data
-# Option --set specifies the measure set (all, sro, resp)
-# Option --RR uses Rate Ratio data
-# Option --released uses already released data
-# Option --appt restricts measures to those with an appointment in interval
-# Option --yearly uses yearly measures data
-# Option --weekly_agg
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 
 # ------------ Configuration -----------------------------------------------------------
 

@@ -1,12 +1,12 @@
 # This script normalizes the practice measures data by calculating rate ratios and testing for seasonality.
 # It also performs a long-term trend analysis on the rate ratios and rounded rates.
-# analysis/normalization.py
-# Option --test flag to run a lightweight test using simulated data
-# Option --practice OR --demograph OR --comorbid flags to select pipeline
-# Option --temp to run a temporary specific section of code and exit early
-
-# TODO:
-# 1
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+# --weekly_agg aggregates weekly intervals to yearly
 
 import pandas as pd
 from utils import *
