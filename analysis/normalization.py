@@ -30,7 +30,7 @@ date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 log_memory_usage(label="Before loading data")
 
 input_path = (
-    f"output/{config['group']}_measures_{config['set']}/proc_{config['group']}_measures_midpoint6"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"
 )
 practice_interval_df = read_write("read", input_path)
 
@@ -139,7 +139,7 @@ for seasonal_group in seasonal_groups:
         },
     )
 long_df = pd.concat([summer['practice_season_df'], non_summer['practice_season_df']])
-read_write(read_or_write="write", path=f"output/{config['group']}_measures/Results_weighted_long", df=long_df, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_weighted_long", df=long_df, file_type = 'csv')    
 
 combined_seasons_df = merge_seasons(
     summer["season_df"], non_summer["season_df"], practice_level=False
@@ -191,7 +191,7 @@ combined_seasons_df = combined_seasons_df.drop(
 )
 read_write(
     read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}/Results_weighted",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_weighted",
     df=combined_seasons_df,
     file_type="csv",
 )
@@ -202,7 +202,7 @@ combined_var_df = summer["season_var_df"].merge(
 
 read_write(
     read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}/Results_variance",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_variance",
     df=combined_var_df,
     file_type="csv",
 )
@@ -247,10 +247,10 @@ combined_practice_seasons_df["RD_first_summr"] = (
 
 # Visualise distributions of rates and RRs
 rate_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "Rate_per_1000", facet_var = 'measure')
-plt.savefig("output/practice_measures/plots/rates.png")
+plt.savefig(f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots/rates.png")
 RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_summr", facet_var = 'measure')
-plt.savefig("output/practice_measures/plots/RR_prev_summer.png")
-read_write(read_or_write="write", path=f"output/{config['group']}_measures/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
+plt.savefig(f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots/RR_prev_summer.png")
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
 
 # Aggregate from practice level to pandemic level
 combined_seasons_df_results = build_aggregate_df(
@@ -274,7 +274,7 @@ rename_map = {
     "RD_first_summr_median": "RD_first_median",
 }
 combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-read_write(read_or_write="write", path=f"output/{config['group']}_measures/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats

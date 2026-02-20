@@ -131,7 +131,7 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
     ungroup()
 
   # Export measure-demo_var table
-  output_table_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/measure~{demo_var}") # Cant release as practice level
+  output_table_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/measure~{demo_var}") # Cant release as practice level
   read_write("write", output_table_path, df = practice_measures, file_type = "csv")
 
   # Filter to rsv and flu specific measures only for plotting
@@ -145,6 +145,6 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
     labs(title = "Yearly Measures Analysis", x = "Zero Rate Indicator", y = "List Size")
 
   # Save plot
-  output_plot_path <- glue("output/practice_measures_{config$set}{config$appt_suffix}{config$yearly_suffix}/bar_plot_{demo_var}{config$test_suffix}.png")
+  output_plot_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/bar_plot_{demo_var}{config$test_suffix}.png")
   ggsave(output_plot_path)
 }

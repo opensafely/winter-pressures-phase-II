@@ -30,7 +30,7 @@ dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 input_path = (
-    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_practice_measures_midpoint6"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"
 )
 
 practice_interval_df = read_write("read", input_path)
@@ -102,11 +102,11 @@ print(practice_yearly_df.head())
 
 # Save practice yearly outputs
 output_path = (
-    f"output/practice_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/proc_practice_measures_midpoint6"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"
 )
 
 # Create directory for weekly agg results
-Path(f"output/practice_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}").mkdir(parents=True, exist_ok=True)
+Path(f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}").mkdir(parents=True, exist_ok=True)
 
 # Rename columns to work with decile charts script
 output_df = practice_yearly_df.rename(
@@ -162,7 +162,7 @@ print(national_yearly_df.head())
 
 # Save national yearly outputs
 output_path = (
-    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/national_yearly_summary"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/national_yearly_summary"
 )
 read_write("write", output_path, df = national_yearly_df, file_type = 'csv')
 

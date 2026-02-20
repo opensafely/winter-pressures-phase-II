@@ -40,8 +40,8 @@ log_memory_usage(label="Before loading data")
 for date in dates:
 
     print(f"Loading {config['group']} measures {date}", flush=True)
-    input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/{config['group']}_measures_{date}"
-    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['yearly_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
+    input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/{config['group']}_measures_{date}"
+    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
     df.drop(columns=["interval_end", "ratio"], inplace=True)  # Drop interval end column as not needed for analysis and saves memory
     log_memory_usage(label=f"After loading measures {date}")

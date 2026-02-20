@@ -40,6 +40,10 @@ option_list <- list(
     action = "store_true",
     default = config$comorbid_measures, help = "Sets measures defaults to comorbidity-level subgroups."
   ),
+  make_option("--practice_subgroup_measures",
+    action = "store_true",
+    default = config$practice_subgroup_measures, help = "Sets measures defaults to practice subgroup-level subgroups."
+  ),
   make_option("--start_intv",
     type = "character", default = config$start_intv,
     help = "Interval start date."
@@ -92,11 +96,14 @@ for (key in names(args_list)) {
 config$dtype_dict <- config$base_dtype_dict
 
 # Apply group-specific configuration
-for (group in c("demograph", "practice", "comorbid")) {
+group_selected <- FALSE
+for (group in c("demograph", "practice", "comorbid", "practice_subgroup")) {
   group_flag <- paste0(group, "_measures")
   if (config[[group_flag]]) {
     config$group <- group
     config$dtype_dict <- c(config$dtype_dict, config$groups[[group]]$dtype_dict)
+    group_selected <- TRUE
+    break  # Only one group can be selected
   }
 }
 
@@ -106,9 +113,9 @@ if (config$appt) {
 
 if (config$yearly) {
   if (config$weekly_agg) {
-    config$yearly_suffix <- "_weeklyagg"
+    config$agg_suffix <- "_weeklyagg"
   } else {
-    config$yearly_suffix <- "_yearly"
+    config$agg_suffix <- "_yearly"
   }
 }
 
@@ -120,4 +127,14 @@ config$deprioritized <- setdiff(names(config$sro_dict), config$prioritized)
 
 if (config$use_csv) {
   config$file_type <- "csv"
+}
+
+if (!is.null(config$set)) {
+  if (config$set == "sro") {
+    config$pipeline_measures <- config$measures_list$sro
+  } else if (config$set == "resp") {
+    config$pipeline_measures <- config$measures_list$resp
+  } else if (config$set == "appts_table") {
+    config$pipeline_measures <- config$measures_list$appts_table
+  }
 }
