@@ -1,11 +1,11 @@
 # This script defines the measures for the analysis pipeline.
 # Options
-# --practice_measures / --demograph_measures / --comorbid_measures / --practice_subgroup_measures 
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
 # --set specifies the measure set (appts_table, sro, resp)
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
-# --yearly uses yearly measures data (REQUIRED)
+# --weekly_agg aggregates weekly intervals to yearly
 
 from ehrql import (
     case,
