@@ -138,3 +138,10 @@ elif config.get("set") == "resp":
     config["pipeline_measures"] = config["measures_list"]["resp"]
 elif config.get("set") == "appts_table":
     config["pipeline_measures"] = config["measures_list"]["appts_table"]
+
+# Define subgroups based on measures output
+if config.get("practice_subgroup_measures", False):
+    config['subgroups'] = list(config["groups"]["practice_subgroup"]["dtype_dict"].keys())
+    config['subgroups'].remove("ethnicity_sus") # Ethnicity sus df not needed, only used for imputation
+elif config.get("practice_measures", False):
+    config['subgroups'] = list(config["groups"]["practice"]["dtype_dict"].keys())

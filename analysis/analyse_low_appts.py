@@ -34,13 +34,14 @@ date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 log_memory_usage(label="Before loading data")
 
-# List all measure-specific files
-input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"
-practice_interval_dict = read_write("read", input_path, file_type="pickle")
-
 # ------------- Pre-processing --------------------------------
 
-for subgroup in practice_interval_dict.keys():
+practice_interval_dict = {}
+for subgroup in config['subgroups']:
+
+    # Load each subgroup dataframe into a dictionary
+    input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6_{subgroup}"
+    practice_interval_dict[subgroup] = read_write("read", input_path, file_type="arrow")
 
     # Only need seen_in_interval
     practice_interval_dict[subgroup] = practice_interval_dict[subgroup][practice_interval_dict[subgroup]['measure'].str.contains('seen_in_interval')]
