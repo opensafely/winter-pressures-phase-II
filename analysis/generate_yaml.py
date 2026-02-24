@@ -193,7 +193,7 @@ yaml_processing_template = """
     needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
-        measures: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/proc_{group}_measures_midpoint6{test_suffix}.pickle
+        measures: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/proc_{group}_measures_midpoint6*{test_suffix}.arrow
   generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
