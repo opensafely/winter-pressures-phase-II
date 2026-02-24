@@ -38,9 +38,8 @@ core_columns = ["practice_pseudo_id", "measure", "interval_start", "numerator", 
 
 # Instantiate list of yearly dataframes for each subgroup
 measures_dict = {}
-subgroups = list(config["groups"]["practice_subgroup"]["dtype_dict"].keys())
-subgroups.remove("ethnicity_sus") # Ethnicity sus df not needed, only used for imputation
-for subgroup in subgroups:
+    
+for subgroup in config['subgroups']:
     measures_dict[subgroup] = []
 
 log_memory_usage(label="Before loading data")
@@ -77,7 +76,7 @@ for date in dates:
     )
     
     # Loop through each subgroup and append the subgroups measures
-    for subgroup in subgroups:
+    for subgroup in config['subgroups']:
          
         core_columns_i = core_columns.copy()
 
@@ -85,13 +84,16 @@ for date in dates:
         if subgroup == "ethnicity":
             core_columns_i = core_columns_i + ["ethnicity_sus"]
 
-        subgroup_df = df[df["measure"].str.endswith(subgroup)]
+        if config["practice_subgroup_measures"]:
+            subgroup_df = df[df["measure"].str.endswith(subgroup)]
+        else:
+            subgroup_df = df
 
         # Drop unneeded columns from each measure dataframe
         for col in subgroup_df.columns:
 
             # If the column is not the subgroup identifier or a core column, drop it to save memory
-            if (not subgroup.endswith(col)) and col not in core_columns_i:
+            if (not subgroup.endswith(col)) and (col not in core_columns_i):
                 subgroup_df = subgroup_df.drop(columns=[col])
 
         measures_dict[subgroup].append(subgroup_df)
@@ -100,7 +102,7 @@ for date in dates:
     log_memory_usage(label=f"After deletion of df")
 
 # Apply pre-processing to each subgroup dataframe
-for subgroup in subgroups:
+for subgroup in config['subgroups']:
 
     # Save Concatenate yearly intervals into a single dataframe
     measures_dict[subgroup] = pd.concat(measures_dict[subgroup])
