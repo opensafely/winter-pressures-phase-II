@@ -1502,7 +1502,7 @@ actions:
     needs: [generate_practice_measures_appts_table_2016-04-11, generate_practice_measures_appts_table_2017-04-10, generate_practice_measures_appts_table_2018-04-09, generate_practice_measures_appts_table_2019-04-08, generate_practice_measures_appts_table_2020-04-06, generate_practice_measures_appts_table_2021-04-05, generate_practice_measures_appts_table_2022-04-04, generate_practice_measures_appts_table_2023-04-03, generate_practice_measures_appts_table_2024-04-01, generate_practice_measures_appts_table_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_appts_table/proc_practice_measures_midpoint6.pickle
+        measures: output/practice_measures_appts_table/proc_practice_measures_midpoint6*.arrow
   generate_normalization_practice_appts_table:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table
     needs: [generate_pre_processing_practice_appts_table]
@@ -1523,7 +1523,7 @@ actions:
     needs: [generate_practice_measures_appts_table_2016-04-11_appt, generate_practice_measures_appts_table_2017-04-10_appt, generate_practice_measures_appts_table_2018-04-09_appt, generate_practice_measures_appts_table_2019-04-08_appt, generate_practice_measures_appts_table_2020-04-06_appt, generate_practice_measures_appts_table_2021-04-05_appt, generate_practice_measures_appts_table_2022-04-04_appt, generate_practice_measures_appts_table_2023-04-03_appt, generate_practice_measures_appts_table_2024-04-01_appt, generate_practice_measures_appts_table_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_appts_table_appt/proc_practice_measures_midpoint6.pickle
+        measures: output/practice_measures_appts_table_appt/proc_practice_measures_midpoint6*.arrow
   generate_normalization_practice_appts_table_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table --appt
     needs: [generate_pre_processing_practice_appts_table_appt]
@@ -1544,7 +1544,7 @@ actions:
     needs: [generate_practice_measures_sro_2016-04-11, generate_practice_measures_sro_2017-04-10, generate_practice_measures_sro_2018-04-09, generate_practice_measures_sro_2019-04-08, generate_practice_measures_sro_2020-04-06, generate_practice_measures_sro_2021-04-05, generate_practice_measures_sro_2022-04-04, generate_practice_measures_sro_2023-04-03, generate_practice_measures_sro_2024-04-01, generate_practice_measures_sro_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro/proc_practice_measures_midpoint6.pickle
+        measures: output/practice_measures_sro/proc_practice_measures_midpoint6*.arrow
   generate_normalization_practice_sro:
     run: python:v2 analysis/normalization.py --practice_measures --set sro
     needs: [generate_pre_processing_practice_sro]
@@ -1565,7 +1565,7 @@ actions:
     needs: [generate_practice_measures_sro_2016-04-11_appt, generate_practice_measures_sro_2017-04-10_appt, generate_practice_measures_sro_2018-04-09_appt, generate_practice_measures_sro_2019-04-08_appt, generate_practice_measures_sro_2020-04-06_appt, generate_practice_measures_sro_2021-04-05_appt, generate_practice_measures_sro_2022-04-04_appt, generate_practice_measures_sro_2023-04-03_appt, generate_practice_measures_sro_2024-04-01_appt, generate_practice_measures_sro_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6.pickle
+        measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6*.arrow
   generate_normalization_practice_sro_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --appt
     needs: [generate_pre_processing_practice_sro_appt]
@@ -1586,7 +1586,7 @@ actions:
     needs: [generate_practice_measures_resp_2016-04-11, generate_practice_measures_resp_2017-04-10, generate_practice_measures_resp_2018-04-09, generate_practice_measures_resp_2019-04-08, generate_practice_measures_resp_2020-04-06, generate_practice_measures_resp_2021-04-05, generate_practice_measures_resp_2022-04-04, generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2024-04-01, generate_practice_measures_resp_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp/proc_practice_measures_midpoint6.pickle
+        measures: output/practice_measures_resp/proc_practice_measures_midpoint6*.arrow
   generate_normalization_practice_resp:
     run: python:v2 analysis/normalization.py --practice_measures --set resp
     needs: [generate_pre_processing_practice_resp]
@@ -1607,7 +1607,7 @@ actions:
     needs: [generate_practice_measures_resp_2016-04-11_appt, generate_practice_measures_resp_2017-04-10_appt, generate_practice_measures_resp_2018-04-09_appt, generate_practice_measures_resp_2019-04-08_appt, generate_practice_measures_resp_2020-04-06_appt, generate_practice_measures_resp_2021-04-05_appt, generate_practice_measures_resp_2022-04-04_appt, generate_practice_measures_resp_2023-04-03_appt, generate_practice_measures_resp_2024-04-01_appt, generate_practice_measures_resp_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6.pickle
+        measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6*.arrow
   generate_normalization_practice_resp_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --appt
     needs: [generate_pre_processing_practice_resp_appt]
@@ -1628,7 +1628,7 @@ actions:
     needs: [generate_practice_subgroup_measures_appts_table_2016-04-11, generate_practice_subgroup_measures_appts_table_2017-04-10, generate_practice_subgroup_measures_appts_table_2018-04-09, generate_practice_subgroup_measures_appts_table_2019-04-08, generate_practice_subgroup_measures_appts_table_2020-04-06, generate_practice_subgroup_measures_appts_table_2021-04-05, generate_practice_subgroup_measures_appts_table_2022-04-04, generate_practice_subgroup_measures_appts_table_2023-04-03, generate_practice_subgroup_measures_appts_table_2024-04-01, generate_practice_subgroup_measures_appts_table_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_appts_table/proc_practice_subgroup_measures_midpoint6.pickle
+        measures: output/practice_subgroup_measures_appts_table/proc_practice_subgroup_measures_midpoint6*.arrow
   generate_normalization_practice_subgroup_appts_table:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table
     needs: [generate_pre_processing_practice_subgroup_appts_table]
@@ -1649,7 +1649,7 @@ actions:
     needs: [generate_practice_subgroup_measures_appts_table_2016-04-11_appt, generate_practice_subgroup_measures_appts_table_2017-04-10_appt, generate_practice_subgroup_measures_appts_table_2018-04-09_appt, generate_practice_subgroup_measures_appts_table_2019-04-08_appt, generate_practice_subgroup_measures_appts_table_2020-04-06_appt, generate_practice_subgroup_measures_appts_table_2021-04-05_appt, generate_practice_subgroup_measures_appts_table_2022-04-04_appt, generate_practice_subgroup_measures_appts_table_2023-04-03_appt, generate_practice_subgroup_measures_appts_table_2024-04-01_appt, generate_practice_subgroup_measures_appts_table_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_appts_table_appt/proc_practice_subgroup_measures_midpoint6.pickle
+        measures: output/practice_subgroup_measures_appts_table_appt/proc_practice_subgroup_measures_midpoint6*.arrow
   generate_normalization_practice_subgroup_appts_table_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --appt
     needs: [generate_pre_processing_practice_subgroup_appts_table_appt]
@@ -1670,7 +1670,7 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_2016-04-11, generate_practice_subgroup_measures_sro_2017-04-10, generate_practice_subgroup_measures_sro_2018-04-09, generate_practice_subgroup_measures_sro_2019-04-08, generate_practice_subgroup_measures_sro_2020-04-06, generate_practice_subgroup_measures_sro_2021-04-05, generate_practice_subgroup_measures_sro_2022-04-04, generate_practice_subgroup_measures_sro_2023-04-03, generate_practice_subgroup_measures_sro_2024-04-01, generate_practice_subgroup_measures_sro_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6.pickle
+        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6*.arrow
   generate_normalization_practice_subgroup_sro:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro
     needs: [generate_pre_processing_practice_subgroup_sro]
@@ -1691,7 +1691,7 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_2016-04-11_appt, generate_practice_subgroup_measures_sro_2017-04-10_appt, generate_practice_subgroup_measures_sro_2018-04-09_appt, generate_practice_subgroup_measures_sro_2019-04-08_appt, generate_practice_subgroup_measures_sro_2020-04-06_appt, generate_practice_subgroup_measures_sro_2021-04-05_appt, generate_practice_subgroup_measures_sro_2022-04-04_appt, generate_practice_subgroup_measures_sro_2023-04-03_appt, generate_practice_subgroup_measures_sro_2024-04-01_appt, generate_practice_subgroup_measures_sro_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6.pickle
+        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6*.arrow
   generate_normalization_practice_subgroup_sro_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt
     needs: [generate_pre_processing_practice_subgroup_sro_appt]
@@ -1712,7 +1712,7 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_2016-04-11, generate_practice_subgroup_measures_resp_2017-04-10, generate_practice_subgroup_measures_resp_2018-04-09, generate_practice_subgroup_measures_resp_2019-04-08, generate_practice_subgroup_measures_resp_2020-04-06, generate_practice_subgroup_measures_resp_2021-04-05, generate_practice_subgroup_measures_resp_2022-04-04, generate_practice_subgroup_measures_resp_2023-04-03, generate_practice_subgroup_measures_resp_2024-04-01, generate_practice_subgroup_measures_resp_2025-03-31]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6.pickle
+        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6*.arrow
   generate_normalization_practice_subgroup_resp:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp
     needs: [generate_pre_processing_practice_subgroup_resp]
@@ -1733,7 +1733,7 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_2016-04-11_appt, generate_practice_subgroup_measures_resp_2017-04-10_appt, generate_practice_subgroup_measures_resp_2018-04-09_appt, generate_practice_subgroup_measures_resp_2019-04-08_appt, generate_practice_subgroup_measures_resp_2020-04-06_appt, generate_practice_subgroup_measures_resp_2021-04-05_appt, generate_practice_subgroup_measures_resp_2022-04-04_appt, generate_practice_subgroup_measures_resp_2023-04-03_appt, generate_practice_subgroup_measures_resp_2024-04-01_appt, generate_practice_subgroup_measures_resp_2025-03-31_appt]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6.pickle
+        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6*.arrow
   generate_normalization_practice_subgroup_resp_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt
     needs: [generate_pre_processing_practice_subgroup_resp_appt]
@@ -2415,7 +2415,7 @@ actions:
     needs: [generate_practice_measures_appts_table_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_appts_table/proc_practice_measures_midpoint6_test.pickle
+        measures: output/practice_measures_appts_table/proc_practice_measures_midpoint6*_test.arrow
   generate_normalization_practice_appts_table_test:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table --test
     needs: [generate_pre_processing_practice_appts_table_test]
@@ -2436,7 +2436,7 @@ actions:
     needs: [generate_practice_measures_appts_table_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_appts_table_appt/proc_practice_measures_midpoint6_test.pickle
+        measures: output/practice_measures_appts_table_appt/proc_practice_measures_midpoint6*_test.arrow
   generate_normalization_practice_appts_table_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table --appt --test
     needs: [generate_pre_processing_practice_appts_table_appt_test]
@@ -2457,7 +2457,7 @@ actions:
     needs: [generate_practice_measures_sro_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro/proc_practice_measures_midpoint6_test.pickle
+        measures: output/practice_measures_sro/proc_practice_measures_midpoint6*_test.arrow
   generate_normalization_practice_sro_test:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --test
     needs: [generate_pre_processing_practice_sro_test]
@@ -2478,7 +2478,7 @@ actions:
     needs: [generate_practice_measures_sro_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6_test.pickle
+        measures: output/practice_measures_sro_appt/proc_practice_measures_midpoint6*_test.arrow
   generate_normalization_practice_sro_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --appt --test
     needs: [generate_pre_processing_practice_sro_appt_test]
@@ -2499,7 +2499,7 @@ actions:
     needs: [generate_practice_measures_resp_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp/proc_practice_measures_midpoint6_test.pickle
+        measures: output/practice_measures_resp/proc_practice_measures_midpoint6*_test.arrow
   generate_normalization_practice_resp_test:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --test
     needs: [generate_pre_processing_practice_resp_test]
@@ -2520,7 +2520,7 @@ actions:
     needs: [generate_practice_measures_resp_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6_test.pickle
+        measures: output/practice_measures_resp_appt/proc_practice_measures_midpoint6*_test.arrow
   generate_normalization_practice_resp_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --appt --test
     needs: [generate_pre_processing_practice_resp_appt_test]
@@ -2541,7 +2541,7 @@ actions:
     needs: [generate_practice_subgroup_measures_appts_table_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_appts_table/proc_practice_subgroup_measures_midpoint6_test.pickle
+        measures: output/practice_subgroup_measures_appts_table/proc_practice_subgroup_measures_midpoint6*_test.arrow
   generate_normalization_practice_subgroup_appts_table_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --test
     needs: [generate_pre_processing_practice_subgroup_appts_table_test]
@@ -2562,7 +2562,7 @@ actions:
     needs: [generate_practice_subgroup_measures_appts_table_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_appts_table_appt/proc_practice_subgroup_measures_midpoint6_test.pickle
+        measures: output/practice_subgroup_measures_appts_table_appt/proc_practice_subgroup_measures_midpoint6*_test.arrow
   generate_normalization_practice_subgroup_appts_table_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --appt --test
     needs: [generate_pre_processing_practice_subgroup_appts_table_appt_test]
@@ -2583,7 +2583,7 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6_test.pickle
+        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures_midpoint6*_test.arrow
   generate_normalization_practice_subgroup_sro_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --test
     needs: [generate_pre_processing_practice_subgroup_sro_test]
@@ -2604,7 +2604,7 @@ actions:
     needs: [generate_practice_subgroup_measures_sro_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6_test.pickle
+        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures_midpoint6*_test.arrow
   generate_normalization_practice_subgroup_sro_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt --test
     needs: [generate_pre_processing_practice_subgroup_sro_appt_test]
@@ -2625,7 +2625,7 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6_test.pickle
+        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures_midpoint6*_test.arrow
   generate_normalization_practice_subgroup_resp_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --test
     needs: [generate_pre_processing_practice_subgroup_resp_test]
@@ -2646,7 +2646,7 @@ actions:
     needs: [generate_practice_subgroup_measures_resp_appt_test]
     outputs:
       highly_sensitive:
-        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6_test.pickle
+        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures_midpoint6*_test.arrow
   generate_normalization_practice_subgroup_resp_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt --test
     needs: [generate_pre_processing_practice_subgroup_resp_appt_test]
