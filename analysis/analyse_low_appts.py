@@ -1,7 +1,5 @@
-# Load decile table for seen_in_interval measure
-# Seperate bottom 30%, 20, 10% of practices
-# Calcualte yearly demographics of each set of practices
-# e.g. top 70% age, region, stp; bottoom 30% age, region...; bottom 20% age, region...; bottom 10% age, region...
+# This script identifies practices in the bottom 10% of appointment rates and compares the demographics of these practices to those above the threshold. 
+# It outputs a CSV file with the demographic breakdown of practices below and above the 10% threshold for each subgroup and year.
 
 # python analysis/analyse_low_appts.py
 # Options
@@ -54,11 +52,11 @@ for subgroup in config['subgroups']:
 
 # Use sex as measure for practice-level aggregation as its required in inclusion criteria
 practice_interval_df = practice_interval_dict['sex']
-practice_agg_df = practice_interval_df.groupby(["practice_pseudo_id", "measure", "year"]).agg({"numerator_midpoint6": "sum", "list_size_midpoint6": "sum"}).reset_index()
+practice_agg_df = practice_interval_df.groupby(["practice_pseudo_id", "year"]).agg({"numerator_midpoint6": "sum", "list_size_midpoint6": "sum"}).reset_index()
 # Calculate rate per 1000
 practice_agg_df["rate_per_1000"] = (practice_agg_df["numerator_midpoint6"] / practice_agg_df["list_size_midpoint6"])*1000
 # Calculate percentile position for each practice
-practice_agg_df["percentile"] = practice_agg_df.groupby("measure")["rate_per_1000"].rank(pct=True)*100
+practice_agg_df["percentile"] = practice_agg_df.groupby("year")["rate_per_1000"].rank(pct=True)*100
 # Extract bottom 10% of practices for each measure
 practice_agg_df["bottom_10pct"] = practice_agg_df["percentile"] <= 10
 
@@ -69,8 +67,11 @@ practice_agg_df["bottom_10pct"] = practice_agg_df["percentile"] <= 10
 for subgroup in practice_interval_dict.keys():
 
     # Merge low_appt identifier into each subgroup-specific dataframe
-    practice_interval_dict[subgroup] = practice_interval_dict[subgroup].merge(practice_agg_df[['practice_pseudo_id', 
-                                                                                               'bottom_10pct']], on="practice_pseudo_id", how="left")
+    practice_interval_dict[subgroup] = practice_interval_dict[subgroup].merge(
+        practice_agg_df[['practice_pseudo_id', 'year', 'bottom_10pct']],
+        on=["practice_pseudo_id", "year"],
+        how="left"
+    )
     # Select columns to aggregate
     cols_to_agg = [subgroup, 'bottom_10pct', 'year']
     # Find total list size per year-bottom_10pct combo
