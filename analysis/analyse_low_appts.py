@@ -59,8 +59,8 @@ practice_agg_df = practice_interval_df.groupby(["practice_pseudo_id", "measure",
 practice_agg_df["rate_per_1000"] = (practice_agg_df["numerator_midpoint6"] / practice_agg_df["list_size_midpoint6"])*1000
 # Calculate percentile position for each practice
 practice_agg_df["percentile"] = practice_agg_df.groupby("measure")["rate_per_1000"].rank(pct=True)*100
-# Extract bottom 20% of practices for each measure
-practice_agg_df["bottom_20pct"] = practice_agg_df["percentile"] <= 20
+# Extract bottom 10% of practices for each measure
+practice_agg_df["bottom_10pct"] = practice_agg_df["percentile"] <= 10
 
 # -------------- Calcculate demographics of practices ----------------
 
@@ -70,20 +70,20 @@ for subgroup in practice_interval_dict.keys():
 
     # Merge low_appt identifier into each subgroup-specific dataframe
     practice_interval_dict[subgroup] = practice_interval_dict[subgroup].merge(practice_agg_df[['practice_pseudo_id', 
-                                                                                               'bottom_20pct']], on="practice_pseudo_id", how="left")
+                                                                                               'bottom_10pct']], on="practice_pseudo_id", how="left")
     # Select columns to aggregate
-    cols_to_agg = [subgroup, 'bottom_20pct', 'year']
-    # Find total list size per year-bottom_20pct combo
-    total_list_size = practice_interval_dict[subgroup].groupby(["bottom_20pct", "year"])["list_size_midpoint6"].sum().reset_index().rename(columns={"list_size_midpoint6": "total_list_size"})
+    cols_to_agg = [subgroup, 'bottom_10pct', 'year']
+    # Find total list size per year-bottom_10pct combo
+    total_list_size = practice_interval_dict[subgroup].groupby(["bottom_10pct", "year"])["list_size_midpoint6"].sum().reset_index().rename(columns={"list_size_midpoint6": "total_list_size"})
     # Groupby low_appt identifier and aggregate list size sums
     practice_interval_dict[subgroup] = practice_interval_dict[subgroup].groupby(cols_to_agg).agg({"list_size_midpoint6": "sum", "numerator_midpoint6": "sum"}).reset_index().rename(columns={"list_size_midpoint6": "list_size", "numerator_midpoint6": "numerator"})
     practice_interval_dict[subgroup]["rate_per_1000_mp6"] = (practice_interval_dict[subgroup]["numerator"] / practice_interval_dict[subgroup]["list_size"])*1000
     # Merge total list size back in to calculate percentage of list size in each demographic group
-    practice_interval_dict[subgroup] = practice_interval_dict[subgroup].merge(total_list_size, on=["bottom_20pct", "year"], how="left")
+    practice_interval_dict[subgroup] = practice_interval_dict[subgroup].merge(total_list_size, on=["bottom_10pct", "year"], how="left")
     practice_interval_dict[subgroup]["pct_list_size"] = round((practice_interval_dict[subgroup]["list_size"] / practice_interval_dict[subgroup]["total_list_size"])*100, 2)
-    # Sort by bottom_20pct (True first), year ascending
+    # Sort by bottom_10pct (True first), year ascending
     practice_interval_dict[subgroup] = practice_interval_dict[subgroup].sort_values(
-        by=["bottom_20pct", "year"],
+        by=["bottom_10pct", "year"],
         ascending=[False, True],
     )
     
@@ -92,7 +92,7 @@ demographics_df = pd.concat(practice_interval_dict.values(), axis=0, ignore_inde
 
 # Move non-subgroup columns to the front
 cols = demographics_df.columns.tolist()
-non_subgroup_cols = ['bottom_20pct', 'year', 'pct_list_size', 'list_size', 'numerator', 'rate_per_1000_mp6', 'total_list_size']
+non_subgroup_cols = ['bottom_10pct', 'year', 'pct_list_size', 'list_size', 'numerator', 'rate_per_1000_mp6', 'total_list_size']
 subgroup_cols = [col for col in cols if col not in non_subgroup_cols]
 demographics_df = demographics_df[non_subgroup_cols + subgroup_cols]
 
