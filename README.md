@@ -7,15 +7,15 @@ Each pipeline stratifies measures by different characteristics and includes supp
 
 ## Setup
 
-There are three main pipelines:
-1. **Practice-level measures**
-2. **Patient demographic variables**
-3. **Patient comorbidities**
+There are two main pipelines:
+1. **Practice-level measures** - Extracts all measures described in original protocol
+2. **Patient-level subgroup measures** - Extracts only good-candidate measures (determined as those with high usage across practices and potential seasonality)
+
+Note - Prior versions had dedicated national **demographic** and **comorbidity** pipelines containing intersectional subgroups e.g. age X sex. These were removed as practice-level univariate subgroup breakdowns were deemed to be more useful for pressure management than national level multivariate breakdowns.
 
 To choose which pipeline to run, add the corresponding flag when calling the script:
 - `--practice_measures`
-- `--demograph_measures`
-- `--comorbid_measures`
+- `--practice_subgroup_measures`
 
 ### Test mode
 Use the `--test` flag with any script to run the lightweight test pipeline (useful in Codespaces, since the default dummy data is sparse).
@@ -28,14 +28,15 @@ There are currently three sets of measures:
 
 ### Helper scripts and configuration
 - **Configuration**
-  - `config.r` and `wp_config_setup.py`: pipeline flags, dates, filetypes, and parameters  
+  - `config.json` and `wp_config_setup.py`: pipeline flags, dates, filetypes, and parameters  
   - `codelist_definition.py`: defines codelists  
 - **Testing**
-  - Measure definitions copied to `dataset.py`
-  - Dummy test data defined in `test_dataset.py`
+  1. Measure definitions copied to `dataset.py`. Note - this requires manual copying, the definitions in `dataset.py` can lag behind the cuurent definitions in `measures_definition.py`.
+  2. Dummy test data defined in `test_dataset.py`
+  3. ehrQL assurance test then run on `dataset.py`
 - **Utilities**
-  - Shared helper functions: `utils.r` and `utils.py`
-- **Automation**
+  - Helper functions: `utils.r` and `utils.py`
+- **Action generation**
   - `generate_yaml.py` automatically creates the GitHub Actions YAML workflow
 
 ## Running the pipeline
@@ -49,7 +50,7 @@ There are currently three sets of measures:
      This runs `wp_measures.py`.  
    - Specific measure queries are defined in `queries.py`.
 
-2. **Generate frequency table (Table 1)**
+2. **OUT OF DATE - Generate frequency table (Table 1)**
    - Available only for the demographics pipeline.
    - Example:  
      ```bash
@@ -66,7 +67,7 @@ There are currently three sets of measures:
 
    - From rounded measures, you can generate decile tables and charts for local visualisation:
      - `opensafely run generate_deciles_charts` → `decile_charts.r`
-     - For demographic/comorbidity pipelines, line plots are generated via `table_generation.r` *(action not yet available)*
+     - For subgroup pipelines, line plots are generated via `table_generation.r` *(action not yet available)*
 
 5. **Generate practice-level seasonal rates**
    - Example:  

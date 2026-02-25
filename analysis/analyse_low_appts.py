@@ -1,7 +1,5 @@
-# Load decile table for seen_in_interval measure
-# Seperate bottom 30%, 20, 10% of practices
-# Calcualte yearly demographics of each set of practices
-# e.g. top 70% age, region, stp; bottoom 30% age, region...; bottom 20% age, region...; bottom 10% age, region...
+# This script identifies practices in the bottom 10% of appointment rates and compares the demographics of these practices to those above the threshold. 
+# It outputs a CSV file with the demographic breakdown of practices below and above the 10% threshold for each subgroup and year.
 
 # python analysis/analyse_low_appts.py
 # Options
