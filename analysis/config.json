@@ -82,7 +82,6 @@
   "appt_suffix": "",
   "agg_suffix": "",
   "test_suffix": "",
-  "weekly_agg": false,
   "group": null,
   "sro_dict": {
     "sodium_test": "codelists/opensafely-sodium-tests-numerical-value.csv",
