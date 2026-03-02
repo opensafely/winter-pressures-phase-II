@@ -5,7 +5,7 @@
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
-# --set specifies the measure set (appts_table, sro, resp)
+# --set specifies the measure set (appts_table (USE WITH SUBGROUPS), sro, resp)
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
 
@@ -22,6 +22,7 @@ import pyarrow.feather as feather
 import seaborn as sns
 import matplotlib.pyplot as plt
 from pathlib import Path
+
 # -------- Load data ----------------------------------
 
 # Generate dates
@@ -32,7 +33,15 @@ input_path = (
     f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"
 )
 
+if config["group"] == "practice_subgroup":
+    # Use sex subgroup for practice-level aggregation as its required in inclusion criteria
+    input_path += "_sex" 
+    
 practice_interval_df = read_write("read", input_path)
+
+if config["group"] == "practice_subgroup":
+    # Remove sex suffix from measure na,es
+    practice_interval_df['measure'] = practice_interval_df['measure'].str.replace(r'_sex$', '', regex=True)
 
 # -------------- Test cases -----------------------------
 
