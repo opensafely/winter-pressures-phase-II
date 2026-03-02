@@ -365,7 +365,7 @@ yaml_yearly_template = """
         practice_weekly_aggregates: output/{group}_measures_{set}_weeklyagg/*{test_suffix}.arrow
   generate_deciles_charts_{set}_weeklyagg{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --set {set}{test_flag}
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set {set} {test_flag}
     needs: [generate_weekly_aggregates_{set}{test_suffix}] 
     outputs:
       moderately_sensitive:

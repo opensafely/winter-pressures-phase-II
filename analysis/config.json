@@ -80,6 +80,7 @@
     }
   },
   "appt_suffix": "",
+  "weekly_agg": false,
   "agg_suffix": "",
   "test_suffix": "",
   "group": null,

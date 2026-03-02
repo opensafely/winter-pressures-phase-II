@@ -2742,7 +2742,7 @@ actions:
         practice_weekly_aggregates: output/practice_measures_appts_table_weeklyagg/*.arrow
   generate_deciles_charts_appts_table_weeklyagg:
     run: >
-      r:v2 analysis/decile_charts.r --set appts_table
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set appts_table 
     needs: [generate_weekly_aggregates_appts_table] 
     outputs:
       moderately_sensitive:
@@ -2760,7 +2760,7 @@ actions:
         practice_weekly_aggregates: output/practice_measures_appts_table_weeklyagg/*_test.arrow
   generate_deciles_charts_appts_table_weeklyagg_test:
     run: >
-      r:v2 analysis/decile_charts.r --set appts_table--test
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set appts_table --test
     needs: [generate_weekly_aggregates_appts_table_test] 
     outputs:
       moderately_sensitive:
@@ -2778,7 +2778,7 @@ actions:
         practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.arrow
   generate_deciles_charts_resp_weeklyagg:
     run: >
-      r:v2 analysis/decile_charts.r --set resp
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set resp 
     needs: [generate_weekly_aggregates_resp] 
     outputs:
       moderately_sensitive:
@@ -2796,7 +2796,7 @@ actions:
         practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.arrow
   generate_deciles_charts_resp_weeklyagg_test:
     run: >
-      r:v2 analysis/decile_charts.r --set resp--test
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set resp --test
     needs: [generate_weekly_aggregates_resp_test] 
     outputs:
       moderately_sensitive:

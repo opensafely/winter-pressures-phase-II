@@ -112,12 +112,11 @@ if (config$appt) {
 } 
 
 if (config$yearly) {
-  if (config$weekly_agg) {
-    config$agg_suffix <- "_weeklyagg"
-  } else {
     config$agg_suffix <- "_yearly"
   }
-}
+if (config$weekly_agg) {
+    config$agg_suffix <- "_weeklyagg"
+  }
 
 if (config$test) {
   config$test_suffix <- "_test"
