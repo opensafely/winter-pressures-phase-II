@@ -356,32 +356,37 @@ yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS  WEEKLY--------------
 yaml_yearly_template = """
   # Weekly aggregates
   generate_weekly_aggregates_{set}{test_suffix}:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set {set} {test_flag} 
-    needs: [generate_pre_processing_practice_{set}{test_suffix}]
+    run: python:v2 analysis/aggregate_weekly.py --practice{subgroup}_measures --set {set} {test_flag} 
+    needs: [generate_pre_processing_practice{subgroup}_{set}{test_suffix}]
     outputs:
       moderately_sensitive:
-        national_weekly_aggregates: output/{group}_measures_{set}_weeklyagg/*{test_suffix}.csv
+        national_weekly_aggregates: output/{group}{subgroup}_measures_{set}_weeklyagg/*{test_suffix}.csv
       highly_sensitive:
-        practice_weekly_aggregates: output/{group}_measures_{set}_weeklyagg/*{test_suffix}.arrow
+        practice_weekly_aggregates: output/{group}{subgroup}_measures_{set}_weeklyagg/*{test_suffix}.arrow
   generate_deciles_charts_{set}_weeklyagg{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set {set} {test_flag}
+      r:v2 analysis/decile_charts.r --practice{subgroup}_measures --weekly_agg --set {set} {test_flag}
     needs: [generate_weekly_aggregates_{set}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/{group}_measures_{set}_weeklyagg/plots{test_suffix}/decile_chart_*_rate_mp6.png
-        deciles_table: output/{group}_measures_{set}_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+        deciles_charts: output/{group}{subgroup}_measures_{set}_weeklyagg/plots{test_suffix}/decile_chart_*_rate_mp6.png
+        deciles_table: output/{group}{subgroup}_measures_{set}_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
 """
 
 # Weekly aggregate for resp and appts_table measure sets only 
 measure_sets.remove('sro')
 for measure_set in measure_sets:
   for test_suffix, test_flag in zip(suffixes, test_flags):
+    if measure_set == "appts_table":
+        subgroup = "_subgroup"
+    else:
+        subgroup = ""
     yaml_yearly += yaml_yearly_template.format(
         test_suffix=test_suffix,
         test_flag=test_flag,
         group="practice",
-        set=measure_set
+        set=measure_set,
+        subgroup=subgroup
     )
 
 # -------- Combine scripts and print file -----------
