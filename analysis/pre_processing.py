@@ -234,7 +234,11 @@ for subgroup in config['subgroups']:
     log_memory_usage(label=f"Final memory usage") # test is 10 times higher for practice_subgroups
 
     # Save processed file
-    output_path_subgroup = output_path + f"_{subgroup}"
+    if config['practice_subgroup_measures']:
+        output_path_subgroup = output_path + f"_{subgroup}"
+    elif config['practice_measures']:
+        output_path_subgroup = output_path
+
     read_write(read_or_write="write", path=output_path_subgroup, df=measures_dict[subgroup], file_type='arrow')
     del measures_dict[subgroup]  # Delete dataframe to save memory
     log_memory_usage(label=f"After saving and deleting {subgroup} dataframe")

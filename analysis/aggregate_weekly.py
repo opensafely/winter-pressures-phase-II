@@ -168,7 +168,7 @@ read_write("write", output_path, df = national_yearly_df, file_type = 'csv')
 # ----------- Test case outputs --------------------------
 
 # Print test cases
-if config["test"]:
+if config["test"] and config["set"] == "resp":
 
     # 1 - Numerator = 0, List size > 0, Rate = 0, Proportion of practices with zero counts = 1
     test_output = national_yearly_df[
