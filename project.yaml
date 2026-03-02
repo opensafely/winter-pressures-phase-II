@@ -2732,8 +2732,44 @@ actions:
  
  # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------
   # Weekly aggregates
-  generate_weekly_aggregates:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --weekly_agg --set resp  
+  generate_weekly_aggregates_appts_table:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set appts_table  
+    needs: [generate_pre_processing_practice_appts_table]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_measures_appts_table_weeklyagg/*.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_appts_table_weeklyagg/*.arrow
+  generate_deciles_charts_appts_table_weeklyagg:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set appts_table 
+    needs: [generate_weekly_aggregates_appts_table] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_appts_table_weeklyagg/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_appts_table_weeklyagg/decile_tables/decile_table_*_rate_mp6.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates_appts_table_test:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set appts_table --test 
+    needs: [generate_pre_processing_practice_appts_table_test]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_measures_appts_table_weeklyagg/*_test.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_appts_table_weeklyagg/*_test.arrow
+  generate_deciles_charts_appts_table_weeklyagg_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set appts_table --test
+    needs: [generate_weekly_aggregates_appts_table_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_appts_table_weeklyagg/plots_test/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_appts_table_weeklyagg/decile_tables/decile_table_*_rate_mp6_test.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates_resp:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp  
     needs: [generate_pre_processing_practice_resp]
     outputs:
       moderately_sensitive:
@@ -2742,16 +2778,16 @@ actions:
         practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.arrow
   generate_deciles_charts_resp_weeklyagg:
     run: >
-      r:v2 analysis/decile_charts.r --set resp --weekly_agg
-    needs: [generate_weekly_aggregates] 
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set resp 
+    needs: [generate_weekly_aggregates_resp] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_weeklyagg/plots/decile_chart_*_rate_mp6.png
         deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6.csv
 
   # Weekly aggregates
-  generate_weekly_aggregates_test:
-    run: python:v2 analysis/aggregate_weekly.py --practice_measures --weekly_agg --set resp --test 
+  generate_weekly_aggregates_resp_test:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp --test 
     needs: [generate_pre_processing_practice_resp_test]
     outputs:
       moderately_sensitive:
@@ -2760,8 +2796,8 @@ actions:
         practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.arrow
   generate_deciles_charts_resp_weeklyagg_test:
     run: >
-      r:v2 analysis/decile_charts.r --set resp--test --weekly_agg
-    needs: [generate_weekly_aggregates_test] 
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set resp --test
+    needs: [generate_weekly_aggregates_resp_test] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/practice_measures_resp_weeklyagg/plots_test/decile_chart_*_rate_mp6.png

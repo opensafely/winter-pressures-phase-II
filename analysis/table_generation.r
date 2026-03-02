@@ -6,7 +6,6 @@
 # --set specifies the measure set (appts_table, sro, resp)
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
-# --weekly_agg aggregates weekly intervals to yearly
 
 # ------------ Configuration -------------------------------------------------------
 

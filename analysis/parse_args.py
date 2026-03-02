@@ -79,12 +79,6 @@ parser.add_argument(
     help="Set intervals to yearly instead of weekly",
 )
 parser.add_argument(
-    "--weekly_agg",
-    action="store_true",
-    default=argparse.SUPPRESS,
-    help="Set yearly intervals to be aggregated from weekly measures",
-)
-parser.add_argument(
     "--test",
     action="store_true",
     default=argparse.SUPPRESS,

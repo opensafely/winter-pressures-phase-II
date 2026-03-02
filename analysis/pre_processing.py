@@ -6,7 +6,6 @@
 # --set specifies the measure set (appts_table, sro, resp)
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
-# --weekly_agg aggregates weekly intervals to yearly
 
 import json
 
@@ -47,8 +46,8 @@ log_memory_usage(label="Before loading data")
 for date in dates:
 
     print(f"Loading {config['group']} measures {date}", flush=True)
-    input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/{config['group']}_measures_{date}"
-    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
+    input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/{config['group']}_measures_{date}"
+    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
 
     df.drop(columns=["interval_end", "ratio"], inplace=True)  # Drop interval end column as not needed for analysis and saves memory
@@ -235,7 +234,11 @@ for subgroup in config['subgroups']:
     log_memory_usage(label=f"Final memory usage") # test is 10 times higher for practice_subgroups
 
     # Save processed file
-    output_path_subgroup = output_path + f"_{subgroup}"
+    if config['practice_subgroup_measures']:
+        output_path_subgroup = output_path + f"_{subgroup}"
+    elif config['practice_measures']:
+        output_path_subgroup = output_path
+
     read_write(read_or_write="write", path=output_path_subgroup, df=measures_dict[subgroup], file_type='arrow')
     del measures_dict[subgroup]  # Delete dataframe to save memory
     log_memory_usage(label=f"After saving and deleting {subgroup} dataframe")

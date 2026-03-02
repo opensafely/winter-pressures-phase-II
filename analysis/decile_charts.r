@@ -21,6 +21,7 @@ source("analysis/parse_args.r")
 
 # Message about test or full
 print(if (config$test) "Using test data" else "Using full data")
+non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 
 # ------------ Generate decile tables ----------------------------------------------------
 
@@ -131,14 +132,20 @@ if (config$set == "appts_table") {
     appts_table = c(
       "CancelledbyPatient", "CancelledbyUnit", "DidNotAttend", "Waiting",
       "follow_up_app", "seen_in_interval", "start_in_interval"
-    ),
-    # Plot 2: Other measures
-    not_appts_table = c(
-      "call_from_gp", "call_from_patient",
-      "emergency_care", "online_consult", "secondary_referral",
-      "tele_consult", "vax_app", "vax_app_covid", "vax_app_flu"
     )
   )
+  # Optionally add non-appointments table measures to a second plot
+  if (non_appts_table_measures) {
+    measure_groups <- append(measure_groups, list(
+      # Plot 2: Other measures
+      not_appts_table = c(
+        "call_from_gp", "call_from_patient",
+        "emergency_care", "online_consult", "secondary_referral",
+        "tele_consult", "vax_app", "vax_app_covid", "vax_app_flu"
+      )
+    )
+    )
+  }
 } else if (config$set == "sro") {
   sro_measures <- append(config$prioritized, "sro_prioritized")
   sro_measures <- append(sro_measures, "sick_notes")
@@ -177,6 +184,7 @@ if (!dir.exists(plots_dir)) {
 print(practice_deciles)
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
+  print(group_name)
   measures_subset <- measure_groups[[group_name]]
   create_and_save_decile_plot(group_name, measures_subset, plots_dir)
 }
