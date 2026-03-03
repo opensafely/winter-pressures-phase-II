@@ -168,9 +168,24 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
 
 
 def build_aggregate_df(rate_df, strata, aggregation_dict):
+
     # Ensure grouping columns are correct
     agg = (rate_df.groupby(strata).agg(aggregation_dict)).reset_index()
-    agg.columns = ["_".join(col).strip("_") for col in agg.columns.values]
+
+    # Handle both MultiIndex (tuple) and single-level column indexes safely
+    new_columns = []
+    for col in agg.columns.values:
+        if isinstance(col, tuple):
+            # Join non-None parts of the tuple with underscores
+            parts = [str(part) for part in col if part is not None]
+            new_col = "_".join(parts).strip("_")
+        else:
+            # Single-level column: use its string representation directly
+            new_col = str(col)
+        new_columns.append(new_col)
+
+    agg.columns = new_columns
+    
     return agg
 
 
