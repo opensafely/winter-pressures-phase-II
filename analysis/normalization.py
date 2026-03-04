@@ -20,6 +20,7 @@ from itertools import product
 import pyarrow.feather as feather
 from itertools import combinations
 from scipy.stats import pearsonr, spearmanr
+import os
 
 # -------- Load data ----------------------------------
 
@@ -33,7 +34,8 @@ input_path = (
     f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"
 )
 practice_interval_df = read_write("read", input_path)
-print(f"1. {practice_interval_df[practice_interval_df['measure'] == 'overall_resp_sensitive'][['measure','interval_start','numerator_midpoint6', 'list_size_midpoint6']].head().to_string()}")
+
+print(f"1. Total numerator = {practice_interval_df['numerator_midpoint6'].sum()}, \nTotal denominator = {practice_interval_df['list_size_midpoint6'].sum()}, \nTotal practices = {practice_interval_df['practice_pseudo_id'].nunique()}")
 log_memory_usage(label="After loading data")
 
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
@@ -64,7 +66,7 @@ pandemic_df = practice_interval_df.loc[
 practice_interval_df = practice_interval_df.loc[
     ~practice_interval_df["pandemic"].isin(["During"])
 ]
-print(f"2. {practice_interval_df[practice_interval_df['measure'] == 'overall_resp_sensitive'][['measure','interval_start','numerator_midpoint6', 'list_size_midpoint6']].head().to_string()}")
+print(f"2. Total numerator after filtering = {practice_interval_df['numerator_midpoint6'].sum()}, \nTotal denominator after filtering = {practice_interval_df['list_size_midpoint6'].sum()}, \nTotal practices after filtering = {practice_interval_df['practice_pseudo_id'].nunique()}")
 # ----------------------- Seasonality analysis ----------------------------------
 
 # Iterate over two summer baseline options: 1) Compare winter to prev summer 2) Compare winter to first summer
@@ -104,7 +106,7 @@ for seasonal_group in seasonal_groups:
         },
         inplace=True,
     )
-    print(f"3. {seasonal_group['practice_interval_df'][seasonal_group['practice_interval_df']['measure'] == 'overall_resp_sensitive'][['measure','interval_start','numerator_midpoint6', 'list_size_midpoint6']].head().to_string()}")
+    print(f"3. Total numerator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['numerator_midpoint6'].sum()}, \nTotal denominator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['list_size_midpoint6'].sum()}, \nTotal practices for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['practice_pseudo_id'].nunique()}")
 
     # -------- 2 - REMOVE SEASONS WITH MISSING BASELINES --------------------
 
@@ -121,7 +123,7 @@ summer["zero_or_nan_df"] = summer["practice_season_df"][
     | (summer["practice_season_df"]["numerator_midpoint6_sum"].isna())
 ]
 
-print(f"4. {summer['practice_season_df'][summer['practice_season_df']['measure'] == 'overall_resp_sensitive'][['measure','summer_year','numerator_midpoint6_sum', 'list_size_midpoint6_sum']].head().to_string()}")
+print(f"4. Total numerator for {summer['practice_season_df']['season'].iloc[0]} = {summer['practice_season_df']['numerator_midpoint6_sum'].sum()}, \nTotal denominator for {summer['practice_season_df']['season'].iloc[0]} = {summer['practice_season_df']['list_size_midpoint6_sum'].sum()}, \nTotal practices for {summer['practice_season_df']['season'].iloc[0]} = {summer['practice_season_df']['practice_pseudo_id'].nunique()}")
 
 for seasonal_group in seasonal_groups:
 
@@ -249,10 +251,13 @@ combined_practice_seasons_df["RD_first_summr"] = (
 )
 
 # Visualise distributions of rates and RRs
+plot_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots"
+os.makedirs(plot_dir, exist_ok=True)
+
 rate_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "Rate_per_1000", facet_var = 'measure')
-plt.savefig(f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots/rates.png")
+rate_plots.savefig(f"{plot_dir}/rates.png")
 RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_summr", facet_var = 'measure')
-plt.savefig(f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots/RR_prev_summer.png")
+RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
 read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
 
 # Aggregate from practice level to pandemic level
