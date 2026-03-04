@@ -1,5 +1,6 @@
 # This script normalizes the practice measures data by calculating rate ratios and testing for seasonality.
 # It also performs a long-term trend analysis on the rate ratios and rounded rates.
+# USAGE: python analysis/normalization.py
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
@@ -29,10 +30,10 @@ date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 log_memory_usage(label="Before loading data")
 
 input_path = (
-    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/proc_{config['group']}_measures_midpoint6"
+    f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"
 )
 practice_interval_df = read_write("read", input_path)
-
+print(f"1. {practice_interval_df[practice_interval_df['measure'] == 'overall_resp_sensitive'][['measure','interval_start','numerator_midpoint6', 'list_size_midpoint6']].head().to_string()}")
 log_memory_usage(label="After loading data")
 
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
@@ -63,7 +64,7 @@ pandemic_df = practice_interval_df.loc[
 practice_interval_df = practice_interval_df.loc[
     ~practice_interval_df["pandemic"].isin(["During"])
 ]
-
+print(f"2. {practice_interval_df[practice_interval_df['measure'] == 'overall_resp_sensitive'][['measure','interval_start','numerator_midpoint6', 'list_size_midpoint6']].head().to_string()}")
 # ----------------------- Seasonality analysis ----------------------------------
 
 # Iterate over two summer baseline options: 1) Compare winter to prev summer 2) Compare winter to first summer
@@ -103,6 +104,7 @@ for seasonal_group in seasonal_groups:
         },
         inplace=True,
     )
+    print(f"3. {seasonal_group['practice_interval_df'][seasonal_group['practice_interval_df']['measure'] == 'overall_resp_sensitive'][['measure','interval_start','numerator_midpoint6', 'list_size_midpoint6']].head().to_string()}")
 
     # -------- 2 - REMOVE SEASONS WITH MISSING BASELINES --------------------
 
@@ -118,6 +120,8 @@ summer["zero_or_nan_df"] = summer["practice_season_df"][
     (summer["practice_season_df"]["numerator_midpoint6_sum"] == 0)
     | (summer["practice_season_df"]["numerator_midpoint6_sum"].isna())
 ]
+
+print(f"4. {summer['practice_season_df'][summer['practice_season_df']['measure'] == 'overall_resp_sensitive'][['measure','summer_year','numerator_midpoint6_sum', 'list_size_midpoint6_sum']].head().to_string()}")
 
 for seasonal_group in seasonal_groups:
 
