@@ -124,13 +124,17 @@ summer["zero_or_nan_df"] = summer["practice_season_df"][
 ]
 
 print(f"4. Total numerator for {summer['practice_season_df']['season'].iloc[0]} = {summer['practice_season_df']['numerator_midpoint6_sum'].sum()}, \nTotal denominator for {summer['practice_season_df']['season'].iloc[0]} = {summer['practice_season_df']['list_size_midpoint6_sum'].sum()}, \nTotal practices for {summer['practice_season_df']['season'].iloc[0]} = {summer['practice_season_df']['practice_pseudo_id'].nunique()}")
+print(f"5. Total numerator for {non_summer['practice_season_df']['season'].iloc[0]} = {non_summer['practice_season_df']['numerator_midpoint6_sum'].sum()}, \nTotal denominator for {non_summer['practice_season_df']['season'].iloc[0]} = {non_summer['practice_season_df']['list_size_midpoint6_sum'].sum()}, \nTotal practices for {non_summer['practice_season_df']['season'].iloc[0]} = {non_summer['practice_season_df']['practice_pseudo_id'].nunique()}")
+print(f"6. Total numerator for zero/nan summer practices = {summer['zero_or_nan_df']['numerator_midpoint6_sum'].sum()}, \nTotal denominator for zero/nan summer practices = {summer['zero_or_nan_df']['list_size_midpoint6_sum'].sum()}, \nTotal practices for zero/nan summer practices = {summer['zero_or_nan_df']['practice_pseudo_id'].nunique()}")
 
 for seasonal_group in seasonal_groups:
 
     # Remove practice seasons without a valid baseline rate
     keys = ['measure', 'summer_year', 'practice_pseudo_id']
     seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'].merge(summer['zero_or_nan_df'][keys], on=keys, how='left', indicator=True)
+    print(f"7. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['numerator_midpoint6_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['list_size_midpoint6_sum'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}")
     seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'][seasonal_group['practice_season_df']['_merge'] == 'left_only'].drop(columns='_merge')
+    print(f"8. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['numerator_midpoint6_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['list_size_midpoint6_sum'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}")
     
     # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
 
@@ -143,6 +147,8 @@ for seasonal_group in seasonal_groups:
             "list_size_midpoint6_count": ["sum"],
         },
     )
+
+    print(f"9. Total numerator for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['numerator_midpoint6_sum_sum'].sum()}, \nTotal denominator for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['list_size_midpoint6_sum_sum'].sum()}, \nTotal practices for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['list_size_midpoint6_count_sum'].sum()}")
 long_df = pd.concat([summer['practice_season_df'], non_summer['practice_season_df']])
 read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_weighted_long", df=long_df, file_type = 'csv')    
 
