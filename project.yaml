@@ -2730,13 +2730,13 @@ actions:
       moderately_sensitive:
         low_appt_analysis: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_demographics.csv
 
-  # Generate national weekly aggregates for RSV_sensitive measure, for sense checking with other work packages.
-  generate_national_weekly_rsv_sensitive:
+  # Generate national weekly aggregates for a measure, for sense checking with other work packages.
+  generate_national_weekly:
     run: python:v2 analysis/national_weekly.py
-    needs: [generate_practice_measures_resp_2016-04-11]
+    needs: [generate_practice_measures_resp_2023-04-03]
     outputs:
       moderately_sensitive:
-        national_weekly_aggregates: output/practice_measures_resp/national_weekly_rsv_sensitive*.csv
+        national_weekly_aggregates: output/practice_measures_resp/national_weekly*.csv
  
  # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------
   # Weekly aggregates

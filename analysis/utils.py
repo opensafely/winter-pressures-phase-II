@@ -167,10 +167,23 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
 # ----------- Summer-winter comparison functions ---------------------------------------------
 
 
-def build_aggregate_df(rate_df, strata, aggregation_dict):
+def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = False):
 
     # Ensure grouping columns are correct
     agg = (rate_df.groupby(strata).agg(aggregation_dict)).reset_index()
+
+    # If initial list size desired, use the first weekly denominator as yearly list size to avoid inflating denominator by summing list sizes across weeks.
+    if initial_list_size == True:
+        first_week_denominator = (
+            rate_df
+            .sort_values('interval_start')
+            .groupby(strata, as_index=False)['denominator']
+            .first()
+        )
+        agg = agg.merge(first_week_denominator, on=strata, how='left')
+
+        # Rename denominator column to reflect that it's the first week denominator, not the sum of weekly denominators
+        agg.rename(columns={'denominator': 'list_size_initial'}, inplace=True)
 
     # Handle both MultiIndex (tuple) and single-level column indexes safely
     new_columns = []
