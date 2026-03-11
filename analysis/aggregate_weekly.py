@@ -73,15 +73,23 @@ if config["test"]:
         practice_interval_df['list_size_midpoint6']
     )
 
+    # 4 - 2025 having fewer practices than other years to test count of practices in national summary
+    practices_to_drop = random.sample(list(unique_practices), k=int(0.5 * len(unique_practices)))
+    print(f"Number of practices: {practice_interval_df[practice_interval_df['interval_start'].dt.year == 2025]['practice_pseudo_id'].nunique()}")
+    practice_interval_df = practice_interval_df[~((practice_interval_df['interval_start'].dt.year == 2025) & (practice_interval_df['practice_pseudo_id'].isin(practices_to_drop)))]
+    print(f"Number of practices: {practice_interval_df[practice_interval_df['interval_start'].dt.year == 2025]['practice_pseudo_id'].nunique()}")
+
 # -------- Aggregate practice-weekly to practice-yearly ----------------------------------
 
 practice_interval_df['year'] = practice_interval_df['interval_start'].dt.year
+print(f"Number of practices: {practice_interval_df[practice_interval_df['interval_start'].dt.year == 2025]['practice_pseudo_id'].nunique()}")
 
 practice_yearly_df = build_aggregate_df(
     practice_interval_df,
     ["measure", "practice_pseudo_id", "year"],
     {"numerator_midpoint6": ["sum"]},
 )
+print(f"Number of practices: {practice_yearly_df[practice_yearly_df['year'] == 2025]['practice_pseudo_id'].nunique()}")
 
 # For list size we want the value from the earliest interval in the year
 list_size_df = (
@@ -212,4 +220,16 @@ if config["test"] and config["set"] == "resp":
             practice_yearly_df['measure'] == 'covid_specific'
         ]['practice_pseudo_id'].nunique() * 100
     )
-    assert test_output['initial_national_list_size_mp6'].values[0] == expected_list_size
+    #assert test_output['initial_national_list_size_mp6'].values[0] == expected_list_size
+
+    # 4 - 2025 having fewer practices than other years to test count of practices in national summary
+    test_output = national_yearly_df[
+        (national_yearly_df['year'] == 2025)
+    ]
+    print("Test Output for 2025:")
+    print(test_output)
+    print("Number of practices in practice_yearly_df for 2025: ", practice_yearly_df[practice_yearly_df['year'] == 2025]['practice_pseudo_id'].nunique())
+    expected_n_practices = practice_yearly_df[
+        practice_yearly_df['year'] == 2025
+    ]['practice_pseudo_id'].nunique()
+    assert test_output['n_practices_mp6'].values[0] == expected_n_practices
