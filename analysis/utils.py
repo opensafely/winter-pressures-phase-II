@@ -170,7 +170,7 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
 def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = False):
 
     # Ensure grouping columns are correct
-    agg = (rate_df.groupby(strata).agg(aggregation_dict)).reset_index()
+    agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
 
     # If initial list size desired, use the first weekly denominator as yearly list size to avoid inflating denominator by summing list sizes across weeks.
     if initial_list_size == True:
