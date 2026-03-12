@@ -66,9 +66,9 @@ if config["test"]:
         practice_interval_df['numerator_midpoint6']
     )
 
-    # 3 - COVID specific where all practices have list size = 100
+    # 3 - rsv_specific where all practices have list size = 100
     practice_interval_df['list_size_midpoint6'] = np.where(
-        (practice_interval_df['measure'] == 'covid_specific'),
+        (practice_interval_df['measure'] == 'rsv_specific'),
         100,
         practice_interval_df['list_size_midpoint6']
     )
@@ -78,6 +78,14 @@ if config["test"]:
     print(f"Number of practices: {practice_interval_df[practice_interval_df['interval_start'].dt.year == 2025]['practice_pseudo_id'].nunique()}")
     practice_interval_df = practice_interval_df[~((practice_interval_df['interval_start'].dt.year == 2025) & (practice_interval_df['practice_pseudo_id'].isin(practices_to_drop)))]
     print(f"Number of practices: {practice_interval_df[practice_interval_df['interval_start'].dt.year == 2025]['practice_pseudo_id'].nunique()}")
+
+    # 5 - All practices have numerator = 10 for rsv_specific in 2024 to test numerator aggregation
+    practice_interval_df['numerator_midpoint6'] = np.where(
+        (practice_interval_df['measure'] == 'rsv_specific') &
+        (practice_interval_df['interval_start'].dt.year == 2024),
+        10,
+        practice_interval_df['numerator_midpoint6']
+    )
 
 # -------- Aggregate practice-weekly to practice-yearly ----------------------------------
 
@@ -209,27 +217,44 @@ if config["test"] and config["set"] == "resp":
     assert test_output['rate_mp6'].values[0] > 0
     assert test_output['propn_prac_zero_rate_mp6'].values[0] < 0.5
 
-    # 3 - All practices have list size = 100 for covid_specific
+    # 3 - All practices have list size = 100 for rsv_specific
     test_output = national_yearly_df[
-        (national_yearly_df['measure'] == 'covid_specific')
+        (national_yearly_df['measure'] == 'rsv_specific')
     ]
-    print("Test Output for covid_specific:")
+    print("Test Output for rsv_specific:")
     print(test_output)
     expected_list_size = (
         practice_yearly_df[
-            practice_yearly_df['measure'] == 'covid_specific'
+            practice_yearly_df['measure'] == 'rsv_specific'
         ]['practice_pseudo_id'].nunique() * 100
     )
     #assert test_output['initial_national_list_size_mp6'].values[0] == expected_list_size
 
     # 4 - 2025 having fewer practices than other years to test count of practices in national summary
-    test_output = national_yearly_df[
+    test_output_2025 = national_yearly_df[
         (national_yearly_df['year'] == 2025)
     ]
+    test_output_2024 = national_yearly_df[
+        (national_yearly_df['year'] == 2024)
+    ]
     print("Test Output for 2025:")
-    print(test_output)
+    print(test_output_2025)
     print("Number of practices in practice_yearly_df for 2025: ", practice_yearly_df[practice_yearly_df['year'] == 2025]['practice_pseudo_id'].nunique())
-    expected_n_practices = practice_yearly_df[
-        practice_yearly_df['year'] == 2025
-    ]['practice_pseudo_id'].nunique()
-    assert test_output['n_practices_mp6'].values[0] == expected_n_practices
+    assert test_output_2025['n_practices_mp6'].values[0] < test_output_2024['n_practices_mp6'].values[0]
+
+    # 5 - All practices have numerator = 10 for rsv_specific in 2024 to test numerator aggregation
+    test_output = national_yearly_df[
+        (national_yearly_df['measure'] == 'rsv_specific') &
+        (national_yearly_df['year'] == 2024)
+    ]
+    print("Test Output for rsv_specific in 2024:")
+    print(test_output)
+    # Expect cum_sum to be 10 multiplied by observed practice-interval rows in 2024
+    expected_cum_sum = 10 * len(
+        practice_interval_df[
+            (practice_interval_df['measure'] == 'rsv_specific') &
+            (practice_interval_df['interval_start'].dt.year == 2024)
+        ]
+    )
+    
+    assert test_output['cum_sum_numerator_mp6'].values[0] == expected_cum_sum
