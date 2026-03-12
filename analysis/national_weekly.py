@@ -2,6 +2,7 @@
 # for sense checking with other work packages.
 
 # python analysis/national_weekly.py
+# --test runs a test version with assertion tests
 
 import json
 import pandas as pd
@@ -14,12 +15,30 @@ from utils import *
 import pyarrow.feather as feather
 from parse_args import config
 
+# ------------- Set up paths and parameters -------------------------
+
+INPUT_INTERVALS = ["2022-04-04", "2023-04-03"]
+CALENDAR_YEAR_TO_INCLUDE = 2023
 INTERVAL_TO_TEST = "2023-04-03" # Action will need to be edited if this is edited
 DISEASE_TO_TEST = "rsv_specific" # Action will need to be edited if this is edited
 
-input_path = f"output/practice_measures_resp/practice_measures_{INTERVAL_TO_TEST}"
-output_path = f"output/practice_measures_resp/national_weekly_{DISEASE_TO_TEST}_{INTERVAL_TO_TEST}"   
-practice_weekly_df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"], test = False)
+input_paths = [
+    f"output/practice_measures_resp/practice_measures_{interval_start}"
+    for interval_start in INPUT_INTERVALS
+]
+output_path = f"output/practice_measures_resp/national_weekly_{DISEASE_TO_TEST}_{CALENDAR_YEAR_TO_INCLUDE}"
+
+practice_weekly_df = pd.concat(
+    [
+        read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"], test=False)
+        for input_path in input_paths
+    ],
+    ignore_index=True,
+)
+practice_weekly_df["interval_start"] = pd.to_datetime(practice_weekly_df["interval_start"])
+practice_weekly_df = practice_weekly_df[
+    practice_weekly_df["interval_start"].dt.year == CALENDAR_YEAR_TO_INCLUDE
+]
 
 # -------------- Test cases -----------------------------
 
@@ -35,7 +54,6 @@ if config["test"]:
         10,
         practice_weekly_df['numerator']
     )
-
 
 # ------------- Aggregate rsv_sensitive measure to national level -------------------------
 
@@ -68,7 +86,7 @@ national_yearly_df = build_aggregate_df(practice_weekly_df, ['measure'],
 # Post-aggregation column edits
 national_yearly_df.rename(columns={'practice_pseudo_id': 'n_practices_year'}, inplace=True)
 national_yearly_df['rate_per_1000'] = (national_yearly_df['numerator'] / national_yearly_df['list_size_initial']) * 1000
-national_yearly_df['year_start'] = INTERVAL_TO_TEST
+national_yearly_df['year_start'] = CALENDAR_YEAR_TO_INCLUDE
 
 print(national_yearly_df)
 read_write(read_or_write="write", df=national_yearly_df, path=f"{output_path}_yearly", file_type="csv", test = False)

@@ -2733,7 +2733,7 @@ actions:
   # Generate national weekly aggregates for a measure, for sense checking with other work packages.
   generate_national_weekly:
     run: python:v2 analysis/national_weekly.py
-    needs: [generate_practice_measures_resp_2023-04-03]
+    needs: [generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2022-04-04]
     outputs:
       moderately_sensitive:
         national_weekly_aggregates: output/practice_measures_resp/national_weekly*.csv
