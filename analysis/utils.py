@@ -172,15 +172,33 @@ def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = Fa
     # Ensure grouping columns are correct
     agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
 
-    # If initial list size desired, use the first weekly denominator as yearly list size to avoid inflating denominator by summing list sizes across weeks.
+    # If initial list size desired, use the first national-week denominator as
+    # yearly list size to avoid inflating denominator by summing list sizes
+    # across weeks or accidentally taking a practice-level denominator value.
     if initial_list_size == True:
-        first_week_denominator = (
+        if 'denominator' not in rate_df.columns or 'interval_start' not in rate_df.columns:
+            raise ValueError(
+                "initial_list_size=True requires 'denominator' and 'interval_start' columns in rate_df"
+            )
+
+        # Aggregate denominator to national-week level first (sum across rows),
+        # then take the earliest week denominator within each stratum.
+        strata_no_interval = [col for col in strata if col != 'interval_start']
+        weekly_strata = list(dict.fromkeys(strata_no_interval + ['interval_start']))
+
+        weekly_denominator = (
             rate_df
+            .groupby(weekly_strata, as_index=False, observed=True)['denominator']
+            .sum()
+        )
+
+        first_week_denominator = (
+            weekly_denominator
             .sort_values('interval_start')
-            .groupby(strata, as_index=False)['denominator']
+            .groupby(strata_no_interval, as_index=False, observed=True)['denominator']
             .first()
         )
-        agg = agg.merge(first_week_denominator, on=strata, how='left')
+        agg = agg.merge(first_week_denominator, on=strata_no_interval, how='left')
 
         # Rename denominator column to reflect that it's the first week denominator, not the sum of weekly denominators
         agg.rename(columns={'denominator': 'list_size_initial'}, inplace=True)
