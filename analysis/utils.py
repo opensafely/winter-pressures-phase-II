@@ -456,3 +456,12 @@ def roundmid_any(x, to=6):
     x = np.asarray(x)
     return np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
 
+def column_total_check(df, column, year, measure_name):
+    
+    total_count = df[
+            (df["measure"] == measure_name) &
+            (df["interval_start"].dt.year == year)
+        ][column].sum()
+    
+    return f"Total {measure_name} cases in {year}: {total_count}"
+

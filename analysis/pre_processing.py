@@ -23,7 +23,6 @@ from parse_args import config
 
 dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 
-print(dates)
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 if config["test"]:
@@ -50,6 +49,10 @@ for date in dates:
     output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
 
+    # Count total rsv_specific cases in 2023 for sense check
+    if config['set'] == 'resp':
+        print(column_total_check(df, column="numerator", year=2023, measure_name="rsv_specific"))
+
     df.drop(columns=["interval_end", "ratio"], inplace=True)  # Drop interval end column as not needed for analysis and saves memory
     log_memory_usage(label=f"After loading measures {date}")
     print(f"Initial shape of input: {df.shape}", flush=True)
@@ -73,6 +76,10 @@ for date in dates:
         f"After dropping rows with 0 list_size or nan list_size shape: {df.shape}",
         flush=True,
     )
+
+    # Count total rsv_specific cases in 2023 for sense check
+    if config['set'] == 'resp':
+        print(column_total_check(df, column="numerator", year=2023, measure_name="rsv_specific"))
     
     # Loop through each subgroup and append the subgroups measures
     for subgroup in config['subgroups']:
@@ -99,6 +106,10 @@ for date in dates:
     
     del df
     log_memory_usage(label=f"After deletion of df")
+    # Count total rsv_specific cases in 2023 for sense check
+    breakpoint()
+    if config['set'] == 'resp':
+        print(column_total_check(measures_dict[subgroup][-1], column="numerator", year=2023, measure_name="rsv_specific"))
 
 # Apply pre-processing to each subgroup dataframe
 for subgroup in config['subgroups']:
@@ -108,6 +119,9 @@ for subgroup in config['subgroups']:
 
     print(f"Data types of input: {measures_dict[subgroup].dtypes}", flush=True)
     log_memory_usage(label=f"After deletion of dataframes")
+    # Count total rsv_specific cases in 2023 for sense check
+    if config['set'] == 'resp':
+        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
 
     if subgroup == "rur_urb_class":
         # Replace numerical values with string values
@@ -176,8 +190,6 @@ for subgroup in config['subgroups']:
             subset=["practice_pseudo_id", "measure", "interval_start"]
         )
 
-        print(measures_dict[subgroup].head())
-
     # Remove intervals before the first summer reference period
     measures_dict[subgroup] = measures_dict[subgroup][measures_dict[subgroup]["interval_start"] > "2016-05-31"]
 
@@ -195,12 +207,18 @@ for subgroup in config['subgroups']:
 
     # Round measures using midpoint 6 rounding
     print(f"Before rounding: {measures_dict[subgroup].head()}")
+    # Count total rsv_specific cases in 2023 for sense check
+    if config['set'] == 'resp':
+        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
 
     # Round the numerator and list_size columns
     measures_dict[subgroup][["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(measures_dict[subgroup][["numerator", "list_size"]], to=6)
     measures_dict[subgroup].drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
 
     print(f"After rounding: {measures_dict[subgroup].head()}")
+    # Count total rsv_specific cases in 2023 for sense check
+    if config['set'] == 'resp':
+        print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
     # Ensure correct datetime format
     measures_dict[subgroup]["interval_start"] = pd.to_datetime(
@@ -238,6 +256,10 @@ for subgroup in config['subgroups']:
         output_path_subgroup = output_path + f"_{subgroup}"
     elif config['practice_measures']:
         output_path_subgroup = output_path
+
+    # Count total rsv_specific cases in 2023 for sense check
+    if config['set'] == 'resp':
+        print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
     read_write(read_or_write="write", path=output_path_subgroup, df=measures_dict[subgroup], file_type='arrow')
     del measures_dict[subgroup]  # Delete dataframe to save memory

@@ -40,6 +40,9 @@ practice_weekly_df = practice_weekly_df[
     practice_weekly_df["interval_start"].dt.year == CALENDAR_YEAR_TO_INCLUDE
 ]
 
+# Count total rsv_specific cases in 2023 for sense check
+print(column_total_check(practice_weekly_df, column="numerator", year=2023, measure_name="rsv_specific"))
+
 # -------------- Test cases -----------------------------
 
 if config["test"]:
@@ -64,6 +67,9 @@ practice_weekly_df = practice_weekly_df[practice_weekly_df['measure'] == DISEASE
 # Redefine categories of measure to avoid aggregation issues
 practice_weekly_df['measure'] = practice_weekly_df['measure'].cat.set_categories([DISEASE_TO_TEST])
 
+# Count total rsv_specific cases in 2023 for sense check
+print(column_total_check(practice_weekly_df, column="numerator", year=2023, measure_name="rsv_specific"))
+
 # Aggregate practice level data to national level
 national_weekly_df = build_aggregate_df(practice_weekly_df, ['measure', 'interval_start'], {'numerator': 'sum', 'denominator': 'sum', 'practice_pseudo_id': 'nunique'})
 
@@ -71,7 +77,6 @@ national_weekly_df = build_aggregate_df(practice_weekly_df, ['measure', 'interva
 national_weekly_df.rename(columns={'practice_pseudo_id': 'n_practices_week'}, inplace=True)
 national_weekly_df['rate_per_1000'] = (national_weekly_df['numerator'] / national_weekly_df['denominator']) * 1000
 
-print(national_weekly_df)
 read_write(read_or_write="write", df=national_weekly_df, path=output_path, file_type="csv", test = False)
 
 # ------------- Aggregate weekly to yearly -------------------------
@@ -88,7 +93,6 @@ national_yearly_df.rename(columns={'practice_pseudo_id': 'n_practices_year'}, in
 national_yearly_df['rate_per_1000'] = (national_yearly_df['numerator'] / national_yearly_df['list_size_initial']) * 1000
 national_yearly_df['year_start'] = CALENDAR_YEAR_TO_INCLUDE
 
-print(national_yearly_df)
 read_write(read_or_write="write", df=national_yearly_df, path=f"{output_path}_yearly", file_type="csv", test = False)
 
 

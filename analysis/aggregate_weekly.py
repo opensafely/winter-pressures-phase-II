@@ -43,6 +43,10 @@ if config["group"] == "practice_subgroup":
     # Remove sex suffix from measure na,es
     practice_interval_df['measure'] = practice_interval_df['measure'].str.replace(r'_sex$', '', regex=True)
 
+# Count total rsv_specific cases in 2023 for sense check
+if config["set"] == "resp":
+    print(column_total_check(practice_interval_df, column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
+
 # -------------- Test cases -----------------------------
 
 if config["test"]:
@@ -91,6 +95,10 @@ if config["test"]:
 
 practice_interval_df['year'] = practice_interval_df['interval_start'].dt.year
 print(f"Number of practices: {practice_interval_df[practice_interval_df['interval_start'].dt.year == 2025]['practice_pseudo_id'].nunique()}")
+
+# Count total rsv_specific cases in 2023 for sense check
+if config["set"] == "resp":
+    print(column_total_check(practice_interval_df, column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
 practice_yearly_df = build_aggregate_df(
     practice_interval_df,
@@ -143,6 +151,10 @@ output_df = practice_yearly_df.rename(
 # Convert interval_start to datetime for decile charts script
 output_df['interval_start'] = pd.to_datetime(output_df['interval_start'], format='%Y')
 read_write("write", output_path, df = output_df, file_type = 'arrow')
+
+# Count total rsv_specific cases in 2023 for sense check
+if config["set"] == "resp":
+    print(column_total_check(output_df, column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
 # -------- Aggregate practice-yearly to national-yearly ----------------------------------
 
