@@ -107,7 +107,6 @@ for date in dates:
     del df
     log_memory_usage(label=f"After deletion of df")
     # Count total rsv_specific cases in 2023 for sense check
-    breakpoint()
     if config['set'] == 'resp':
         print(column_total_check(measures_dict[subgroup][-1], column="numerator", year=2023, measure_name="rsv_specific"))
 
