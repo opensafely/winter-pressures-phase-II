@@ -212,13 +212,26 @@ for subgroup in config['subgroups']:
 
     # Round the numerator and list_size columns
     measures_dict[subgroup][["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(measures_dict[subgroup][["numerator", "list_size"]], to=6)
-    measures_dict[subgroup].drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
-
     print(f"After rounding: {measures_dict[subgroup].head()}")
+
     # Count total rsv_specific cases in 2023 for sense check
     if config['set'] == 'resp':
         print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
+    # Check distribution of numerators to see if rounding is biased towards rounding up or down
+    measures_dict[subgroup]["rounding_difference"] = measures_dict[subgroup]["numerator_midpoint6"] - measures_dict[subgroup]["numerator"]
+    rounding_diff_counts = measures_dict[subgroup].groupby("rounding_difference").size()
+    print(f"Rounding difference counts:\n{rounding_diff_counts}", flush=True)
+
+    # Histogram of numerators up to 10
+    measures_dict[subgroup]["numerator"].hist().set_title(f"Histogram of original numerators for {subgroup}")
+    plt.xlim(0, 10)
+    plot_path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/histogram_original_numerators_{subgroup}.png"
+    if config['test']:
+        plot_path = plot_path.replace(".png", "_test.png")
+    plt.savefig(plot_path)
+
+    measures_dict[subgroup].drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
     # Ensure correct datetime format
     measures_dict[subgroup]["interval_start"] = pd.to_datetime(
         measures_dict[subgroup]["interval_start"]
