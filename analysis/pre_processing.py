@@ -219,21 +219,19 @@ for subgroup in config['subgroups']:
         print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
     # Check distribution of numerators to see if rounding is biased towards rounding up or down
-    rsv_df = measures_dict[subgroup][measures_dict[subgroup]["measure"] == "rsv_specific"]
-    rsv_df["rounding_difference"] = rsv_df["numerator_midpoint6"] - rsv_df["numerator"]
-    rounding_diff_counts = rsv_df.groupby("rounding_difference").size()
-    print(f"Rounding difference counts for rsv_specific:\n{rounding_diff_counts}", flush=True)
+    rsv_2023_df = measures_dict[subgroup][(measures_dict[subgroup]["measure"] == "rsv_specific") & (measures_dict[subgroup]["interval_start"].dt.year == 2023)]
+    rsv_2023_df["rounding_difference"] = rsv_2023_df["numerator_midpoint6"] - rsv_2023_df["numerator"]
+    rounding_diff_counts = rsv_2023_df.groupby("rounding_difference").size()
+    print(f"Rounding difference counts for rsv_specific 2023:\n{rounding_diff_counts}", flush=True)
     measures_dict[subgroup]["rounding_difference"] = measures_dict[subgroup]["numerator_midpoint6"] - measures_dict[subgroup]["numerator"]
     rounding_diff_counts = measures_dict[subgroup].groupby("rounding_difference").size()
     print(f"Rounding difference counts total:\n{rounding_diff_counts}", flush=True)
 
-    # Histogram of numerators up to 10
-    rsv_df["numerator"].hist().set_title(f"RSV original numerators for {subgroup}")
-    plt.xlim(0, 10)
-    plot_path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/rsv_numerators_{subgroup}.png"
-    if config['test']:
-        plot_path = plot_path.replace(".png", "_test.png")
-    plt.savefig(plot_path)
+    # Print value counts for low numerators to check for rounding bias
+    low_numerator_counts = rsv_2023_df[rsv_2023_df["numerator"] < 10].groupby("numerator").size()
+    low_numerator_counts_rounded = rsv_2023_df[rsv_2023_df["numerator_midpoint6"] < 10].groupby("numerator_midpoint6").size()
+    print(f"Low numerator counts for {subgroup}:\n{low_numerator_counts}", flush=True) 
+    print(f"Low rounded numerator counts for {subgroup}:\n{low_numerator_counts_rounded}", flush=True)  
 
     measures_dict[subgroup].drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
     # Ensure correct datetime format
