@@ -219,14 +219,18 @@ for subgroup in config['subgroups']:
         print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
 
     # Check distribution of numerators to see if rounding is biased towards rounding up or down
+    rsv_df = measures_dict[subgroup][measures_dict[subgroup]["measure"] == "rsv_specific"]
+    rsv_df["rounding_difference"] = rsv_df["numerator_midpoint6"] - rsv_df["numerator"]
+    rounding_diff_counts = rsv_df.groupby("rounding_difference").size()
+    print(f"Rounding difference counts for rsv_specific:\n{rounding_diff_counts}", flush=True)
     measures_dict[subgroup]["rounding_difference"] = measures_dict[subgroup]["numerator_midpoint6"] - measures_dict[subgroup]["numerator"]
     rounding_diff_counts = measures_dict[subgroup].groupby("rounding_difference").size()
-    print(f"Rounding difference counts:\n{rounding_diff_counts}", flush=True)
+    print(f"Rounding difference counts total:\n{rounding_diff_counts}", flush=True)
 
     # Histogram of numerators up to 10
-    measures_dict[subgroup]["numerator"].hist().set_title(f"Histogram of original numerators for {subgroup}")
+    rsv_df["numerator"].hist().set_title(f"RSV original numerators for {subgroup}")
     plt.xlim(0, 10)
-    plot_path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/histogram_original_numerators_{subgroup}.png"
+    plot_path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/rsv_numerators_{subgroup}.png"
     if config['test']:
         plot_path = plot_path.replace(".png", "_test.png")
     plt.savefig(plot_path)
