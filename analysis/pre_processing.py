@@ -227,13 +227,11 @@ for subgroup in config['subgroups']:
     rounding_diff_counts = measures_dict[subgroup].groupby("rounding_difference").size()
     print(f"Rounding difference counts total:\n{rounding_diff_counts}", flush=True)
 
-    # Histogram of numerators up to 10
-    rsv_2023_df["numerator"].hist().set_title(f"RSV original numerators for {subgroup}")
-    plt.xlim(0, 10)
-    plot_path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/rsv_2023_numerators_{subgroup}.png"
-    if config['test']:
-        plot_path = plot_path.replace(".png", "_test.png")
-    plt.savefig(plot_path)
+    # Print value counts for low numerators to check for rounding bias
+    low_numerator_counts = rsv_2023_df[rsv_2023_df["numerator"] < 10].groupby("numerator").size()
+    low_numerator_counts_rounded = rsv_2023_df[rsv_2023_df["numerator_midpoint6"] < 10].groupby("numerator_midpoint6").size()
+    print(f"Low numerator counts for {subgroup}:\n{low_numerator_counts}", flush=True) 
+    print(f"Low rounded numerator counts for {subgroup}:\n{low_numerator_counts_rounded}", flush=True)  
 
     measures_dict[subgroup].drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
     # Ensure correct datetime format
