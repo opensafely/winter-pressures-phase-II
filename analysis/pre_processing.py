@@ -46,7 +46,7 @@ for date in dates:
 
     print(f"Loading {config['group']} measures {date}", flush=True)
     input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/{config['group']}_measures_{date}"
-    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"    # Read in measures
+    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"    # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
 
     # Count total rsv_specific cases in 2023 for sense check
@@ -204,36 +204,17 @@ for subgroup in config['subgroups']:
             flush=True,
         )
 
-    # Round measures using midpoint 6 rounding
-    print(f"Before rounding: {measures_dict[subgroup].head()}")
     # Count total rsv_specific cases in 2023 for sense check
     if config['set'] == 'resp':
         print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
 
-    # Round the numerator and list_size columns
-    measures_dict[subgroup][["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(measures_dict[subgroup][["numerator", "list_size"]], to=6)
-    print(f"After rounding: {measures_dict[subgroup].head()}")
+    # MOVE DOWNSTREAM   
+    #measures_dict[subgroup][["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(measures_dict[subgroup][["numerator", "list_size"]], to=6)
 
     # Count total rsv_specific cases in 2023 for sense check
     if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
+        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
 
-    # Check distribution of numerators to see if rounding is biased towards rounding up or down
-    rsv_2023_df = measures_dict[subgroup][(measures_dict[subgroup]["measure"] == "rsv_specific") & (measures_dict[subgroup]["interval_start"].dt.year == 2023)]
-    rsv_2023_df["rounding_difference"] = rsv_2023_df["numerator_midpoint6"] - rsv_2023_df["numerator"]
-    rounding_diff_counts = rsv_2023_df.groupby("rounding_difference").size()
-    print(f"Rounding difference counts for rsv_specific 2023:\n{rounding_diff_counts}", flush=True)
-    measures_dict[subgroup]["rounding_difference"] = measures_dict[subgroup]["numerator_midpoint6"] - measures_dict[subgroup]["numerator"]
-    rounding_diff_counts = measures_dict[subgroup].groupby("rounding_difference").size()
-    print(f"Rounding difference counts total:\n{rounding_diff_counts}", flush=True)
-
-    # Print value counts for low numerators to check for rounding bias
-    low_numerator_counts = rsv_2023_df[rsv_2023_df["numerator"] < 10].groupby("numerator").size()
-    low_numerator_counts_rounded = rsv_2023_df[rsv_2023_df["numerator_midpoint6"] < 10].groupby("numerator_midpoint6").size()
-    print(f"Low numerator counts for {subgroup}:\n{low_numerator_counts}", flush=True) 
-    print(f"Low rounded numerator counts for {subgroup}:\n{low_numerator_counts_rounded}", flush=True)  
-
-    measures_dict[subgroup].drop(columns=["numerator", "list_size"], inplace=True)  # Drop original columns to save memory
     # Ensure correct datetime format
     measures_dict[subgroup]["interval_start"] = pd.to_datetime(
         measures_dict[subgroup]["interval_start"]
@@ -247,9 +228,9 @@ for subgroup in config['subgroups']:
     )
 
     # Calculate rate per 1000
-    measures_dict[subgroup]["rate_per_1000_midpoint6_derived"] = (
-        measures_dict[subgroup]["numerator_midpoint6"]
-        / measures_dict[subgroup]["list_size_midpoint6"]
+    measures_dict[subgroup]["rate_per_1000"] = (
+        measures_dict[subgroup]["numerator"]
+        / measures_dict[subgroup]["list_size"]
         * 1000
     )
 
@@ -273,7 +254,7 @@ for subgroup in config['subgroups']:
 
     # Count total rsv_specific cases in 2023 for sense check
     if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup], column="numerator_midpoint6", year=2023, measure_name="rsv_specific"))
+        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
 
     read_write(read_or_write="write", path=output_path_subgroup, df=measures_dict[subgroup], file_type='arrow')
     del measures_dict[subgroup]  # Delete dataframe to save memory

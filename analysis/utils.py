@@ -452,9 +452,63 @@ def generate_dist_plot(df, var, facet_var, **kwargs):
 
     return facet_plot
 
-def roundmid_any(x, to=6):
-    x = np.asarray(x)
-    return np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+def _print_rounding_checks(unrounded, rounded, col_name, low_value_threshold=10):
+    """
+    Print rounding checks comparing rounded vs unrounded values for a column.
+    """
+    unrounded_series = pd.Series(unrounded).astype("float64")
+    rounded_series = pd.Series(rounded).astype("float64")
+
+    rounding_difference = rounded_series - unrounded_series
+    rounding_diff_counts = rounding_difference.value_counts(dropna=False).sort_index()
+    print(f"Rounding difference counts for {col_name}:\n{rounding_diff_counts}", flush=True)
+
+    low_unrounded = (
+        unrounded_series[unrounded_series < low_value_threshold]
+        .value_counts(dropna=False)
+        .sort_index()
+    )
+    low_rounded = (
+        rounded_series[rounded_series < low_value_threshold]
+        .value_counts(dropna=False)
+        .sort_index()
+    )
+    print(
+        f"Low unrounded value counts for {col_name} (< {low_value_threshold}):\n{low_unrounded}",
+        flush=True,
+    )
+    print(
+        f"Low rounded value counts for {col_name} (< {low_value_threshold}):\n{low_rounded}",
+        flush=True,
+    )
+
+
+def roundmid_any(x, to=6, low_value_threshold=10):
+    """
+    Round values using midpoint rounding and always print checks comparing
+    rounded and unrounded counts.
+    """
+    if isinstance(x, pd.DataFrame):
+        rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+        for col in x.columns:
+            _print_rounding_checks(
+                x[col], rounded[col], col_name=col, low_value_threshold=low_value_threshold
+            )
+        return rounded
+
+    if isinstance(x, pd.Series):
+        rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+        _print_rounding_checks(
+            x, rounded, col_name=x.name or "value", low_value_threshold=low_value_threshold
+        )
+        return rounded
+
+    x_arr = np.asarray(x)
+    rounded = np.ceil(x_arr / to) * to - (np.floor(to / 2) * (x_arr != 0))
+    _print_rounding_checks(
+        x_arr.flatten(), rounded.flatten(), col_name="value", low_value_threshold=low_value_threshold
+    )
+    return rounded
 
 def column_total_check(df, column, year, measure_name):
     
