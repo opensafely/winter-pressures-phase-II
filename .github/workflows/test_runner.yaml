@@ -16,6 +16,6 @@ jobs:
     - name: Test that the project is runnable
       uses: opensafely-core/research-action@v2
       with:
-        actions: generate_national_weekly
+        actions: generate_practice_measures_resp_test generate_pre_processing_practice_resp_test generate_normalization_practice_resp_test
 
 
