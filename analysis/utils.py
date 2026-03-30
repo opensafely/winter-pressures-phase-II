@@ -166,46 +166,17 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
 
 # ----------- Summer-winter comparison functions ---------------------------------------------
 
-
-def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = False):
-
-    # Ensure grouping columns are correct
-    agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
-
-    # If initial list size desired, use the first national-week denominator as
-    # yearly list size to avoid inflating denominator by summing list sizes
-    # across weeks or accidentally taking a practice-level denominator value.
-    if initial_list_size == True:
-        if 'denominator' not in rate_df.columns or 'interval_start' not in rate_df.columns:
-            raise ValueError(
-                "initial_list_size=True requires 'denominator' and 'interval_start' columns in rate_df"
-            )
-
-        # Aggregate denominator to national-week level first (sum across rows),
-        # then take the earliest week denominator within each stratum.
-        strata_no_interval = [col for col in strata if col != 'interval_start']
-        weekly_strata = list(dict.fromkeys(strata_no_interval + ['interval_start']))
-
-        weekly_denominator = (
-            rate_df
-            .groupby(weekly_strata, as_index=False, observed=True)['denominator']
-            .sum()
-        )
-
-        first_week_denominator = (
-            weekly_denominator
-            .sort_values('interval_start')
-            .groupby(strata_no_interval, as_index=False, observed=True)['denominator']
-            .first()
-        )
-        agg = agg.merge(first_week_denominator, on=strata_no_interval, how='left')
-
-        # Rename denominator column to reflect that it's the first week denominator, not the sum of weekly denominators
-        agg.rename(columns={'denominator': 'list_size_initial'}, inplace=True)
-
+def flatten_multiindex_columns(df):
+    """
+    Flattens multi-index columns in a DataFrame by joining the levels with an underscore.
+    Args:
+        df (pd.DataFrame): DataFrame with multi-index columns.
+    Returns:
+        pd.DataFrame: DataFrame with flattened column names.
+    """
     # Handle both MultiIndex (tuple) and single-level column indexes safely
     new_columns = []
-    for col in agg.columns.values:
+    for col in df.columns.values:
         if isinstance(col, tuple):
             # Join non-None parts of the tuple with underscores
             parts = [str(part) for part in col if part is not None]
@@ -215,7 +186,48 @@ def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = Fa
             new_col = str(col)
         new_columns.append(new_col)
 
-    agg.columns = new_columns
+    df = df.copy()
+    df.columns = new_columns
+    return df
+
+def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = False):
+
+    # Ensure grouping columns are correct
+    agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
+    agg = flatten_multiindex_columns(agg)
+
+    # If initial list size desired, use the first national-week list_size as
+    # yearly list size to avoid inflating list_size by summing list sizes
+    # across weeks or accidentally taking a practice-level list_size value.
+    if initial_list_size == True:
+        if 'list_size' not in rate_df.columns or 'interval_start' not in rate_df.columns:
+            raise ValueError(
+                "initial_list_size=True requires 'list_size' and 'interval_start' columns in rate_df"
+            )
+
+        # Aggregate list_size to national-week level first (sum across rows),
+        # then take the earliest week list_size within each stratum.
+        strata_no_interval = [col for col in strata if col != 'interval_start']
+        weekly_strata = list(dict.fromkeys(strata_no_interval + ['interval_start']))
+
+        weekly_list_size = (
+            rate_df
+            .groupby(weekly_strata, as_index=False, observed=True)['list_size']
+            .sum()
+        )
+
+        first_week_list_size = (
+            weekly_list_size
+            .sort_values('interval_start')
+            .groupby(strata_no_interval, as_index=False, observed=True)['list_size']
+            .first()
+        )
+
+        first_week_list_size = flatten_multiindex_columns(first_week_list_size)
+        agg = agg.merge(first_week_list_size, on=strata_no_interval, how='left')
+
+        # Rename list_size column to reflect that it's the first week list_size, not the sum of weekly list_sizes
+        agg.rename(columns={'list_size': 'list_size_initial'}, inplace=True)
     
     return agg
 
@@ -286,6 +298,8 @@ def get_season(month):
         return "Nov-Dec"
     elif month in [1, 2]:
         return "Jan-Feb"
+    elif month in [3]:
+        return "Mar" # QOF deadline to flag for qof inflation, important for sro
     elif month in [6, 7]:
         return "Jun-Jul"
     else:
