@@ -1509,6 +1509,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_appts_table/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_measures_appts_table/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_appts_table/Results*.csv
 
@@ -1530,6 +1531,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_appts_table_appt/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_measures_appts_table_appt/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_appts_table_appt/Results*.csv
 
@@ -1551,6 +1553,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_measures_sro/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_sro/Results*.csv
 
@@ -1572,6 +1575,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro_appt/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_measures_sro_appt/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_sro_appt/Results*.csv
 
@@ -1593,6 +1597,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_measures_resp/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_resp/Results*.csv
 
@@ -1614,6 +1619,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp_appt/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_measures_resp_appt/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_resp_appt/Results*.csv
 
@@ -1635,6 +1641,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_appts_table/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_appts_table/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_appts_table/Results*.csv
 
@@ -1656,6 +1663,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_appts_table_appt/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_appts_table_appt/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_appts_table_appt/Results*.csv
 
@@ -1677,6 +1685,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_sro/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_sro/Results*.csv
 
@@ -1698,6 +1707,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro_appt/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_sro_appt/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_sro_appt/Results*.csv
 
@@ -1719,6 +1729,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_resp/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_resp/Results*.csv
 
@@ -1740,6 +1751,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp_appt/practice_level_counts.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_resp_appt/Results_weighted_long.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_resp_appt/Results*.csv
  
@@ -2422,6 +2434,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_appts_table/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_measures_appts_table/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_appts_table/Results*_test.csv
 
@@ -2443,6 +2456,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_appts_table_appt/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_measures_appts_table_appt/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_appts_table_appt/Results*_test.csv
 
@@ -2464,6 +2478,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_measures_sro/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_sro/Results*_test.csv
 
@@ -2485,6 +2500,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_sro_appt/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_measures_sro_appt/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_sro_appt/Results*_test.csv
 
@@ -2506,6 +2522,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_measures_resp/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_resp/Results*_test.csv
 
@@ -2527,6 +2544,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_measures_resp_appt/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_measures_resp_appt/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_measures_resp_appt/Results*_test.csv
 
@@ -2548,6 +2566,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_appts_table/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_appts_table/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_appts_table/Results*_test.csv
 
@@ -2569,6 +2588,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_appts_table_appt/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_appts_table_appt/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_appts_table_appt/Results*_test.csv
 
@@ -2590,6 +2610,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_sro/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_sro/Results*_test.csv
 
@@ -2611,6 +2632,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_sro_appt/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_sro_appt/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_sro_appt/Results*_test.csv
 
@@ -2632,6 +2654,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_resp/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_resp/Results*_test.csv
 
@@ -2653,6 +2676,7 @@ actions:
     outputs:
       highly_sensitive:
         practice_level_tables: output/practice_subgroup_measures_resp_appt/practice_level_counts_test.arrow
+        practice_level_tables_2: output/practice_subgroup_measures_resp_appt/Results_weighted_long_test.arrow
       moderately_sensitive:
         seasonal_tables_tables: output/practice_subgroup_measures_resp_appt/Results*_test.csv
  

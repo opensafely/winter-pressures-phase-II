@@ -111,12 +111,14 @@ for seasonal_group in seasonal_groups:
 
     # -------- 2 - REMOVE SEASONS WITH MISSING BASELINES --------------------
     # Aggregate counts per practice per season
+
     seasonal_group["practice_season_df"] = build_aggregate_df(
         seasonal_group["practice_interval_df"],
         ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
-        {"numerator": ["sum"], "list_size": ["count"]},
+        {"numerator": ["sum"]},
         initial_list_size = True,
     )
+    seasonal_group["practice_season_df"]["list_size_count"] = 1 # Practice count indicator for later aggregation
 
 # Generate total counts per measure per summer
 summer["zero_or_nan_df"] = summer["practice_season_df"][
@@ -132,13 +134,14 @@ for seasonal_group in seasonal_groups:
 
     # Remove practice seasons without a valid baseline rate
     keys = ['measure', 'summer_year', 'practice_pseudo_id']
+
     seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'].merge(summer['zero_or_nan_df'][keys], on=keys, how='left', indicator=True)
     print(f"7. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}")
+
     seasonal_group['practice_season_df'] = seasonal_group['practice_season_df'][seasonal_group['practice_season_df']['_merge'] == 'left_only'].drop(columns='_merge')
     print(f"8. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}")
     
     # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
-
     seasonal_group["season_df"] = build_aggregate_df(
         seasonal_group["practice_season_df"],
         ["measure", "season", "pandemic", "summer_year"],
@@ -150,7 +153,14 @@ for seasonal_group in seasonal_groups:
     )
 
     print(f"9. Total numerator for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['numerator_sum_sum'].sum()}, \nTotal denominator for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['list_size_initial_sum'].sum()}, \nTotal practices for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['list_size_count_sum'].sum()}")
+
 long_df = pd.concat([summer['practice_season_df'], non_summer['practice_season_df']])
+# Remap column names
+long_df = long_df.rename(columns={
+    "numerator_sum": "num_sum",
+    "list_size_initial": "list_size_initial",
+    "list_size_count": "n_practices",
+})
 read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_weighted_long", df=long_df, file_type = 'csv')    
 
 combined_seasons_df = merge_seasons(
@@ -180,21 +190,21 @@ for baseline in baselines:
 
 rename_map = {
     "numerator_sum_sum": "num_sum",
-    "list_size_initial_sum": "list_sum",
-    "list_size_count_sum": "list_count",
-    "numerator_sum_sum_prev_summr": "num_prev",
-    "list_size_initial_sum_prev_summr": "list_prev",
-    "list_size_count_sum_prev_summr": "list_count_prev",
-    "numerator_sum_sum_first_summr": "num_first",
-    "list_size_initial_sum_first_summr": "list_first",
-    "list_size_count_sum_first_summr": "list_count_first",
-    "rate_per_1000": "rate",
-    "rate_per_1000_prev_summr": "rate_prev",
-    "rate_per_1000_first_summr": "rate_first",
-    "RR_prev_summr": "RR_prev",
-    "RD_prev_summr": "RD_prev",
-    "RR_first_summr": "RR_first",
-    "RD_first_summr": "RD_first",
+    "list_size_initial_sum": "list_size_initial",
+    "list_size_count_sum": "n_practices",
+    "numerator_sum_sum_prev_summr": "num_prev_summer",
+    "list_size_initial_sum_prev_summr": "list_prev_summer",
+    "list_size_count_sum_prev_summr": "n_practices_prev_summer",
+    "numerator_sum_sum_first_summr": "num_first_summer",
+    "list_size_initial_sum_first_summr": "list_first_summer",
+    "list_size_count_sum_first_summr": "n_practices_first_summer",
+    "rate_per_1000": "rate_/1000",
+    "rate_per_1000_prev_summr": "rate_/1000_prev_summer",
+    "rate_per_1000_first_summr": "rate_/1000_first_summer",
+    "RR_prev_summr": "RR_prev_summer",
+    "RD_prev_summr": "RD_prev_summer",
+    "RR_first_summr": "RR_first_summer",
+    "RD_first_summr": "RD_first_summer",
 }
 
 combined_seasons_df = combined_seasons_df.rename(columns=rename_map)
@@ -267,29 +277,30 @@ RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_
 RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
 read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
 
-# Aggregate from practice level to pandemic level
-combined_seasons_df_results = build_aggregate_df(
-    combined_practice_seasons_df,
-    ["measure", "season", "pandemic"],
-    {"RR_prev_summr": ["median"], "RR_first_summr": ["median"], "list_size_count_first_summr": ['sum'], "list_size_count_prev_summr": ["sum"],
-     "RD_prev_summr": ["median"], "RD_first_summr": ["median"]},
-)
+# # Aggregate from practice level to pandemic level - CANNOT SUM PANDEMIC LEVEL DENOMINATOR
+# breakpoint()
+# combined_seasons_df_results = build_aggregate_df(
+#     combined_practice_seasons_df,
+#     ["measure", "season", "pandemic"],
+#     {"RR_prev_summr": ["median"], "RR_first_summr": ["median"], "list_size_count_first_summr": ['sum'], "list_size_count_prev_summr": ["sum"],
+#      "RD_prev_summr": ["median"], "RD_first_summr": ["median"]},
+# )
 
-# Save unweighted RRs per season
-rename_map = {
-    # rate ratios
-    "RR_prev_summr_median": "RR_prev_median",
-    "RR_first_summr_median": "RR_first_median",
+# # Save unweighted RRs per season
+# rename_map = {
+#     # rate ratios
+#     "RR_prev_summr_median": "RR_prev_median",
+#     "RR_first_summr_median": "RR_first_median",
 
-    # list sizes (counts of practices contributing)
-    "list_size_count_first_summr_sum": "list_count_first",
-    "list_size_count_prev_summr_sum": "list_count_prev",
-    # rate differences
-    "RD_prev_summr_median": "RD_prev_median",
-    "RD_first_summr_median": "RD_first_median",
-}
-combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
+#     # list sizes (counts of practices contributing)
+#     "list_size_count_first_summr_sum": "n_practice_first_summer",
+#     "list_size_count_prev_summr_sum": "n_practice_prev_summer",
+#     # rate differences
+#     "RD_prev_summr_median": "RD_prev_median",
+#     "RD_first_summr_median": "RD_first_median",
+# }
+# combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
+# read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
 
 # # --------------- Describing long-term trend --------------------------------------------
 
