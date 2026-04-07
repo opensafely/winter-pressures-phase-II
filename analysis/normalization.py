@@ -161,7 +161,7 @@ long_df = long_df.rename(columns={
     "list_size_initial": "list_size_initial",
     "list_size_count": "n_practices",
 })
-read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_weighted_long", df=long_df, file_type = 'csv')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_counts", df=long_df, file_type = 'csv')    
 
 combined_seasons_df = merge_seasons(
     summer["season_df"], non_summer["season_df"], practice_level=False
@@ -275,7 +275,7 @@ rate_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "Rate_p
 rate_plots.savefig(f"{plot_dir}/rates.png")
 RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_summr", facet_var = 'measure')
 RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
-read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_counts", df=combined_practice_seasons_df, file_type = 'arrow')    
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_RR", df=combined_practice_seasons_df, file_type = 'arrow')    
 
 # # Aggregate from practice level to pandemic level - CANNOT SUM PANDEMIC LEVEL DENOMINATOR
 # breakpoint()
