@@ -82,6 +82,8 @@ for var in config["subgroups"]:
         .reset_index()
     )
     table_one[var].columns = ["level", "count"]
+    # Round values
+    table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
     table_one[var]["prop"] = table_one[var]["count"] / table_one[var]["count"].sum()
 
 # Initialize an empty list to hold formatted DataFrames
@@ -105,6 +107,9 @@ total_row = (
 # Merge total row with the original DataFrame
 result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
 result_df = result_df.round(3)
+
+# Rename cols
+result_df.rename(columns={"count": "count_mp6", "prop": "prop_mp6_derived", "total": "total_mp6_derived"}, inplace=True)
 
 # Save processed file
 result_df.to_csv(output_path + ".csv", index=False)
