@@ -182,18 +182,18 @@ yaml_appt_report += (
 )
 
 yaml_processing_template = """
-  generate_freq_table_{group}_{set}{appt_suffix}{test_suffix}:
-    run: python:v2 analysis/freq_table.py --{group}_measures --set {set}{appt_flag}{test_flag}
-    needs: [{needs}{test_suffix}]
-    outputs:
-      moderately_sensitive:
-        freq_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/freq_table_{group}{test_suffix}.csv
   generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/pre_processing.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [{needs}{test_suffix}]
     outputs:
       highly_sensitive:
         measures: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/proc_{group}_measures*{test_suffix}.arrow
+  generate_freq_table_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/freq_table.py --{group}_measures --set {set}{appt_flag}{test_flag}
+    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/freq_table_{group}{test_suffix}.csv
   generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
     run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
     needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]

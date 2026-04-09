@@ -1,44 +1,63 @@
+# This script generate the table one statistics (demographic breakdowns)
+# Uses the denominator from the seen_in_interval measure
+# Takes characteristics at a specific timepoint (April 2016)
+
 # Options
-# --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
 # --set specifies the measure set (appts_table, sro, resp)
-# --released uses already released data
 # --appt restricts measures to those with an appointment in interval
-# --weekly_agg aggregates weekly intervals to yearly
+# USAGE: python analysis/freq_table.py
+# Depends on pre_processing.py
 
 import pandas as pd
 from utils import *
 import pyarrow.feather as feather
 from parse_args import *
 import numpy as np
+from pathlib import Path
+
+#  ---------------  Configuration -----------------------------------------------------
+
+if not config["practice_subgroup_measures"]:
+    raise ValueError("This script is only for practice subgroup measures. Please use --practice_subgroup_measures")
 
 if config["test"]:
-    year = "2016"
+    # Use explicit test interval start for lightweight test snapshots.
+    date = config["test_config"]["start_date"]
 else:
-    year = "2020"
+    dates = generate_annual_dates(config["study_end_date"], config["n_years"])
+    date = "2020-04-06"
+    matching_dates = [d for d in dates if d.startswith("2016")]
+    if matching_dates:
+        date = matching_dates[0]
 
-dates = generate_annual_dates(config["study_end_date"], config["n_years"])
-date = [date for date in dates if date.startswith(year)][0]
+# ---------------  Load and format data ----------------------------------------------
 
 # Load and format data for each interval
 print(f"Loading {config['group']} measures {date}", flush=True)
-input_path = f"output/{config['group']}_measures_{config['set']}/{config['group']}_measures_{date}"
-output_path = f"output/{config['group']}_measures_{config['set']}/freq_table_{config['group']}"
+base_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}"
 
-patient_df = read_write(
-    read_or_write="read",
-    path=input_path,
-    dtype=config["dtype_dict"],
-    true_values=["T"],
-    false_values=["F"],
-)
+patient_df_dict = {}
+for subgroup in config["subgroups"]:
 
-# Extract first week of data
+    input_path = f"{base_dir}/proc_{config['group']}_measures_{subgroup}"
+    output_path = f"{base_dir}/freq_table_{config['group']}"
+
+    patient_df_dict[subgroup] = read_write("read", input_path)
+
+patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
+
+# 1. Extract first week of data
+# 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
+# 3. Drop practice IDs and STPs as we can't release for discolosure control
 patient_df = patient_df[
     (patient_df["interval_start"].astype(str) == date)
-    & (patient_df["measure"] == "seen_in_interval")
+    & (patient_df["measure"].str.contains("seen_in_interval"))
+    & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
 ]
 patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
+patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
+config["subgroups"].remove("stp")
 
 if config["test"]:
     # Increase numerator and list_size for testing of downstream functions
@@ -46,23 +65,12 @@ if config["test"]:
     patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
     output_path = output_path + "_test"
 
-if config["demograph_measures"]:
-    # Replace numerical values with string values
-    patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
 
-# Extract demographic variables
-excluded_cols = [
-    "numerator",
-    "list_size",
-    "measure",
-    "interval_start",
-    "interval_end",
-    "ratio",
-]
-table_one_vars = [col for col in patient_df.columns if col not in excluded_cols]
+# ---------------  Create frequency table -----------------------------------------------
+
 table_one = {}
 # Iterate over all the demographic variables we want in table one
-for var in table_one_vars:
+for var in config["subgroups"]:
     # Create an binary matrix composed of indicator variables representing the categorical value for each group (e.g. cols ethnicity_black: 0, ethnicity_white: 1)
     # Multiply this matrix by the vector of list_sizes representing the size of the given group
     # Sum to get the total denominator value from all the groups (Sum(Categories x list_size))
@@ -74,6 +82,8 @@ for var in table_one_vars:
         .reset_index()
     )
     table_one[var].columns = ["level", "count"]
+    # Round values
+    table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
     table_one[var]["prop"] = table_one[var]["count"] / table_one[var]["count"].sum()
 
 # Initialize an empty list to hold formatted DataFrames
@@ -97,6 +107,9 @@ total_row = (
 # Merge total row with the original DataFrame
 result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
 result_df = result_df.round(3)
+
+# Rename cols
+result_df.rename(columns={"count": "count_mp6", "prop": "prop_mp6_derived", "total": "total_mp6_derived"}, inplace=True)
 
 # Save processed file
 result_df.to_csv(output_path + ".csv", index=False)
