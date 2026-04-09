@@ -1,10 +1,13 @@
+# This script generate the table one statistics (demographic breakdowns)
+# Uses the denominator from the seen_in_interval measure
+# Takes characteristics at a specific timepoint (April 2016)
+
 # Options
-# --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
 # --set specifies the measure set (appts_table, sro, resp)
-# --released uses already released data
 # --appt restricts measures to those with an appointment in interval
-# --weekly_agg aggregates weekly intervals to yearly
+# USAGE: python analysis/freq_table.py
+# Depends on pre_processing.py
 
 import pandas as pd
 from utils import *
@@ -24,7 +27,7 @@ if config["test"]:
 else:
     dates = generate_annual_dates(config["study_end_date"], config["n_years"])
     date = "2020-04-06"
-    matching_dates = [d for d in dates if d.startswith("2020")]
+    matching_dates = [d for d in dates if d.startswith("2016")]
     if matching_dates:
         date = matching_dates[0]
 
@@ -42,40 +45,32 @@ for subgroup in config["subgroups"]:
 
     patient_df_dict[subgroup] = read_write("read", input_path)
 
-patient_df_dict
-    # 1. Extract first week of data
-    # 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
-    # 3. Drop practice IDs and STPs as we can't release for discolosure control
-    patient_df = patient_df[
-        (patient_df["interval_start"].astype(str) == date)
-        & (patient_df["measure"].str.contains("seen_in_interval"))
-        & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
-    ]
-    patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
-    patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
+patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
 
-    if config["test"]:
-        # Increase numerator and list_size for testing of downstream functions
-        patient_df["numerator"] = np.random.randint(0, 1000, size=len(patient_df))
-        patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
-        output_path = output_path + "_test"
+# 1. Extract first week of data
+# 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
+# 3. Drop practice IDs and STPs as we can't release for discolosure control
+patient_df = patient_df[
+    (patient_df["interval_start"].astype(str) == date)
+    & (patient_df["measure"].str.contains("seen_in_interval"))
+    & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
+]
+patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
+patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
+config["subgroups"].remove("stp")
+
+if config["test"]:
+    # Increase numerator and list_size for testing of downstream functions
+    patient_df["numerator"] = np.random.randint(0, 1000, size=len(patient_df))
+    patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
+    output_path = output_path + "_test"
 
 
 # ---------------  Create frequency table -----------------------------------------------
 
-# Extract demographic variables
-excluded_cols = [
-    "numerator",
-    "list_size",
-    "measure",
-    "interval_start",
-    "interval_end",
-    "ratio",
-]
-table_one_vars = [col for col in patient_df.columns if col not in excluded_cols]
 table_one = {}
 # Iterate over all the demographic variables we want in table one
-for var in table_one_vars:
+for var in config["subgroups"]:
     # Create an binary matrix composed of indicator variables representing the categorical value for each group (e.g. cols ethnicity_black: 0, ethnicity_white: 1)
     # Multiply this matrix by the vector of list_sizes representing the size of the given group
     # Sum to get the total denominator value from all the groups (Sum(Categories x list_size))
