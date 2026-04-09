@@ -11,44 +11,57 @@ from utils import *
 import pyarrow.feather as feather
 from parse_args import *
 import numpy as np
+from pathlib import Path
+
+#  ---------------  Configuration -----------------------------------------------------
+
+if not config["practice_subgroup_measures"]:
+    raise ValueError("This script is only for practice subgroup measures. Please use --practice_subgroup_measures")
 
 if config["test"]:
-    year = "2016"
+    # Use explicit test interval start for lightweight test snapshots.
+    date = config["test_config"]["start_date"]
 else:
-    year = "2020"
+    dates = generate_annual_dates(config["study_end_date"], config["n_years"])
+    date = "2020-04-06"
+    matching_dates = [d for d in dates if d.startswith("2020")]
+    if matching_dates:
+        date = matching_dates[0]
 
-dates = generate_annual_dates(config["study_end_date"], config["n_years"])
-date = [date for date in dates if date.startswith(year)][0]
+# ---------------  Load and format data ----------------------------------------------
 
 # Load and format data for each interval
 print(f"Loading {config['group']} measures {date}", flush=True)
-input_path = f"output/{config['group']}_measures_{config['set']}/{config['group']}_measures_{date}"
-output_path = f"output/{config['group']}_measures_{config['set']}/freq_table_{config['group']}"
+base_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}"
 
-patient_df = read_write(
-    read_or_write="read",
-    path=input_path,
-    dtype=config["dtype_dict"],
-    true_values=["T"],
-    false_values=["F"],
-)
+patient_df_dict = {}
+for subgroup in config["subgroups"]:
 
-# Extract first week of data
-patient_df = patient_df[
-    (patient_df["interval_start"].astype(str) == date)
-    & (patient_df["measure"] == "seen_in_interval")
-]
-patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
+    input_path = f"{base_dir}/proc_{config['group']}_measures_{subgroup}"
+    output_path = f"{base_dir}/freq_table_{config['group']}"
 
-if config["test"]:
-    # Increase numerator and list_size for testing of downstream functions
-    patient_df["numerator"] = np.random.randint(0, 1000, size=len(patient_df))
-    patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
-    output_path = output_path + "_test"
+    patient_df_dict[subgroup] = read_write("read", input_path)
 
-if config["demograph_measures"]:
-    # Replace numerical values with string values
-    patient_df = replace_nums(patient_df, replace_ethnicity=True, replace_rur_urb=True)
+patient_df_dict
+    # 1. Extract first week of data
+    # 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
+    # 3. Drop practice IDs and STPs as we can't release for discolosure control
+    patient_df = patient_df[
+        (patient_df["interval_start"].astype(str) == date)
+        & (patient_df["measure"].str.contains("seen_in_interval"))
+        & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
+    ]
+    patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
+    patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
+
+    if config["test"]:
+        # Increase numerator and list_size for testing of downstream functions
+        patient_df["numerator"] = np.random.randint(0, 1000, size=len(patient_df))
+        patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
+        output_path = output_path + "_test"
+
+
+# ---------------  Create frequency table -----------------------------------------------
 
 # Extract demographic variables
 excluded_cols = [
