@@ -36,17 +36,16 @@ else:
 # Load and format data for each interval
 print(f"Loading {config['group']} measures {date}", flush=True)
 base_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}"
+output_path = f"{base_dir}/freq_table_{config['group']}"
 
 patient_df_dict = {}
 for subgroup in config["subgroups"]:
 
     input_path = f"{base_dir}/proc_{config['group']}_measures_{subgroup}"
-    output_path = f"{base_dir}/freq_table_{config['group']}"
-
     patient_df_dict[subgroup] = read_write("read", input_path)
 
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
-
+print(patient_df.head(), flush=True)
 # 1. Extract first week of data
 # 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
 # 3. Drop practice IDs and STPs as we can't release for discolosure control
@@ -58,6 +57,7 @@ patient_df = patient_df[
 patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
 patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
 config["subgroups"].remove("stp")
+print(patient_df.head(), flush=True)
 
 if config["test"]:
     # Increase numerator and list_size for testing of downstream functions
@@ -83,7 +83,7 @@ for var in config["subgroups"]:
     )
     table_one[var].columns = ["level", "count"]
     # Round values
-    table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
+    #table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
     table_one[var]["prop"] = table_one[var]["count"] / table_one[var]["count"].sum()
 
 # Initialize an empty list to hold formatted DataFrames
