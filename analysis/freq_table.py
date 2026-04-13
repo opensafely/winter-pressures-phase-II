@@ -17,19 +17,17 @@ import numpy as np
 from pathlib import Path
 
 #  ---------------  Configuration -----------------------------------------------------
+# Use June 6th (earlier dates may have been filtered out)
+TABLE_ONE_DATE = datetime.strptime("2016-06-06", "%Y-%m-%d")
 
 if not config["practice_subgroup_measures"]:
     raise ValueError("This script is only for practice subgroup measures. Please use --practice_subgroup_measures")
 
 if config["test"]:
-    # Use explicit test interval start for lightweight test snapshots.
-    date = config["test_config"]["start_date"]
+    # Use test start date to avoid loading all the way back to 2016 for testing
+    date = datetime.strptime(config["test_config"]["start_date"], "%Y-%m-%d")
 else:
-    dates = generate_annual_dates(config["study_end_date"], config["n_years"])
-    date = "2020-04-06"
-    matching_dates = [d for d in dates if d.startswith("2016")]
-    if matching_dates:
-        date = matching_dates[0]
+    date = TABLE_ONE_DATE
 
 # ---------------  Load and format data ----------------------------------------------
 
@@ -45,19 +43,18 @@ for subgroup in config["subgroups"]:
     patient_df_dict[subgroup] = read_write("read", input_path)
 
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
-print(patient_df.head(), flush=True)
+
 # 1. Extract first week of data
 # 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
 # 3. Drop practice IDs and STPs as we can't release for discolosure control
 patient_df = patient_df[
-    (patient_df["interval_start"].astype(str) == date)
+    (patient_df["interval_start"].dt.isocalendar().week == date.isocalendar()[1])
     & (patient_df["measure"].str.contains("seen_in_interval"))
     & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
 ]
 patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
 patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
 config["subgroups"].remove("stp")
-print(patient_df.head(), flush=True)
 
 if config["test"]:
     # Increase numerator and list_size for testing of downstream functions
@@ -83,7 +80,7 @@ for var in config["subgroups"]:
     )
     table_one[var].columns = ["level", "count"]
     # Round values
-    #table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
+    table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
     table_one[var]["prop"] = table_one[var]["count"] / table_one[var]["count"].sum()
 
 # Initialize an empty list to hold formatted DataFrames
