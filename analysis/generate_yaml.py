@@ -20,10 +20,7 @@ dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 # --- YAML HEADER ---
 
 yaml_header = """
-version: '3.0'
-
-expectations:
-  population_size: 1000
+version: '5.0'
 
 actions:
 """
