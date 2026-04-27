@@ -63,6 +63,7 @@ pandemic_df = practice_interval_df.loc[
             ["During"]
         )
     ]
+
 practice_interval_df = practice_interval_df.loc[
     ~practice_interval_df["pandemic"].isin(["During"])
 ]
@@ -142,6 +143,8 @@ for seasonal_group in seasonal_groups:
     print(f"8. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}")
     
     # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
+    ## Yearly RRs
+
     seasonal_group["season_df"] = build_aggregate_df(
         seasonal_group["practice_season_df"],
         ["measure", "season", "pandemic", "summer_year"],
@@ -237,6 +240,8 @@ read_write(
 
 # ------------ 4 - PRACTICE-LEVEL (UNWEIGHTED) EFFECT -------------------------
 
+## Practice-level RRs
+
 non_summer["practice_season_df"]["Rate_per_1000"] = (
     non_summer["practice_season_df"]["numerator_sum"]
     / non_summer["practice_season_df"]["list_size_initial"]
@@ -277,30 +282,38 @@ RR_plots = generate_dist_plot(df = combined_practice_seasons_df, var = "RR_prev_
 RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
 read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_RR", df=combined_practice_seasons_df, file_type = 'arrow')    
 
-# # Aggregate from practice level to pandemic level - CANNOT SUM PANDEMIC LEVEL DENOMINATOR
-# breakpoint()
-# combined_seasons_df_results = build_aggregate_df(
-#     combined_practice_seasons_df,
-#     ["measure", "season", "pandemic"],
-#     {"RR_prev_summr": ["median"], "RR_first_summr": ["median"], "list_size_count_first_summr": ['sum'], "list_size_count_prev_summr": ["sum"],
-#      "RD_prev_summr": ["median"], "RD_first_summr": ["median"]},
-# )
+## Yearly RRs
+yearly_unweighted_df_results = aggregate_unweighted_rr_results(
+    combined_practice_seasons_df,
+    ["measure", "season", "pandemic", "summer_year"],
+)
+rename_map = {
+    # rate ratios
+    "RR_prev_summr_median": "RR_prev_median",
+    "RR_first_summr_median": "RR_first_median",
 
-# # Save unweighted RRs per season
-# rename_map = {
-#     # rate ratios
-#     "RR_prev_summr_median": "RR_prev_median",
-#     "RR_first_summr_median": "RR_first_median",
+    # list sizes (counts of practices contributing)
+    "list_size_count_first_summr_sum": "n_practice_first_summer",
+    "list_size_count_prev_summr_sum": "n_practice_prev_summer",
 
-#     # list sizes (counts of practices contributing)
-#     "list_size_count_first_summr_sum": "n_practice_first_summer",
-#     "list_size_count_prev_summr_sum": "n_practice_prev_summer",
-#     # rate differences
-#     "RD_prev_summr_median": "RD_prev_median",
-#     "RD_first_summr_median": "RD_first_median",
-# }
-# combined_seasons_df_results = combined_seasons_df_results.rename(columns=rename_map)
-# read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted", df=combined_seasons_df_results, file_type = 'csv')    
+    # rate differences
+    "RD_prev_summr_median": "RD_prev_median",
+    "RD_first_summr_median": "RD_first_median",
+}
+
+# Save unweighted RRs per year
+yearly_unweighted_df_results = yearly_unweighted_df_results.rename(columns=rename_map)
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_yearly", df=yearly_unweighted_df_results, file_type = 'csv')    
+
+## Pandemic period RRs
+pandemic_unweighted_df_results = aggregate_unweighted_rr_results(
+    combined_practice_seasons_df,
+    ["measure", "season", "pandemic"],
+)
+
+# Save unweighted RRs per pandemic period
+pandemic_unweighted_df_results = pandemic_unweighted_df_results.rename(columns=rename_map)
+read_write(read_or_write="write", path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_pandemic", df=pandemic_unweighted_df_results, file_type = 'csv')    
 
 # # --------------- Describing long-term trend --------------------------------------------
 

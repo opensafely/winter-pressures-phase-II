@@ -235,15 +235,20 @@ for subgroup in config['subgroups']:
     )
 
     # Define pandemic dates
+    if config["test"]:
+        pandemic_start = pd.to_datetime(config["test_config"]["pandemic_start"])
+        pandemic_end = pd.to_datetime(config["test_config"]["pandemic_end"])
+    else:
+        pandemic_start = pd.to_datetime(config["pandemic_start"])
+        pandemic_end = pd.to_datetime(config["pandemic_end"])
     pandemic_conditions = [
-        measures_dict[subgroup]["interval_start"] < pd.to_datetime(config["pandemic_start"]),
-        (measures_dict[subgroup]["interval_start"] >= pd.to_datetime(config["pandemic_start"]))
-        & (measures_dict[subgroup]["interval_start"] <= pd.to_datetime(config["pandemic_end"])),
-        measures_dict[subgroup]["interval_start"] > pd.to_datetime(config["pandemic_end"]),
+        measures_dict[subgroup]["interval_start"] < pd.to_datetime(pandemic_start),
+        (measures_dict[subgroup]["interval_start"] >= pd.to_datetime(pandemic_start))
+        & (measures_dict[subgroup]["interval_start"] <= pd.to_datetime(pandemic_end)),
+        measures_dict[subgroup]["interval_start"] > pd.to_datetime(pandemic_end),
     ]
     choices = ["Before", "During", "After"]
     measures_dict[subgroup]["pandemic"] = np.select(pandemic_conditions, choices)
-
     log_memory_usage(label=f"Final memory usage") # test is 10 times higher for practice_subgroups
 
     # Save processed file
@@ -259,3 +264,4 @@ for subgroup in config['subgroups']:
     read_write(read_or_write="write", path=output_path_subgroup, df=measures_dict[subgroup], file_type='arrow')
     del measures_dict[subgroup]  # Delete dataframe to save memory
     log_memory_usage(label=f"After saving and deleting {subgroup} dataframe")
+    

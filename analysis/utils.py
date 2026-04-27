@@ -439,8 +439,9 @@ def merge_seasons(summer_df, non_summer_df, practice_level):
         columns="summer_year"
     )  # Drop original summer_year after filtering
 
-    # Merge first summer counts into main df
-    merge_cols = ["measure", "pandemic"]
+    # Merge first-summer baseline independent of pandemic period so
+    # post-pandemic rows can still reference the 2016 summer baseline.
+    merge_cols = ["measure"]
     if practice_level == True:
         merge_cols.append("practice_pseudo_id")
 
@@ -533,3 +534,71 @@ def column_total_check(df, column, year, measure_name):
     
     return f"Total {measure_name} cases in {year}: {total_count}"
 
+def aggregate_unweighted_rr_results(practice_level_df, group_cols):
+    """
+    Aggregate RR medians, RD medians, and proportions of RR direction.
+    Args:
+    - practice_level_df: DataFrame with practice-level RRs and rate differences.
+    - group_cols: List of columns to group by for aggregation (e.g., measure, season, pandemic).
+    """
+
+    df = practice_level_df.copy()
+
+    # Indicator columns for RR direction used in grouped counts.
+    for baseline in ["prev_summr", "first_summr"]:
+        rr_col = f"RR_{baseline}"
+        df[f"{rr_col}_>1"] = df[rr_col] > 1
+        df[f"{rr_col}_=1"] = df[rr_col] == 1
+        df[f"{rr_col}_<1"] = df[rr_col] < 1
+
+    results_df = build_aggregate_df(
+        df,
+        group_cols,
+        {
+            "RR_prev_summr": ["median"],
+            "RR_first_summr": ["median"],
+            "list_size_count_first_summr": ["sum"],
+            "list_size_count_prev_summr": ["sum"],
+            "RD_prev_summr": ["median"],
+            "RD_first_summr": ["median"],
+            "RR_prev_summr_>1": ["sum"],
+            "RR_prev_summr_=1": ["sum"],
+            "RR_prev_summr_<1": ["sum"],
+            "RR_first_summr_>1": ["sum"],
+            "RR_first_summr_=1": ["sum"],
+            "RR_first_summr_<1": ["sum"],
+        },
+    )
+
+    # Proportion of practices with RR > 1, = 1, and < 1.
+    results_df["%_RR_prev_>1"] = (
+        results_df["RR_prev_summr_>1_sum"] / results_df["list_size_count_prev_summr_sum"]
+    )
+    results_df["%_RR_prev_=1"] = (
+        results_df["RR_prev_summr_=1_sum"] / results_df["list_size_count_prev_summr_sum"]
+    )
+    results_df["%_RR_prev_<1"] = (
+        results_df["RR_prev_summr_<1_sum"] / results_df["list_size_count_prev_summr_sum"]
+    )
+    results_df["%_RR_first_>1"] = (
+        results_df["RR_first_summr_>1_sum"] / results_df["list_size_count_first_summr_sum"]
+    )
+    results_df["%_RR_first_=1"] = (
+        results_df["RR_first_summr_=1_sum"] / results_df["list_size_count_first_summr_sum"]
+    )
+    results_df["%_RR_first_<1"] = (
+        results_df["RR_first_summr_<1_sum"] / results_df["list_size_count_first_summr_sum"]
+    )
+
+    results_df = results_df.drop(
+        columns=[
+            "RR_prev_summr_>1_sum",
+            "RR_prev_summr_=1_sum",
+            "RR_prev_summr_<1_sum",
+            "RR_first_summr_>1_sum",
+            "RR_first_summr_=1_sum",
+            "RR_first_summr_<1_sum",
+        ]
+    )
+
+    return results_df
