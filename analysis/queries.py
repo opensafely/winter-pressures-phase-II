@@ -59,7 +59,7 @@ def restrict_to_seen_appts(series, seen_appts_in_interval):
     if isinstance(series, query_language.BoolPatientSeries):
 
         has_appt_in_interval = seen_appts_in_interval.exists_for_patient()
-        
+
         event_and_appt = series & has_appt_in_interval
         return event_and_appt
 

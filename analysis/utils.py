@@ -94,17 +94,21 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
         print(f"Post-replace values:, {df['rur_urb_class'].unique()}")
 
     if replace_ethnicity:
-        
+
         # 'Demograph measures' will require not filtering on measures with 'ethnicity' in the name
         if config["practice_subgroup_measures"] == True:
 
             print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
-            df_ethnicity = df[df["measure"].str.contains("ethnicity", case=False, na=False)]
+            df_ethnicity = df[
+                df["measure"].str.contains("ethnicity", case=False, na=False)
+            ]
             # Identify missing values
             df_ethnicity["ethnicity"].replace("6", pd.NA, inplace=True)
             print(f"Prior Nan count: {df_ethnicity['ethnicity'].isna().sum()}")
             # Fill missing values with values from sus_ethnicity
-            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(df_ethnicity["ethnicity_sus"])
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(
+                df_ethnicity["ethnicity_sus"]
+            )
             # Convert string col to category for efficiency
             df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].astype("category")
             # Reformat ethnicity data
@@ -139,21 +143,27 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
                 inplace=True,
             )
             # Impute missing ethnicity with ethnicity sus
-            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(df_ethnicity["ethnicity_sus"])
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(
+                df_ethnicity["ethnicity_sus"]
+            )
             print(f"New datatype of ethnicity: {df_ethnicity['ethnicity'].dtype}")
             print(f"Post-replace Nan count: {df_ethnicity['ethnicity'].isna().sum()}")
-            print(f"Post-replace ehtnicity values:, {df_ethnicity['ethnicity'].unique()}")
+            print(
+                f"Post-replace ehtnicity values:, {df_ethnicity['ethnicity'].unique()}"
+            )
             df = df.drop("ethnicity_sus", axis=1)
             df_ethnicity = df_ethnicity.drop("ethnicity_sus", axis=1)
 
             # Aggregate ethnicity categories
             group_cols = [
-                col for col in df_ethnicity.columns if col not in ["numerator", "list_size"]
+                col
+                for col in df_ethnicity.columns
+                if col not in ["numerator", "list_size"]
             ]
-            df_ethnicity = df_ethnicity.groupby(group_cols, as_index=False, observed=True, dropna=False)[
-                ["numerator", "list_size"]
-            ].sum()
-            
+            df_ethnicity = df_ethnicity.groupby(
+                group_cols, as_index=False, observed=True, dropna=False
+            )[["numerator", "list_size"]].sum()
+
             # Drop original ethnicity measures and merge back aggregated measures
             df = df[~df["measure"].str.contains("ethnicity", case=False, na=False)]
             df = pd.concat([df, df_ethnicity], ignore_index=True)
@@ -165,6 +175,7 @@ def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
 
 
 # ----------- Summer-winter comparison functions ---------------------------------------------
+
 
 def flatten_multiindex_columns(df):
     """
@@ -190,7 +201,8 @@ def flatten_multiindex_columns(df):
     df.columns = new_columns
     return df
 
-def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = False):
+
+def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size=False):
 
     # Ensure grouping columns are correct
     agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
@@ -200,35 +212,35 @@ def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size = Fa
     # yearly list size to avoid inflating list_size by summing list sizes
     # across weeks or accidentally taking a practice-level list_size value.
     if initial_list_size == True:
-        if 'list_size' not in rate_df.columns or 'interval_start' not in rate_df.columns:
+        if (
+            "list_size" not in rate_df.columns
+            or "interval_start" not in rate_df.columns
+        ):
             raise ValueError(
                 "initial_list_size=True requires 'list_size' and 'interval_start' columns in rate_df"
             )
 
         # Aggregate list_size to national-week level first (sum across rows),
         # then take the earliest week list_size within each stratum.
-        strata_no_interval = [col for col in strata if col != 'interval_start']
-        weekly_strata = list(dict.fromkeys(strata_no_interval + ['interval_start']))
+        strata_no_interval = [col for col in strata if col != "interval_start"]
+        weekly_strata = list(dict.fromkeys(strata_no_interval + ["interval_start"]))
 
-        weekly_list_size = (
-            rate_df
-            .groupby(weekly_strata, as_index=False, observed=True)['list_size']
-            .sum()
-        )
+        weekly_list_size = rate_df.groupby(
+            weekly_strata, as_index=False, observed=True
+        )["list_size"].sum()
 
         first_week_list_size = (
-            weekly_list_size
-            .sort_values('interval_start')
-            .groupby(strata_no_interval, as_index=False, observed=True)['list_size']
+            weekly_list_size.sort_values("interval_start")
+            .groupby(strata_no_interval, as_index=False, observed=True)["list_size"]
             .first()
         )
 
         first_week_list_size = flatten_multiindex_columns(first_week_list_size)
-        agg = agg.merge(first_week_list_size, on=strata_no_interval, how='left')
+        agg = agg.merge(first_week_list_size, on=strata_no_interval, how="left")
 
         # Rename list_size column to reflect that it's the first week list_size, not the sum of weekly list_sizes
-        agg.rename(columns={'list_size': 'list_size_initial'}, inplace=True)
-    
+        agg.rename(columns={"list_size": "list_size_initial"}, inplace=True)
+
     return agg
 
 
@@ -299,7 +311,7 @@ def get_season(month):
     elif month in [1, 2]:
         return "Jan-Feb"
     elif month in [3]:
-        return "Mar" # QOF deadline to flag for qof inflation, important for sro
+        return "Mar"  # QOF deadline to flag for qof inflation, important for sro
     elif month in [6, 7]:
         return "Jun-Jul"
     else:
@@ -353,7 +365,7 @@ def read_write(
             return df
 
         elif file_type == "pickle":
-            with open(path + ".pickle", 'rb') as handle:
+            with open(path + ".pickle", "rb") as handle:
                 df = pickle.load(handle)
             return df
 
@@ -364,7 +376,7 @@ def read_write(
 
         if file_type == "csv":
             df.to_csv(path + ".csv", **kwargs)
-        
+
         elif file_type == "csv.gz":
             df.to_csv(path + ".csv.gz", compression="gzip", **kwargs)
 
@@ -373,7 +385,7 @@ def read_write(
             feather.write_feather(df, path + ".arrow")
 
         elif file_type == "pickle":
-            with open(path + ".pickle", 'wb') as handle:
+            with open(path + ".pickle", "wb") as handle:
                 pickle.dump(df, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
@@ -451,21 +463,23 @@ def merge_seasons(summer_df, non_summer_df, practice_level):
 
     return combined_seasons_df_final
 
+
 def generate_dist_plot(df, var, facet_var, **kwargs):
-    
+
     facet_plot = sns.FacetGrid(
-        data = df,
+        data=df,
         col=facet_var,
         col_wrap=4,
         height=4,
         aspect=1,
-        sharex=False,   # ✅ works properly here
-        sharey=False
+        sharex=False,  # ✅ works properly here
+        sharey=False,
     )
 
-    facet_plot.map_dataframe(sns.histplot, x = var, element="bars")
+    facet_plot.map_dataframe(sns.histplot, x=var, element="bars")
 
     return facet_plot
+
 
 def _print_rounding_checks(unrounded, rounded, col_name, low_value_threshold=10):
     """
@@ -476,7 +490,10 @@ def _print_rounding_checks(unrounded, rounded, col_name, low_value_threshold=10)
 
     rounding_difference = rounded_series - unrounded_series
     rounding_diff_counts = rounding_difference.value_counts(dropna=False).sort_index()
-    print(f"Rounding difference counts for {col_name}:\n{rounding_diff_counts}", flush=True)
+    print(
+        f"Rounding difference counts for {col_name}:\n{rounding_diff_counts}",
+        flush=True,
+    )
 
     low_unrounded = (
         unrounded_series[unrounded_series < low_value_threshold]
@@ -507,32 +524,42 @@ def roundmid_any(x, to=6, low_value_threshold=10):
         rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
         for col in x.columns:
             _print_rounding_checks(
-                x[col], rounded[col], col_name=col, low_value_threshold=low_value_threshold
+                x[col],
+                rounded[col],
+                col_name=col,
+                low_value_threshold=low_value_threshold,
             )
         return rounded
 
     if isinstance(x, pd.Series):
         rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
         _print_rounding_checks(
-            x, rounded, col_name=x.name or "value", low_value_threshold=low_value_threshold
+            x,
+            rounded,
+            col_name=x.name or "value",
+            low_value_threshold=low_value_threshold,
         )
         return rounded
 
     x_arr = np.asarray(x)
     rounded = np.ceil(x_arr / to) * to - (np.floor(to / 2) * (x_arr != 0))
     _print_rounding_checks(
-        x_arr.flatten(), rounded.flatten(), col_name="value", low_value_threshold=low_value_threshold
+        x_arr.flatten(),
+        rounded.flatten(),
+        col_name="value",
+        low_value_threshold=low_value_threshold,
     )
     return rounded
 
+
 def column_total_check(df, column, year, measure_name):
-    
+
     total_count = df[
-            (df["measure"] == measure_name) &
-            (df["interval_start"].dt.year == year)
-        ][column].sum()
-    
+        (df["measure"] == measure_name) & (df["interval_start"].dt.year == year)
+    ][column].sum()
+
     return f"Total {measure_name} cases in {year}: {total_count}"
+
 
 def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     """
@@ -547,9 +574,9 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     # Indicator columns for RR direction used in grouped counts.
     for baseline in ["prev_summr", "first_summr"]:
         rr_col = f"RR_{baseline}"
-        df[f"{rr_col}_>1"] = df[rr_col] > 1
-        df[f"{rr_col}_=1"] = df[rr_col] == 1
-        df[f"{rr_col}_<1"] = df[rr_col] < 1
+        df[f"{rr_col}_>5%"] = df[rr_col] > 1.05
+        df[f"{rr_col}_=1"] = (df[rr_col] >= 0.95) & (df[rr_col] <= 1.05)
+        df[f"{rr_col}_<5%"] = df[rr_col] < 0.95
 
     results_df = build_aggregate_df(
         df,
@@ -561,44 +588,106 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
             "list_size_count_prev_summr": ["sum"],
             "RD_prev_summr": ["median"],
             "RD_first_summr": ["median"],
-            "RR_prev_summr_>1": ["sum"],
+            "RR_prev_summr_>5%": ["sum"],
             "RR_prev_summr_=1": ["sum"],
-            "RR_prev_summr_<1": ["sum"],
-            "RR_first_summr_>1": ["sum"],
+            "RR_prev_summr_<5%": ["sum"],
+            "RR_first_summr_>5%": ["sum"],
             "RR_first_summr_=1": ["sum"],
-            "RR_first_summr_<1": ["sum"],
+            "RR_first_summr_<5%": ["sum"],
         },
     )
 
     # Proportion of practices with RR > 1, = 1, and < 1.
-    results_df["%_RR_prev_>1"] = (
-        results_df["RR_prev_summr_>1_sum"] / results_df["list_size_count_prev_summr_sum"]
+    results_df["%_RR_prev_>5%"] = (
+        results_df["RR_prev_summr_>5%_sum"]
+        / results_df["list_size_count_prev_summr_sum"]
     )
     results_df["%_RR_prev_=1"] = (
-        results_df["RR_prev_summr_=1_sum"] / results_df["list_size_count_prev_summr_sum"]
+        results_df["RR_prev_summr_=1_sum"]
+        / results_df["list_size_count_prev_summr_sum"]
     )
-    results_df["%_RR_prev_<1"] = (
-        results_df["RR_prev_summr_<1_sum"] / results_df["list_size_count_prev_summr_sum"]
+    results_df["%_RR_prev_<5%"] = (
+        results_df["RR_prev_summr_<5%_sum"]
+        / results_df["list_size_count_prev_summr_sum"]
     )
-    results_df["%_RR_first_>1"] = (
-        results_df["RR_first_summr_>1_sum"] / results_df["list_size_count_first_summr_sum"]
+    results_df["%_RR_first_>5%"] = (
+        results_df["RR_first_summr_>5%_sum"]
+        / results_df["list_size_count_first_summr_sum"]
     )
     results_df["%_RR_first_=1"] = (
-        results_df["RR_first_summr_=1_sum"] / results_df["list_size_count_first_summr_sum"]
+        results_df["RR_first_summr_=1_sum"]
+        / results_df["list_size_count_first_summr_sum"]
     )
-    results_df["%_RR_first_<1"] = (
-        results_df["RR_first_summr_<1_sum"] / results_df["list_size_count_first_summr_sum"]
+    results_df["%_RR_first_<5%"] = (
+        results_df["RR_first_summr_<5%_sum"]
+        / results_df["list_size_count_first_summr_sum"]
     )
 
     results_df = results_df.drop(
         columns=[
-            "RR_prev_summr_>1_sum",
+            "RR_prev_summr_>5%_sum",
             "RR_prev_summr_=1_sum",
-            "RR_prev_summr_<1_sum",
-            "RR_first_summr_>1_sum",
+            "RR_prev_summr_<5%_sum",
+            "RR_first_summr_>5%_sum",
             "RR_first_summr_=1_sum",
-            "RR_first_summr_<1_sum",
+            "RR_first_summr_<5%_sum",
         ]
     )
 
     return results_df
+
+
+def filter_pandemic_mismatches(df):
+    # Filter out pandemic period mismatches
+
+    if config["test"]:
+        pandemic_start_year = pd.to_datetime(
+            config["test_config"]["pandemic_start"]
+        ).year
+        pandemic_end_year = pd.to_datetime(config["test_config"]["pandemic_end"]).year
+    else:
+        pandemic_start_year = pd.to_datetime(config["pandemic_start"]).year
+        pandemic_end_year = pd.to_datetime(config["pandemic_end"]).year
+
+    summer_year = pd.to_numeric(df["summer_year"], errors="coerce")
+
+    return df[
+        ~(
+            ((df["pandemic"] == "Before") & (summer_year > pandemic_end_year))
+            | ((df["pandemic"] == "After") & (summer_year < pandemic_start_year))
+        )
+    ]
+
+
+def calculate_rate_ratios(summer_df, non_summer_df, practice_level):
+    """
+    Calculates rate ratios and rate differences comparing each season to the two summer baselines (prev summer and first summer).
+    """
+
+    rr_df = merge_seasons(summer_df, non_summer_df, practice_level=practice_level)
+
+    # National level has additional level of aggregation, so use the higher aggregate column counts when practice level = False
+    if practice_level == True:
+        numerator_col = "numerator_sum"
+        denominator_col = "list_size_initial"
+    else:
+        numerator_col = "numerator_sum_sum"
+        denominator_col = "list_size_initial_sum"
+
+    # Calculate rate ratios
+    rr_df["Rate_per_1000"] = (rr_df[numerator_col] / rr_df[denominator_col]) * 1000
+    baselines = ["_prev_summr", "_first_summr"]
+
+    for baseline in baselines:
+        rr_df[f"{'Rate_per_1000'}{baseline}"] = (
+            rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
+        ) * 1000
+        rr_df[f"RR{baseline}"] = (
+            rr_df["Rate_per_1000"] / rr_df[f"{'Rate_per_1000'}{baseline}"]
+        )
+        rr_df[f"RD{baseline}"] = (
+            rr_df["Rate_per_1000"] - rr_df[f"{'Rate_per_1000'}{baseline}"]
+        )
+
+    filtered_rr_df = filter_pandemic_mismatches(rr_df)
+    return filtered_rr_df

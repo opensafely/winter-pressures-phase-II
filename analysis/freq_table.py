@@ -21,7 +21,9 @@ from pathlib import Path
 TABLE_ONE_DATE = datetime.strptime("2016-06-06", "%Y-%m-%d")
 
 if not config["practice_subgroup_measures"]:
-    raise ValueError("This script is only for practice subgroup measures. Please use --practice_subgroup_measures")
+    raise ValueError(
+        "This script is only for practice subgroup measures. Please use --practice_subgroup_measures"
+    )
 
 if config["test"]:
     # Use test start date to avoid loading all the way back to 2016 for testing
@@ -68,7 +70,9 @@ if config["test"]:
     #  ------------ Test Cases ---------------------------------------------
 
     # 1 - Total list size check for seen_in_interval_sex
-    total_list_size = patient_df[patient_df["measure"] == "seen_in_interval_sex"]["list_size"].sum()
+    total_list_size = patient_df[patient_df["measure"] == "seen_in_interval_sex"][
+        "list_size"
+    ].sum()
 
 # ---------------  Create frequency table -----------------------------------------------
 
@@ -112,16 +116,26 @@ total_row = (
 result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
 
 # Rename cols
-result_df.rename(columns={"count": "count_mp6", "prop": "prop_mp6_derived", "total": "total_mp6_derived"}, inplace=True)
+result_df.rename(
+    columns={
+        "count": "count_mp6",
+        "prop": "prop_mp6_derived",
+        "total": "total_mp6_derived",
+    },
+    inplace=True,
+)
 
 # ------------- Test case check ----------------------------
 
 if config["test"]:
     # 1 - Total list size check for seen_in_interval_sex
-    test_total_list_size = result_df[(result_df["Category"] == "sex") 
-                                     & (result_df["level"] == "Total")]["count_mp6"].iloc[0]
-    assert total_list_size == test_total_list_size, f"Total list size for seen_in_interval_sex does not match expected value. Expected: {total_list_size}, Got: {test_total_list_size}" 
-    
+    test_total_list_size = result_df[
+        (result_df["Category"] == "sex") & (result_df["level"] == "Total")
+    ]["count_mp6"].iloc[0]
+    assert (
+        total_list_size == test_total_list_size
+    ), f"Total list size for seen_in_interval_sex does not match expected value. Expected: {total_list_size}, Got: {test_total_list_size}"
+
 result_df = result_df.round(3)
 
 # Save processed file

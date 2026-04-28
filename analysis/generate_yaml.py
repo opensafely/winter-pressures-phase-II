@@ -31,7 +31,7 @@ actions:
 flags = ["practice_measures", "practice_subgroup_measures"]
 groups = []
 for flag in flags:
-    groups.append(flag.replace("_measures", "")) # practice/demograph/comorbid
+    groups.append(flag.replace("_measures", ""))  # practice/demograph/comorbid
 # Set of measures to loop
 measure_sets = ["appts_table", "sro", "resp"]
 # Appt variants
@@ -125,14 +125,14 @@ yaml_measures_test_template = """
 yaml_measures_test = ""
 for set in measure_sets:
     for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
-      for group in groups:
-          yaml_measures_test += yaml_measures_test_template.format(
-              start_date=config["test_config"]["start_date"],
-              set=set,
-              appt_suffix=appt_suffix,
-              appt_flag=appt_flag,
-              group=group
-          )
+        for group in groups:
+            yaml_measures_test += yaml_measures_test_template.format(
+                start_date=config["test_config"]["start_date"],
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
+                group=group,
+            )
 
 # --------------- YAML APPT REPORT ------------------------------------------
 yaml_appt_report = ""
@@ -314,13 +314,13 @@ yaml_sense_check_template = """
 
 for set in measure_sets:
     for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
-          yaml_sense_check += yaml_sense_check_template.format(
-              set=set,
-              appt_suffix=appt_suffix,
-              appt_flag=appt_flag,
-              group="practice",
-              agg_suffix="",
-            )
+        yaml_sense_check += yaml_sense_check_template.format(
+            set=set,
+            appt_suffix=appt_suffix,
+            appt_flag=appt_flag,
+            group="practice",
+            agg_suffix="",
+        )
 
 yaml_other = """
 
@@ -379,21 +379,21 @@ yaml_yearly_template = """
         deciles_table: output/{group}{subgroup}_measures_{set}_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
 """
 
-# Weekly aggregate for resp and appts_table measure sets only 
-measure_sets.remove('sro')
+# Weekly aggregate for resp and appts_table measure sets only
+measure_sets.remove("sro")
 for measure_set in measure_sets:
-  for test_suffix, test_flag in zip(suffixes, test_flags):
-    if measure_set == "appts_table":
-        subgroup = "_subgroup"
-    else:
-        subgroup = ""
-    yaml_yearly += yaml_yearly_template.format(
-        test_suffix=test_suffix,
-        test_flag=test_flag,
-        group="practice",
-        set=measure_set,
-        subgroup=subgroup
-    )
+    for test_suffix, test_flag in zip(suffixes, test_flags):
+        if measure_set == "appts_table":
+            subgroup = "_subgroup"
+        else:
+            subgroup = ""
+        yaml_yearly += yaml_yearly_template.format(
+            test_suffix=test_suffix,
+            test_flag=test_flag,
+            group="practice",
+            set=measure_set,
+            subgroup=subgroup,
+        )
 
 # -------- Combine scripts and print file -----------
 
