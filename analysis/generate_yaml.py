@@ -197,7 +197,6 @@ yaml_processing_template = """
     outputs:
       highly_sensitive:
         practice_level_arrow: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/practice_level*{test_suffix}.arrow
-        practice_level_csv: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/practice_level*{test_suffix}.csv
       moderately_sensitive:
         seasonal_tables_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/Results*{test_suffix}.csv
 """

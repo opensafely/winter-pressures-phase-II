@@ -149,6 +149,12 @@ for seasonal_group in seasonal_groups:
 combined_var_btwn_df = pd.concat([summer["season_var_btwn_df"], non_summer["season_var_btwn_df"]])
 combined_var_within_df = pd.concat([summer["season_var_w/in_df"], non_summer["season_var_w/in_df"]])
 
+# Apply SDC rounding
+# (Not applied to variance because N is high enough such that variance is undisclosive (ref SACRO guidebook 2023))
+# (and rounding the input practice-week rates would distort variance significantly)
+combined_var_btwn_df = roundmid_any(combined_var_btwn_df, ["var_rate_btwn_prac_season_n_weeks"], to=6)
+combined_var_within_df = roundmid_any(combined_var_within_df, ["var_rate_w/in_prac_season_n_practices"], to=6)
+
 # Round tables
 combined_var_btwn_df = combined_var_btwn_df.round(4)
 combined_var_within_df = combined_var_within_df.round(4)
@@ -162,7 +168,7 @@ combined_var_btwn_df = combined_var_btwn_df.merge(
 
 read_write(
     read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Variances",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_variances",
     df=combined_var_btwn_df,
     file_type="csv",
 )
@@ -223,40 +229,42 @@ long_df = long_df.rename(
         "list_size_count": "n_practices",
     }
 )
+# Practice level counts used in stat_test.r
 read_write(
     read_or_write="write",
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_counts",
     df=long_df,
-    file_type="csv",
+    file_type="arrow",
 )
+
+# Apply SDC before calculating RRs and RDs
+summer["season_df"] = roundmid_any(summer["season_df"], ["numerator_sum_sum", "list_size_initial_sum", "list_size_count_sum"], to=6)
+non_summer["season_df"] = roundmid_any(non_summer["season_df"], ["numerator_sum_sum", "list_size_initial_sum", "list_size_count_sum"], to=6)
 
 combined_seasons_df = calculate_rate_ratios(
-    summer["season_df"], non_summer["season_df"], practice_level=False
+    summer["season_df"], non_summer["season_df"], practice_level=False, mp6_input = True
 )
-
 rename_map = {
-    "numerator_sum_sum": "num_sum",
-    "list_size_initial_sum": "list_size_initial",
-    "list_size_count_sum": "n_practices",
-    "numerator_sum_sum_prev_summr": "num_prev_summer",
-    "list_size_initial_sum_prev_summr": "list_prev_summer",
-    "list_size_count_sum_prev_summr": "n_practices_prev_summer",
-    "numerator_sum_sum_first_summr": "num_first_summer",
-    "list_size_initial_sum_first_summr": "list_first_summer",
-    "list_size_count_sum_first_summr": "n_practices_first_summer",
-    "Rate_per_1000": "rate_/1000",
-    "Rate_per_1000_prev_summr": "rate_/1000_prev_summer",
-    "Rate_per_1000_first_summr": "rate_/1000_first_summer",
-    "RR_prev_summr": "RR_prev_summer",
-    "RD_prev_summr": "RD_prev_summer",
-    "RR_first_summr": "RR_first_summer",
-    "RD_first_summr": "RD_first_summer",
+    "numerator_sum_sum_mp6": "num_sum_mp6",
+    "list_size_initial_sum_mp6": "list_size_initial_mp6",
+    "list_size_count_sum_mp6": "n_practices_mp6",
+    "numerator_sum_sum_mp6_prev_summr": "num_prev_summer_mp6",
+    "list_size_initial_sum_mp6_prev_summr": "list_prev_summer_mp6",
+    "list_size_count_sum_mp6_prev_summr": "n_practices_prev_summer_mp6",
+    "numerator_sum_sum_mp6_first_summr": "num_first_summer_mp6",
+    "list_size_initial_sum_mp6_first_summr": "list_first_summer_mp6",
+    "list_size_count_sum_mp6_first_summr": "n_practices_first_summer_mp6",
+    "Rate_per_1000_mp6": "rate_/1000_mp6",
+    "Rate_per_1000_prev_summr_mp6": "rate_/1000_prev_summer_mp6",
+    "Rate_per_1000_first_summr_mp6": "rate_/1000_first_summer_mp6",
 }
 
+# Format output table
 combined_seasons_df = combined_seasons_df.rename(columns=rename_map)
 combined_seasons_df = combined_seasons_df.drop(
     columns=["season_prev_summr", "season_first_summr"]
 )
+combined_seasons_df = combined_seasons_df.round(4)
 read_write(
     read_or_write="write",
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_weighted",
