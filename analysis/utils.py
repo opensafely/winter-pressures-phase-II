@@ -523,29 +523,33 @@ def _print_rounding_checks(unrounded, rounded, col_name, low_value_threshold=10)
     )
 
 
-def roundmid_any(x, to=6, low_value_threshold=10):
+def roundmid_any(df, cols, to=6, low_value_threshold=10):
     """
     Round values using midpoint rounding and always print checks comparing
     rounded and unrounded counts.
     Args:
-    - x: DataFrame of values to be rounded
+    - x: Series of values to be rounded
     - to: The number to which to round (e.g., 6 for rounding to the nearest 6)
     - low_value_threshold: Threshold below which to print value counts for rounded and unrounded values 
                             to check for potential over-rounding of low values.
     """
 
-    rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+    for col in cols:
+        rounded_col = np.ceil(df[col] / to) * to - (np.floor(to / 2) * (df[col] != 0))
+        df[f"{col}_mp6"] = rounded_col
 
     # Print changes caused by rounding
-    for col in x.columns:
+    for col in cols:
         _print_rounding_checks(
-            x[col],
-            rounded[col],
-            col_name=col,
-            low_value_threshold=low_value_threshold,
-        )
+            df[col],
+            df[f"{col}_mp6"],
+        col_name=col,
+        low_value_threshold=low_value_threshold,
+    )
 
-    return rounded
+    # Delete unrounded columns
+    df = df.drop(columns=cols)
+    return df
 
 def column_total_check(df, column, year, measure_name):
 
@@ -654,34 +658,49 @@ def filter_pandemic_mismatches(df):
     ]
 
 
-def calculate_rate_ratios(summer_df, non_summer_df, practice_level):
+def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input=False):
     """
     Calculates rate ratios and rate differences comparing each season to the two summer baselines (prev summer and first summer).
+    Args:
+    - summer_df: DataFrame containing summer season counts (used as baseline/denominator)
+    - non_summer_df: DataFrame containing non-summer season counts (used as comparison/numerator)
+    - practice_level: Boolean indicating whether the data is at the practice level (True) or national
+    - mp6_input: Boolean indicating whether the input has been mp6 rounded
     """
 
     rr_df = merge_seasons(summer_df, non_summer_df, practice_level=practice_level)
+    if mp6_input:
+        mp6_suffix = "_mp6"
+    else:
+        mp6_suffix = ""
 
     # National level has additional level of aggregation, so use the higher aggregate column counts when practice level = False
     if practice_level == True:
-        numerator_col = "numerator_sum"
-        denominator_col = "list_size_initial"
+        numerator_col = f"numerator_sum{mp6_suffix}"
+        denominator_col = f"list_size_initial{mp6_suffix}"
     else:
-        numerator_col = "numerator_sum_sum"
-        denominator_col = "list_size_initial_sum"
+        numerator_col = f"numerator_sum_sum{mp6_suffix}"
+        denominator_col = f"list_size_initial_sum{mp6_suffix}"
 
     # Calculate rate ratios
-    rr_df["Rate_per_1000"] = (rr_df[numerator_col] / rr_df[denominator_col]) * 1000
+    rate_per_1000_col = f"Rate_per_1000{mp6_suffix}"
+    rr_df[rate_per_1000_col] = (rr_df[numerator_col] / rr_df[denominator_col]) * 1000
     baselines = ["_prev_summr", "_first_summr"]
 
+
     for baseline in baselines:
-        rr_df[f"{'Rate_per_1000'}{baseline}"] = (
+        baseline_rate_col = f"Rate_per_1000{baseline}{mp6_suffix}"
+        rr_col = f"RR{baseline}{mp6_suffix}"
+        rd_col = f"RD{baseline}{mp6_suffix}"
+
+        rr_df[baseline_rate_col] = (
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
         ) * 1000
-        rr_df[f"RR{baseline}"] = (
-            rr_df["Rate_per_1000"] / rr_df[f"{'Rate_per_1000'}{baseline}"]
+        rr_df[rr_col] = (
+            rr_df[rate_per_1000_col] / rr_df[baseline_rate_col]
         )
-        rr_df[f"RD{baseline}"] = (
-            rr_df["Rate_per_1000"] - rr_df[f"{'Rate_per_1000'}{baseline}"]
+        rr_df[rd_col] = (
+            rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
         )
 
     filtered_rr_df = filter_pandemic_mismatches(rr_df)
