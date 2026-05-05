@@ -527,38 +527,25 @@ def roundmid_any(x, to=6, low_value_threshold=10):
     """
     Round values using midpoint rounding and always print checks comparing
     rounded and unrounded counts.
+    Args:
+    - x: DataFrame of values to be rounded
+    - to: The number to which to round (e.g., 6 for rounding to the nearest 6)
+    - low_value_threshold: Threshold below which to print value counts for rounded and unrounded values 
+                            to check for potential over-rounding of low values.
     """
-    if isinstance(x, pd.DataFrame):
-        rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
-        for col in x.columns:
-            _print_rounding_checks(
-                x[col],
-                rounded[col],
-                col_name=col,
-                low_value_threshold=low_value_threshold,
-            )
-        return rounded
 
-    if isinstance(x, pd.Series):
-        rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+    rounded = np.ceil(x / to) * to - (np.floor(to / 2) * (x != 0))
+
+    # Print changes caused by rounding
+    for col in x.columns:
         _print_rounding_checks(
-            x,
-            rounded,
-            col_name=x.name or "value",
+            x[col],
+            rounded[col],
+            col_name=col,
             low_value_threshold=low_value_threshold,
         )
-        return rounded
 
-    x_arr = np.asarray(x)
-    rounded = np.ceil(x_arr / to) * to - (np.floor(to / 2) * (x_arr != 0))
-    _print_rounding_checks(
-        x_arr.flatten(),
-        rounded.flatten(),
-        col_name="value",
-        low_value_threshold=low_value_threshold,
-    )
     return rounded
-
 
 def column_total_check(df, column, year, measure_name):
 

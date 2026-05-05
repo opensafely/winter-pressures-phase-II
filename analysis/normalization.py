@@ -107,8 +107,8 @@ for seasonal_group in seasonal_groups:
     # Rename columns for clarity
     seasonal_group["season_var_btwn_df"].rename(
         columns={
-            "Rate_per_1000_var_median": "rate_weekly_var_btwn_prac_median",
-            "Rate_per_1000_var_count": "rate_weekly_var_btwn_prac_n_weeks",
+            "Rate_per_1000_var_median": "var_rate_btwn_prac_season_median",
+            "Rate_per_1000_var_count": "var_rate_btwn_prac_season_n_weeks",
         },
         inplace=True,
     )
@@ -135,8 +135,8 @@ for seasonal_group in seasonal_groups:
     # Rename columns for clarity
     seasonal_group["season_var_w/in_df"].rename(
         columns={
-            "Rate_per_1000_var_median": "rate_weekly_var_w/in_prac_median",
-            "Rate_per_1000_var_count": "rate_weekly_var_w/in_prac_n_weeks",
+            "Rate_per_1000_var_median": "var_rate_w/in_prac_season_median",
+            "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practices",
         },
         inplace=True,
     )
@@ -148,6 +148,10 @@ for seasonal_group in seasonal_groups:
 # Concatenate summer and non-summer variance tables into one table
 combined_var_btwn_df = pd.concat([summer["season_var_btwn_df"], non_summer["season_var_btwn_df"]])
 combined_var_within_df = pd.concat([summer["season_var_w/in_df"], non_summer["season_var_w/in_df"]])
+
+# Round tables
+combined_var_btwn_df = combined_var_btwn_df.round(4)
+combined_var_within_df = combined_var_within_df.round(4)
 
 # Merge into one variance table
 combined_var_btwn_df = combined_var_btwn_df.merge(
@@ -163,8 +167,7 @@ read_write(
     file_type="csv",
 )
 
-
-# -------- RATE RATIOS --------------------
+# ---------------- RATE RATIOS -----------------------------
 
 ## REMOvE PRACTICES WITH ZERO/NAN BASELINE RATES 
 keys = ["measure", "summer_year", "practice_pseudo_id"]
