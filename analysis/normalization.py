@@ -82,7 +82,7 @@ summer["practice_interval_df"] = practice_interval_df[
 
 for seasonal_group in seasonal_groups:
 
-    # -------- 1 - VARIANCES --------------------
+    # -------- VARIANCES --------------------
 
     seasonal_group["interval_season_df"] = build_aggregate_df(
         seasonal_group["practice_interval_df"],
@@ -113,20 +113,21 @@ for seasonal_group in seasonal_groups:
         f"3. Total numerator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['numerator'].sum()}, \nTotal denominator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['list_size'].sum()}, \nTotal practices for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['practice_pseudo_id'].nunique()}"
     )
 
-    # -------- 2 - REMOVE SEASONS WITH MISSING BASELINES --------------------
-    # Aggregate counts per practice per season
+# Concatenate summer and non-summer variance tables into one table
+combined_var_df = pd.concat([summer["season_var_df"], non_summer["season_var_df"]])
 
-    seasonal_group["practice_season_df"] = build_aggregate_df(
-        seasonal_group["practice_interval_df"],
-        ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
-        {"numerator": ["sum"]},
-        initial_list_size=True,
-    )
-    seasonal_group["practice_season_df"][
-        "list_size_count"
-    ] = 1  # Practice count indicator for later aggregation
+breakpoint()
 
-# Generate total counts per measure per summer
+read_write(
+    read_or_write="write",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_variance",
+    df=combined_var_df,
+    file_type="csv",
+)
+
+# -------- RATE RATIOS --------------------
+
+# Identify practices with zero/nan baseline rates in summer season to exclude from practice-level RRs (since these would lead to infinite/undefined RRs)
 summer["zero_or_nan_df"] = summer["practice_season_df"][
     (summer["practice_season_df"]["numerator_sum"] == 0)
     | (summer["practice_season_df"]["numerator_sum"].isna())
@@ -144,9 +145,21 @@ print(
 
 for seasonal_group in seasonal_groups:
 
+    # Aggregate counts per practice per season
+    seasonal_group["practice_season_df"] = build_aggregate_df(
+        seasonal_group["practice_interval_df"],
+        ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        {"numerator": ["sum"]},
+        initial_list_size=True,
+    )
+    seasonal_group["practice_season_df"][
+        "list_size_count"
+    ] = 1  # Practice count indicator for later aggregation
+
     # Remove practice seasons without a valid baseline rate
     keys = ["measure", "summer_year", "practice_pseudo_id"]
 
+    # Merge with zero/nan df to identify practices with zero/nan baseline rates
     seasonal_group["practice_season_df"] = seasonal_group["practice_season_df"].merge(
         summer["zero_or_nan_df"][keys], on=keys, how="left", indicator=True
     )
@@ -154,6 +167,7 @@ for seasonal_group in seasonal_groups:
         f"7. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}"
     )
 
+    # Keep only practices that do not have zero/nan baseline rates
     seasonal_group["practice_season_df"] = seasonal_group["practice_season_df"][
         seasonal_group["practice_season_df"]["_merge"] == "left_only"
     ].drop(columns="_merge")
@@ -161,7 +175,7 @@ for seasonal_group in seasonal_groups:
         f"8. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}"
     )
 
-    # -------- 3 - PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
+    # -------- PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
     ## Yearly RRs
 
     seasonal_group["season_df"] = build_aggregate_df(
@@ -179,6 +193,7 @@ for seasonal_group in seasonal_groups:
     )
 
 long_df = pd.concat([summer["practice_season_df"], non_summer["practice_season_df"]])
+
 # Remap column names
 long_df = long_df.rename(
     columns={
@@ -228,24 +243,13 @@ read_write(
     file_type="csv",
 )
 
-combined_var_df = summer["season_var_df"].merge(
-    non_summer["season_var_df"], on=["measure", "season", "pandemic"], how="left"
-)
-
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_variance",
-    df=combined_var_df,
-    file_type="csv",
-)
-
 # Check medians and var ratio
 # practice_season_df["var/mean"] = (
 #     practice_season_df["Rate_per_1000_var_mean"]
 #     / practice_season_df["Rate_per_1000_mean_mean"]
 # )
 
-# ------------ 4 - PRACTICE-LEVEL (UNWEIGHTED) EFFECT -------------------------
+# ------------ PRACTICE-LEVEL (UNWEIGHTED) EFFECT -------------------------
 
 ## Practice-level RRs
 

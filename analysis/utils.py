@@ -203,6 +203,14 @@ def flatten_multiindex_columns(df):
 
 
 def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size=False):
+    """
+    Builds an aggregate DataFrame based on the specified grouping columns and aggregation functions.
+    Args:
+    - rate_df (pd.DataFrame): The input DataFrame containing the data to be aggregated
+    - strata (list): List of column names to group by
+    - aggregation_dict (dict): Dictionary specifying the aggregation functions for each column
+    - initial_list_size (bool): If True, calculates the list size at the first interval
+    """
 
     # Ensure grouping columns are correct
     agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
