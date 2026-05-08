@@ -140,20 +140,28 @@ for seasonal_group in seasonal_groups:
         },
         inplace=True,
     )
-    
+
     print(
         f"3. Total numerator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['numerator'].sum()}, \nTotal denominator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['list_size'].sum()}, \nTotal practices for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['practice_pseudo_id'].nunique()}"
     )
 
 # Concatenate summer and non-summer variance tables into one table
-combined_var_btwn_df = pd.concat([summer["season_var_btwn_df"], non_summer["season_var_btwn_df"]])
-combined_var_within_df = pd.concat([summer["season_var_w/in_df"], non_summer["season_var_w/in_df"]])
+combined_var_btwn_df = pd.concat(
+    [summer["season_var_btwn_df"], non_summer["season_var_btwn_df"]]
+)
+combined_var_within_df = pd.concat(
+    [summer["season_var_w/in_df"], non_summer["season_var_w/in_df"]]
+)
 
 # Apply SDC rounding
 # (Not applied to variance because N is high enough such that variance is undisclosive (ref SACRO guidebook 2023))
 # (and rounding the input practice-week rates would distort variance significantly)
-combined_var_btwn_df = roundmid_any(combined_var_btwn_df, ["var_rate_btwn_prac_season_n_weeks"], to=6)
-combined_var_within_df = roundmid_any(combined_var_within_df, ["var_rate_w/in_prac_season_n_practices"], to=6)
+combined_var_btwn_df = roundmid_any(
+    combined_var_btwn_df, ["var_rate_btwn_prac_season_n_weeks"], to=6
+)
+combined_var_within_df = roundmid_any(
+    combined_var_within_df, ["var_rate_w/in_prac_season_n_practices"], to=6
+)
 
 # Round tables
 combined_var_btwn_df = combined_var_btwn_df.round(4)
@@ -175,10 +183,10 @@ read_write(
 
 # ---------------- RATE RATIOS -----------------------------
 
-## REMOvE PRACTICES WITH ZERO/NAN BASELINE RATES 
+## REMOvE PRACTICES WITH ZERO/NAN BASELINE RATES
 keys = ["measure", "summer_year", "practice_pseudo_id"]
 
-# Identify practices with zero/nan baseline rates in summer season to exclude from practice-level RRs 
+# Identify practices with zero/nan baseline rates in summer season to exclude from practice-level RRs
 summer["zero_or_nan_df"] = summer["practice_season_df"][
     (summer["practice_season_df"]["numerator_sum"] == 0)
     | (summer["practice_season_df"]["numerator_sum"].isna())
@@ -238,11 +246,19 @@ read_write(
 )
 
 # Apply SDC before calculating RRs and RDs
-summer["season_df"] = roundmid_any(summer["season_df"], ["numerator_sum_sum", "list_size_initial_sum", "list_size_count_sum"], to=6)
-non_summer["season_df"] = roundmid_any(non_summer["season_df"], ["numerator_sum_sum", "list_size_initial_sum", "list_size_count_sum"], to=6)
+summer["season_df"] = roundmid_any(
+    summer["season_df"],
+    ["numerator_sum_sum", "list_size_initial_sum", "list_size_count_sum"],
+    to=6,
+)
+non_summer["season_df"] = roundmid_any(
+    non_summer["season_df"],
+    ["numerator_sum_sum", "list_size_initial_sum", "list_size_count_sum"],
+    to=6,
+)
 
 combined_seasons_df = calculate_rate_ratios(
-    summer["season_df"], non_summer["season_df"], practice_level=False, mp6_input = True
+    summer["season_df"], non_summer["season_df"], practice_level=False, mp6_input=True
 )
 rename_map = {
     "numerator_sum_sum_mp6": "num_sum_mp6",
@@ -288,7 +304,10 @@ read_write(
 
 # Calculate practice-level RRs and RDs comparing each season to the two summer baselines (prev summer and first summer)
 combined_practice_seasons_df = calculate_rate_ratios(
-    summer["practice_season_df"], non_summer["practice_season_df"], practice_level=True, mp6_input=False
+    summer["practice_season_df"],
+    non_summer["practice_season_df"],
+    practice_level=True,
+    mp6_input=False,
 )
 
 # Visualise distributions of rates and RRs

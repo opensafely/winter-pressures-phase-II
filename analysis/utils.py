@@ -530,7 +530,7 @@ def roundmid_any(df, cols, to=6, low_value_threshold=10):
     Args:
     - x: Series of values to be rounded
     - to: The number to which to round (e.g., 6 for rounding to the nearest 6)
-    - low_value_threshold: Threshold below which to print value counts for rounded and unrounded values 
+    - low_value_threshold: Threshold below which to print value counts for rounded and unrounded values
                             to check for potential over-rounding of low values.
     """
 
@@ -543,13 +543,14 @@ def roundmid_any(df, cols, to=6, low_value_threshold=10):
         _print_rounding_checks(
             df[col],
             df[f"{col}_mp6"],
-        col_name=col,
-        low_value_threshold=low_value_threshold,
-    )
+            col_name=col,
+            low_value_threshold=low_value_threshold,
+        )
 
     # Delete unrounded columns
     df = df.drop(columns=cols)
     return df
+
 
 def column_total_check(df, column, year, measure_name):
 
@@ -695,12 +696,8 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         rr_df[baseline_rate_col] = (
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
         ) * 1000
-        rr_df[rr_col] = (
-            rr_df[rate_per_1000_col] / rr_df[baseline_rate_col]
-        )
-        rr_df[rd_col] = (
-            rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
-        )
+        rr_df[rr_col] = rr_df[rate_per_1000_col] / rr_df[baseline_rate_col]
+        rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
     filtered_rr_df = filter_pandemic_mismatches(rr_df)
     return filtered_rr_df
