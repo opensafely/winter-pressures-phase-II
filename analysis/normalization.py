@@ -282,8 +282,13 @@ read_write(
 
 ## Practice-level RRs
 
+# Skipping SDC as aggregate median RR with high N is undisclosive
+# summer["practice_season_df"] = roundmid_any(summer["practice_season_df"], ["numerator_sum", "list_size_initial", "list_size_count"], to=6)
+# non_summer["practice_season_df"] = roundmid_any(non_summer["practice_season_df"], ["numerator_sum", "list_size_initial", "list_size_count"], to=6)
+
+# Calculate practice-level RRs and RDs comparing each season to the two summer baselines (prev summer and first summer)
 combined_practice_seasons_df = calculate_rate_ratios(
-    summer["practice_season_df"], non_summer["practice_season_df"], practice_level=True
+    summer["practice_season_df"], non_summer["practice_season_df"], practice_level=True, mp6_input=False
 )
 
 # Visualise distributions of rates and RRs
@@ -322,6 +327,8 @@ rename_map = {
     "RD_first_summr_median": "RD_first_median",
 }
 
+# Round
+yearly_unweighted_df_results = yearly_unweighted_df_results.round(4)
 # Save unweighted RRs per year
 yearly_unweighted_df_results = yearly_unweighted_df_results.rename(columns=rename_map)
 read_write(
@@ -341,6 +348,7 @@ pandemic_unweighted_df_results = aggregate_unweighted_rr_results(
 pandemic_unweighted_df_results = pandemic_unweighted_df_results.rename(
     columns=rename_map
 )
+pandemic_unweighted_df_results = pandemic_unweighted_df_results.round(4)
 read_write(
     read_or_write="write",
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_pandemic",

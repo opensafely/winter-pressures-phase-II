@@ -562,7 +562,7 @@ def column_total_check(df, column, year, measure_name):
 
 def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     """
-    Aggregate RR medians, RD medians, and proportions of RR direction.
+    Aggregate RR medians, RD medians, and proportions of RR results.
     Args:
     - practice_level_df: DataFrame with practice-level RRs and rate differences.
     - group_cols: List of columns to group by for aggregation (e.g., measure, season, pandemic).
@@ -658,7 +658,7 @@ def filter_pandemic_mismatches(df):
     ]
 
 
-def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input=False):
+def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     """
     Calculates rate ratios and rate differences comparing each season to the two summer baselines (prev summer and first summer).
     Args:
@@ -686,7 +686,6 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input=Fa
     rate_per_1000_col = f"Rate_per_1000{mp6_suffix}"
     rr_df[rate_per_1000_col] = (rr_df[numerator_col] / rr_df[denominator_col]) * 1000
     baselines = ["_prev_summr", "_first_summr"]
-
 
     for baseline in baselines:
         baseline_rate_col = f"Rate_per_1000{baseline}{mp6_suffix}"
