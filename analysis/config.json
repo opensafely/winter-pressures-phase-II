@@ -14,7 +14,7 @@
   "appt": false,
   "study_end_date": "2025-03-31",
   "pandemic_start": "2020-03-23",
-  "pandemic_end": "2021-07-19",
+  "pandemic_end": "2022-04-01",
   "n_years": 10,
   "base_dtype_dict": {
     "measure": "category",
