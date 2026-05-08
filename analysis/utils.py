@@ -318,8 +318,8 @@ def get_season(month):
         return "Nov-Dec"
     elif month in [1, 2]:
         return "Jan-Feb"
-    elif month in [3]:
-        return "Mar"  # QOF deadline to flag for qof inflation, important for sro
+    elif month in [3, 4]:
+        return "Mar-Apr"  # QOF deadline to flag for qof inflation, important for sro
     elif month in [6, 7]:
         return "Jun-Jul"
     else:

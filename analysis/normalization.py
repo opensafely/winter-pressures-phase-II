@@ -51,7 +51,7 @@ practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
 # Only keep intervals inside the periods of interest
 practice_interval_df = practice_interval_df.loc[
-    practice_interval_df["season"].isin(["Jun-Jul", "Sep-Oct", "Nov-Dec", "Jan-Feb"])
+    ~(practice_interval_df["season"] == None)
 ]
 
 # Separate pandemic period from main dataset
