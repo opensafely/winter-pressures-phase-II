@@ -30,14 +30,20 @@ if config["test"]:
     # For testing, use only one date
     dates = [config["test_config"]["start_date"]]
 
-core_columns = ["practice_pseudo_id", "measure", "interval_start", "numerator", "list_size"]
+core_columns = [
+    "practice_pseudo_id",
+    "measure",
+    "interval_start",
+    "numerator",
+    "list_size",
+]
 
 # -------- Patient measures processing ----------------------------------
 
 # Instantiate list of yearly dataframes for each subgroup
 measures_dict = {}
-    
-for subgroup in config['subgroups']:
+
+for subgroup in config["subgroups"]:
     measures_dict[subgroup] = []
 
 log_memory_usage(label="Before loading data")
@@ -46,14 +52,20 @@ for date in dates:
 
     print(f"Loading {config['group']} measures {date}", flush=True)
     input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/{config['group']}_measures_{date}"
-    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"    # Read in measures
+    output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"  # Read in measures
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
 
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(df, column="numerator", year=2023, measure_name="rsv_specific"))
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                df, column="numerator", year=2023, measure_name="rsv_specific"
+            )
+        )
 
-    df.drop(columns=["interval_end", "ratio"], inplace=True)  # Drop interval end column as not needed for analysis and saves memory
+    df.drop(
+        columns=["interval_end", "ratio"], inplace=True
+    )  # Drop interval end column as not needed for analysis and saves memory
     log_memory_usage(label=f"After loading measures {date}")
     print(f"Initial shape of input: {df.shape}", flush=True)
 
@@ -78,12 +90,16 @@ for date in dates:
     )
 
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(df, column="numerator", year=2023, measure_name="rsv_specific"))
-    
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                df, column="numerator", year=2023, measure_name="rsv_specific"
+            )
+        )
+
     # Loop through each subgroup and append the subgroups measures
-    for subgroup in config['subgroups']:
-         
+    for subgroup in config["subgroups"]:
+
         core_columns_i = core_columns.copy()
 
         # Ethnicity_sus needed for imputation
@@ -103,15 +119,22 @@ for date in dates:
                 subgroup_df = subgroup_df.drop(columns=[col])
 
         measures_dict[subgroup].append(subgroup_df)
-    
+
     del df
     log_memory_usage(label=f"After deletion of df")
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup][-1], column="numerator", year=2023, measure_name="rsv_specific"))
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                measures_dict[subgroup][-1],
+                column="numerator",
+                year=2023,
+                measure_name="rsv_specific",
+            )
+        )
 
 # Apply pre-processing to each subgroup dataframe
-for subgroup in config['subgroups']:
+for subgroup in config["subgroups"]:
 
     # Save Concatenate yearly intervals into a single dataframe
     measures_dict[subgroup] = pd.concat(measures_dict[subgroup])
@@ -119,23 +142,37 @@ for subgroup in config['subgroups']:
     print(f"Data types of input: {measures_dict[subgroup].dtypes}", flush=True)
     log_memory_usage(label=f"After deletion of dataframes")
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                measures_dict[subgroup],
+                column="numerator",
+                year=2023,
+                measure_name="rsv_specific",
+            )
+        )
 
     if subgroup == "rur_urb_class":
         # Replace numerical values with string values
-        measures_dict[subgroup] = replace_nums(measures_dict[subgroup], replace_ethnicity=False, replace_rur_urb=True)
+        measures_dict[subgroup] = replace_nums(
+            measures_dict[subgroup], replace_ethnicity=False, replace_rur_urb=True
+        )
 
     if subgroup == "ethnicity":
         # Replace numerical values with string values
-        measures_dict[subgroup] = replace_nums(measures_dict[subgroup], replace_ethnicity=True, replace_rur_urb=False)
-
+        measures_dict[subgroup] = replace_nums(
+            measures_dict[subgroup], replace_ethnicity=True, replace_rur_urb=False
+        )
 
     if config["test"]:
         np.random.seed(42)  # For reproducibility in testing
         # Increase numerator and list_size for testing of downstream functions
-        measures_dict[subgroup]["numerator"] = np.random.randint(0, 500, size=len(measures_dict[subgroup]))
-        measures_dict[subgroup]["list_size"] = np.random.randint(500, 1000, size=len(measures_dict[subgroup]))
+        measures_dict[subgroup]["numerator"] = np.random.randint(
+            0, 500, size=len(measures_dict[subgroup])
+        )
+        measures_dict[subgroup]["list_size"] = np.random.randint(
+            500, 1000, size=len(measures_dict[subgroup])
+        )
 
         # Simulate extra data for downstream testing
         print(measures_dict[subgroup]["interval_start"].unique())
@@ -143,27 +180,35 @@ for subgroup in config['subgroups']:
 
         # Define number of repeats and time delta based on yearly or weekly config
         if config["yearly"]:
-            n_intervals = 2     # 2 years
-            time_delta_weeks = 52     # 1 year gap between intervals
+            n_intervals = 2  # 2 years
+            time_delta_weeks = 52  # 1 year gap between intervals
         else:
-            n_intervals = 52 * 2     # 2 years
-            time_delta_weeks = 1     # 1 week gap between intervals
+            n_intervals = 52 * 2  # 2 years
+            time_delta_weeks = 1  # 1 week gap between intervals
 
         # Generate extended rows by shifting weeks and randomizing values
         extended_rows = []
         for i in range(1, n_intervals + 1):
             df_copy = measures_dict[subgroup].copy()
-            df_copy["interval_start"] = df_copy["interval_start"] + timedelta(weeks=time_delta_weeks * i)
+            df_copy["interval_start"] = df_copy["interval_start"] + timedelta(
+                weeks=time_delta_weeks * i
+            )
             df_copy["numerator"] = np.random.randint(0, 500, size=len(df_copy))
             df_copy["list_size"] = np.random.randint(500, 1000, size=len(df_copy))
             extended_rows.append(df_copy)
 
         # Combine original and simulated rows
-        measures_dict[subgroup] = pd.concat([measures_dict[subgroup]] + extended_rows, ignore_index=True)
+        measures_dict[subgroup] = pd.concat(
+            [measures_dict[subgroup]] + extended_rows, ignore_index=True
+        )
 
         # Sample 10 unique practice_pseudo_ids
-        test_practices = pd.Series(measures_dict[subgroup]["practice_pseudo_id"].unique()).sample(10)
-        measures_dict[subgroup] = measures_dict[subgroup][measures_dict[subgroup]["practice_pseudo_id"].isin(test_practices)]
+        test_practices = pd.Series(
+            measures_dict[subgroup]["practice_pseudo_id"].unique()
+        ).sample(10)
+        measures_dict[subgroup] = measures_dict[subgroup][
+            measures_dict[subgroup]["practice_pseudo_id"].isin(test_practices)
+        ]
 
         # Set values in 'numerator' column to 0 for the selected rows to simulate real data missingness
         # Define mask for conditional rows
@@ -184,13 +229,17 @@ for subgroup in config['subgroups']:
         # Drop rows
         measures_dict[subgroup] = measures_dict[subgroup].drop(matching_indices)
         # Drop duplicates
-        measures_dict[subgroup] = pd.concat([measures_dict[subgroup]] + extended_rows, ignore_index=True)
+        measures_dict[subgroup] = pd.concat(
+            [measures_dict[subgroup]] + extended_rows, ignore_index=True
+        )
         measures_dict[subgroup] = measures_dict[subgroup].drop_duplicates(
             subset=["practice_pseudo_id", "measure", "interval_start"]
         )
 
     # Remove intervals before the first summer reference period
-    measures_dict[subgroup] = measures_dict[subgroup][measures_dict[subgroup]["interval_start"] > "2016-05-31"]
+    measures_dict[subgroup] = measures_dict[subgroup][
+        measures_dict[subgroup]["interval_start"] > "2016-05-31"
+    ]
 
     # Remove practices with < 750 list size
     if config["practice_measures"]:
@@ -198,28 +247,46 @@ for subgroup in config['subgroups']:
             f"Number of practices before filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
             flush=True,
         )
-        measures_dict[subgroup] = measures_dict[subgroup][(measures_dict[subgroup]["list_size"] > 750)]
+        measures_dict[subgroup] = measures_dict[subgroup][
+            (measures_dict[subgroup]["list_size"] > 750)
+        ]
         print(
             f"Number of practices after filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
             flush=True,
         )
 
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                measures_dict[subgroup],
+                column="numerator",
+                year=2023,
+                measure_name="rsv_specific",
+            )
+        )
 
-    # MOVE DOWNSTREAM   
-    #measures_dict[subgroup][["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(measures_dict[subgroup][["numerator", "list_size"]], to=6)
+    # MOVE DOWNSTREAM
+    # measures_dict[subgroup][["numerator_midpoint6", "list_size_midpoint6"]] = roundmid_any(measures_dict[subgroup][["numerator", "list_size"]], to=6)
 
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                measures_dict[subgroup],
+                column="numerator",
+                year=2023,
+                measure_name="rsv_specific",
+            )
+        )
 
     # Ensure correct datetime format
     measures_dict[subgroup]["interval_start"] = pd.to_datetime(
         measures_dict[subgroup]["interval_start"]
     ).dt.tz_localize(None)
-    measures_dict[subgroup]["month"] = measures_dict[subgroup]["interval_start"].dt.month
+    measures_dict[subgroup]["month"] = measures_dict[subgroup][
+        "interval_start"
+    ].dt.month
     # If Jan - May, RR is relative to prev years summer. If June - Dec, RR is relative to same years summer.
     measures_dict[subgroup]["summer_year"] = np.where(
         measures_dict[subgroup]["month"] <= 5,
@@ -228,34 +295,53 @@ for subgroup in config['subgroups']:
     )
 
     # Calculate rate per 1000
-    measures_dict[subgroup]["rate_per_1000"] = (
+    measures_dict[subgroup]["Rate_per_1000"] = (
         measures_dict[subgroup]["numerator"]
         / measures_dict[subgroup]["list_size"]
         * 1000
     )
 
     # Define pandemic dates
+    if config["test"]:
+        pandemic_start = pd.to_datetime(config["test_config"]["pandemic_start"])
+        pandemic_end = pd.to_datetime(config["test_config"]["pandemic_end"])
+    else:
+        pandemic_start = pd.to_datetime(config["pandemic_start"])
+        pandemic_end = pd.to_datetime(config["pandemic_end"])
     pandemic_conditions = [
-        measures_dict[subgroup]["interval_start"] < pd.to_datetime(config["pandemic_start"]),
-        (measures_dict[subgroup]["interval_start"] >= pd.to_datetime(config["pandemic_start"]))
-        & (measures_dict[subgroup]["interval_start"] <= pd.to_datetime(config["pandemic_end"])),
-        measures_dict[subgroup]["interval_start"] > pd.to_datetime(config["pandemic_end"]),
+        measures_dict[subgroup]["interval_start"] < pd.to_datetime(pandemic_start),
+        (measures_dict[subgroup]["interval_start"] >= pd.to_datetime(pandemic_start))
+        & (measures_dict[subgroup]["interval_start"] <= pd.to_datetime(pandemic_end)),
+        measures_dict[subgroup]["interval_start"] > pd.to_datetime(pandemic_end),
     ]
     choices = ["Before", "During", "After"]
     measures_dict[subgroup]["pandemic"] = np.select(pandemic_conditions, choices)
-
-    log_memory_usage(label=f"Final memory usage") # test is 10 times higher for practice_subgroups
+    log_memory_usage(
+        label=f"Final memory usage"
+    )  # test is 10 times higher for practice_subgroups
 
     # Save processed file
-    if config['practice_subgroup_measures']:
+    if config["practice_subgroup_measures"]:
         output_path_subgroup = output_path + f"_{subgroup}"
-    elif config['practice_measures']:
+    elif config["practice_measures"]:
         output_path_subgroup = output_path
 
     # Count total rsv_specific cases in 2023 for sense check
-    if config['set'] == 'resp':
-        print(column_total_check(measures_dict[subgroup], column="numerator", year=2023, measure_name="rsv_specific"))
+    if config["set"] == "resp":
+        print(
+            column_total_check(
+                measures_dict[subgroup],
+                column="numerator",
+                year=2023,
+                measure_name="rsv_specific",
+            )
+        )
 
-    read_write(read_or_write="write", path=output_path_subgroup, df=measures_dict[subgroup], file_type='arrow')
+    read_write(
+        read_or_write="write",
+        path=output_path_subgroup,
+        df=measures_dict[subgroup],
+        file_type="arrow",
+    )
     del measures_dict[subgroup]  # Delete dataframe to save memory
     log_memory_usage(label=f"After saving and deleting {subgroup} dataframe")

@@ -14,7 +14,7 @@
   "appt": false,
   "study_end_date": "2025-03-31",
   "pandemic_start": "2020-03-23",
-  "pandemic_end": "2021-07-19",
+  "pandemic_end": "2022-04-01",
   "n_years": 10,
   "base_dtype_dict": {
     "measure": "category",
@@ -101,8 +101,8 @@
   "file_type": "arrow",
   "test_config": {
     "start_date": "2023-05-08",
-    "pandemic_start": "2017-03-01",
-    "pandemic_end": "2018-05-17"
+    "pandemic_start": "2024-01-01",
+    "pandemic_end": "2024-01-01"
   },
   "yearly": false,
   "released": false,

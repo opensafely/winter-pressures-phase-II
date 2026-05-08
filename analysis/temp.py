@@ -1,4 +1,3 @@
-
 import json
 
 import pandas as pd
@@ -10,6 +9,7 @@ import os
 from utils import *
 import pyarrow.feather as feather
 from parse_args import config
+
 # python analysis/temp.py --test --set resp --practice_measures
 
 # --------- Configuration ------------------------------------------------
@@ -32,5 +32,3 @@ log_memory_usage(label="Before loading data")
 # practice subgroup measures dataframe = 473 mb
 # practice subgroup measures dict = 287 mb
 # Thus, saving as dictionary with trimmed columns is more memory efficient for practice subgroup measures
-
-

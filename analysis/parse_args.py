@@ -74,7 +74,7 @@ parser.add_argument(
 )
 parser.add_argument(
     "--yearly",
-    action = "store_true",
+    action="store_true",
     default=argparse.SUPPRESS,
     help="Set intervals to yearly instead of weekly",
 )
@@ -135,7 +135,11 @@ elif config.get("set") == "appts_table":
 
 # Define subgroups based on measures output
 if config.get("practice_subgroup_measures", False):
-    config['subgroups'] = list(config["groups"]["practice_subgroup"]["dtype_dict"].keys())
-    config['subgroups'].remove("ethnicity_sus") # Ethnicity sus df not needed, only used for imputation
+    config["subgroups"] = list(
+        config["groups"]["practice_subgroup"]["dtype_dict"].keys()
+    )
+    config["subgroups"].remove(
+        "ethnicity_sus"
+    )  # Ethnicity sus df not needed, only used for imputation
 elif config.get("practice_measures", False):
-    config['subgroups'] = list(config["groups"]["practice"]["dtype_dict"].keys())
+    config["subgroups"] = list(config["groups"]["practice"]["dtype_dict"].keys())

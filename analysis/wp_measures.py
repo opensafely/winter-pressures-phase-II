@@ -121,9 +121,7 @@ region = practice_registrations.for_patient_on(
 ).practice_nuts1_region_name
 
 # Practice stp
-stp = practice_registrations.for_patient_on(
-    INTERVAL.start_date
-).practice_stp
+stp = practice_registrations.for_patient_on(INTERVAL.start_date).practice_stp
 
 # ---------------------- Comorbidity and vaccination status --------------------------------
 
@@ -210,9 +208,9 @@ comorbid_dict = {
     ],
 }
 practice_subgroup_dict = demograph_dict | comorbid_dict
-practice_subgroup_dict['practice_pseudo_id'] = practice_id
-practice_subgroup_dict.pop('ethnicity_sus')
-practice_subgroup_dict['stp'] = stp
+practice_subgroup_dict["practice_pseudo_id"] = practice_id
+practice_subgroup_dict.pop("ethnicity_sus")
+practice_subgroup_dict["stp"] = stp
 
 # ---------------------- Measures --------------------------------
 
@@ -390,9 +388,9 @@ measures_to_add["ili"] = count_seasonal_illness_sensitive(
 )
 
 # Max specificity measures
-if config['yearly']:
+if config["yearly"]:
     # For yearly measures, allow counting multiple consultations per patient
-    n_per_patient = "many_pp" 
+    n_per_patient = "many_pp"
 else:
     n_per_patient = "one_pp"
 
@@ -423,7 +421,7 @@ if config["demograph_measures"]:
     measures.define_defaults(
         denominator=inclusion_criteria,
         intervals=intervals,
-        group_by= demograph_dict,
+        group_by=demograph_dict,
     )
 elif config["practice_measures"]:
     # Run practice script if practice flag called
@@ -448,7 +446,7 @@ elif config["practice_subgroup_measures"]:
 
 # Filtering out measures to select pipeline
 for measure in list(measures_to_add.keys()):
-    if measure not in config['pipeline_measures']:
+    if measure not in config["pipeline_measures"]:
         del measures_to_add[measure]
 
 # Restrict measures to those with an appointment in interval
@@ -470,22 +468,22 @@ for measure in measures_to_add.keys():
 
             # If ethnicity, also groupby sus ethnicity for imputation
             if subgroup == "ethnicity":
-                group_by= {"practice_pseudo_id": practice_id, 
-                           subgroup: definition,
-                           "ethnicity_sus": ethnicity_from_sus.code}
+                group_by = {
+                    "practice_pseudo_id": practice_id,
+                    subgroup: definition,
+                    "ethnicity_sus": ethnicity_from_sus.code,
+                }
             else:
-                group_by= {"practice_pseudo_id": practice_id, 
-                           subgroup: definition}
-                
+                group_by = {"practice_pseudo_id": practice_id, subgroup: definition}
+
             measures.define_measure(
                 name=f"{measure}_{subgroup}",
                 numerator=measures_to_add[measure],
-                group_by= group_by,
-        )
+                group_by=group_by,
+            )
     else:
         # For non-yearly measures, don't include demographic breakdowns to save memory
         measures.define_measure(
             name=measure,
             numerator=measures_to_add[measure],
         )
-
