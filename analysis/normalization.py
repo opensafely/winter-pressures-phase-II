@@ -381,10 +381,11 @@ read_write(
 )
 
 ## Yearly RRs
-yearly_unweighted_df_results = aggregate_unweighted_rr_results(
+yearly_unweighted_results = aggregate_unweighted_rr_results(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic", "summer_year"],
 )
+
 rename_map = {
     # rate ratios
     "RR_prev_summr_median": "RR_prev_median",
@@ -397,34 +398,50 @@ rename_map = {
     "RD_first_summr_median": "RD_first_median",
 }
 
-# Round
-yearly_unweighted_df_results = yearly_unweighted_df_results.round(4)
-# Save unweighted RRs per year
-yearly_unweighted_df_results = yearly_unweighted_df_results.rename(columns=rename_map)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_yearly",
-    df=yearly_unweighted_df_results,
-    file_type="csv",
-)
+# Clean and save yearly unweighted RRs
+for yearly_df, baseline in zip(yearly_unweighted_results, ["first", "prev"]):
+    # Round
+    yearly_df = yearly_df.round(4)
+    # Save unweighted RRs per year
+    yearly_df = yearly_df.rename(columns=rename_map)
+    # Apply SDC rounding to counts
+    yearly_df = roundmid_any(
+        yearly_df,
+        ["Rate_per_1000_median", f"Rate_per_1000_{baseline}_summr_median", f"n_practice_{baseline}_summer"],
+        to=6,
+    )
+    read_write(
+        read_or_write="write",
+        path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_yearly_{baseline}_summer",
+        df=yearly_df,
+        file_type="csv",
+    )
 
 ## Pandemic period RRs
-pandemic_unweighted_df_results = aggregate_unweighted_rr_results(
+pandemic_unweighted_results = aggregate_unweighted_rr_results(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic"],
 )
 
-# Save unweighted RRs per pandemic period
-pandemic_unweighted_df_results = pandemic_unweighted_df_results.rename(
-    columns=rename_map
-)
-pandemic_unweighted_df_results = pandemic_unweighted_df_results.round(4)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_pandemic",
-    df=pandemic_unweighted_df_results,
-    file_type="csv",
-)
+# Clean and save pandemic period unweighted RRs
+for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"]):
+    
+    # Save unweighted RRs per pandemic period
+    pandemic_df = pandemic_df.rename(
+        columns=rename_map
+    )
+    pandemic_df = pandemic_df.round(4)
+    pandemic_df = roundmid_any(
+        pandemic_df,
+        ["Rate_per_1000_median", f"Rate_per_1000_{baseline}_summr_median", f"n_practice_{baseline}_summer"],
+        to=6,
+    )
+    read_write(
+        read_or_write="write",
+        path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_pandemic_{baseline}_summer",
+        df=pandemic_df,
+        file_type="csv",
+    )
 
 # # --------------- Describing long-term trend --------------------------------------------
 

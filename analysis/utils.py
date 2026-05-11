@@ -534,6 +534,8 @@ def roundmid_any(df, cols, to=6, low_value_threshold=10):
                             to check for potential over-rounding of low values.
     """
 
+    original_columns = df.columns.tolist()
+
     for col in cols:
         rounded_col = np.ceil(df[col] / to) * to - (np.floor(to / 2) * (df[col] != 0))
         df[f"{col}_mp6"] = rounded_col
@@ -547,8 +549,16 @@ def roundmid_any(df, cols, to=6, low_value_threshold=10):
             low_value_threshold=low_value_threshold,
         )
 
-    # Delete unrounded columns
+    # Preserve initial column ordering
     df = df.drop(columns=cols)
+    reordered_columns = []
+    for col in original_columns:
+        if col in cols:
+            reordered_columns.append(f"{col}_mp6")
+        else:
+            reordered_columns.append(col)
+    df = df[reordered_columns]
+
     return df
 
 
@@ -571,6 +581,27 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
 
     df = practice_level_df.copy()
 
+    # Named percentile functions to keep readable output column names.
+    def p01(x):
+        return x.quantile(0.01)
+
+    p01.__name__ = "p01"
+
+    def p25(x):
+        return x.quantile(0.25)
+
+    p25.__name__ = "p25"
+
+    def p75(x):
+        return x.quantile(0.75)
+
+    p75.__name__ = "p75"
+
+    def p99(x):
+        return x.quantile(0.99)
+
+    p99.__name__ = "p99"
+
     # Indicator columns for RR direction used in grouped counts.
     for baseline in ["prev_summr", "first_summr"]:
         rr_col = f"RR_{baseline}"
@@ -582,12 +613,15 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         df,
         group_cols,
         {
-            "RR_prev_summr": ["median"],
-            "RR_first_summr": ["median"],
+            "Rate_per_1000": ["median"],
+            "Rate_per_1000_prev_summr": ["median"],
+            "Rate_per_1000_first_summr": ["median"],
             "list_size_count_first_summr": ["sum"],
             "list_size_count_prev_summr": ["sum"],
-            "RD_prev_summr": ["median"],
-            "RD_first_summr": ["median"],
+            "RR_prev_summr": [p01, p25, "median", "mean", p75, p99, "var"],
+            "RR_first_summr": [p01, p25, "median", "mean", p75, p99, "var"],
+            "RD_prev_summr": [p01, p25, "median", "mean", p75, p99, "var"],
+            "RD_first_summr": [p01, p25, "median", "mean", p75, p99, "var"],
             "RR_prev_summr_>5%": ["sum"],
             "RR_prev_summr_=1": ["sum"],
             "RR_prev_summr_<5%": ["sum"],
@@ -598,30 +632,12 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     )
 
     # Proportion of practices with RR > 1, = 1, and < 1.
-    results_df["%_RR_prev_>5%"] = (
-        results_df["RR_prev_summr_>5%_sum"]
-        / results_df["list_size_count_prev_summr_sum"]
-    )
-    results_df["%_RR_prev_=1"] = (
-        results_df["RR_prev_summr_=1_sum"]
-        / results_df["list_size_count_prev_summr_sum"]
-    )
-    results_df["%_RR_prev_<5%"] = (
-        results_df["RR_prev_summr_<5%_sum"]
-        / results_df["list_size_count_prev_summr_sum"]
-    )
-    results_df["%_RR_first_>5%"] = (
-        results_df["RR_first_summr_>5%_sum"]
-        / results_df["list_size_count_first_summr_sum"]
-    )
-    results_df["%_RR_first_=1"] = (
-        results_df["RR_first_summr_=1_sum"]
-        / results_df["list_size_count_first_summr_sum"]
-    )
-    results_df["%_RR_first_<5%"] = (
-        results_df["RR_first_summr_<5%_sum"]
-        / results_df["list_size_count_first_summr_sum"]
-    )
+    rr_categories = ["_>5%", "_=1", "_<5%"]
+    for baseline in ["prev_summr", "first_summr"]:
+        for category in rr_categories:
+            results_df[f"%_RR_{baseline}{category}"] = (
+                results_df[f"RR_{baseline}{category}_sum"] / results_df[f"list_size_count_{baseline}_sum"]
+            )
 
     results_df = results_df.drop(
         columns=[
@@ -634,7 +650,12 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         ]
     )
 
-    return results_df
+    # Split first summer and prev summer RR into different tables
+    core_columns = ["measure", "season", "pandemic", "summer_year", "Rate_per_1000_median"]
+    results_df_first_summer = results_df[[col for col in results_df.columns if "first_summr" in col or col in core_columns]]
+    results_df_prev_summer = results_df[[col for col in results_df.columns if "prev_summr" in col or col in core_columns]]
+
+    return (results_df_first_summer, results_df_prev_summer)
 
 
 def filter_pandemic_mismatches(df):
