@@ -696,7 +696,17 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         rr_df[baseline_rate_col] = (
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
         ) * 1000
-        rr_df[rr_col] = rr_df[rate_per_1000_col] / rr_df[baseline_rate_col]
+
+        # Handle practice with a summer rate of 0.
+        # Real 0's should remain in the dataset, so 1 is used as baseline rate to avoid inf whilst preserving position in distribution
+        # Fake 0's (practices that don't code that measure) should be removed from the dataset
+        # For Resp, SRO, seen_in_interval etc, all 0's will be assumerd to be 0 and thus np.nan
+        # For other measures, we will need a different approach TBC.
+        rr_df[rr_col] = np.where(
+            rr_df[baseline_rate_col] == 0,
+            rr_df[rate_per_1000_col] / 1,
+            rr_df[rate_per_1000_col] / rr_df[baseline_rate_col],
+        )
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
     filtered_rr_df = filter_pandemic_mismatches(rr_df)

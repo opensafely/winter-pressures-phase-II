@@ -236,6 +236,13 @@ for subgroup in config["subgroups"]:
             subset=["practice_pseudo_id", "measure", "interval_start"]
         )
 
+        # Modify rsv and flu specific to be sparse to simulate real data
+        measures_dict[subgroup]["numerator"] = np.where(
+            measures_dict[subgroup]["measure"].isin(["rsv_specific", "flu_specific"]),
+            np.random.choice([0, 1], size=len(measures_dict[subgroup]), p=[0.95, 0.05]),
+            measures_dict[subgroup]["numerator"],
+        )
+
     # Remove intervals before the first summer reference period
     measures_dict[subgroup] = measures_dict[subgroup][
         measures_dict[subgroup]["interval_start"] > "2016-05-31"
