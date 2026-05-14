@@ -651,7 +651,7 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
             "RR_first_summr_>5%": ["sum"],
             "RR_first_summr_=1": ["sum"],
             "RR_first_summr_<5%": ["sum"],
-        }
+        },
     )
 
     # Proportion of practices with RR > 1, = 1, and < 1.
@@ -659,7 +659,8 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     for baseline in ["prev_summr", "first_summr"]:
         for category in rr_categories:
             results_df[f"%_RR_{baseline}{category}"] = (
-                results_df[f"RR_{baseline}{category}_sum"] / results_df[f"list_size_count_{baseline}_sum"]
+                results_df[f"RR_{baseline}{category}_sum"]
+                / results_df[f"list_size_count_{baseline}_sum"]
             )
 
     results_df = results_df.drop(
@@ -674,9 +675,27 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     )
 
     # Split first summer and prev summer RR into different tables
-    core_columns = ["measure", "season", "pandemic", "summer_year", "Rate_per_1000_median"]
-    results_df_first_summer = results_df[[col for col in results_df.columns if "first_summr" in col or col in core_columns]]
-    results_df_prev_summer = results_df[[col for col in results_df.columns if "prev_summr" in col or col in core_columns]]
+    core_columns = [
+        "measure",
+        "season",
+        "pandemic",
+        "summer_year",
+        "Rate_per_1000_median",
+    ]
+    results_df_first_summer = results_df[
+        [
+            col
+            for col in results_df.columns
+            if "first_summr" in col or col in core_columns
+        ]
+    ]
+    results_df_prev_summer = results_df[
+        [
+            col
+            for col in results_df.columns
+            if "prev_summr" in col or col in core_columns
+        ]
+    ]
 
     return (results_df_first_summer, results_df_prev_summer)
 
@@ -753,5 +772,5 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         )
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
-    #rr_df = filter_pandemic_mismatches(rr_df)
+    # rr_df = filter_pandemic_mismatches(rr_df)
     return rr_df

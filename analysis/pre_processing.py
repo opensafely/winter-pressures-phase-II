@@ -180,7 +180,7 @@ for subgroup in config["subgroups"]:
 
         # Define number of repeats and time delta based on yearly or weekly config
         if config["yearly"]:
-            n_intervals = 3 
+            n_intervals = 3
             time_delta_weeks = 52  # 1 year gap between intervals
         else:
             n_intervals = 52 * 3  # 3 years ("2023-05-08" - ""2026-05-08")
@@ -257,7 +257,6 @@ for subgroup in config["subgroups"]:
                 & (measures_dict[subgroup]["interval_start"] <= "2024-06-01")
             )
         ]
-
 
     # Remove intervals before the first summer reference period
     measures_dict[subgroup] = measures_dict[subgroup][
