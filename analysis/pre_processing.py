@@ -180,10 +180,10 @@ for subgroup in config["subgroups"]:
 
         # Define number of repeats and time delta based on yearly or weekly config
         if config["yearly"]:
-            n_intervals = 2  # 2 years
+            n_intervals = 3  # 3 years
             time_delta_weeks = 52  # 1 year gap between intervals
         else:
-            n_intervals = 52 * 2  # 2 years
+            n_intervals = 52 * 3  # 3 years
             time_delta_weeks = 1  # 1 week gap between intervals
 
         # Generate extended rows by shifting weeks and randomizing values
@@ -242,6 +242,22 @@ for subgroup in config["subgroups"]:
             np.random.choice([0, 1], size=len(measures_dict[subgroup]), p=[0.95, 0.05]),
             measures_dict[subgroup]["numerator"],
         )
+
+        # Delete some practices from 2023 only to simiulate new practices joining over time
+        practices_2023 = measures_dict[subgroup][
+            measures_dict[subgroup]["interval_start"] < "2023-12-12"
+        ]["practice_pseudo_id"].unique()
+        practices_to_drop = np.random.choice(
+            practices_2023, size=int(0.2 * len(practices_2023)), replace=False
+        )
+        # Remove these practices from the entire 2023 comparison group (up to May 2024)
+        measures_dict[subgroup] = measures_dict[subgroup][
+            ~(
+                (measures_dict[subgroup]["practice_pseudo_id"].isin(practices_to_drop))
+                & (measures_dict[subgroup]["interval_start"] <= "2024-06-01")
+            )
+        ]
+
 
     # Remove intervals before the first summer reference period
     measures_dict[subgroup] = measures_dict[subgroup][
