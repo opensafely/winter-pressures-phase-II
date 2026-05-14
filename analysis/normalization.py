@@ -53,7 +53,6 @@ exclude_mask = ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26)) | (
     date_col >= pd.Timestamp(MEASURES_END_DATE)
 )
 practice_interval_df = practice_interval_df.loc[~exclude_mask]
-
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
 # Only keep intervals inside the periods of interest
@@ -133,13 +132,14 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_btwn_df"] = build_aggregate_df(
         seasonal_group["interval_season_df"],
         ["measure", "season", "pandemic"],
-        {"Rate_per_1000_var": ["median", "count"]},
+        {"Rate_per_1000_var": ["median", "mean", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_btwn_df"].rename(
         columns={
             "Rate_per_1000_var_median": "var_rate_btwn_prac_season_median",
+            "Rate_per_1000_var_mean": "var_rate_btwn_prac_season_mean",
             "Rate_per_1000_var_count": "var_rate_btwn_prac_season_n_weeks",
         },
         inplace=True,
@@ -208,21 +208,20 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_w/in_df"] = build_aggregate_df(
         seasonal_group["practice_season_df"],
         ["measure", "season", "pandemic"],
-        {"Rate_per_1000_var": ["median", "count"]},
+        {"Rate_per_1000_var": ["median", "mean", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_w/in_df"].rename(
         columns={
             "Rate_per_1000_var_median": "var_rate_w/in_prac_season_median",
+            "Rate_per_1000_var_mean": "var_rate_w/in_prac_season_mean",
             "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practice-years",
         },
         inplace=True,
     )
 
-    print(
-        f"3. Total numerator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['numerator'].sum()}, \nTotal denominator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['list_size'].sum()}, \nTotal practices for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['practice_pseudo_id'].nunique()}"
-    )
+    print(f"3. Total numerator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['numerator'].sum()}, \nTotal denominator for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['list_size'].sum()}, \nTotal practices for {seasonal_group['practice_interval_df']['season'].iloc[0]} = {seasonal_group['practice_interval_df']['practice_pseudo_id'].nunique()}")
 
 # Concatenate summer and non-summer variance tables into one table
 combined_var_btwn_df = pd.concat(
@@ -246,6 +245,8 @@ combined_var_within_df = roundmid_any(
 variance_columns = [
     "var_rate_btwn_prac_season_median",
     "var_rate_w/in_prac_season_median",
+    "var_rate_btwn_prac_season_mean",
+    "var_rate_w/in_prac_season_mean",
 ]
 for var_df in [combined_var_btwn_df, combined_var_within_df]:
     for col in var_df.columns:
