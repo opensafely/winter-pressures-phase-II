@@ -249,7 +249,7 @@ variance_columns = [
 ]
 for var_df in [combined_var_btwn_df, combined_var_within_df]:
     for col in var_df.columns:
-        if var_df[col].dtype != np.number:
+        if not pd.api.types.is_numeric_dtype(var_df[col]):
             continue
         if col in variance_columns:
             var_df[col] = var_df[col].round(7)

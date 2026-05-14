@@ -624,10 +624,11 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         .reset_index()
         .sort_values("summer_year")
     )
-    print("Practice counts by summer_year before unweighted aggregation:", flush=True)
-    print(practice_count_by_year.to_string(index=False), flush=True)
-    print("Baseline-linked practice counts by summer_year:", flush=True)
-    print(baseline_count_by_year.to_string(index=False), flush=True)
+    if config['test']:
+        print("Practice counts by summer_year before unweighted aggregation:", flush=True)
+        print(practice_count_by_year.to_string(index=False), flush=True)
+        print("Baseline-linked practice counts by summer_year:", flush=True)
+        print(baseline_count_by_year.to_string(index=False), flush=True)
 
     # Aggregate RR percentiles and practice counts
     # Practices without a valid summer baseline are ignored by default
@@ -641,10 +642,10 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
             "list_size_count": ["sum"],
             "list_size_count_first_summr": ["sum"],
             "list_size_count_prev_summr": ["sum"],
-            "RR_prev_summr": [p01, p25, "median", "mean", p75, p99, "var"],
-            "RR_first_summr": [p01, p25, "median", "mean", p75, p99, "var"],
-            "RD_prev_summr": [p01, p25, "median", "mean", p75, p99, "var"],
-            "RD_first_summr": [p01, p25, "median", "mean", p75, p99, "var"],
+            "RR_prev_summr": [p01, p25, "median", p75, p99, "var"],
+            "RR_first_summr": [p01, p25, "median", p75, p99, "var"],
+            "RD_prev_summr": [p01, p25, "median", p75, p99, "var"],
+            "RD_first_summr": [p01, p25, "median",p75, p99, "var"],
             "RR_prev_summr_>5%": ["sum"],
             "RR_prev_summr_=1": ["sum"],
             "RR_prev_summr_<5%": ["sum"],
@@ -761,16 +762,14 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         ) * 1000
 
         # Handle practice with a summer rate of 0.
-        # Real 0's should remain in the dataset, so 1 is used as baseline rate to avoid inf whilst preserving position in distribution
+        # Real 0's should remain in the dataset, so 1offset is used toavoid inf whilst preserving position in distribution
         # Fake 0's (practices that don't code that measure) should be removed from the dataset
         # For Resp, SRO, seen_in_interval etc, all 0's will be assumerd to be 0 and thus np.nan
         # For other measures, we will need a different approach TBC.
-        rr_df[rr_col] = np.where(
-            rr_df[baseline_rate_col] == 0,
-            rr_df[rate_per_1000_col] / 1,
-            rr_df[rate_per_1000_col] / rr_df[baseline_rate_col],
-        )
+        offset = 0.00001
+        rr_df[rr_col] = (rr_df[rate_per_1000_col] + offset) / (rr_df[baseline_rate_col] + offset)
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
+    # temporarily removed filter_pandemic_mismatches to see if it is necessary
     # rr_df = filter_pandemic_mismatches(rr_df)
     return rr_df
