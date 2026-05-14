@@ -56,6 +56,7 @@ was_alive = patients.is_alive_on(INTERVAL.start_date)
 
 # Registered at the start of the interval and
 # only include practices that became TPP before the interval being measured
+# excluding practices that are currently TPP (at DB runtime) but not during the interval
 was_registered = (
     practice_registrations.exists_for_patient_on(INTERVAL.start_date)
     & practice_registrations.where(

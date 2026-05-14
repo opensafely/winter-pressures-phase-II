@@ -609,6 +609,28 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         df[f"{rr_col}_=1"] = (df[rr_col] >= 0.95) & (df[rr_col] <= 1.05)
         df[f"{rr_col}_<5%"] = df[rr_col] < 0.95
 
+    # Debug check: number of unique practices and baseline-linked practice counts by year.
+    practice_count_by_year = (
+        df.groupby("summer_year", observed=True)["practice_pseudo_id"]
+        .nunique()
+        .reset_index(name="n_unique_practices")
+        .sort_values("summer_year")
+    )
+    baseline_count_by_year = (
+        df.groupby("summer_year", observed=True)[
+            ["list_size_count_prev_summr", "list_size_count_first_summr"]
+        ]
+        .sum()
+        .reset_index()
+        .sort_values("summer_year")
+    )
+    print("Practice counts by summer_year before unweighted aggregation:", flush=True)
+    print(practice_count_by_year.to_string(index=False), flush=True)
+    print("Baseline-linked practice counts by summer_year:", flush=True)
+    print(baseline_count_by_year.to_string(index=False), flush=True)
+
+    # Aggregate RR percentiles and practice counts
+    # Practices without a valid summer baseline are ignored by default
     results_df = build_aggregate_df(
         df,
         group_cols,
@@ -616,6 +638,7 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
             "Rate_per_1000": ["median"],
             "Rate_per_1000_prev_summr": ["median"],
             "Rate_per_1000_first_summr": ["median"],
+            "list_size_count": ["sum"],
             "list_size_count_first_summr": ["sum"],
             "list_size_count_prev_summr": ["sum"],
             "RR_prev_summr": [p01, p25, "median", "mean", p75, p99, "var"],
@@ -628,7 +651,7 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
             "RR_first_summr_>5%": ["sum"],
             "RR_first_summr_=1": ["sum"],
             "RR_first_summr_<5%": ["sum"],
-        },
+        }
     )
 
     # Proportion of practices with RR > 1, = 1, and < 1.

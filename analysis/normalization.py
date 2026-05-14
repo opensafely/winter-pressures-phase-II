@@ -15,12 +15,19 @@ from parse_args import *
 import numpy as np
 import random
 from datetime import datetime, timedelta
-from scipy import stats
+from scipy import stats, test
 from itertools import product
 import pyarrow.feather as feather
 from itertools import combinations
 from scipy.stats import pearsonr, spearmanr
 import os
+
+# ------- CONFIGURATION ---------------------------------- 
+ 
+if not config["test"]:
+    MEASURES_END_DATE = "2025-06-01" # Exclude intervals after June 2025 as the set of comparisons are not yet complete
+else:
+    MEASURES_END_DATE = "2026-06-01" # For test data, push back end of measures to allow for simulated data
 
 # -------- Load data ----------------------------------
 
@@ -43,7 +50,7 @@ log_memory_usage(label="After loading data")
 # Remove interval containing xmas shutdown
 date_col = practice_interval_df["interval_start"]
 exclude_mask = ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26)) | (
-    date_col >= pd.Timestamp("2025-06-01")
+    date_col >= pd.Timestamp(MEASURES_END_DATE)
 )
 practice_interval_df = practice_interval_df.loc[~exclude_mask]
 
@@ -208,7 +215,7 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_w/in_df"].rename(
         columns={
             "Rate_per_1000_var_median": "var_rate_w/in_prac_season_median",
-            "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practices",
+            "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practice-years",
         },
         inplace=True,
     )
@@ -232,12 +239,22 @@ combined_var_btwn_df = roundmid_any(
     combined_var_btwn_df, ["var_rate_btwn_prac_season_n_weeks"], to=6
 )
 combined_var_within_df = roundmid_any(
-    combined_var_within_df, ["var_rate_w/in_prac_season_n_practices"], to=6
+    combined_var_within_df, ["var_rate_w/in_prac_season_n_practice-years"], to=6
 )
 
-# Round tables
-combined_var_btwn_df = combined_var_btwn_df.round(4)
-combined_var_within_df = combined_var_within_df.round(4)
+# Round tables to 4 dp, except for variances, which are rounded to 6 dp to preserve precision
+variance_columns = [
+    "var_rate_btwn_prac_season_median",
+    "var_rate_w/in_prac_season_median",
+]
+for var_df in [combined_var_btwn_df, combined_var_within_df]:
+    for col in var_df.columns:
+        if var_df[col].dtype != np.number:
+            continue
+        if col in variance_columns:
+            var_df[col] = var_df[col].round(7)
+        else:
+            var_df[col] = var_df[col].round(4)
 
 # Merge into one variance table
 combined_var_btwn_df = combined_var_btwn_df.merge(
@@ -314,10 +331,9 @@ combined_seasons_df = calculate_rate_ratios(
 rename_map = {
     "numerator_sum_sum_mp6": "num_sum_mp6",
     "list_size_initial_sum_mp6": "list_size_initial_mp6",
-    "list_size_count_sum_mp6": "n_practices_mp6",
-    "numerator_sum_sum_mp6_prev_summr": "num_prev_summer_mp6",
+    "numerator_sum_sum_mp6_prev_summr": "num_prev_summer_mp6", 
     "list_size_initial_sum_mp6_prev_summr": "list_prev_summer_mp6",
-    "list_size_count_sum_mp6_prev_summr": "n_practices_prev_summer_mp6",
+    "list_size_count_sum_mp6_prev_summr": "n_practices_prev_summer_mp6", # n_practices prev summer is the same as n_practices for that winter
     "numerator_sum_sum_mp6_first_summr": "num_first_summer_mp6",
     "list_size_initial_sum_mp6_first_summr": "list_first_summer_mp6",
     "list_size_count_sum_mp6_first_summr": "n_practices_first_summer_mp6",
@@ -423,6 +439,10 @@ pandemic_unweighted_results = aggregate_unweighted_rr_results(
     ["measure", "season", "pandemic"],
 )
 
+# Change n_practices to n_practice-years (count of practices contributing to each season-pandemic period)
+rename_map["list_size_count_first_summr_sum"] = "n_practice-years_first_summer"
+rename_map["list_size_count_prev_summr_sum"] = "n_practice-years_prev_summer"
+
 # Clean and save pandemic period unweighted RRs
 for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"]):
     
@@ -433,7 +453,7 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
     pandemic_df = pandemic_df.round(4)
     pandemic_df = roundmid_any(
         pandemic_df,
-        ["Rate_per_1000_median", f"Rate_per_1000_{baseline}_summr_median", f"n_practice_{baseline}_summer"],
+        ["Rate_per_1000_median", f"Rate_per_1000_{baseline}_summr_median", f"n_practice-years_{baseline}_summer"],
         to=6,
     )
     read_write(
