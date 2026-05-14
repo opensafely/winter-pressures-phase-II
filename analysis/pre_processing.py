@@ -180,10 +180,10 @@ for subgroup in config["subgroups"]:
 
         # Define number of repeats and time delta based on yearly or weekly config
         if config["yearly"]:
-            n_intervals = 3  # 3 years
+            n_intervals = 3 
             time_delta_weeks = 52  # 1 year gap between intervals
         else:
-            n_intervals = 52 * 3  # 3 years
+            n_intervals = 52 * 3  # 3 years ("2023-05-08" - ""2026-05-08")
             time_delta_weeks = 1  # 1 week gap between intervals
 
         # Generate extended rows by shifting weeks and randomizing values

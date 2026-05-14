@@ -753,5 +753,5 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         )
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
-    filtered_rr_df = filter_pandemic_mismatches(rr_df)
-    return filtered_rr_df
+    #rr_df = filter_pandemic_mismatches(rr_df)
+    return rr_df
