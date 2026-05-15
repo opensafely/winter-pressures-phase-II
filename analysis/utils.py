@@ -733,7 +733,6 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     - mp6_input: Boolean indicating whether the input has been mp6 rounded
     """
 
-    rr_df = merge_seasons(summer_df, non_summer_df, practice_level=practice_level)
     if mp6_input:
         mp6_suffix = "_mp6"
     else:
@@ -746,6 +745,21 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     else:
         numerator_col = f"numerator_sum_sum{mp6_suffix}"
         denominator_col = f"list_size_initial_sum{mp6_suffix}"
+
+    # Set the count column based on whether the practice data has been aggregated
+    count_col = f"list_size_count{mp6_suffix}" if practice_level else f"list_size_count_sum{mp6_suffix}"
+
+    # Keep only columns needed for RR/RD calculations and downstream outputs
+    # to reduce memory pressure during merges.
+    merge_keys = ["measure", "summer_year", "pandemic"]
+    if practice_level:
+        merge_keys.append("practice_pseudo_id")
+
+    required_cols = merge_keys + ["season", numerator_col, denominator_col, count_col]
+    non_summer_rr = non_summer_df[required_cols].copy()
+    summer_rr = summer_df[required_cols].copy()
+
+    rr_df = merge_seasons(summer_rr, non_summer_rr, practice_level=practice_level)
 
     # Calculate rate ratios
     rate_per_1000_col = f"Rate_per_1000{mp6_suffix}"
@@ -761,13 +775,15 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
         ) * 1000
 
-        # Handle practice with a summer rate of 0.
-        # Real 0's should remain in the dataset, so 1offset is used toavoid inf whilst preserving position in distribution
-        # Fake 0's (practices that don't code that measure) should be removed from the dataset
-        # For Resp, SRO, seen_in_interval etc, all 0's will be assumerd to be 0 and thus np.nan
-        # For other measures, we will need a different approach TBC.
-        offset = 0.00001
-        rr_df[rr_col] = (rr_df[rate_per_1000_col] + offset) / (rr_df[baseline_rate_col] + offset)
+        # Offset-based RR avoids NaNs for true 0/0 cases while limiting
+        # memory overhead by reusing preallocated arrays.
+        offset = 1e-4
+        rr_values = rr_df[rate_per_1000_col].to_numpy(copy=True)
+        rr_values += offset
+        baseline_values = rr_df[baseline_rate_col].to_numpy(copy=True)
+        baseline_values += offset
+        np.divide(rr_values, baseline_values, out=rr_values)
+        rr_df[rr_col] = rr_values
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
     # temporarily removed filter_pandemic_mismatches to see if it is necessary

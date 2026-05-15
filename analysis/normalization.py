@@ -15,7 +15,7 @@ from parse_args import *
 import numpy as np
 import random
 from datetime import datetime, timedelta
-from scipy import stats, test
+from scipy import stats
 from itertools import product
 import pyarrow.feather as feather
 from itertools import combinations
@@ -197,9 +197,6 @@ for seasonal_group in seasonal_groups:
         on=["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
         how="left",
     )
-    seasonal_group["practice_season_df"]["numerator_sum"] = seasonal_group[
-        "practice_season_df"
-    ]["numerator_sum"].fillna(0)
 
     # Aggregate seasonal variance w/in practices to median national seasonal variance w/in practices
     seasonal_group["season_var_w/in_df"] = build_aggregate_df(
@@ -379,22 +376,28 @@ combined_practice_seasons_df = calculate_rate_ratios(
 
 # Visualise distributions of rates and RRs
 plot_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots"
+
+log_memory_usage(label="Before plotting distributions")
 os.makedirs(plot_dir, exist_ok=True)
 
 rate_plots = generate_dist_plot(
     df=combined_practice_seasons_df, var="Rate_per_1000", facet_var="measure"
 )
 rate_plots.savefig(f"{plot_dir}/rates.png")
+plt.close(rate_plots.fig)
+
 RR_plots = generate_dist_plot(
     df=combined_practice_seasons_df, var="RR_prev_summr", facet_var="measure"
 )
 RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
+plt.close(RR_plots.fig)
 read_write(
     read_or_write="write",
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_RR",
     df=combined_practice_seasons_df,
     file_type="arrow",
 )
+log_memory_usage(label="After plotting distributions")
 
 ## Yearly RRs
 yearly_unweighted_results = aggregate_unweighted_rr_results(
@@ -420,7 +423,9 @@ for yearly_df, baseline in zip(yearly_unweighted_results, ["first", "prev"]):
     yearly_df = yearly_df.round(4)
     # Save unweighted RRs per year
     yearly_df = yearly_df.rename(columns=rename_map)
-    # Apply SDC rounding to counts
+    
+    # Apply SDC rounding to rates rather than counts
+    # because rounding sparse counts leads to biased results
     yearly_df = roundmid_any(
         yearly_df,
         [
@@ -453,6 +458,9 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
     # Save unweighted RRs per pandemic period
     pandemic_df = pandemic_df.rename(columns=rename_map)
     pandemic_df = pandemic_df.round(4)
+
+    # Apply SDC rounding to rates rather than counts
+    # because rounding sparse counts leads to biased results
     pandemic_df = roundmid_any(
         pandemic_df,
         [
@@ -469,6 +477,7 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
         file_type="csv",
     )
 
+print("Rate Ratios Saved")
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats
