@@ -1,0 +1,56 @@
+<!-- This script visualises and summarises the RR tables produced by normalization.py-->
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(stringr)
+source("analysis/utils.r")
+source("analysis/parse_args.r")
+
+# Set Config
+config["test"] <- TRUE
+```
+
+## Respiratory Measures
+
+```{r}
+resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_weighted_test.csv")
+
+rr_timeseries_by_measure <- function(df, y_var, y_label){
+    "This function produces a line plot, coloured by season, faceted by measure
+    Args:
+        df: dataframe containing the results of the rate ratio calculations
+        y_var: the variable to plot on the y-axis (e.g. RR_prev_summr_mp6)
+        y_label: the label for the y-axis"
+
+    line_plot <- df %>%
+        ggplot(aes(x = summer_year, y = {{ y_var }}, color = season)) +
+        geom_line() +
+        geom_point() +
+        labs(title = glue("{y_label} Over Time by Season"),
+            x = "year",
+            y = y_label) +
+        theme_minimal() +
+        facet_grid(rows = vars(measure)) +
+        theme(legend.title = element_blank())
+
+    return(line_plot)
+}
+
+rr_timeseries_by_measure(resp_results_df, RR_prev_summr_mp6, "Rate Ratio")
+rr_timeseries_by_measure(resp_results_df, RD_prev_summr_mp6, "Rate Difference")
+
+```
+
+
+## Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
+
+```{r}
+pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_weighted_test.csv")
+
+rr_timeseries_by_measure(pathology_results_df, RR_prev_summr_mp6, "Rate Ratio")
+rr_timeseries_by_measure(pathology_results_df, RD_prev_summr_mp6, "Rate Difference")
+```
+
+
+

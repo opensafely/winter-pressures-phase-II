@@ -10,8 +10,7 @@ library(jsonlite)
 #styler::style_dir("analysis")
 
 # Load config
-config <- fromJSON(file.path(dirname(sys.frame(1)$ofile), "config.json"))
-
+config <- jsonlite::fromJSON("analysis/config.json")
 # ----------------- Parse user arguments -------------------------------
 
 # Define list of options
