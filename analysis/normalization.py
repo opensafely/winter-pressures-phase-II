@@ -380,17 +380,19 @@ plot_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suff
 log_memory_usage(label="Before plotting distributions")
 os.makedirs(plot_dir, exist_ok=True)
 
-rate_plots = generate_dist_plot(
-    df=combined_practice_seasons_df, var="Rate_per_1000", facet_var="measure"
-)
-rate_plots.savefig(f"{plot_dir}/rates.png")
-plt.close(rate_plots.fig)
+# TEMPORARILY COMMENTING OUT PLOTTING DUE TO MEMORY ISSUES
+# rate_plots = generate_dist_plot(
+#     df=combined_practice_seasons_df, var="Rate_per_1000", facet_var="measure"
+# )
+# rate_plots.savefig(f"{plot_dir}/rates.png")
+# plt.close(rate_plots.fig)
 
-RR_plots = generate_dist_plot(
-    df=combined_practice_seasons_df, var="RR_prev_summr", facet_var="measure"
-)
-RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
-plt.close(RR_plots.fig)
+# RR_plots = generate_dist_plot(
+#     df=combined_practice_seasons_df, var="RR_prev_summr", facet_var="measure"
+# )
+# RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
+# plt.close(RR_plots.fig)
+
 read_write(
     read_or_write="write",
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_RR",
@@ -404,6 +406,7 @@ yearly_unweighted_results = aggregate_unweighted_rr_results(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic", "summer_year"],
 )
+log_memory_usage(label="After aggregating yearly unweighted RRs")
 
 rename_map = {
     # rate ratios
@@ -447,6 +450,7 @@ pandemic_unweighted_results = aggregate_unweighted_rr_results(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic"],
 )
+log_memory_usage(label="After aggregating pandemic unweighted RRs")
 
 # Change n_practices to n_practice-years (count of practices contributing to each season-pandemic period)
 rename_map["list_size_count_first_summr_sum"] = "n_practice-years_first_summer"
@@ -477,6 +481,7 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
         file_type="csv",
     )
 
+log_memory_usage(label="After saving pandemic unweighted RRs")
 print("Rate Ratios Saved")
 # # --------------- Describing long-term trend --------------------------------------------
 
