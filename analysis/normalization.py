@@ -22,6 +22,13 @@ from itertools import combinations
 from scipy.stats import pearsonr, spearmanr
 import os
 
+# ------- CONFIGURATION ----------------------------------
+
+if not config["test"]:
+    MEASURES_END_DATE = "2025-06-01"  # Exclude intervals after June 2025 as the set of comparisons are not yet complete
+else:
+    MEASURES_END_DATE = "2026-06-01"  # For test data, push back end of measures to allow for simulated data
+
 # -------- Load data ----------------------------------
 
 # Generate dates
@@ -43,10 +50,9 @@ log_memory_usage(label="After loading data")
 # Remove interval containing xmas shutdown
 date_col = practice_interval_df["interval_start"]
 exclude_mask = ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26)) | (
-    date_col >= pd.Timestamp("2025-06-01")
+    date_col >= pd.Timestamp(MEASURES_END_DATE)
 )
 practice_interval_df = practice_interval_df.loc[~exclude_mask]
-
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
 # Only keep intervals inside the periods of interest
@@ -66,6 +72,23 @@ print(
     f"2. Total numerator after filtering = {practice_interval_df['numerator'].sum()}, \nTotal denominator after filtering = {practice_interval_df['list_size'].sum()}, \nTotal practices after filtering = {practice_interval_df['practice_pseudo_id'].nunique()}"
 )
 
+#
+practice_interval_denominator_df = practice_interval_df.sort_values(
+    ["practice_pseudo_id", "interval_start", "measure"]
+).drop_duplicates(subset=["practice_pseudo_id", "interval_start"], keep="first")[
+    [
+        "practice_pseudo_id",
+        "interval_start",
+        "season",
+        "pandemic",
+        "summer_year",
+        "list_size",
+    ]
+]
+
+# Exctract list of measures
+measure_names_df = practice_interval_df[["measure"]].drop_duplicates()
+
 # ----------------------- Seasonality analysis ----------------------------------
 
 # Iterate over two summer baseline options: 1) Compare winter to prev summer 2) Compare winter to first summer
@@ -73,6 +96,12 @@ print(
 non_summer = {}
 summer = {}
 seasonal_groups = [summer, non_summer]
+
+# Add indicator column for seasonal dataframes
+summer["is_summer"] = True
+non_summer["is_summer"] = False
+
+# Filter numerator counts for specific season
 non_summer["practice_interval_df"] = practice_interval_df[
     practice_interval_df["season"] != "Jun-Jul"
 ]
@@ -101,13 +130,14 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_btwn_df"] = build_aggregate_df(
         seasonal_group["interval_season_df"],
         ["measure", "season", "pandemic"],
-        {"Rate_per_1000_var": ["median", "count"]},
+        {"Rate_per_1000_var": ["median", "mean", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_btwn_df"].rename(
         columns={
             "Rate_per_1000_var_median": "var_rate_btwn_prac_season_median",
+            "Rate_per_1000_var_mean": "var_rate_btwn_prac_season_mean",
             "Rate_per_1000_var_count": "var_rate_btwn_prac_season_n_weeks",
         },
         inplace=True,
@@ -115,28 +145,72 @@ for seasonal_group in seasonal_groups:
 
     ## VARIANCE WITHIN PRACTICES
     # Aggregate counts per practice-season, and calculate variance within practices across weeks
-    seasonal_group["practice_season_df"] = build_aggregate_df(
+    seasonal_group["practice_season_numerator_df"] = build_aggregate_df(
         seasonal_group["practice_interval_df"],
         ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
         {"numerator": ["sum"], "Rate_per_1000": ["var"]},
-        initial_list_size=True,
     )
-    seasonal_group["practice_season_df"][
-        "list_size_count"
-    ] = 1  # Practice count indicator for later aggregation
+
+    # Filter denominator table to season
+    if seasonal_group["is_summer"]:
+        seasonal_denominator_interval_df = practice_interval_denominator_df[
+            practice_interval_denominator_df["season"] == "Jun-Jul"
+        ]
+    else:
+        seasonal_denominator_interval_df = practice_interval_denominator_df[
+            practice_interval_denominator_df["season"] != "Jun-Jul"
+        ]
+
+    # Merge with all measures to create a practice-season-measure level frame, with consistent denominator counts across measures but allowing denominator counts to vary by season and pandemic period
+    seasonal_denominator_df = (
+        # Sort denomainator table so that intervals are in order
+        seasonal_denominator_interval_df.sort_values(
+            [
+                "practice_pseudo_id",
+                "season",
+                "pandemic",
+                "summer_year",
+                "interval_start",
+            ]
+        )
+        # Pick the first week for each practice-season combination to represent the denominator for that practice-season
+        .drop_duplicates(
+            subset=["practice_pseudo_id", "season", "pandemic", "summer_year"],
+            keep="first",
+        ).rename(columns={"list_size": "list_size_initial"})
+    )
+
+    # Drop interval_start as the week represents the denominator for the whole season
+    seasonal_denominator_df = seasonal_denominator_df.drop(columns=["interval_start"])
+
+    # Add count column to later aggregate number of practices contributing to each season
+    seasonal_denominator_df["list_size_count"] = 1
+
+    # Add each permutation of measure with seasonal denominator
+    seasonal_denominator_df = seasonal_denominator_df.merge(
+        measure_names_df, how="cross"
+    )
+
+    # Add the numerator counts for each measure and season
+    seasonal_group["practice_season_df"] = seasonal_denominator_df.merge(
+        seasonal_group["practice_season_numerator_df"],
+        on=["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        how="left",
+    )
 
     # Aggregate seasonal variance w/in practices to median national seasonal variance w/in practices
     seasonal_group["season_var_w/in_df"] = build_aggregate_df(
         seasonal_group["practice_season_df"],
         ["measure", "season", "pandemic"],
-        {"Rate_per_1000_var": ["median", "count"]},
+        {"Rate_per_1000_var": ["median", "mean", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_w/in_df"].rename(
         columns={
             "Rate_per_1000_var_median": "var_rate_w/in_prac_season_median",
-            "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practices",
+            "Rate_per_1000_var_mean": "var_rate_w/in_prac_season_mean",
+            "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practice-years",
         },
         inplace=True,
     )
@@ -160,12 +234,24 @@ combined_var_btwn_df = roundmid_any(
     combined_var_btwn_df, ["var_rate_btwn_prac_season_n_weeks"], to=6
 )
 combined_var_within_df = roundmid_any(
-    combined_var_within_df, ["var_rate_w/in_prac_season_n_practices"], to=6
+    combined_var_within_df, ["var_rate_w/in_prac_season_n_practice-years"], to=6
 )
 
-# Round tables
-combined_var_btwn_df = combined_var_btwn_df.round(4)
-combined_var_within_df = combined_var_within_df.round(4)
+# Round tables to 4 dp, except for variances, which are rounded to 6 dp to preserve precision
+variance_columns = [
+    "var_rate_btwn_prac_season_median",
+    "var_rate_w/in_prac_season_median",
+    "var_rate_btwn_prac_season_mean",
+    "var_rate_w/in_prac_season_mean",
+]
+for var_df in [combined_var_btwn_df, combined_var_within_df]:
+    for col in var_df.columns:
+        if not pd.api.types.is_numeric_dtype(var_df[col]):
+            continue
+        if col in variance_columns:
+            var_df[col] = var_df[col].round(7)
+        else:
+            var_df[col] = var_df[col].round(4)
 
 # Merge into one variance table
 combined_var_btwn_df = combined_var_btwn_df.merge(
@@ -183,31 +269,10 @@ read_write(
 
 # ---------------- RATE RATIOS -----------------------------
 
-## REMOvE PRACTICES WITH ZERO/NAN BASELINE RATES
-keys = ["measure", "summer_year", "practice_pseudo_id"]
-
-# Identify practices with zero/nan baseline rates in summer season to exclude from practice-level RRs
-summer["zero_or_nan_df"] = summer["practice_season_df"][
-    (summer["practice_season_df"]["numerator_sum"] == 0)
-    | (summer["practice_season_df"]["numerator_sum"].isna())
-]
-
 for seasonal_group in seasonal_groups:
 
-    # Merge with zero/nan df to identify practices with zero/nan baseline rates
-    seasonal_group["practice_season_df"] = seasonal_group["practice_season_df"].merge(
-        summer["zero_or_nan_df"][keys], on=keys, how="left", indicator=True
-    )
     print(
-        f"7. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after merging with zero/nan df = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}"
-    )
-
-    # Keep only practices that do not have zero/nan baseline rates
-    seasonal_group["practice_season_df"] = seasonal_group["practice_season_df"][
-        seasonal_group["practice_season_df"]["_merge"] == "left_only"
-    ].drop(columns="_merge")
-    print(
-        f"8. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after removing zero/nan practices = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}"
+        f"7. Total numerator for {seasonal_group['practice_season_df']['season'].iloc[0]} after denominator harmonisation = {seasonal_group['practice_season_df']['numerator_sum'].sum()}, \nTotal denominator for {seasonal_group['practice_season_df']['season'].iloc[0]} after denominator harmonisation = {seasonal_group['practice_season_df']['list_size_initial'].sum()}, \nTotal practices for {seasonal_group['practice_season_df']['season'].iloc[0]} after denominator harmonisation = {seasonal_group['practice_season_df']['practice_pseudo_id'].nunique()}"
     )
 
     # -------- PATIENT LEVEL (LIST_SIZE-WEIGHTED) EFFECTS --------------------
@@ -263,10 +328,9 @@ combined_seasons_df = calculate_rate_ratios(
 rename_map = {
     "numerator_sum_sum_mp6": "num_sum_mp6",
     "list_size_initial_sum_mp6": "list_size_initial_mp6",
-    "list_size_count_sum_mp6": "n_practices_mp6",
     "numerator_sum_sum_mp6_prev_summr": "num_prev_summer_mp6",
     "list_size_initial_sum_mp6_prev_summr": "list_prev_summer_mp6",
-    "list_size_count_sum_mp6_prev_summr": "n_practices_prev_summer_mp6",
+    "list_size_count_sum_mp6_prev_summr": "n_practices_prev_summer_mp6",  # n_practices prev summer is the same as n_practices for that winter
     "numerator_sum_sum_mp6_first_summr": "num_first_summer_mp6",
     "list_size_initial_sum_mp6_first_summr": "list_first_summer_mp6",
     "list_size_count_sum_mp6_first_summr": "n_practices_first_summer_mp6",
@@ -312,28 +376,35 @@ combined_practice_seasons_df = calculate_rate_ratios(
 
 # Visualise distributions of rates and RRs
 plot_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/plots"
+
+log_memory_usage(label="Before plotting distributions")
 os.makedirs(plot_dir, exist_ok=True)
 
 rate_plots = generate_dist_plot(
     df=combined_practice_seasons_df, var="Rate_per_1000", facet_var="measure"
 )
 rate_plots.savefig(f"{plot_dir}/rates.png")
+plt.close(rate_plots.fig)
+
 RR_plots = generate_dist_plot(
     df=combined_practice_seasons_df, var="RR_prev_summr", facet_var="measure"
 )
 RR_plots.savefig(f"{plot_dir}/RR_prev_summer.png")
+plt.close(RR_plots.fig)
 read_write(
     read_or_write="write",
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/practice_level_RR",
     df=combined_practice_seasons_df,
     file_type="arrow",
 )
+log_memory_usage(label="After plotting distributions")
 
 ## Yearly RRs
-yearly_unweighted_df_results = aggregate_unweighted_rr_results(
+yearly_unweighted_results = aggregate_unweighted_rr_results(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic", "summer_year"],
 )
+
 rename_map = {
     # rate ratios
     "RR_prev_summr_median": "RR_prev_median",
@@ -346,35 +417,67 @@ rename_map = {
     "RD_first_summr_median": "RD_first_median",
 }
 
-# Round
-yearly_unweighted_df_results = yearly_unweighted_df_results.round(4)
-# Save unweighted RRs per year
-yearly_unweighted_df_results = yearly_unweighted_df_results.rename(columns=rename_map)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_yearly",
-    df=yearly_unweighted_df_results,
-    file_type="csv",
-)
+# Clean and save yearly unweighted RRs
+for yearly_df, baseline in zip(yearly_unweighted_results, ["first", "prev"]):
+    # Round
+    yearly_df = yearly_df.round(4)
+    # Save unweighted RRs per year
+    yearly_df = yearly_df.rename(columns=rename_map)
+    
+    # Apply SDC rounding to rates rather than counts
+    # because rounding sparse counts leads to biased results
+    yearly_df = roundmid_any(
+        yearly_df,
+        [
+            "Rate_per_1000_median",
+            f"Rate_per_1000_{baseline}_summr_median",
+            f"n_practice_{baseline}_summer",
+        ],
+        to=6,
+    )
+    read_write(
+        read_or_write="write",
+        path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_yearly_{baseline}_summer",
+        df=yearly_df,
+        file_type="csv",
+    )
 
 ## Pandemic period RRs
-pandemic_unweighted_df_results = aggregate_unweighted_rr_results(
+pandemic_unweighted_results = aggregate_unweighted_rr_results(
     combined_practice_seasons_df,
     ["measure", "season", "pandemic"],
 )
 
-# Save unweighted RRs per pandemic period
-pandemic_unweighted_df_results = pandemic_unweighted_df_results.rename(
-    columns=rename_map
-)
-pandemic_unweighted_df_results = pandemic_unweighted_df_results.round(4)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_pandemic",
-    df=pandemic_unweighted_df_results,
-    file_type="csv",
-)
+# Change n_practices to n_practice-years (count of practices contributing to each season-pandemic period)
+rename_map["list_size_count_first_summr_sum"] = "n_practice-years_first_summer"
+rename_map["list_size_count_prev_summr_sum"] = "n_practice-years_prev_summer"
 
+# Clean and save pandemic period unweighted RRs
+for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"]):
+
+    # Save unweighted RRs per pandemic period
+    pandemic_df = pandemic_df.rename(columns=rename_map)
+    pandemic_df = pandemic_df.round(4)
+
+    # Apply SDC rounding to rates rather than counts
+    # because rounding sparse counts leads to biased results
+    pandemic_df = roundmid_any(
+        pandemic_df,
+        [
+            "Rate_per_1000_median",
+            f"Rate_per_1000_{baseline}_summr_median",
+            f"n_practice-years_{baseline}_summer",
+        ],
+        to=6,
+    )
+    read_write(
+        read_or_write="write",
+        path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_unweighted_pandemic_{baseline}_summer",
+        df=pandemic_df,
+        file_type="csv",
+    )
+
+print("Rate Ratios Saved")
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats

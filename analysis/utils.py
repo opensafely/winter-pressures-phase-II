@@ -534,6 +534,8 @@ def roundmid_any(df, cols, to=6, low_value_threshold=10):
                             to check for potential over-rounding of low values.
     """
 
+    original_columns = df.columns.tolist()
+
     for col in cols:
         rounded_col = np.ceil(df[col] / to) * to - (np.floor(to / 2) * (df[col] != 0))
         df[f"{col}_mp6"] = rounded_col
@@ -547,8 +549,16 @@ def roundmid_any(df, cols, to=6, low_value_threshold=10):
             low_value_threshold=low_value_threshold,
         )
 
-    # Delete unrounded columns
+    # Preserve initial column ordering
     df = df.drop(columns=cols)
+    reordered_columns = []
+    for col in original_columns:
+        if col in cols:
+            reordered_columns.append(f"{col}_mp6")
+        else:
+            reordered_columns.append(col)
+    df = df[reordered_columns]
+
     return df
 
 
@@ -571,6 +581,27 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
 
     df = practice_level_df.copy()
 
+    # Named percentile functions to keep readable output column names.
+    def p01(x):
+        return x.quantile(0.01)
+
+    p01.__name__ = "p01"
+
+    def p25(x):
+        return x.quantile(0.25)
+
+    p25.__name__ = "p25"
+
+    def p75(x):
+        return x.quantile(0.75)
+
+    p75.__name__ = "p75"
+
+    def p99(x):
+        return x.quantile(0.99)
+
+    p99.__name__ = "p99"
+
     # Indicator columns for RR direction used in grouped counts.
     for baseline in ["prev_summr", "first_summr"]:
         rr_col = f"RR_{baseline}"
@@ -578,16 +609,43 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         df[f"{rr_col}_=1"] = (df[rr_col] >= 0.95) & (df[rr_col] <= 1.05)
         df[f"{rr_col}_<5%"] = df[rr_col] < 0.95
 
+    # Debug check: number of unique practices and baseline-linked practice counts by year.
+    practice_count_by_year = (
+        df.groupby("summer_year", observed=True)["practice_pseudo_id"]
+        .nunique()
+        .reset_index(name="n_unique_practices")
+        .sort_values("summer_year")
+    )
+    baseline_count_by_year = (
+        df.groupby("summer_year", observed=True)[
+            ["list_size_count_prev_summr", "list_size_count_first_summr"]
+        ]
+        .sum()
+        .reset_index()
+        .sort_values("summer_year")
+    )
+    if config['test']:
+        print("Practice counts by summer_year before unweighted aggregation:", flush=True)
+        print(practice_count_by_year.to_string(index=False), flush=True)
+        print("Baseline-linked practice counts by summer_year:", flush=True)
+        print(baseline_count_by_year.to_string(index=False), flush=True)
+
+    # Aggregate RR percentiles and practice counts
+    # Practices without a valid summer baseline are ignored by default
     results_df = build_aggregate_df(
         df,
         group_cols,
         {
-            "RR_prev_summr": ["median"],
-            "RR_first_summr": ["median"],
+            "Rate_per_1000": ["median"],
+            "Rate_per_1000_prev_summr": ["median"],
+            "Rate_per_1000_first_summr": ["median"],
+            "list_size_count": ["sum"],
             "list_size_count_first_summr": ["sum"],
             "list_size_count_prev_summr": ["sum"],
-            "RD_prev_summr": ["median"],
-            "RD_first_summr": ["median"],
+            "RR_prev_summr": [p01, p25, "median", p75, p99, "var"],
+            "RR_first_summr": [p01, p25, "median", p75, p99, "var"],
+            "RD_prev_summr": [p01, p25, "median", p75, p99, "var"],
+            "RD_first_summr": [p01, p25, "median",p75, p99, "var"],
             "RR_prev_summr_>5%": ["sum"],
             "RR_prev_summr_=1": ["sum"],
             "RR_prev_summr_<5%": ["sum"],
@@ -598,30 +656,13 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
     )
 
     # Proportion of practices with RR > 1, = 1, and < 1.
-    results_df["%_RR_prev_>5%"] = (
-        results_df["RR_prev_summr_>5%_sum"]
-        / results_df["list_size_count_prev_summr_sum"]
-    )
-    results_df["%_RR_prev_=1"] = (
-        results_df["RR_prev_summr_=1_sum"]
-        / results_df["list_size_count_prev_summr_sum"]
-    )
-    results_df["%_RR_prev_<5%"] = (
-        results_df["RR_prev_summr_<5%_sum"]
-        / results_df["list_size_count_prev_summr_sum"]
-    )
-    results_df["%_RR_first_>5%"] = (
-        results_df["RR_first_summr_>5%_sum"]
-        / results_df["list_size_count_first_summr_sum"]
-    )
-    results_df["%_RR_first_=1"] = (
-        results_df["RR_first_summr_=1_sum"]
-        / results_df["list_size_count_first_summr_sum"]
-    )
-    results_df["%_RR_first_<5%"] = (
-        results_df["RR_first_summr_<5%_sum"]
-        / results_df["list_size_count_first_summr_sum"]
-    )
+    rr_categories = ["_>5%", "_=1", "_<5%"]
+    for baseline in ["prev_summr", "first_summr"]:
+        for category in rr_categories:
+            results_df[f"%_RR_{baseline}{category}"] = (
+                results_df[f"RR_{baseline}{category}_sum"]
+                / results_df[f"list_size_count_{baseline}_sum"]
+            )
 
     results_df = results_df.drop(
         columns=[
@@ -634,7 +675,30 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         ]
     )
 
-    return results_df
+    # Split first summer and prev summer RR into different tables
+    core_columns = [
+        "measure",
+        "season",
+        "pandemic",
+        "summer_year",
+        "Rate_per_1000_median",
+    ]
+    results_df_first_summer = results_df[
+        [
+            col
+            for col in results_df.columns
+            if "first_summr" in col or col in core_columns
+        ]
+    ]
+    results_df_prev_summer = results_df[
+        [
+            col
+            for col in results_df.columns
+            if "prev_summr" in col or col in core_columns
+        ]
+    ]
+
+    return (results_df_first_summer, results_df_prev_summer)
 
 
 def filter_pandemic_mismatches(df):
@@ -669,7 +733,6 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     - mp6_input: Boolean indicating whether the input has been mp6 rounded
     """
 
-    rr_df = merge_seasons(summer_df, non_summer_df, practice_level=practice_level)
     if mp6_input:
         mp6_suffix = "_mp6"
     else:
@@ -682,6 +745,21 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     else:
         numerator_col = f"numerator_sum_sum{mp6_suffix}"
         denominator_col = f"list_size_initial_sum{mp6_suffix}"
+
+    # Set the count column based on whether the practice data has been aggregated
+    count_col = f"list_size_count{mp6_suffix}" if practice_level else f"list_size_count_sum{mp6_suffix}"
+
+    # Keep only columns needed for RR/RD calculations and downstream outputs
+    # to reduce memory pressure during merges.
+    merge_keys = ["measure", "summer_year", "pandemic"]
+    if practice_level:
+        merge_keys.append("practice_pseudo_id")
+
+    required_cols = merge_keys + ["season", numerator_col, denominator_col, count_col]
+    non_summer_rr = non_summer_df[required_cols].copy()
+    summer_rr = summer_df[required_cols].copy()
+
+    rr_df = merge_seasons(summer_rr, non_summer_rr, practice_level=practice_level)
 
     # Calculate rate ratios
     rate_per_1000_col = f"Rate_per_1000{mp6_suffix}"
@@ -696,8 +774,18 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         rr_df[baseline_rate_col] = (
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
         ) * 1000
-        rr_df[rr_col] = rr_df[rate_per_1000_col] / rr_df[baseline_rate_col]
+
+        # Offset-based RR avoids NaNs for true 0/0 cases while limiting
+        # memory overhead by reusing preallocated arrays.
+        offset = 1e-4
+        rr_values = rr_df[rate_per_1000_col].to_numpy(copy=True)
+        rr_values += offset
+        baseline_values = rr_df[baseline_rate_col].to_numpy(copy=True)
+        baseline_values += offset
+        np.divide(rr_values, baseline_values, out=rr_values)
+        rr_df[rr_col] = rr_values
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
-    filtered_rr_df = filter_pandemic_mismatches(rr_df)
-    return filtered_rr_df
+    # temporarily removed filter_pandemic_mismatches to see if it is necessary
+    # rr_df = filter_pandemic_mismatches(rr_df)
+    return rr_df
