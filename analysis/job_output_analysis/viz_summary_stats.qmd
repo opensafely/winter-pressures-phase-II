@@ -11,23 +11,55 @@ source("analysis/parse_args.r")
 config["test"] <- TRUE
 ```
 
+
 ## Respiratory Measures
+
+The aims of this analysis are to answer the following questions:
+1: Which measures show the highest rate ratios?
+2: Is there heterogeneity in pressure within winter?
+3: Do rate differences show meaningful effect sizes for each measure?
+4: Is the pressure metric consistent over time? And by pandemic period?
+5: Is pressure increasing in the long-term (i.e. relative to first summer)?
+6: Do respiratory metrics capture different pressure signals from each other? Would be indicated by different RR timings.
 
 ```{r}
 resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_weighted_test.csv")
 
-rr_timeseries_by_measure <- function(df, y_var, y_label){
-    "This function produces a line plot, coloured by season, faceted by measure
+rr_timeseries_by_measure <- function(df, y_var, y_label, colour_var, colour_label, baseline){
+    "
+    This function produces a line plot, coloured by season, faceted by measure
     Args:
-        df: dataframe containing the results of the rate ratio calculations
+        df: dataframe containing the results of the rate ratio     calculations
         y_var: the variable to plot on the y-axis (e.g. RR_prev_summr_mp6)
-        y_label: the label for the y-axis"
+        colour_var: the variable to colour the lines by (e.g. season)
+        y_label: the label for the y-axis
+        colour_label: the label for the colour legend
+        baseline: the baseline category for comparison
+    "
+    if (colour_label == "Season") {
+        linetype_mapping <- c(
+            "Sep-Oct" = "dashed",
+            "Nov-Dec" = "solid",
+            "Jan-Feb" = "solid",
+            "Mar-Apr" = "dashed"
+        )
+    }
+    else if(colour_label == "Percentile") {
+        linetype_mapping <- c(
+            "RR_prev_summr_p01" = "dotted",
+            "RR_prev_summr_p25" = "dashed",
+            "RR_prev_median" = "solid",
+            "RR_prev_summr_p75" = "dashed",
+            "RR_prev_summr_p99" = "dotted"
+        )
+    }
 
     line_plot <- df %>%
-        ggplot(aes(x = summer_year, y = {{ y_var }}, color = season)) +
+        ggplot(aes(x = summer_year, y = {{ y_var }}, color = {{ colour_var }}, linetype = {{ colour_var }})) +
         geom_line() +
         geom_point() +
-        labs(title = glue("{y_label} Over Time by Season"),
+        scale_linetype_manual(values = linetype_mapping) +
+        labs(title = glue("{y_label} (vs {baseline}) Over Time by {colour_label}"),
             x = "year",
             y = y_label) +
         theme_minimal() +
@@ -37,20 +69,57 @@ rr_timeseries_by_measure <- function(df, y_var, y_label){
     return(line_plot)
 }
 
-rr_timeseries_by_measure(resp_results_df, RR_prev_summr_mp6, "Rate Ratio")
-rr_timeseries_by_measure(resp_results_df, RD_prev_summr_mp6, "Rate Difference")
+rr_timeseries_by_measure(resp_results_df, RR_prev_summr_mp6, "Rate Ratio", season, "Season", "prev summer")
+rr_timeseries_by_measure(resp_results_df, RD_prev_summr_mp6, "Rate Difference", season, "Season", "prev summer")
+rr_timeseries_by_measure(resp_results_df, RR_first_summr_mp6, "Rate Ratio", season, "Season", "first summer")
+rr_timeseries_by_measure(resp_results_df, RD_first_summr_mp6, "Rate Difference", season, "Season", "first summer")
+
+```
+
+- Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
+
+```{r}
+resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
+
+rr_timeseries_by_measure(resp_results_df, RR_prev_median, "Rate Ratio", season, "Season", "prev summer")
+rr_timeseries_by_measure(resp_results_df, RR_prev_median, "Rate Difference", season, "Season", "prev summer")
+rr_timeseries_by_measure(resp_results_df, RR_first_median, "Rate Ratio", season, "Season", "first summer")
+rr_timeseries_by_measure(resp_results_df, RD_first_median, "Rate Difference", season, "Season", "first summer")
+
+```
+
+- How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
+- How much does the pressure metric vary over time within a practice? 
+
+```{r}
+REPRESENTATIVE_SEASON <- "Nov-Dec"
+
+# Pivot percentile columns to long format so that they can be set as colour
+resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
+
+resp_results_long <- resp_results_df %>%
+    pivot_longer(cols = c(RR_prev_summr_p01, RR_prev_summr_p25, RR_prev_median, RR_prev_summr_p75, RR_prev_summr_p99), names_to = "percentile", values_to = "RR_prev_summer")
+
+filter(resp_results_long, season == REPRESENTATIVE_SEASON) %>%
+    rr_timeseries_by_measure(RR_prev_summer, "Rate Ratio", percentile, "Percentile", "first summer")
 
 ```
 
 
 ## Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
 
+As above
+
 ```{r}
 pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_weighted_test.csv")
 
-rr_timeseries_by_measure(pathology_results_df, RR_prev_summr_mp6, "Rate Ratio")
-rr_timeseries_by_measure(pathology_results_df, RD_prev_summr_mp6, "Rate Difference")
+rr_timeseries_by_measure(pathology_results_df, RR_prev_summr_mp6, "Rate Ratio", season, "Season", "prev summer")
+rr_timeseries_by_measure(pathology_results_df, RD_prev_summr_mp6, "Rate Difference", season, "Season", "prev summer")
+rr_timeseries_by_measure(pathology_results_df, RR_first_summr_mp6, "Rate Ratio", season, "Season", "first summer")
+rr_timeseries_by_measure(pathology_results_df, RD_first_summr_mp6, "Rate Difference", season, "Season", "first summer")
 ```
+
+
 
 
 
