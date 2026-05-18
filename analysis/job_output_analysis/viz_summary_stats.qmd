@@ -9,6 +9,7 @@ source("analysis/parse_args.r")
 
 # Set Config
 config["test"] <- TRUE
+set <- "resp"
 ```
 
 
@@ -23,9 +24,8 @@ The aims of this analysis are to answer the following questions:
 6: Do respiratory metrics capture different pressure signals from each other? Would be indicated by different RR timings.
 
 ```{r}
-resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_weighted_test.csv")
 
-plot_rr_timeseries_by_measure <- function(df, y_var, colour_var, baseline, weighting){
+plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting, set){
     "
     This function produces a line plot, coloured by season, faceted by measure
     Args:
@@ -35,6 +35,7 @@ plot_rr_timeseries_by_measure <- function(df, y_var, colour_var, baseline, weigh
         colour_label: the label for the colour legend
         baseline: the baseline category for comparison
     "
+
     if (colour_var == "season") {
         linetype_mapping <- c(
             "Sep-Oct" = "dashed",
@@ -64,7 +65,6 @@ plot_rr_timeseries_by_measure <- function(df, y_var, colour_var, baseline, weigh
             glue("{y_var}_{baseline}_summr_p75"),
             glue("{y_var}_{baseline}_summr_p99")
         )
-        
         colour_mapping <- c(
             "#0011ff",
             "#0011ff",
@@ -75,15 +75,22 @@ plot_rr_timeseries_by_measure <- function(df, y_var, colour_var, baseline, weigh
         names(colour_mapping) <- names(linetype_mapping)
     }
     if (weighting == "weighted") {
+        df_name <- paste(glue("weighted"))
         y_col <- paste(glue("{y_var}_{baseline}_summr_mp6"))
     }
     else if ((weighting == "unweighted") & (colour_var == "season")) {
+        df_name <- paste(glue("unweighted_yearly_{baseline}_summer"))
         y_col <- paste(glue("{y_var}_{baseline}_median"))
     }
     else if ((weighting == "unweighted") & (colour_var == "percentile")) {
+        df_name <- paste(glue("unweighted_yearly_{baseline}_summer"))
         y_col <- paste(glue("{y_var}_{baseline}_summer"))
     }
-    line_plot <- df |>
+
+    # Load weighted results
+    results_df <- read.csv(glue("output/practice_measures_{set}/practice_measures_{set}_DUMMY/Results_{df_name}_test.csv"))
+
+    line_plot <- results_df |>
         ggplot(aes(x = summer_year, y = .data[[y_col]], color = .data[[colour_var]], linetype = .data[[colour_var]])) +
         geom_line() +
         geom_point() +
@@ -99,27 +106,22 @@ plot_rr_timeseries_by_measure <- function(df, y_var, colour_var, baseline, weigh
     return(line_plot)
 }
 
-plot_rr_timeseries_by_measure(resp_results_df,"RR", "season", "prev", "weighted")
-plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "prev", "weighted")
-plot_rr_timeseries_by_measure(resp_results_df, "RR", "season", "first", "weighted")
-plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "first", "weighted")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp")
+plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "resp")
+plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "resp")
 
 ```
 
 - Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
 
 ```{r}
-resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
-
-plot_rr_timeseries_by_measure(resp_results_df, "RR", "season", "prev", "unweighted")
-plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "prev", "unweighted")
-
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "resp")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "unweighted", "resp")
 
 # First summer df
-resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_first_summer_test.csv")
-
-plot_rr_timeseries_by_measure(resp_results_df, "RR", "season", "first", "unweighted")
-plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "first", "unweighted")
+plot_rr_timeseries_by_measure("RR", "season", "first", "unweighted", "resp")
+plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "resp")
 
 ```
 
@@ -128,36 +130,59 @@ plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "first", "unweigh
 ```{r}
 REPRESENTATIVE_SEASON <- "Nov-Dec" # Used for percentile chart
 
-plot_percentile_timeseries <- function(y_var, baseline){
+plot_percentile_timeseries <- function(y_var, baseline, set){
     "This function produces a plot of percentiles
     Args:
         y_var: string name of the variable to plot on the y-axis (e.g. 'RR')
         baseline: the baseline category for comparison (e.g. 'prev' or 'first')
-        weighting: whether to use weighted or unweighted results (e.g. 'weighted' or 'unweighted')"
+        set: Set of measures (e.g. 'resp' or 'sro')"
     
     # Load first or previous summer baseline df
-    resp_results_df <- read.csv(glue("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_{baseline}_summer_test.csv"))
+    resp_results_df <- read.csv(glue("output/practice_measures_{set}/practice_measures_{set}_DUMMY/Results_unweighted_yearly_{baseline}_summer_test.csv"))
 
     # Pivot percentile columns to long format so that they can be set as colour
-    resp_results_long <- resp_results_df %>%
+    results_long <- results_df %>%
         pivot_longer(cols = c(glue("{y_var}_{baseline}_summr_p01"), glue("{y_var}_{baseline}_summr_p25"), glue("{y_var}_{baseline}_median"), glue("{y_var}_{baseline}_summr_p75"), glue("{y_var}_{baseline}_summr_p99")), names_to = "percentile", values_to = as.character(glue("{y_var}_{baseline}_summer")))
     
     # Percentile chart - do we need RD as well?
-    filter(resp_results_long, season == REPRESENTATIVE_SEASON) %>%
-        plot_rr_timeseries_by_measure(y_var, "percentile", baseline, "unweighted")
+    filter(results_long, season == REPRESENTATIVE_SEASON) %>%
+        plot_rr_timeseries_by_measure(y_var, "percentile", baseline, "unweighted", set)
 }
 
-plot_percentile_timeseries("RR", "prev")
-plot_percentile_timeseries("RD", "prev")
-plot_percentile_timeseries("RR", "first")
-plot_percentile_timeseries("RD", "first")
+plot_percentile_timeseries("RR", "prev", "resp")
+plot_percentile_timeseries("RD", "prev", "resp")
+plot_percentile_timeseries("RR", "first", "resp")
+plot_percentile_timeseries("RD", "first", "resp")
 ```
 
 - How much does the pressure metric vary over time within a practice? 
 
 ```{r}
-variance_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_variances_test.csv")
 
+plot_variance_bar_chart <- function(df, var_type, set){
+    "This function produces a bar chart of the variance of the pressure metric
+    Args:
+        df: dataframe containing the results of the variance calculations
+        var_type: string name of the type of variance to plot (e.g. 'btwn' or 'w.in')
+        set: Set of measures (resp or sro)"
+    
+    # Load variance df
+    variance_df <- read.csv(glue("output/practice_measures_{set}/practice_measures_{set}_DUMMY/Results_variances_test.csv"))
+
+    variance_plot <- df %>%
+        ggplot(aes(x = measure, y = .data[[glue("var_rate_{var_type}_prac_season_median")]], fill = season)) +
+        geom_col(position = position_dodge(width = 0.9)) +
+        labs(title = glue("Variance in rate {var_type} practices inby Season"),
+            x = "Season",
+            y = glue("Variance in rate {var_type} practices")) +
+        theme_minimal() +
+        theme(legend.title = element_blank())
+    
+    return(variance_plot)
+}
+
+plot_variance_bar_chart(variance_df, "btwn", "prev", "resp")
+plot_variance_bar_chart(variance_df, "w.in", "first", "resp")
 ```
 
 
