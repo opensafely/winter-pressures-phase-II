@@ -25,43 +25,73 @@ The aims of this analysis are to answer the following questions:
 ```{r}
 resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_weighted_test.csv")
 
-rr_timeseries_by_measure <- function(df, y_var, y_label, colour_var, colour_label, baseline){
+plot_rr_timeseries_by_measure <- function(df, y_var, colour_var, baseline, weighting){
     "
     This function produces a line plot, coloured by season, faceted by measure
     Args:
-        df: dataframe containing the results of the rate ratio     calculations
-        y_var: the variable to plot on the y-axis (e.g. RR_prev_summr_mp6)
-        colour_var: the variable to colour the lines by (e.g. season)
-        y_label: the label for the y-axis
+        df: dataframe containing the results of the rate ratio calculations
+        y_var: string name of the variable to plot on the y-axis (e.g. 'RR_prev_summr_mp6')
+        colour_var: string name of the variable to colour the lines by (e.g. 'season')
         colour_label: the label for the colour legend
         baseline: the baseline category for comparison
     "
-    if (colour_label == "Season") {
+    if (colour_var == "season") {
         linetype_mapping <- c(
             "Sep-Oct" = "dashed",
             "Nov-Dec" = "solid",
             "Jan-Feb" = "solid",
             "Mar-Apr" = "dashed"
         )
-    }
-    else if(colour_label == "Percentile") {
-        linetype_mapping <- c(
-            "RR_prev_summr_p01" = "dotted",
-            "RR_prev_summr_p25" = "dashed",
-            "RR_prev_median" = "solid",
-            "RR_prev_summr_p75" = "dashed",
-            "RR_prev_summr_p99" = "dotted"
+        colour_mapping <- c(
+            "Sep-Oct" = "#1b9e77",
+            "Nov-Dec" = "#d95f02",
+            "Jan-Feb" = "#7570b3",
+            "Mar-Apr" = "#e7298a"
         )
     }
-
-    line_plot <- df %>%
-        ggplot(aes(x = summer_year, y = {{ y_var }}, color = {{ colour_var }}, linetype = {{ colour_var }})) +
+    else if(colour_var == "percentile") {
+        linetype_mapping <- c(
+            "dotted",
+            "dashed",
+            "solid",
+            "dashed",
+            "dotted"
+        )
+        names(linetype_mapping) <- c(
+            glue("{y_var}_{baseline}_summr_p01"),
+            glue("{y_var}_{baseline}_summr_p25"),
+            glue("{y_var}_{baseline}_median"),
+            glue("{y_var}_{baseline}_summr_p75"),
+            glue("{y_var}_{baseline}_summr_p99")
+        )
+        
+        colour_mapping <- c(
+            "#0011ff",
+            "#0011ff",
+            "#0011ff",
+            "#0011ff",
+            "#0011ff"
+        )
+        names(colour_mapping) <- names(linetype_mapping)
+    }
+    if (weighting == "weighted") {
+        y_col <- paste(glue("{y_var}_{baseline}_summr_mp6"))
+    }
+    else if ((weighting == "unweighted") & (colour_var == "season")) {
+        y_col <- paste(glue("{y_var}_{baseline}_median"))
+    }
+    else if ((weighting == "unweighted") & (colour_var == "percentile")) {
+        y_col <- paste(glue("{y_var}_{baseline}_summer"))
+    }
+    line_plot <- df |>
+        ggplot(aes(x = summer_year, y = .data[[y_col]], color = .data[[colour_var]], linetype = .data[[colour_var]])) +
         geom_line() +
         geom_point() +
         scale_linetype_manual(values = linetype_mapping) +
-        labs(title = glue("{y_label} (vs {baseline}) Over Time by {colour_label}"),
+        scale_color_manual(values = colour_mapping) +
+        labs(title = glue("{y_var} (vs {baseline} summer) Over Time by {colour_var}"),
             x = "year",
-            y = y_label) +
+            y = y_var) +
         theme_minimal() +
         facet_grid(rows = vars(measure)) +
         theme(legend.title = element_blank())
@@ -69,10 +99,10 @@ rr_timeseries_by_measure <- function(df, y_var, y_label, colour_var, colour_labe
     return(line_plot)
 }
 
-rr_timeseries_by_measure(resp_results_df, RR_prev_summr_mp6, "Rate Ratio", season, "Season", "prev summer")
-rr_timeseries_by_measure(resp_results_df, RD_prev_summr_mp6, "Rate Difference", season, "Season", "prev summer")
-rr_timeseries_by_measure(resp_results_df, RR_first_summr_mp6, "Rate Ratio", season, "Season", "first summer")
-rr_timeseries_by_measure(resp_results_df, RD_first_summr_mp6, "Rate Difference", season, "Season", "first summer")
+plot_rr_timeseries_by_measure(resp_results_df,"RR", "season", "prev", "weighted")
+plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "prev", "weighted")
+plot_rr_timeseries_by_measure(resp_results_df, "RR", "season", "first", "weighted")
+plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "first", "weighted")
 
 ```
 
@@ -81,10 +111,81 @@ rr_timeseries_by_measure(resp_results_df, RD_first_summr_mp6, "Rate Difference",
 ```{r}
 resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
 
-rr_timeseries_by_measure(resp_results_df, RR_prev_median, "Rate Ratio", season, "Season", "prev summer")
-rr_timeseries_by_measure(resp_results_df, RR_prev_median, "Rate Difference", season, "Season", "prev summer")
-rr_timeseries_by_measure(resp_results_df, RR_first_median, "Rate Ratio", season, "Season", "first summer")
-rr_timeseries_by_measure(resp_results_df, RD_first_median, "Rate Difference", season, "Season", "first summer")
+plot_rr_timeseries_by_measure(resp_results_df, "RR", "season", "prev", "unweighted")
+plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "prev", "unweighted")
+
+
+# First summer df
+resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_first_summer_test.csv")
+
+plot_rr_timeseries_by_measure(resp_results_df, "RR", "season", "first", "unweighted")
+plot_rr_timeseries_by_measure(resp_results_df, "RD", "season", "first", "unweighted")
+
+```
+
+- How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
+
+```{r}
+REPRESENTATIVE_SEASON <- "Nov-Dec" # Used for percentile chart
+
+plot_percentile_timeseries <- function(y_var, baseline){
+    "This function produces a plot of percentiles
+    Args:
+        y_var: string name of the variable to plot on the y-axis (e.g. 'RR')
+        baseline: the baseline category for comparison (e.g. 'prev' or 'first')
+        weighting: whether to use weighted or unweighted results (e.g. 'weighted' or 'unweighted')"
+    
+    # Load first or previous summer baseline df
+    resp_results_df <- read.csv(glue("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_{baseline}_summer_test.csv"))
+
+    # Pivot percentile columns to long format so that they can be set as colour
+    resp_results_long <- resp_results_df %>%
+        pivot_longer(cols = c(glue("{y_var}_{baseline}_summr_p01"), glue("{y_var}_{baseline}_summr_p25"), glue("{y_var}_{baseline}_median"), glue("{y_var}_{baseline}_summr_p75"), glue("{y_var}_{baseline}_summr_p99")), names_to = "percentile", values_to = as.character(glue("{y_var}_{baseline}_summer")))
+    
+    # Percentile chart - do we need RD as well?
+    filter(resp_results_long, season == REPRESENTATIVE_SEASON) %>%
+        plot_rr_timeseries_by_measure(y_var, "percentile", baseline, "unweighted")
+}
+
+plot_percentile_timeseries("RR", "prev")
+plot_percentile_timeseries("RD", "prev")
+plot_percentile_timeseries("RR", "first")
+plot_percentile_timeseries("RD", "first")
+```
+
+- How much does the pressure metric vary over time within a practice? 
+
+```{r}
+variance_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_variances_test.csv")
+
+```
+
+
+
+
+
+## Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
+
+As above
+
+```{r}
+pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_weighted_test.csv")
+
+plot_rr_timeseries_by_measure(pathology_results_df, RR_prev_summr_mp6, "Rate Ratio", season, "Season", "prev summer")
+plot_rr_timeseries_by_measure(pathology_results_df, RD_prev_summr_mp6, "Rate Difference", season, "Season", "prev summer")
+plot_rr_timeseries_by_measure(pathology_results_df, RR_first_summr_mp6, "Rate Ratio", season, "Season", "first summer")
+plot_rr_timeseries_by_measure(pathology_results_df, RD_first_summr_mp6, "Rate Difference", season, "Season", "first summer")
+```
+
+- Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
+
+```{r}
+pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
+
+plot_rr_timeseries_by_measure(pathology_results_df, RR_prev_median, "Rate Ratio", season, "Season", "prev summer")
+plot_rr_timeseries_by_measure(pathology_results_df, RR_prev_median, "Rate Difference", season, "Season", "prev summer")
+plot_rr_timeseries_by_measure(pathology_results_df, RR_first_median, "Rate Ratio", season, "Season", "first summer")
+plot_rr_timeseries_by_measure(pathology_results_df, RD_first_median, "Rate Difference", season, "Season", "first summer")
 
 ```
 
@@ -95,31 +196,15 @@ rr_timeseries_by_measure(resp_results_df, RD_first_median, "Rate Difference", se
 REPRESENTATIVE_SEASON <- "Nov-Dec"
 
 # Pivot percentile columns to long format so that they can be set as colour
-resp_results_df <- read.csv("output/practice_measures_resp/practice_measures_resp_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
+pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
 
-resp_results_long <- resp_results_df %>%
+pathology_results_long <- pathology_results_df %>%
     pivot_longer(cols = c(RR_prev_summr_p01, RR_prev_summr_p25, RR_prev_median, RR_prev_summr_p75, RR_prev_summr_p99), names_to = "percentile", values_to = "RR_prev_summer")
 
-filter(resp_results_long, season == REPRESENTATIVE_SEASON) %>%
-    rr_timeseries_by_measure(RR_prev_summer, "Rate Ratio", percentile, "Percentile", "first summer")
+filter(pathology_results_long, season == REPRESENTATIVE_SEASON) %>%
+    plot_rr_timeseries_by_measure(RR_prev_summer, "Rate Ratio", percentile, "Percentile", "first summer")
 
 ```
-
-
-## Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
-
-As above
-
-```{r}
-pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_weighted_test.csv")
-
-rr_timeseries_by_measure(pathology_results_df, RR_prev_summr_mp6, "Rate Ratio", season, "Season", "prev summer")
-rr_timeseries_by_measure(pathology_results_df, RD_prev_summr_mp6, "Rate Difference", season, "Season", "prev summer")
-rr_timeseries_by_measure(pathology_results_df, RR_first_summr_mp6, "Rate Ratio", season, "Season", "first summer")
-rr_timeseries_by_measure(pathology_results_df, RD_first_summr_mp6, "Rate Difference", season, "Season", "first summer")
-```
-
-
 
 
 
