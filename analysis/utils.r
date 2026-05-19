@@ -252,7 +252,42 @@ plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting
         # Practice percentile chart - do we need RD as well?
         results_df <- filter(results_df, season == representative_season)
     }
-    
+  
+    # Format measure names for readability
+    if (set == "sro") {
+        results_df <- results_df %>%
+            # Rename measures
+            mutate(measure = case_when(
+                measure == "sodium_test" ~ "Sodium",
+                measure == "alt_test" ~ "ALT",
+                measure == "chol_test" ~ "Cholesterol",
+                measure == "sys_bp_test" ~ "BP Systolic",
+                measure == "rbc_test" ~ "RBC",
+                measure == "hba1c_test" ~ "HbA1c",
+                measure == "cvd_10yr" ~ "10 yr CVD",
+                measure == "thy_test" ~ "Thyroid",
+                measure == "asthma_review" ~ "Asthma Revw",
+                measure == "copd_review" ~ "COPD Revw",
+                measure == "sro_prioritized" ~ "High Priority tests",
+                measure == "sro_deprioritized" ~ "Low Priority tests",
+                TRUE ~ measure
+            ))
+    }
+    else if (set == "resp") {
+        results_df <- results_df %>%
+            # Rename measures
+            mutate(measure = case_when(
+                measure == "overall_resp_sensitive" ~ "Overall Respiratory Illness",
+                measure == "flu_sensitive" ~ "Flu Sensitive",
+                measure == "rsv_sensitive" ~ "RSV Sensitive",
+                measure == "flu_specific" ~ "Flu Specific",
+                measure == "rsv_specific" ~ "RSV Specific",
+                TRUE ~ measure
+            )) %>%
+            # Reorder measures
+            mutate(measure = factor(measure, levels = c("Overall Respiratory Illness", "Flu Sensitive", "RSV Sensitive", "Flu Specific", "RSV Specific")))     
+    }
+  
     line_plot <- results_df |>
         ggplot(aes(x = summer_year, y = .data[[y_col]], color = .data[[colour_var]], linetype = .data[[colour_var]])) +
         geom_line() +
@@ -280,7 +315,7 @@ plot_variance_bar_chart <- function(var_type, set){
 
     variance_plot <- variance_df %>%
       mutate(
-      season = factor(
+        season = factor(
         season,
         levels = c("Jun-Jul","Sep-Oct", "Nov-Dec", "Jan-Feb", "Mar-Apr")
       )

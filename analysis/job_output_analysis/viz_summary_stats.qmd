@@ -26,7 +26,7 @@ The aims of this analysis are to answer the following questions:
 6: Do respiratory metrics capture different pressure signals from each other? Would be indicated by different RR timings.
 
 ```{r}
-
+source("analysis/utils.r")
 plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp")
 plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp")
 plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "resp")
@@ -73,47 +73,26 @@ plot_variance_bar_chart("w.in", "resp")
 
 
 
-## Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
+# Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
 
-As above
+## Respiratory Measures
 
-```{r}
-pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_weighted_test.csv")
-
-plot_rr_timeseries_by_measure(pathology_results_df, RR_prev_summr_mp6, "Rate Ratio", season, "Season", "prev summer")
-plot_rr_timeseries_by_measure(pathology_results_df, RD_prev_summr_mp6, "Rate Difference", season, "Season", "prev summer")
-plot_rr_timeseries_by_measure(pathology_results_df, RR_first_summr_mp6, "Rate Ratio", season, "Season", "first summer")
-plot_rr_timeseries_by_measure(pathology_results_df, RD_first_summr_mp6, "Rate Difference", season, "Season", "first summer")
-```
-
-- Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
+The aims of this analysis are to answer the following questions:
+1: Which measures show the highest rate ratios?
+2: Is there heterogeneity in pressure within winter?
+3: Do rate differences show meaningful effect sizes for each measure?
+4: Is the pressure metric consistent over time? And by pandemic period?
+5: Is pressure increasing in the long-term (i.e. relative to first summer)?
+6: Do respiratory metrics capture different pressure signals from each other? Would be indicated by different RR timings.
 
 ```{r}
-pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
+source("analysis/utils.r")
 
-plot_rr_timeseries_by_measure(pathology_results_df, RR_prev_median, "Rate Ratio", season, "Season", "prev summer")
-plot_rr_timeseries_by_measure(pathology_results_df, RR_prev_median, "Rate Difference", season, "Season", "prev summer")
-plot_rr_timeseries_by_measure(pathology_results_df, RR_first_median, "Rate Ratio", season, "Season", "first summer")
-plot_rr_timeseries_by_measure(pathology_results_df, RD_first_median, "Rate Difference", season, "Season", "first summer")
-
-```
-
-- How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
-- How much does the pressure metric vary over time within a practice? 
-
-```{r}
-REPRESENTATIVE_SEASON <- "Nov-Dec"
-
-# Pivot percentile columns to long format so that they can be set as colour
-pathology_results_df <- read.csv("output/practice_measures_resp/practice_measures_sro_DUMMY/Results_unweighted_yearly_prev_summer_test.csv")
-
-pathology_results_long <- pathology_results_df %>%
-    pivot_longer(cols = c(RR_prev_summr_p01, RR_prev_summr_p25, RR_prev_median, RR_prev_summr_p75, RR_prev_summr_p99), names_to = "percentile", values_to = "RR_prev_summer")
-
-filter(pathology_results_long, season == REPRESENTATIVE_SEASON) %>%
-    plot_rr_timeseries_by_measure(RR_prev_summer, "Rate Ratio", percentile, "Percentile", "first summer")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "sro")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "sro")
+plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "sro")
+plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "sro")
 
 ```
-
 
 
