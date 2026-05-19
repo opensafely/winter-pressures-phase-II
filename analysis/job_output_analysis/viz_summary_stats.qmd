@@ -10,6 +10,8 @@ source("analysis/parse_args.r")
 # Set Config
 config["test"] <- TRUE
 set <- "resp"
+REPRESENTATIVE_SEASON <- "Nov-Dec" # Used for percentile chart
+
 ```
 
 
@@ -24,87 +26,6 @@ The aims of this analysis are to answer the following questions:
 6: Do respiratory metrics capture different pressure signals from each other? Would be indicated by different RR timings.
 
 ```{r}
-
-plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting, set){
-    "
-    This function produces a line plot, coloured by season, faceted by measure
-    Args:
-        df: dataframe containing the results of the rate ratio calculations
-        y_var: string name of the variable to plot on the y-axis (e.g. 'RR_prev_summr_mp6')
-        colour_var: string name of the variable to colour the lines by (e.g. 'season')
-        colour_label: the label for the colour legend
-        baseline: the baseline category for comparison
-    "
-
-    if (colour_var == "season") {
-        linetype_mapping <- c(
-            "Sep-Oct" = "dashed",
-            "Nov-Dec" = "solid",
-            "Jan-Feb" = "solid",
-            "Mar-Apr" = "dashed"
-        )
-        colour_mapping <- c(
-            "Sep-Oct" = "#1b9e77",
-            "Nov-Dec" = "#d95f02",
-            "Jan-Feb" = "#7570b3",
-            "Mar-Apr" = "#e7298a"
-        )
-    }
-    else if(colour_var == "percentile") {
-        linetype_mapping <- c(
-            "dotted",
-            "dashed",
-            "solid",
-            "dashed",
-            "dotted"
-        )
-        names(linetype_mapping) <- c(
-            glue("{y_var}_{baseline}_summr_p01"),
-            glue("{y_var}_{baseline}_summr_p25"),
-            glue("{y_var}_{baseline}_median"),
-            glue("{y_var}_{baseline}_summr_p75"),
-            glue("{y_var}_{baseline}_summr_p99")
-        )
-        colour_mapping <- c(
-            "#0011ff",
-            "#0011ff",
-            "#0011ff",
-            "#0011ff",
-            "#0011ff"
-        )
-        names(colour_mapping) <- names(linetype_mapping)
-    }
-    if (weighting == "weighted") {
-        df_name <- paste(glue("weighted"))
-        y_col <- paste(glue("{y_var}_{baseline}_summr_mp6"))
-    }
-    else if ((weighting == "unweighted") & (colour_var == "season")) {
-        df_name <- paste(glue("unweighted_yearly_{baseline}_summer"))
-        y_col <- paste(glue("{y_var}_{baseline}_median"))
-    }
-    else if ((weighting == "unweighted") & (colour_var == "percentile")) {
-        df_name <- paste(glue("unweighted_yearly_{baseline}_summer"))
-        y_col <- paste(glue("{y_var}_{baseline}_summer"))
-    }
-
-    # Load weighted results
-    results_df <- read.csv(glue("output/practice_measures_{set}/practice_measures_{set}_DUMMY/Results_{df_name}_test.csv"))
-
-    line_plot <- results_df |>
-        ggplot(aes(x = summer_year, y = .data[[y_col]], color = .data[[colour_var]], linetype = .data[[colour_var]])) +
-        geom_line() +
-        geom_point() +
-        scale_linetype_manual(values = linetype_mapping) +
-        scale_color_manual(values = colour_mapping) +
-        labs(title = glue("{y_var} (vs {baseline} summer) Over Time by {colour_var}"),
-            x = "year",
-            y = y_var) +
-        theme_minimal() +
-        facet_grid(rows = vars(measure)) +
-        theme(legend.title = element_blank())
-
-    return(line_plot)
-}
 
 plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp")
 plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp")
@@ -128,61 +49,24 @@ plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "resp")
 - How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
 
 ```{r}
-REPRESENTATIVE_SEASON <- "Nov-Dec" # Used for percentile chart
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "resp", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
+```
 
-plot_percentile_timeseries <- function(y_var, baseline, set){
-    "This function produces a plot of percentiles
-    Args:
-        y_var: string name of the variable to plot on the y-axis (e.g. 'RR')
-        baseline: the baseline category for comparison (e.g. 'prev' or 'first')
-        set: Set of measures (e.g. 'resp' or 'sro')"
-    
-    # Load first or previous summer baseline df
-    resp_results_df <- read.csv(glue("output/practice_measures_{set}/practice_measures_{set}_DUMMY/Results_unweighted_yearly_{baseline}_summer_test.csv"))
+- How consistent is the pressure effect across practices?
 
-    # Pivot percentile columns to long format so that they can be set as colour
-    results_long <- results_df %>%
-        pivot_longer(cols = c(glue("{y_var}_{baseline}_summr_p01"), glue("{y_var}_{baseline}_summr_p25"), glue("{y_var}_{baseline}_median"), glue("{y_var}_{baseline}_summr_p75"), glue("{y_var}_{baseline}_summr_p99")), names_to = "percentile", values_to = as.character(glue("{y_var}_{baseline}_summer")))
-    
-    # Percentile chart - do we need RD as well?
-    filter(results_long, season == REPRESENTATIVE_SEASON) %>%
-        plot_rr_timeseries_by_measure(y_var, "percentile", baseline, "unweighted", set)
-}
-
-plot_percentile_timeseries("RR", "prev", "resp")
-plot_percentile_timeseries("RD", "prev", "resp")
-plot_percentile_timeseries("RR", "first", "resp")
-plot_percentile_timeseries("RD", "first", "resp")
+```{r}
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "%_practices","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
 ```
 
 - How much does the pressure metric vary over time within a practice? 
 
 ```{r}
-
-plot_variance_bar_chart <- function(df, var_type, set){
-    "This function produces a bar chart of the variance of the pressure metric
-    Args:
-        df: dataframe containing the results of the variance calculations
-        var_type: string name of the type of variance to plot (e.g. 'btwn' or 'w.in')
-        set: Set of measures (resp or sro)"
-    
-    # Load variance df
-    variance_df <- read.csv(glue("output/practice_measures_{set}/practice_measures_{set}_DUMMY/Results_variances_test.csv"))
-
-    variance_plot <- df %>%
-        ggplot(aes(x = measure, y = .data[[glue("var_rate_{var_type}_prac_season_median")]], fill = season)) +
-        geom_col(position = position_dodge(width = 0.9)) +
-        labs(title = glue("Variance in rate {var_type} practices inby Season"),
-            x = "Season",
-            y = glue("Variance in rate {var_type} practices")) +
-        theme_minimal() +
-        theme(legend.title = element_blank())
-    
-    return(variance_plot)
-}
-
-plot_variance_bar_chart(variance_df, "btwn", "prev", "resp")
-plot_variance_bar_chart(variance_df, "w.in", "first", "resp")
+plot_variance_bar_chart("btwn", "resp")
+plot_variance_bar_chart("w.in", "resp")
 ```
 
 
