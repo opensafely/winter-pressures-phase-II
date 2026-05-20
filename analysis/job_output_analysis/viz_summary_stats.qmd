@@ -1,11 +1,13 @@
 <!-- This script visualises and summarises the RR tables produced by normalization.py-->
 
 ```{r}
+library(here)
+# Now paths like "analysis/utils.r" work relative to project root
 library(dplyr)
 library(ggplot2)
 library(stringr)
-source("analysis/utils.r")
-source("analysis/parse_args.r")
+source(here("analysis/utils.r"))
+source(here("analysis/parse_args.r"))
 
 # Set Config
 config["test"] <- TRUE
@@ -13,7 +15,6 @@ set <- "resp"
 REPRESENTATIVE_SEASON <- "Nov-Dec" # Used for percentile chart
 
 ```
-
 
 ## Respiratory Measures
 
@@ -27,44 +28,72 @@ The aims of this analysis are to answer the following questions:
 
 ```{r}
 source("analysis/utils.r")
-plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp")
-plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp")
-plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "resp")
-plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "resp")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp", "specific")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp", "specific")
+```
+```{r}
+plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "resp", "specific")
+plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "resp", "specific")
 
 ```
 
 - Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
 
 ```{r}
-plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "resp")
-plot_rr_timeseries_by_measure("RD", "season", "prev", "unweighted", "resp")
+source("analysis/utils.r")
 
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "unweighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "resp", "specific")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "unweighted", "resp", "specific")
+```
+```{r}
 # First summer df
-plot_rr_timeseries_by_measure("RR", "season", "first", "unweighted", "resp")
-plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "resp")
+plot_rr_timeseries_by_measure("RR", "season", "first", "unweighted", "resp", "sensitive")
+plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "resp", "sensitive")
 
 ```
 
 - How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
 
 ```{r}
-plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "resp", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
+source("analysis/utils.r")
+
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp",  "sensitive", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "resp",  "sensitive", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp",  "specific", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "resp", "specific", REPRESENTATIVE_SEASON)
+```
+```{r}
+plot_rr_timeseries_by_measure("RR", "percentile","f irst", "unweighted" ,"resp",  "sensitive", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "resp",  "sensitive", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"resp",  "specific", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "resp", "specific", REPRESENTATIVE_SEASON)
 ```
 
 - How consistent is the pressure effect across practices?
 
 ```{r}
-plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp", REPRESENTATIVE_SEASON)
+source("analysis/utils.r")
+
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp",   subset = "specific")
+
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp", subset = "sensitive")
+
+```
+```{r}
 plot_rr_timeseries_by_measure("RR", "%_practices","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
 ```
 
 - How much does the pressure metric vary over time within a practice? 
 
 ```{r}
+source("analysis/utils.r")
+
 plot_variance_bar_chart("btwn", "resp")
 plot_variance_bar_chart("w.in", "resp")
 ```
@@ -88,11 +117,65 @@ The aims of this analysis are to answer the following questions:
 ```{r}
 source("analysis/utils.r")
 
-plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "sro")
-plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "sro")
-plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "sro")
-plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "sro")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "sro", "tests")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "sro", "tests")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "sro", "other")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "sro", "other")
+```
+```{r}
+plot_rr_timeseries_by_measure("RR", "season", "first", "weighted", "sro", "tests")
+plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "sro", "tests")
 
 ```
 
+- Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
 
+```{r}
+source("analysis/utils.r")
+
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "sro", "tests")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "unweighted", "sro", "tests")
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "sro", "other")
+plot_rr_timeseries_by_measure("RD", "season", "prev", "unweighted", "sro", "other")
+```
+```{r}
+# First summer df
+plot_rr_timeseries_by_measure("RR", "season", "first", "unweighted", "sro", "tests")
+plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "sro", "tests")
+
+```
+
+- How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
+
+```{r}
+source("analysis/utils.r")
+
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "sensitive", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "sro",  "sensitive", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "specific", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "sro", "specific", REPRESENTATIVE_SEASON)
+```
+```{r}
+plot_rr_timeseries_by_measure("RR", "percentile","f irst", "unweighted" ,"sro",  "sensitive", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "sro",  "sensitive", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"sro",  "specific", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "sro", "specific", REPRESENTATIVE_SEASON)
+```
+
+- How consistent is the pressure effect across practices?
+
+```{r}
+source("analysis/utils.r")
+
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","sro",   subset = "tests", representative_season = REPRESENTATIVE_SEASON)
+
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","sro", subset = "other", representative_season = REPRESENTATIVE_SEASON)
+```
+
+- How much does the pressure metric vary over time within a practice? 
+
+```{r}
+source("analysis/utils.r")
+
+plot_variance_bar_chart("btwn", "sro")
+plot_variance_bar_chart("w.in", "sro")
