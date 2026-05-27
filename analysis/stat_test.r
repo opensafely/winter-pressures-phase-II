@@ -1,3 +1,5 @@
+# This script generates fits regression models to the practice-level rates
+# to produce rate ratio estimatesfor winter-summer comparisons for each measure.
 # USAGE: Rscript analysis/stat_test.r
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
