@@ -16,7 +16,13 @@ REPRESENTATIVE_SEASON <- "Nov-Dec" # Used for percentile chart
 
 ```
 
-## Respiratory Measures
+# Summary
+- Sensitive respiratory measures are more stable across practices and time
+- Specific respiratory measures are more tuned to specific instances of pressure in a few practices at specific times
+- Pathology measures are all very similar, with Nov-Dec often lower than summer
+- Next steps: Investigate characteristics of groups practices
+
+# Respiratory Measures
 
 The aims of this analysis are to answer the following questions:
 1: Which measures show the highest rate ratios?
@@ -41,7 +47,14 @@ plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "resp", "spec
 
 ```
 
-- Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
+- Flu specific has highest relative rate
+- Timing within winter matters - Jan-feb of 2017 was particularly strong for flu
+- RSV less seasonal compared to flu
+- Overall measure much flatter
+- Dip in March-Apr 2020 for all measures, likely due to lockdowns and reduced GP interactions
+- Rate differences driven by counts, overall has the highest so maybe most stable
+
+Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
 
 ```{r}
 source("analysis/utils.r")
@@ -58,7 +71,13 @@ plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "resp", "se
 
 ```
 
-- How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
+- Median is huge for flu and rsv, indicating large variation between practices
+- Subset of practices drags down the national RR
+- Specific definitions are more unstable but receptive to pressure in a given practice
+- Sensitive definitions are more stable but less receptive to pressure
+- RDs similar to national RRs
+
+How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
 
 ```{r}
 source("analysis/utils.r")
@@ -69,13 +88,16 @@ plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp",  
 plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "resp", "specific", REPRESENTATIVE_SEASON)
 ```
 ```{r}
-plot_rr_timeseries_by_measure("RR", "percentile","f irst", "unweighted" ,"resp",  "sensitive", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"resp",  "sensitive", REPRESENTATIVE_SEASON,)
 plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "resp",  "sensitive", REPRESENTATIVE_SEASON,)
 plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"resp",  "specific", REPRESENTATIVE_SEASON)
 plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "resp", "specific", REPRESENTATIVE_SEASON)
 ```
 
-- How consistent is the pressure effect across practices?
+- The 0.0001 offset added to each rate means that the RR for the 99th percentile reaches absurdly high values because 1 in winter / 0 + 0.0001 in summer = 10,000. This doesn't have an affect on most of the results (as they are non-parametric e.g. median), but makes the percentile graphs misleading.
+- Roz argues that practices with low counts should be removed as the RRs are not representative of actual pressure and likely caused by non-coding practices.
+
+How consistent is the pressure effect across practices?
 
 ```{r}
 source("analysis/utils.r")
@@ -86,25 +108,67 @@ plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp", s
 
 ```
 ```{r}
-plot_rr_timeseries_by_measure("RR", "%_practices","first", "unweighted", "resp", REPRESENTATIVE_SEASON)
+source("analysis/utils.r")
+
+plot_rr_timeseries_by_measure("RR", "%_practices","first", "unweighted", "resp", subset = "specific")
+plot_rr_timeseries_by_measure("RR", "%_practices","first", "unweighted", "resp", subset = "sensitive")
 ```
 
-- How much does the pressure metric vary over time within a practice? 
+- Sensitive definitions are more stable across practices, risk of essentially always saying there is pressure
+- Specific definitions only indicate pressure in subsets of practices, identifies instances of presssure
+
+How much does the pressure metric vary over time within a practice? 
 
 ```{r}
 source("analysis/utils.r")
 
-plot_variance_bar_chart("btwn", "resp")
-plot_variance_bar_chart("w.in", "resp")
+plot_variance_bar_chart("btwn", "resp", subset = "sensitive")
+plot_variance_bar_chart("w.in", "resp", subset = "sensitive")
+plot_variance_bar_chart("btwn", "resp", subset = "specific")
+plot_variance_bar_chart("w.in", "resp", subset = "specific")
 ```
 
+- Since these are count distributions, the variance is essentially just the mean count, so this variance is not informative alone. Instead, we should look at overdispersion (var/mean) to understand how much variance there is that is not explained by the mean. 
+- Overdispersion within practices over time would support the idea that the metric is capturing a signal that varies over time, rather than just reflecting a static characteristic of the practice. Overdispersion between practices would indicate that there are the metric varies a lot between practices, which could be due to some practices having consistently higher pressure than others, or it could be due to some practices having more variable coding practices than others.
 
+Do the measures look different when restricting the measure to events with an appointment in the interval?
 
+```{r}
+source("analysis/utils.r")
 
+# Weighted results
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp", "sensitive", appt = TRUE)
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp", "sensitive", appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "resp", "specific", appt = TRUE)
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "resp", "specific", appt = TRUE)
+
+# Unweighted results
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "resp", "sensitive", appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "resp", "specific", appt = TRUE)
+
+# Percentiles
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp",  "sensitive", REPRESENTATIVE_SEASON, appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"resp",  "specific", REPRESENTATIVE_SEASON, appt = TRUE)
+
+# % practices
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp", subset = "specific", appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","resp", subset = "sensitive", appt = TRUE)
+
+```
+
+- Weighted results
+    - Senstive results are essentially the same as wihtout _appt, but scaled down 10%.
+    - Specific results also show similar patterns, but scale much more wildly because of smaller counts.
+- Unweighted results
+    - Substantial reductions in RRs
+        - Sensitive measures show median RRs are ~50% smaller than non _appt.
+        - Specific measures show ~50% reductions along with some RRs going from 1000 to 0 (e.g. RSV & Flu specific 2019, Flu 2022)
+- % Practices
+    - Similar with general 10% point increase in RR == 1 frequency, potentially driven by lower counts dropping to 0 in summer and winter.
+    - Except for overall 2022, where much higher % practices > 1.05 RR (0.15 non _appt vs 0.6 with _appt). So it undoes the 1 anomaly in the non _appt results.
+- Conclusion: _appt restrictions don't change results in any meanginful way. Can be included in paper as supplementary sensitivity analysis.
 
 # Pathology Test Measures (NEED TO ADD RESULTS FROM CODESPACES TO OUTPUT FOLDER FIRST)
-
-## Respiratory Measures
 
 The aims of this analysis are to answer the following questions:
 1: Which measures show the highest rate ratios?
@@ -128,7 +192,13 @@ plot_rr_timeseries_by_measure("RD", "season", "first", "weighted", "sro", "tests
 
 ```
 
-- Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
+- Very similar across measures
+- Generally highest in jan-feb, perhaps not driven by qof, unless thats done in feb?
+- Nov-Dec actually almost always lower than summer
+- Summer 2019 had drop of across all measures, could be data issue or is that expected?
+- RDs show similar results, plus magnitude of drop off in low priority tests
+
+Do things look different when we look at the average (median) practice rather than the overall national results? I.e. how much of the national signal is driven by a few high-pressure practices?
 
 ```{r}
 source("analysis/utils.r")
@@ -145,24 +215,26 @@ plot_rr_timeseries_by_measure("RD", "season", "first", "unweighted", "sro", "tes
 
 ```
 
-- How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
+- Medians show similar results as pathology tests are stable across practices, not skewed as much as respiratory measures
+
+How much does the pressure metric vary between practices? I.e. Is pressure similar in the median practice compared to the p75 and p99?
 
 ```{r}
 source("analysis/utils.r")
 
-plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "sensitive", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "sro",  "sensitive", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "specific", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "sro", "specific", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "tests", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "sro",  "tests", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "other", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","prev", "unweighted", "sro", "other", REPRESENTATIVE_SEASON)
 ```
 ```{r}
-plot_rr_timeseries_by_measure("RR", "percentile","f irst", "unweighted" ,"sro",  "sensitive", REPRESENTATIVE_SEASON,)
-plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "sro",  "sensitive", REPRESENTATIVE_SEASON,)
-plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"sro",  "specific", REPRESENTATIVE_SEASON)
-plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "sro", "specific", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"sro",  "tests", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "sro",  "tests", REPRESENTATIVE_SEASON,)
+plot_rr_timeseries_by_measure("RR", "percentile","first", "unweighted" ,"sro",  "other", REPRESENTATIVE_SEASON)
+plot_rr_timeseries_by_measure("RD", "percentile","first", "unweighted", "sro", "other", REPRESENTATIVE_SEASON)
 ```
 
-- How consistent is the pressure effect across practices?
+How consistent is the pressure effect across practices?
 
 ```{r}
 source("analysis/utils.r")
@@ -172,10 +244,40 @@ plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","sro",   
 plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","sro", subset = "other", representative_season = REPRESENTATIVE_SEASON)
 ```
 
-- How much does the pressure metric vary over time within a practice? 
+- Practices actually often higher in summer for tests
+
+How much does the pressure metric vary over time within a practice? 
 
 ```{r}
 source("analysis/utils.r")
 
-plot_variance_bar_chart("btwn", "sro")
-plot_variance_bar_chart("w.in", "sro")
+plot_variance_bar_chart("btwn", "sro", subset = "tests")
+plot_variance_bar_chart("w.in", "sro", subset = "tests")
+plot_variance_bar_chart("btwn", "sro", subset = "other")
+plot_variance_bar_chart("w.in", "sro", subset = "other")
+```
+
+- Do the measures look different when restricting the measure to events with an appointment in the interval?
+
+```{r}
+source("analysis/utils.r")
+
+# Weighted results
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "sro", "tests", appt = TRUE)
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "sro", "tests", appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "season", "prev", "weighted", "sro", "other", appt = TRUE)
+plot_rr_timeseries_by_measure("RD", "season", "prev", "weighted", "sro", "other", appt = TRUE)
+
+# Unweighted results
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "sro", "tests", appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "season", "prev", "unweighted", "sro", "other", appt = TRUE)
+
+# Percentiles
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "tests", REPRESENTATIVE_SEASON, appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "percentile","prev", "unweighted" ,"sro",  "other", REPRESENTATIVE_SEASON, appt = TRUE)
+
+# % practices
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","sro", subset = "tests", appt = TRUE)
+plot_rr_timeseries_by_measure("RR", "%_practices","prev", "unweighted","sro", subset = "other", appt = TRUE)
+
+```

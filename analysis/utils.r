@@ -281,7 +281,7 @@ format_colours_for_plotting <- function(df, colour_var, y_var = NULL, baseline =
   list(linetype_mapping = linetype_mapping, colour_mapping = colour_mapping, df = df)
 }
 
-plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting, set, subset, representative_season = NULL) {
+plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting, set, subset, representative_season = NULL, appt = FALSE) {
     "
     This function produces a line plot, coloured by season, faceted by measure
     Args:
@@ -291,7 +291,7 @@ plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting
         colour_label: the label for the colour legend
         baseline: the baseline category for comparison
     "
-    
+    # Configuration
     if (weighting == "weighted") {
         df_name <- paste(glue("weighted"))
         y_col <- paste(glue("{y_var}_{baseline}_summr_mp6"))
@@ -309,10 +309,22 @@ plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting
         y_col <- paste(glue("%_{y_var}_{baseline}_summer"))
     }
   
+    if (appt == TRUE) {
+      appt_suffix <- "_appt"
+    } else {
+      appt_suffix <- ""
+    }
+  
     # Load results and remove any unnamed columns that may have been added during CSV export
-    results_df <- read.csv(glue("output/practice_measures_{set}/Results_{df_name}.csv"), check.names = FALSE) 
+    results_df <- read.csv(glue("output/practice_measures_{set}{appt_suffix}/Results_{df_name}.csv"), check.names = FALSE) 
     results_df <- results_df[, names(results_df) != ""]
-    
+
+    # Remove _appt prefix from measure names for appt restricted df
+    if (appt == TRUE) {
+      results_df <- results_df %>%
+        mutate(measure = sub("^appt_", "", measure))
+    }
+  
     # Pivot percentiles if colouring by percentile
     if (colour_var == "percentile") {
         results_df <- results_df %>%
@@ -324,8 +336,6 @@ plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting
     else if (colour_var == "%_practices") {
       print(head(results_df))
       print(summary(results_df))
-      print(glue::glue("Sum of %_RR_prev_summr_<5%: {sum(results_df['%_RR_prev_summr_<5%'], na.rm = TRUE)}"))
-      print(glue::glue("Sum of %_RR_prev_summr_>5%: {sum(results_df['%_RR_prev_summr_>5%'], na.rm = TRUE)}"))
         results_df <- results_df %>%
             pivot_longer(cols = c(glue("%_RR_{baseline}_summr_<5%"), glue("%_RR_{baseline}_summr_=1"), glue("%_RR_{baseline}_summr_>5%")), names_to = "%_practices", values_to = as.character(y_col))
         
@@ -351,8 +361,8 @@ plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting
         geom_point() +
         scale_linetype_manual(values = linetype_mapping) +
         scale_color_manual(values = colour_mapping) +
-        labs(title = glue("{y_var} (vs {baseline} summer) Over Time by {colour_var}, {weighting} by practice list size"),
-            x = "year",
+        labs(title = glue("{y_var} (vs {baseline} summer) Over Time by {colour_var}, {weighting} by practice list size {appt_suffix}"),
+            x = "summer baseline year",
             y = y_var) +
         theme_minimal() +
         facet_grid(rows = vars(measure)) +
