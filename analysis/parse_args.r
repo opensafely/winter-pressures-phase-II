@@ -74,6 +74,11 @@ option_list <- list(
   make_option("--weekly_agg", 
     action = "store_true", 
     default = config$weekly_agg, help = "Generate weekly aggregates"
+  ),
+  make_option("--rr",
+    action = "store_true",
+    default = FALSE,
+    help = "Process rate ratios"
   )
 )
 

@@ -83,12 +83,12 @@ read_write <- function(read_or_write, path, test = config$test, file_type = conf
 }
 
 # Helper function to create and save decile plots
-create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir) {
+create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, x_var, y_var) {
   # Create the plot
   plot <- ggplot(
     filter(practice_deciles, measure %in% measures_subset),
     aes(
-      x = interval_start, y = rate_per_1000,
+      x = !!sym(x_var), y = value,
       group = factor(decile),
       linetype = decile,
       color = decile
@@ -98,16 +98,20 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir) 
     scale_linetype_manual(values = line_types) +
     scale_color_manual(values = line_colors) +
     labs(
-      title = glue("Decile Charts for {plots_dir}_rate_mp6"),
-      x = "Interval Start",
-      y = "Rate per 1000"
+      title = glue("Decile Charts for {plots_dir}_rate"),
+      x = x_var,
+      y = y_var
     ) +
     facet_wrap(vars(measure), scales = "free_y") +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   # Save the plot
-  filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6.png")
+  if (y_var == "rate_per_1000"){
+    filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6.png")
+  } else if (y_var == "RR_prev_summr") {
+    filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_rr_prev_summr.png")
+  }
 
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
 }
@@ -231,7 +235,7 @@ format_colours_for_plotting <- function(df, colour_var, y_var = NULL, baseline =
 
     present_seasons <- intersect(season_order, unique(as.character(df$season)))
 
-    df <- df |>
+    df <- df %>%
       mutate(season = factor(season, levels = present_seasons))
 
     linetype_mapping <- full_linetype_mapping[present_seasons]
@@ -355,7 +359,7 @@ plot_rr_timeseries_by_measure <- function(y_var, colour_var, baseline, weighting
     colour_mapping <- format_mappings$colour_mapping
     results_df <- format_mappings$df
   
-    line_plot <- results_df |>
+    line_plot <- results_df %>%
         ggplot(aes(x = summer_year, y = .data[[y_col]], color = .data[[colour_var]], linetype = .data[[colour_var]])) +
         geom_line() +
         geom_point() +

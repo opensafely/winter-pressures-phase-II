@@ -624,7 +624,6 @@ print("Rate Ratios Saved")
 #     lambda row: test_difference(row, agg_df), axis=1
 # )
 
-# breakpoint()
 
 # values = ['numerator_sum', 'list_size_initial', 'numerator_sum_prev_summr', 'list_size_initial_prev_summr']
 # for value in values:
@@ -644,7 +643,6 @@ print("Rate Ratios Saved")
 
 # combined_practice_seasons_df['test_prev_summr'] = combined_practice_seasons_df.apply(run_poisson_test, axis=1)
 
-# breakpoint()
 # # Adjust for multiple testing
 # # Identify non-NaN indices
 # valid_mask = ~np.isnan(practice_season_df["test_summer_vs_winter"])
