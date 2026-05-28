@@ -236,24 +236,22 @@ for group in groups:
 yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
 
 yaml_viz_template = """
-
-  generate_deciles_charts_{set}{appt_suffix}{test_suffix}:
+  generate_deciles_charts_{set}{appt_suffix}{y_val_suffix}{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r {test_flag} --set {set}{appt_flag}
-    needs: [generate_pre_processing_practice_{set}{appt_suffix}{test_suffix}] 
+      r:v2 analysis/decile_charts.r --practice_measures {test_flag} --set {set}{appt_flag} {y_val}
+    needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/decile_chart_*_rate_mp6.png
-        deciles_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
-  
-  generate_decomposition_plots_{set}{appt_suffix}{test_suffix}:
-    run: >
-      r:v2 analysis/decomposition.r {test_flag} --set {set}{appt_flag}
-    needs: [generate_pre_processing_practice_{set}{appt_suffix}{test_suffix}]
-    outputs:
-      moderately_sensitive:
-        decomposition_plots: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/*{test_suffix}.png
-        decomposition_summaries: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/summary_*{test_suffix}.txt
+        deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/decile_chart_*{y_val_suffix}.png
+        deciles_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*{y_val_suffix}{test_suffix}.csv
+  # generate_decomposition_plots_{set}{appt_suffix}{y_val_suffix}{test_suffix}:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures {test_flag} --set {set}{appt_flag} {y_val} 
+  #   needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/*{y_val_suffix}{test_suffix}.png
+  #       decomposition_summaries: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/summary_*{y_val_suffix}{test_suffix}.txt
 """
 
 """ TEMPORARILY COMMENTED OUT:
@@ -286,18 +284,23 @@ yaml_viz_template = """
 
 suffixes = ["", "_test"]
 test_flags = ["", "--test"]
+y_vals = ["", "--rr"] 
+y_val_suffixes = ["_rate_per_1000_mp6", "_RR_prev_summr"]
 for test_suffix, test_flag in zip(suffixes, test_flags):
     for set in measure_sets:
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
-            yaml_viz += yaml_viz_template.format(
-                test_suffix=test_suffix,
-                test_flag=test_flag,
-                set=set,
-                appt_suffix=appt_suffix,
-                appt_flag=appt_flag,
-                group="practice",
-                agg_suffix="",
-            )
+            for y_val, y_val_suffix in zip(y_vals, y_val_suffixes): # decomposition actually doesn't use y_val but included for simplicty of looping
+              yaml_viz += yaml_viz_template.format(
+                  test_suffix=test_suffix,
+                  test_flag=test_flag,
+                  set=set,
+                  appt_suffix=appt_suffix,
+                  appt_flag=appt_flag,
+                  group="practice",
+                  agg_suffix="",
+                  y_val=y_val,
+                  y_val_suffix=y_val_suffix
+              )
 
 yaml_sense_check = " \n # --------------- SENSE CHECK ACTIONS ------------------------------------------"
 
