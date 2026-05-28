@@ -108,9 +108,9 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
 
   # Save the plot
   if (y_var == "rate_per_1000"){
-    filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_mp6.png")
+    filename <- glue("{plots_dir}/decile_chart_{group_name}_rate_mp6.png")
   } else if (y_var == "RR_prev_summr") {
-    filename <- glue("{plots_dir}/decile_chart_appt_{group_name}_rate_rr_prev_summr.png")
+    filename <- glue("{plots_dir}/decile_chart_{group_name}_RR_prev_summr.png")
   }
 
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)

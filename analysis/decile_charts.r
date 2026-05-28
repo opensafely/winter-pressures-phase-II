@@ -7,6 +7,7 @@
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
 # --weekly_agg aggregates weekly intervals to yearly
+# --rr generates charts for rate ratios instead of rates
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -22,6 +23,7 @@ source("analysis/parse_args.r")
 # Message about test or full
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
+N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
 
 # ------------ Generate decile tables ----------------------------------------------------
 
@@ -34,6 +36,7 @@ if (config$released == FALSE){
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/practice_level_RR")
     Y_VALUE <- "RR_prev_summr"
     INTERVALS <- "summer_year"
+    print(glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/practice_level_RR"))
     practice_measures <- read_write("read", input_path)
 
     if (config$test) {
@@ -132,9 +135,9 @@ print("Creating decile charts..."
 )
 # Define line types
 line_types <- c(
-  "d1" = "dashed", "d3" = "dashed",
+  "d1" = "dotted", "d3" = "dashed",
   "d5" = "solid", # Median (d5) is solid
-  "d7" = "dashed", "d9" = "dashed"
+  "d7" = "dashed", "d9" = "dotted"
 )
 
 # Define colors
@@ -145,7 +148,7 @@ line_colors <- c(
 )
 
 # Add additional deciles for yearly data
-if (config$yearly) {
+if (N_DECILES_PLOT == "all") {
   line_types <- c(line_types, "d2" = "dashed", "d4" = "dashed", "d6" = "dashed", "d8" = "dashed")
   line_colors <- c(line_colors, "d2" = "black", "d4" = "black", "d6" = "black", "d8" = "black")
 } 
@@ -159,6 +162,12 @@ if ((config$set == "resp") | (config$set == "appts_table")) {
   measure_groups[[config$set]] <- config$measures_list[[config$set]]
   # Filter out config list of measures to get remaining measures
   measure_groups[["other"]] <- setdiff(df_measures$measure, config$measures_list[[config$set]])
+
+  # Remove "other" group if empty
+  if (length(measure_groups[["other"]]) == 0) {
+    measure_groups[["other"]] <- NULL 
+  }
+
 } else if (config$set == "sro") {
 
   sro_measures <- append(config$prioritized, "sro_prioritized")
