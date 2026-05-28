@@ -16,6 +16,7 @@ library(dplyr)
 library(tidyr)
 library(glue)
 library(optparse)
+library(lubridate)
 library(arrow)
 source("analysis/utils.r")
 source("analysis/parse_args.r")
@@ -35,8 +36,6 @@ if (config$released == FALSE){
     print("Processing rate ratios...")
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/practice_level_RR")
     Y_VALUE <- "RR_prev_summr"
-    INTERVALS <- "summer_year"
-    print(glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/practice_level_RR"))
     practice_measures <- read_write("read", input_path)
 
     if (config$test) {
@@ -50,7 +49,6 @@ if (config$released == FALSE){
     print("Processing rates...")
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/proc_{config$group}_measures")
     Y_VALUE <- "rate_per_1000"
-    INTERVALS <- "interval_start"
     practice_measures <- read_write("read", input_path)
 
       if (config$test) {
@@ -88,9 +86,29 @@ if (config$released == FALSE){
   }
 
   print("Creating decile tables...")
-  # Create deciles for practice measures
+
+  # Create period_date for plotting on x-axis (start of each 2-month period)
+  practice_measures <- practice_measures %>%
+  mutate(
+    # Match new year seasons to the proceeding year
+    period_year = case_when(
+      season %in% c("Jan-Feb", "Mar-Apr") ~ summer_year + 1L,
+      TRUE ~ summer_year
+    ),
+    period_month = case_when(
+      season == "Sep-Oct" ~ 9L,
+      season == "Nov-Dec" ~ 11L,
+      season == "Jan-Feb" ~ 1L,
+      season == "Mar-Apr" ~ 3L,
+      season == "Jun-Jul" ~ 6L,
+      TRUE ~ NA_integer_
+    ),
+    # start of the 2-month period
+    interval_start = make_date(period_year, period_month, 1L)
+  )
+
   practice_deciles <- practice_measures %>%
-    group_by(!!sym(INTERVALS), measure) %>%
+    group_by(interval_start, measure) %>%
     summarise(
       d1 = quantile(!!sym(Y_VALUE), 0.1, na.rm = TRUE),
       d2 = quantile(!!sym(Y_VALUE), 0.2, na.rm = TRUE),
@@ -202,6 +220,6 @@ for (group_name in names(measure_groups)) {
     print(paste("Skipping plot for", group_name, "(no measures)"))
     next
   }
-  create_and_save_decile_plot(group_name, measures_subset, plots_dir, INTERVALS, Y_VALUE)
+  create_and_save_decile_plot(group_name, measures_subset, plots_dir, Y_VALUE)
   
 }

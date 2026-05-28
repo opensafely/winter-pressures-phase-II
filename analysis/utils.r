@@ -83,7 +83,7 @@ read_write <- function(read_or_write, path, test = config$test, file_type = conf
 }
 
 # Helper function to create and save decile plots
-create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, x_var, y_var) {
+create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, y_var, x_var = "interval_start") {
   # Create the plot
   plot <- ggplot(
     filter(practice_deciles, measure %in% measures_subset),
@@ -98,7 +98,7 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     scale_linetype_manual(values = line_types) +
     scale_color_manual(values = line_colors) +
     labs(
-      title = glue("Decile Charts for {plots_dir}_rate"),
+      title = glue("Decile Charts for {plots_dir}_{y_var}"),
       x = x_var,
       y = y_var
     ) +
