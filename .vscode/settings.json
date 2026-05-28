@@ -1,3 +1,9 @@
 {
-    "r.lsp.promptToInstall": false
+    "r.lsp.promptToInstall": false,
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /workspaces/winter-pressures-phase-II && source /opt/venv/bin/activate && Rscript analysis/decile_charts\\.r --released --test --practice_measures --set resp --rr$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
 }

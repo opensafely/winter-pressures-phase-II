@@ -25,6 +25,7 @@ source("analysis/parse_args.r")
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
+Y_VALUE <- if (config$rr) "RR_prev_summr" else "rate_per_1000"
 
 # ------------ Generate decile tables ----------------------------------------------------
 
@@ -35,7 +36,6 @@ if (config$released == FALSE){
 
     print("Processing rate ratios...")
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/practice_level_RR")
-    Y_VALUE <- "RR_prev_summr"
     practice_measures <- read_write("read", input_path)
 
     if (config$test) {
@@ -48,17 +48,21 @@ if (config$released == FALSE){
   else {
     print("Processing rates...")
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/proc_{config$group}_measures")
-    Y_VALUE <- "rate_per_1000"
     practice_measures <- read_write("read", input_path)
 
-      if (config$test) {
+    # Round rates
+    practice_measures <- practice_measures %>%
+      mutate(numerator_midpoint6 = roundmid_any(numerator), list_size_midpoint6 = roundmid_any(list_size))
+
+    Y_VALUE <- paste0(Y_VALUE, "_mp6") # Add midpoint suffix to Y_VALUE for plotting
+    if (config$test) {
         # Generate simulated rate data (since dummy data contains too many 0's to graph)
         practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
         practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)
     }
     
     # Calculate rate per 1000
-    practice_measures <- mutate(practice_measures, rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
+    practice_measures <- mutate(practice_measures, rate_per_1000_mp6 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
     practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
 
@@ -76,7 +80,7 @@ if (config$released == FALSE){
           numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
           list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE)
         ) %>%
-        mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+        mutate(rate_per_1000_mp6 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
         ungroup()
 
       # Remove "_age" suffix from measure names to match group definitions
@@ -88,24 +92,26 @@ if (config$released == FALSE){
   print("Creating decile tables...")
 
   # Create period_date for plotting on x-axis (start of each 2-month period)
-  practice_measures <- practice_measures %>%
-  mutate(
-    # Match new year seasons to the proceeding year
-    period_year = case_when(
-      season %in% c("Jan-Feb", "Mar-Apr") ~ summer_year + 1L,
-      TRUE ~ summer_year
-    ),
-    period_month = case_when(
-      season == "Sep-Oct" ~ 9L,
-      season == "Nov-Dec" ~ 11L,
-      season == "Jan-Feb" ~ 1L,
-      season == "Mar-Apr" ~ 3L,
-      season == "Jun-Jul" ~ 6L,
-      TRUE ~ NA_integer_
-    ),
-    # start of the 2-month period
-    interval_start = make_date(period_year, period_month, 1L)
-  )
+  if (config$rr){
+    practice_measures <- practice_measures %>%
+    mutate(
+      # Match new year seasons to the proceeding year
+      period_year = case_when(
+        season %in% c("Jan-Feb", "Mar-Apr") ~ summer_year + 1L,
+        TRUE ~ summer_year
+      ),
+      period_month = case_when(
+        season == "Sep-Oct" ~ 9L,
+        season == "Nov-Dec" ~ 11L,
+        season == "Jan-Feb" ~ 1L,
+        season == "Mar-Apr" ~ 3L,
+        season == "Jun-Jul" ~ 6L,
+        TRUE ~ NA_integer_
+      ),
+      # start of the 2-month period
+      interval_start = make_date(period_year, period_month, 1L)
+    )
+  }
 
   practice_deciles <- practice_measures %>%
     group_by(interval_start, measure) %>%
@@ -138,9 +144,15 @@ if (config$released == FALSE){
 } else if (config$released == TRUE) { # If data is already released, read in the decile tables instead of generating them from raw data
 
   print("Reading in released decile tables...")
+  
+  metric_file_suffix <- glue("_{Y_VALUE}{config$test_suffix}\\.csv$")
+
   # List all measure-specific files
-  files <- list.files(glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/"), 
-                      full.names = TRUE)
+  files <- list.files(
+    glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/"),
+    pattern = metric_file_suffix,
+    full.names = TRUE
+  )
 
   # Read and combine into one dataframe
   practice_deciles <- files %>%

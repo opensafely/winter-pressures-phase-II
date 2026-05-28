@@ -107,8 +107,8 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   # Save the plot
-  if (y_var == "rate_per_1000"){
-    filename <- glue("{plots_dir}/decile_chart_{group_name}_rate_mp6.png")
+  if (y_var == "rate_per_1000_mp6"){
+    filename <- glue("{plots_dir}/decile_chart_{group_name}_rate_per_1000_mp6.png")
   } else if (y_var == "RR_prev_summr") {
     filename <- glue("{plots_dir}/decile_chart_{group_name}_RR_prev_summr.png")
   }
@@ -131,7 +131,7 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
       numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
       list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
     ) %>%
-    mutate(rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+    mutate(rate_per_1000_mp6 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
     ungroup()
 
   # Export measure-demo_var table

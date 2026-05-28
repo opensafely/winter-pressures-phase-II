@@ -239,19 +239,19 @@ yaml_viz_template = """
   generate_deciles_charts_{set}{appt_suffix}{y_val_suffix}{test_suffix}:
     run: >
       r:v2 analysis/decile_charts.r --practice_measures {test_flag} --set {set}{appt_flag} {y_val}
-    needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}] 
+    needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
         deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/decile_chart_*{y_val_suffix}.png
         deciles_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*{y_val_suffix}{test_suffix}.csv
-  generate_decomposition_plots_{set}{appt_suffix}{y_val_suffix}{test_suffix}:
-    run: >
-      r:v2 analysis/decomposition.r --practice_measures {test_flag} --set {set}{appt_flag} {y_val} 
-    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
-    outputs:
-      moderately_sensitive:
-        decomposition_plots: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/*{y_val_suffix}{test_suffix}.png
-        decomposition_summaries: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/summary_*{y_val_suffix}{test_suffix}.txt
+  # generate_decomposition_plots_{set}{appt_suffix}{y_val_suffix}{test_suffix}:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures {test_flag} --set {set}{appt_flag} {y_val} 
+  #   needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/*{y_val_suffix}{test_suffix}.png
+  #       decomposition_summaries: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/summary_*{y_val_suffix}{test_suffix}.txt
 """
 
 """ TEMPORARILY COMMENTED OUT:
@@ -285,7 +285,7 @@ yaml_viz_template = """
 suffixes = ["", "_test"]
 test_flags = ["", "--test"]
 y_vals = ["", "--rr"] 
-y_val_suffixes = ["_rate", "_RR_prev_summr"]
+y_val_suffixes = ["_rate_per_1000_mp6", "_RR_prev_summr"]
 for test_suffix, test_flag in zip(suffixes, test_flags):
     for set in measure_sets:
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
