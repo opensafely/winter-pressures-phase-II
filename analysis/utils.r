@@ -5,23 +5,25 @@ library(readr)
 library(readr)
 library(arrow)
 
-# Midpoint rounding function
-# Args:
-#   x: Numeric vector to be rounded
-#   to: The rounding base (default is 6)
-# Returns:
-#   Numeric vector rounded to the nearest multiple of 'to'
 roundmid_any <- function(x, to = 6) {
+  # Midpoint rounding function
+  # Args:
+  #   x: Numeric vector to be rounded
+  #   to: The rounding base (default is 6)
+  # Returns:
+  #   Numeric vector rounded to the nearest multiple of 'to'
+
   ceiling(x / to) * to - (floor(to / 2) * (x != 0))
 }
 
-# Function to round specified columns in a dataframe
-# Args:
-#   df: Dataframe containing the columns to be rounded
-#   cols_to_round: Character vector of column names to be rounded
-# Returns:
-#   Dataframe with specified columns rounded to the nearest multiple of 6
 round_columns <- function(df, cols_to_round) {
+  # Function to round specified columns in a dataframe
+  # Args:
+  #   df: Dataframe containing the columns to be rounded
+  #   cols_to_round: Character vector of column names to be rounded
+  # Returns:
+  #   Dataframe with specified columns rounded to the nearest multiple of 6
+
   rounded_df <- df %>%
     # Select required columns and round their values
     mutate(across(all_of(cols_to_round), ~ roundmid_any(.x))) %>%
@@ -32,6 +34,14 @@ round_columns <- function(df, cols_to_round) {
 }
 
 read_write <- function(read_or_write, path, test = config$test, file_type = config$file_type, df = NULL, dtype = NULL, ...) {
+  # Function to read or write dataframes in either CSV or Arrow format, with optional test suffix and dtype coercion for Arrow
+  # Args:
+  #   read_or_write: String indicating whether to read or write ("read" or "write")
+  #   path: The file path for reading or writing
+  #   test: Boolean indicating whether to add a "_test" suffix to the file path (default is config$test)
+  #   file_type: String indicating the file type ("csv" or "arrow", default is config$file_type)
+  #   df: Dataframe to be written (required if read_or_write is "write")
+  #   dtype: Optional named list of column names and target data types for coercion when reading Arrow files (e.g. list(col1 = "bool", col2 = "numeric"))
   
   # Add '_test' suffix to path if test flag is TRUE
   if (test) {
@@ -82,13 +92,26 @@ read_write <- function(read_or_write, path, test = config$test, file_type = conf
   }
 }
 
-# Helper function to create and save decile plots
-create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, y_var, x_var = "interval_start") {
+create_and_save_decile_plot <- function(deciles_df, group_name, measures_subset, plots_dir, y_var, x_var = "interval_start", season="") {
+  # Function to create and save a decile plot for a given group of measures and season
+  # Args:
+  #   group_name: Name of the measure group (e.g. "prioritized", "deprioritized", "other")
+  #   measures_subset: Character vector of measure names to include in the plot
+  #   plots_dir: Directory where the plot will be saved
+  #   y_var: The variable to plot on the y-axis (e.g. "rate_per_1000_mp6" or "RR_prev_summr")
+  #   x_var: The variable to plot on the x-axis (default is "interval_start")
+  #   season: The season for which to create the plot
+
+  # Format season name
+  if (season != "") {
+    season <- paste0("_", season)
+  }
+
   # Create the plot
   plot <- ggplot(
-    filter(practice_deciles, measure %in% measures_subset),
+    filter(deciles_df, measure %in% measures_subset),
     aes(
-      x = !!sym(x_var), y = value,
+      x = !!sym(x_var), y = !!sym(y_var),
       group = factor(decile),
       linetype = decile,
       color = decile
@@ -98,7 +121,7 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     scale_linetype_manual(values = line_types) +
     scale_color_manual(values = line_colors) +
     labs(
-      title = glue("Decile Charts for {plots_dir}_{y_var}"),
+      title = glue("Decile Charts for {plots_dir}_{y_var}{season}"),
       x = x_var,
       y = y_var
     ) +
@@ -107,16 +130,16 @@ create_and_save_decile_plot <- function(group_name, measures_subset, plots_dir, 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
   # Save the plot
-  if (y_var == "rate_per_1000_mp6"){
-    filename <- glue("{plots_dir}/decile_chart_{group_name}_rate_per_1000_mp6.png")
-  } else if (y_var == "RR_prev_summr") {
-    filename <- glue("{plots_dir}/decile_chart_{group_name}_RR_prev_summr.png")
-  }
+  filename <- glue("{plots_dir}/decile_chart_{group_name}{season}_{y_var}.png")
 
   ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
 }
 
 summarise_demographics_rate_zero <-function(df, demo_var) {
+  # Function to summarise demographic characteristics of practices with zero rates vs non-zero rates for a given measure
+  # Args:
+  #   df: Dataframe containing practice-level measures and demographic variables
+  #   demo_var: The demographic variable to summarise (e.g. "age_band or "imd_decile")
 
   # Filter to relevant demographic measures
   df <- filter(df, grepl(paste0("_", demo_var, "$"), measure))
@@ -154,6 +177,12 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
 }
 
 format_measures_for_plotting <- function(df, set, subset) {
+  # Function to format measure names for plotting based on the set and subset
+  # Args:
+  #   df: Dataframe containing the measures to be formatted
+  #   set: The set of measures (e.g. "sro" or "resp")
+  #   subset: The subset of measures (e.g. "tests", "other", "specific", "sensitive", or "all")
+
     if (set == "sro") {
       if (subset == "tests"){
         filtered_measures <- c("sodium_test", "alt_test", "chol_test", "sys_bp_test", "rbc_test", "hba1c_test", "cvd_10yr", "thy_test")
@@ -214,6 +243,13 @@ format_measures_for_plotting <- function(df, set, subset) {
 }
 
 format_colours_for_plotting <- function(df, colour_var, y_var = NULL, baseline = NULL) {
+  # Function to format line types and colours for plotting based on the colouring variable
+  # Args:
+  #   df: Dataframe containing the data to be plotted
+  #   colour_var: The variable by which the lines will be coloured (e.g. "season", "percentile", or "%_practices")
+  #   y_var: The variable being plotted on the y-axis (used for naming conventions when colour_var is "percentile" or "%_practices")
+  #   baseline: The baseline category for comparison (used for naming conventions when colour_var is "percentile" or "%_practices")
+
   if (colour_var == "season") {
     season_order <- c("Sep-Oct", "Nov-Dec", "Jan-Feb", "Mar-Apr", "Jun-Jul")
 

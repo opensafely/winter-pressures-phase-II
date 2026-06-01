@@ -7,7 +7,7 @@
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
 # --weekly_agg aggregates weekly intervals to yearly
-# --rr generates charts for rate ratios instead of rates
+# --y_value choose RR_prev_summr/RD_prev_summr/rate_per_1000 charts
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -25,19 +25,18 @@ source("analysis/parse_args.r")
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
-Y_VALUE <- if (config$rr) "RR_prev_summr" else "rate_per_1000"
 
 # ------------ Generate decile tables ----------------------------------------------------
 
 if (config$released == FALSE){
 
   # RR PROCESSING
-  if (config$rr) {
+  if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
 
     print("Processing rate ratios...")
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/practice_level_RR")
     practice_measures <- read_write("read", input_path)
-
+    print(unique(practice_measures$season))
     if (config$test) {
       practice_measures$RR_prev_summr <- sample(0.5:20, nrow(practice_measures), replace = TRUE)
     }
@@ -54,7 +53,7 @@ if (config$released == FALSE){
     practice_measures <- practice_measures %>%
       mutate(numerator_midpoint6 = roundmid_any(numerator), list_size_midpoint6 = roundmid_any(list_size))
 
-    Y_VALUE <- paste0(Y_VALUE, "_mp6") # Add midpoint suffix to Y_VALUE for plotting
+    config$y_value <- paste0(config$y_value, "_mp6") # Add midpoint suffix to Y_VALUE for plotting
     if (config$test) {
         # Generate simulated rate data (since dummy data contains too many 0's to graph)
         practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
@@ -92,7 +91,7 @@ if (config$released == FALSE){
   print("Creating decile tables...")
 
   # Create period_date for plotting on x-axis (start of each 2-month period)
-  if (config$rr){
+  if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
     practice_measures <- practice_measures %>%
     mutate(
       # Match new year seasons to the proceeding year
@@ -113,28 +112,34 @@ if (config$released == FALSE){
     )
   }
 
+  grouping_cols <- if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
+    c("season", "interval_start", "measure")
+  } else {
+    c("interval_start", "measure")
+  }
+
   practice_deciles <- practice_measures %>%
-    group_by(interval_start, measure) %>%
+    group_by(across(all_of(grouping_cols))) %>%
     summarise(
-      d1 = quantile(!!sym(Y_VALUE), 0.1, na.rm = TRUE),
-      d2 = quantile(!!sym(Y_VALUE), 0.2, na.rm = TRUE),
-      d3 = quantile(!!sym(Y_VALUE), 0.3, na.rm = TRUE),
-      d4 = quantile(!!sym(Y_VALUE), 0.4, na.rm = TRUE),
-      d5 = quantile(!!sym(Y_VALUE), 0.5, na.rm = TRUE), # Median
-      d6 = quantile(!!sym(Y_VALUE), 0.6, na.rm = TRUE),
-      d7 = quantile(!!sym(Y_VALUE), 0.7, na.rm = TRUE),
-      d8 = quantile(!!sym(Y_VALUE), 0.8, na.rm = TRUE),
-      d9 = quantile(!!sym(Y_VALUE), 0.9, na.rm = TRUE)
+      d1 = quantile(!!sym(config$y_value), 0.1, na.rm = TRUE),
+      d2 = quantile(!!sym(config$y_value), 0.2, na.rm = TRUE),
+      d3 = quantile(!!sym(config$y_value), 0.3, na.rm = TRUE),
+      d4 = quantile(!!sym(config$y_value), 0.4, na.rm = TRUE),
+      d5 = quantile(!!sym(config$y_value), 0.5, na.rm = TRUE), # Median
+      d6 = quantile(!!sym(config$y_value), 0.6, na.rm = TRUE),
+      d7 = quantile(!!sym(config$y_value), 0.7, na.rm = TRUE),
+      d8 = quantile(!!sym(config$y_value), 0.8, na.rm = TRUE),
+      d9 = quantile(!!sym(config$y_value), 0.9, na.rm = TRUE)
     ) %>%
     ungroup() %>%
-    pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = "value")
+    pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = config$y_value)
 
   # Save tables, generating a separate file for each measure
   for (measure in unique(practice_deciles$measure)) {
     measure_data <- practice_deciles %>% filter(measure == !!measure)
     
     read_write("write",
-      glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/decile_table_{measure}_{Y_VALUE}"),
+      glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/decile_table_{measure}_{config$y_value}"),
       df = measure_data,
       file_type = "csv"
     )
@@ -145,7 +150,7 @@ if (config$released == FALSE){
 
   print("Reading in released decile tables...")
   
-  metric_file_suffix <- glue("_{Y_VALUE}{config$test_suffix}\\.csv$")
+  metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
 
   # List all measure-specific files
   files <- list.files(
@@ -223,15 +228,26 @@ if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }
 
+# Filter out rows with NA season before plotting
 print(practice_deciles)
+practice_deciles <- practice_deciles %>% filter(!is.na(season)) 
+
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
-  print(paste("Creating plot for:", group_name))
-  measures_subset <- measure_groups[[group_name]]
-  if (length(measures_subset) == 0) {
-    print(paste("Skipping plot for", group_name, "(no measures)"))
-    next
+
+  # Loop over each season, filtering the decile table each time
+  for (season in unique(practice_deciles$season)) {
+    print(glue("Creating plot for:{group_name} (Season: {season}) (Y-axis: {config$y_value})..."))
+
+    # Filter measures and deciles for the current group and season
+    measures_subset <- measure_groups[[group_name]]
+    filtered_deciles <- practice_deciles %>% filter(season == !!season)
+
+    # Skip plotting if no measures in this group
+    if (length(measures_subset) == 0) {
+      print(paste("Skipping plot for", group_name, "(no measures)"))
+      next
+    }
+    create_and_save_decile_plot(filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
   }
-  create_and_save_decile_plot(group_name, measures_subset, plots_dir, Y_VALUE)
-  
 }
