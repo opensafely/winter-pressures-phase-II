@@ -75,10 +75,9 @@ option_list <- list(
     action = "store_true", 
     default = config$weekly_agg, help = "Generate weekly aggregates"
   ),
-  make_option("--rr",
-    action = "store_true",
-    default = FALSE,
-    help = "Process rate ratios"
+  make_option("--y_value",
+    type = "character",
+    help = "Specify the y-axis value for plotting"
   )
 )
 
