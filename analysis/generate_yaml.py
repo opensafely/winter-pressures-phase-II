@@ -238,7 +238,7 @@ yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------
 yaml_viz_template = """
   generate_deciles_charts_{set}{appt_suffix}_{y_val}{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures {test_flag} --set {set}{appt_flag} --y_val {y_val}
+      r:v2 analysis/decile_charts.r --practice_measures {test_flag} --set {set}{appt_flag} --y_value {y_val}
     needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:

@@ -1743,7 +1743,7 @@ actions:
  # --------------- VISUALIZATION ACTIONS ------------------------------------------
   generate_deciles_charts_appts_table_rate_per_1000_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
     outputs:
       moderately_sensitive:
@@ -1760,7 +1760,7 @@ actions:
 
   generate_deciles_charts_appts_table_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_value RR_prev_summr
     needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
     outputs:
       moderately_sensitive:
@@ -1777,7 +1777,7 @@ actions:
 
   generate_deciles_charts_appts_table_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_value RD_prev_summr
     needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
     outputs:
       moderately_sensitive:
@@ -1794,7 +1794,7 @@ actions:
 
   generate_deciles_charts_appts_table_appt_rate_per_1000_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
     outputs:
       moderately_sensitive:
@@ -1811,7 +1811,7 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_value RR_prev_summr
     needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
     outputs:
       moderately_sensitive:
@@ -1828,7 +1828,7 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_value RD_prev_summr
     needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
     outputs:
       moderately_sensitive:
@@ -1845,7 +1845,7 @@ actions:
 
   generate_deciles_charts_sro_rate_per_1000_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
@@ -1862,7 +1862,7 @@ actions:
 
   generate_deciles_charts_sro_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_value RR_prev_summr
     needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
@@ -1879,7 +1879,7 @@ actions:
 
   generate_deciles_charts_sro_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_value RD_prev_summr
     needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
@@ -1896,7 +1896,7 @@ actions:
 
   generate_deciles_charts_sro_appt_rate_per_1000_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
@@ -1913,7 +1913,7 @@ actions:
 
   generate_deciles_charts_sro_appt_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_value RR_prev_summr
     needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
@@ -1930,7 +1930,7 @@ actions:
 
   generate_deciles_charts_sro_appt_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_value RD_prev_summr
     needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
@@ -1947,7 +1947,7 @@ actions:
 
   generate_deciles_charts_resp_rate_per_1000_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
@@ -1964,7 +1964,7 @@ actions:
 
   generate_deciles_charts_resp_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_value RR_prev_summr
     needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
@@ -1981,7 +1981,7 @@ actions:
 
   generate_deciles_charts_resp_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_value RD_prev_summr
     needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
@@ -1998,7 +1998,7 @@ actions:
 
   generate_deciles_charts_resp_appt_rate_per_1000_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
@@ -2015,7 +2015,7 @@ actions:
 
   generate_deciles_charts_resp_appt_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_value RR_prev_summr
     needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
@@ -2032,7 +2032,7 @@ actions:
 
   generate_deciles_charts_resp_appt_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_value RD_prev_summr
     needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
@@ -2049,7 +2049,7 @@ actions:
 
   generate_deciles_charts_appts_table_rate_per_1000_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
     outputs:
       moderately_sensitive:
@@ -2066,7 +2066,7 @@ actions:
 
   generate_deciles_charts_appts_table_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_value RR_prev_summr
     needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
     outputs:
       moderately_sensitive:
@@ -2083,7 +2083,7 @@ actions:
 
   generate_deciles_charts_appts_table_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_value RD_prev_summr
     needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
     outputs:
       moderately_sensitive:
@@ -2100,7 +2100,7 @@ actions:
 
   generate_deciles_charts_appts_table_appt_rate_per_1000_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2117,7 +2117,7 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_value RR_prev_summr
     needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2134,7 +2134,7 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_value RD_prev_summr
     needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2151,7 +2151,7 @@ actions:
 
   generate_deciles_charts_sro_rate_per_1000_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
@@ -2168,7 +2168,7 @@ actions:
 
   generate_deciles_charts_sro_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_value RR_prev_summr
     needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
@@ -2185,7 +2185,7 @@ actions:
 
   generate_deciles_charts_sro_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_value RD_prev_summr
     needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
@@ -2202,7 +2202,7 @@ actions:
 
   generate_deciles_charts_sro_appt_rate_per_1000_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2219,7 +2219,7 @@ actions:
 
   generate_deciles_charts_sro_appt_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_value RR_prev_summr
     needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2236,7 +2236,7 @@ actions:
 
   generate_deciles_charts_sro_appt_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_value RD_prev_summr
     needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2253,7 +2253,7 @@ actions:
 
   generate_deciles_charts_resp_rate_per_1000_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
@@ -2270,7 +2270,7 @@ actions:
 
   generate_deciles_charts_resp_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_value RR_prev_summr
     needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
@@ -2287,7 +2287,7 @@ actions:
 
   generate_deciles_charts_resp_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_value RD_prev_summr
     needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
@@ -2304,7 +2304,7 @@ actions:
 
   generate_deciles_charts_resp_appt_rate_per_1000_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_val rate_per_1000_mp6
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_value rate_per_1000_mp6
     needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2321,7 +2321,7 @@ actions:
 
   generate_deciles_charts_resp_appt_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_val RR_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_value RR_prev_summr
     needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
@@ -2338,7 +2338,7 @@ actions:
 
   generate_deciles_charts_resp_appt_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_val RD_prev_summr
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_value RD_prev_summr
     needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:

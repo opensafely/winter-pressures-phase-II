@@ -230,12 +230,19 @@ if (!dir.exists(plots_dir)) {
 
 # Filter out rows with NA season before plotting
 print(practice_deciles)
-practice_deciles <- practice_deciles %>% filter(!is.na(season)) 
+
 
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
 
   # Loop over each season, filtering the decile table each time
+  if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
+    practice_deciles <- practice_deciles %>% filter(!is.na(season)) 
+  }
+  else{
+    # Add season column with "all" values for rate measures to avoid issues
+    practice_deciles$season <- "all" 
+  }
   for (season in unique(practice_deciles$season)) {
     print(glue("Creating plot for:{group_name} (Season: {season}) (Y-axis: {config$y_value})..."))
 
