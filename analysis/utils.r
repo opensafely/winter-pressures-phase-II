@@ -92,7 +92,7 @@ read_write <- function(read_or_write, path, test = config$test, file_type = conf
   }
 }
 
-create_and_save_decile_plot <- function(deciles_df, group_name, measures_subset, plots_dir, y_var, x_var = "interval_start", season="") {
+create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, measures_subset, plots_dir, y_var, x_var = "interval_start", season="") {
   # Function to create and save a decile plot for a given group of measures and season
   # Args:
   #   group_name: Name of the measure group (e.g. "prioritized", "deprioritized", "other")
@@ -106,33 +106,63 @@ create_and_save_decile_plot <- function(deciles_df, group_name, measures_subset,
   if (season != "") {
     season <- paste0("_", season)
   }
+  print(x_var)
 
-  # Create the plot
-  plot <- ggplot(
-    filter(deciles_df, measure %in% measures_subset),
-    aes(
-      x = !!sym(x_var), y = !!sym(y_var),
-      group = factor(decile),
-      linetype = decile,
-      color = decile
-    )
-  ) +
-    geom_line() +
-    scale_linetype_manual(values = line_types) +
-    scale_color_manual(values = line_colors) +
-    labs(
-      title = glue("Decile Charts for {plots_dir}_{y_var}{season}"),
-      x = x_var,
-      y = y_var
+  if (chart_type == "decile"){
+    # Create the plot
+    p <- ggplot(
+      filter(deciles_df, measure %in% measures_subset),
+      aes(
+        x = !!sym(x_var), y = !!sym(y_var),
+        group = factor(decile),
+        linetype = decile,
+        color = decile
+      )
     ) +
-    facet_wrap(vars(measure), scales = "free_y") +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      geom_line() +
+      scale_linetype_manual(values = line_types) +
+      scale_color_manual(values = line_colors) +
+      labs(
+        title = glue("Decile Charts for {plots_dir}_{y_var}{season}"),
+        x = x_var,
+        y = y_var
+      ) +
+      facet_wrap(vars(measure), scales = "free_y") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+  else if (chart_type == "dotplot") {
+    p <- ggplot(
+      filter(deciles_df, measure %in% measures_subset),
+      aes(
+        x = factor(!!sym(x_var)), y = !!sym(y_var), fill = factor(decile)
+      )
+    ) +
+      geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 1) +
+      labs(
+        title = glue("Decile dotplot for {plots_dir}_{y_var}{season}"),
+        x = x_var,
+        y = y_var
+      ) +
+      facet_wrap(vars(measure), scales = "free_y") +
+      scale_fill_manual(
+      values = c(
+        "d1" = "black",
+        "d2" = "black",
+        "d3" = "black",
+        "d4" = "black",
+        "d5" = "red",
+        "d6" = "black",
+        "d7" = "black",
+        "d8" = "black",
+        "d9" = "black",
+        "d10" = "black"
+      ))
+  }
 
   # Save the plot
-  filename <- glue("{plots_dir}/decile_chart_{group_name}{season}_{y_var}.png")
-
-  ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
+  filename <- glue("{plots_dir}/{chart_type}_chart_{group_name}{season}_{y_var}.png")
+  ggsave(filename, plot = p, width = 20, height = 12, dpi = 400)
 }
 
 summarise_demographics_rate_zero <-function(df, demo_var) {

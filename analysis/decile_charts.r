@@ -25,7 +25,21 @@ source("analysis/parse_args.r")
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
+DEV <- TRUE # Set to TRUE to use dummy data for development
 
+if (DEV) {
+  print("DEVELOPMENT MODE: Using dummy data and skipping file writing")
+  config$test <- TRUE
+  config$released <- TRUE
+  config$set <- "resp"
+  config$y_value <- "RR_prev_summr"
+  config$practice_measures <- TRUE
+  config$practice_subgroup_measures <- FALSE
+  config$weekly_agg <- FALSE
+  config$yearly <- FALSE
+  config$appt <- FALSE
+  config <- recompute_config(config)
+}
 # ------------ Generate decile tables ----------------------------------------------------
 
 if (config$released == FALSE){
@@ -150,11 +164,14 @@ if (config$released == FALSE){
 
   print("Reading in released decile tables...")
   
+  # Use dummy data if in development mode
+  dummy_folder <- if (DEV) "practice_measures_resp_DUMMY/" else ""
   metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
+  file_pattern <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/")
 
   # List all measure-specific files
   files <- list.files(
-    glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/"),
+    file_pattern,
     pattern = metric_file_suffix,
     full.names = TRUE
   )
@@ -223,7 +240,7 @@ if (config$appt) {
 }
 
 # Setup output directory
-plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/plots{config$test_suffix}")
+plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}plots{config$test_suffix}")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }
@@ -249,12 +266,12 @@ for (group_name in names(measure_groups)) {
     # Filter measures and deciles for the current group and season
     measures_subset <- measure_groups[[group_name]]
     filtered_deciles <- practice_deciles %>% filter(season == !!season)
-
+    print(filtered_deciles$interval_start)
     # Skip plotting if no measures in this group
     if (length(measures_subset) == 0) {
       print(paste("Skipping plot for", group_name, "(no measures)"))
       next
     }
-    create_and_save_decile_plot(filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    create_and_save_decile_plot("dotplot", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
   }
 }
