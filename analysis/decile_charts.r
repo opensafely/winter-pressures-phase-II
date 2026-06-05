@@ -25,11 +25,13 @@ source("analysis/parse_args.r")
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
-DEV <- TRUE # Set to TRUE to use dummy data for development
+LOCAL <- TRUE # Set to true when working locally
+FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021
 
-if (DEV) {
-  print("DEVELOPMENT MODE: Using dummy data and skipping file writing")
-  config$test <- TRUE
+if (LOCAL) {
+  print("Using local data - SET PARAMETERS HERE:")
+  DUMMY <- FALSE # Set to TRUE to use dummy data folder
+  config$test <- FALSE
   config$released <- TRUE
   config$set <- "resp"
   config$y_value <- "rate_per_1000_mp6"
@@ -40,6 +42,7 @@ if (DEV) {
   config$appt <- FALSE
   config <- recompute_config(config)
 }
+
 # ------------ Generate decile tables ----------------------------------------------------
 
 if (config$released == FALSE){
@@ -165,7 +168,7 @@ if (config$released == FALSE){
   print("Reading in released decile tables...")
   
   # Use dummy data if in development mode
-  dummy_folder <- if (DEV) "practice_measures_resp_DUMMY/" else ""
+  dummy_folder <- if (DUMMY) "practice_measures_resp_DUMMY/" else ""
   metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
   file_pattern <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/")
 
@@ -180,6 +183,12 @@ if (config$released == FALSE){
   practice_deciles <- files %>%
     lapply(read_csv) %>%
     bind_rows()
+
+  if (config$y_value == "rate_per_1000_mp6"){
+    if ("rate_per_1000" %in% colnames(practice_deciles)) {
+      practice_deciles <- practice_deciles %>% rename(rate_per_1000_mp6 = rate_per_1000)
+    }
+  }
 }
 
 # ------------ Create decile charts -----------------------------------------------------------
