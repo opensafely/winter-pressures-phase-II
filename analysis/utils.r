@@ -163,32 +163,46 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
   else if (chart_type == "seasonal lineplot") {
 
     deciles_df <- deciles_df %>%
-    mutate(
-      year = factor(lubridate::year(interval_start)),
-      week_in_year = lubridate::isoweek(interval_start),
-      season_x = as.Date("2000-01-03") + lubridate::weeks(week_in_year - 1)
-    )
+      mutate(
+        season_year_start = if_else(
+          month(interval_start) >= 6,
+          year(interval_start),
+          year(interval_start) - 1
+        ),
+        season_year = glue("{season_year_start}/{substr(season_year_start + 1, 3, 4)}"),
+        season_year = factor(season_year),
+        season_x = make_date(
+          year = if_else(month(interval_start) >= 6, 2000L, 2001L),
+          month = month(interval_start),
+          day = day(interval_start)
+        )
+      )
 
-  p <- ggplot(
-    filter(deciles_df, (measure %in% measures_subset) & (decile == "d5")),
-    aes(
-      x = season_x,
-      y = !!sym(y_var),
-      group = year,
-      color = year
-    )
-  ) +
-    geom_line() +
-    scale_x_date(date_breaks = "1 month", date_labels = "%b") +
-    labs(
-      title = glue("Seasonal Line Plot for {plots_dir}_{y_var}{season}"),
-      x = "Month",
-      y = y_var
+    p <- ggplot(
+      filter(deciles_df, (measure %in% measures_subset) & (decile == "d5")),
+      aes(
+        x = season_x,
+        y = !!sym(y_var),
+        group = season_year,
+        color = season_year
+      )
     ) +
-    facet_wrap(vars(measure), scales = "free_y") +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    }
+      geom_line() +
+      scale_x_date(
+        date_breaks = "1 month",
+        date_labels = "%b",
+        limits = as.Date(c("2000-06-01", "2001-05-31"))
+      ) +
+      labs(
+        title = glue("Seasonal Line Plot for {plots_dir}_{y_var}{season}"),
+        x = "Month",
+        y = y_var,
+        color = "Season year"
+      ) +
+      facet_wrap(vars(measure), scales = "free_y") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
 
     # Save the plot
     filename <- glue("{plots_dir}/{chart_type}_chart_{group_name}{season}_{y_var}.png")
