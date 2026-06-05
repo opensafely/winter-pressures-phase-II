@@ -32,7 +32,7 @@ if (DEV) {
   config$test <- TRUE
   config$released <- TRUE
   config$set <- "resp"
-  config$y_value <- "RR_prev_summr"
+  config$y_value <- "rate_per_1000_mp6"
   config$practice_measures <- TRUE
   config$practice_subgroup_measures <- FALSE
   config$weekly_agg <- FALSE
@@ -272,6 +272,10 @@ for (group_name in names(measure_groups)) {
       print(paste("Skipping plot for", group_name, "(no measures)"))
       next
     }
-    create_and_save_decile_plot("dotplot", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
+      create_and_save_decile_plot("dotplot", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    } else {
+      create_and_save_decile_plot("seasonal lineplot", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    }
   }
 }

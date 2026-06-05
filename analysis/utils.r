@@ -4,6 +4,7 @@ library(glue)
 library(readr)
 library(readr)
 library(arrow)
+library(ggplot2)
 
 roundmid_any <- function(x, to = 6) {
   # Midpoint rounding function
@@ -159,10 +160,39 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
         "d10" = "black"
       ))
   }
+  else if (chart_type == "seasonal lineplot") {
 
-  # Save the plot
-  filename <- glue("{plots_dir}/{chart_type}_chart_{group_name}{season}_{y_var}.png")
-  ggsave(filename, plot = p, width = 20, height = 12, dpi = 400)
+    deciles_df <- deciles_df %>%
+    mutate(
+      year = factor(lubridate::year(interval_start)),
+      week_in_year = lubridate::isoweek(interval_start),
+      season_x = as.Date("2000-01-03") + lubridate::weeks(week_in_year - 1)
+    )
+
+  p <- ggplot(
+    filter(deciles_df, (measure %in% measures_subset) & (decile == "d5")),
+    aes(
+      x = season_x,
+      y = !!sym(y_var),
+      group = year,
+      color = year
+    )
+  ) +
+    geom_line() +
+    scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+    labs(
+      title = glue("Seasonal Line Plot for {plots_dir}_{y_var}{season}"),
+      x = "Month",
+      y = y_var
+    ) +
+    facet_wrap(vars(measure), scales = "free_y") +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    }
+
+    # Save the plot
+    filename <- glue("{plots_dir}/{chart_type}_chart_{group_name}{season}_{y_var}.png")
+    ggsave(filename, plot = p, width = 20, height = 12, dpi = 400)
 }
 
 summarise_demographics_rate_zero <-function(df, demo_var) {
