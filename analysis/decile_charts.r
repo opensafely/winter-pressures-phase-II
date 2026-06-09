@@ -31,15 +31,18 @@ FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021
 if (LOCAL) {
   print("Using local data - SET PARAMETERS HERE:")
   DUMMY <- FALSE # Set to TRUE to use dummy data folder
+  RR_PLOT <- "dotplot"
+  RATE_PLOT <- "seasonal lineplot"
   config$test <- FALSE
   config$released <- TRUE
-  config$set <- "resp"
+  config$set <- "appts_table"
   config$y_value <- "rate_per_1000_mp6"
   config$practice_measures <- TRUE
   config$practice_subgroup_measures <- FALSE
   config$weekly_agg <- FALSE
   config$yearly <- FALSE
   config$appt <- FALSE
+
   config <- recompute_config(config)
 }
 
@@ -254,9 +257,30 @@ if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
 }
 
+# Reformat years into split year formate (e.g. 2016/17)
+practice_deciles <- practice_deciles %>%
+  mutate(
+    season_year_start = if_else(
+      month(interval_start) >= 6,
+      year(interval_start),
+      year(interval_start) - 1
+    ),
+    season_year = glue("{season_year_start}/{substr(season_year_start + 1, 3, 4)}"),
+    season_year = factor(season_year),
+    season_x = make_date(
+      year = if_else(month(interval_start) >= 6, 2000L, 2001L),
+      month = month(interval_start),
+      day = day(interval_start)
+    )
+  )
+
+# Filter out pandemic seasons
+if (FILTER_PANDEMIC){
+  practice_deciles <- practice_deciles %>% filter(!season_year %in% c("2019/20", "2020/21", "2021/22"))
+}
+
 # Filter out rows with NA season before plotting
 print(practice_deciles)
-
 
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
@@ -282,9 +306,9 @@ for (group_name in names(measure_groups)) {
       next
     }
     if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
-      create_and_save_decile_plot("dotplot", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+      create_and_save_decile_plot(RR_PLOT, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
     } else {
-      create_and_save_decile_plot("seasonal lineplot", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+      create_and_save_decile_plot(RATE_PLOT, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
     }
   }
 }
