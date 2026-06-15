@@ -27,7 +27,7 @@ source("analysis/parse_args.r")
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
-LOCAL <- TRUE # Set to true when working locally
+LOCAL <- FALSE # Set to true when working locally
 FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021
 
 if (LOCAL) {
