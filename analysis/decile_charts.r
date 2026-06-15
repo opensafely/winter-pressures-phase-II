@@ -1,5 +1,7 @@
-# This script generates decile charts for practice measures.
-# USAGE: Rscript analysis/decile_charts.r
+# This script generates charts for visualising rates, RRs and RDs for practice measures.
+# USAGE: 
+# From codespaces: Rscript analysis/decile_charts.r --params
+# From positron: Source("analysis/decile_charts.r") using local params
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
@@ -35,8 +37,8 @@ if (LOCAL) {
   RATE_PLOT <- "seasonal lineplot"
   config$test <- FALSE
   config$released <- TRUE
-  config$set <- "appts_table"
-  config$y_value <- "rate_per_1000_mp6"
+  config$set <- "resp"
+  config$y_value <- "RD_prev_summr"
   config$practice_measures <- TRUE
   config$practice_subgroup_measures <- FALSE
   config$weekly_agg <- FALSE
@@ -282,24 +284,30 @@ if (FILTER_PANDEMIC){
 # Filter out rows with NA season before plotting
 print(practice_deciles)
 
+# Remove NAs from season columns
+practice_deciles <- practice_deciles %>% filter(!is.na(season))
+
+# For dotplot, stratify by season WITHIN a single plot
+if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (RR_PLOT == "dotplot")) {
+  # Move season info to new column so that the original season column can be set to "all" so only 1 plot gets created
+  practice_deciles$season_strata <- practice_deciles$season
+  practice_deciles$season <- "all" 
+
+  # For rate_per_1000 decile chart, don't stratify by season
+} else if ((config$y_value == "rate_per_1000")) {
+    practice_deciles$season <- "all" 
+  }
+
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
 
-  # Loop over each season, filtering the decile table each time
-  if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
-    practice_deciles <- practice_deciles %>% filter(!is.na(season)) 
-  }
-  else{
-    # Add season column with "all" values for rate measures to avoid issues
-    practice_deciles$season <- "all" 
-  }
   for (season in unique(practice_deciles$season)) {
     print(glue("Creating plot for:{group_name} (Season: {season}) (Y-axis: {config$y_value})..."))
 
     # Filter measures and deciles for the current group and season
     measures_subset <- measure_groups[[group_name]]
     filtered_deciles <- practice_deciles %>% filter(season == !!season)
-    print(filtered_deciles$interval_start)
+    print(head(filtered_deciles))
     # Skip plotting if no measures in this group
     if (length(measures_subset) == 0) {
       print(paste("Skipping plot for", group_name, "(no measures)"))

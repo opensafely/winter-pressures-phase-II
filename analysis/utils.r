@@ -107,8 +107,14 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
   if (season != "") {
     season <- paste0("_", season)
   }
-  print(x_var)
-
+  scale_seasons = c(
+    "Sep-Oct" = "#00ff1554",
+    "Nov-Dec" = "#00ffff6e",
+    "Jan-Feb" = "#8270b376",
+    "Mar-Apr" = "#ffd5006d",
+    "Jun-Jul" = "#ff0000"
+  )
+  print(head(deciles_df))
   if (chart_type == "decile"){
     # Create the plot
     p <- ggplot(
@@ -133,32 +139,53 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
   }
   else if (chart_type == "dotplot") {
+
+    # Set y_intercept line for clearer interpretation
+
     p <- ggplot(
       filter(deciles_df, measure %in% measures_subset),
       aes(
-        x = factor(!!sym(x_var)), y = !!sym(y_var), fill = factor(decile)
+        x = interaction(
+          factor(!!sym(x_var)),
+          factor(season_strata),
+          sep = " / ",
+          lex.order = TRUE
+        ),
+        y = !!sym(y_var)
       )
     ) +
-      geom_dotplot(binaxis = "y", stackdir = "center", dotsize = 1) +
+      geom_hline(yintercept = if (y_var == "RD_prev_summr") 0 else 1,
+        linetype = "dashed",
+        colour = "grey40") +
+      geom_point(
+        data = \(d) d |> dplyr::filter(decile != "d5"),
+        aes(fill = season_strata),
+        shape = 21,
+        size = 2.2,
+        alpha = 0.5,
+        colour = "grey30",
+        stroke = 0.2,
+        position = position_identity()
+      ) +
+      geom_point(
+        data = \(d) d |> dplyr::filter(decile == "d5"),
+        aes(fill = season_strata),
+        shape = 21,
+        size = 3,
+        colour = "black",
+        stroke = 0.5,
+        position = position_identity()
+      ) +
+      scale_fill_manual(values = scale_seasons) +
       labs(
         title = glue("Decile dotplot for {plots_dir}_{y_var}{season}"),
         x = x_var,
-        y = y_var
+        y = y_var,
+        fill = "Season strata"
       ) +
       facet_wrap(vars(measure), scales = "free_y") +
-      scale_fill_manual(
-      values = c(
-        "d1" = "black",
-        "d2" = "black",
-        "d3" = "black",
-        "d4" = "black",
-        "d5" = "red",
-        "d6" = "black",
-        "d7" = "black",
-        "d8" = "black",
-        "d9" = "black",
-        "d10" = "black"
-      ))
+      theme_bw(base_size = 15) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
   }
   else if (chart_type == "seasonal lineplot") {
 
