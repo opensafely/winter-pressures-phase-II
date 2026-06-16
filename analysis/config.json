@@ -137,5 +137,8 @@
       "sro_prioritized",
       "sro_deprioritized"
     ]
-  }
+  },
+  "rr_plot": "dotplot",
+  "rate_plot": "seasonal lineplot",
+  "dummy": false
 }

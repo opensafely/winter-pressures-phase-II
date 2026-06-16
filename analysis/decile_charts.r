@@ -32,9 +32,9 @@ FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021
 
 if (LOCAL) {
   print("Using local data - SET PARAMETERS HERE:")
-  DUMMY <- FALSE # Set to TRUE to use dummy data folder
-  RR_PLOT <- "dotplot"
-  RATE_PLOT <- "seasonal lineplot"
+  config$dummy <- FALSE # Set to TRUE to use dummy data folder
+  config$rr_plot <- "dotplot"
+  config$rate_plot <- "seasonal lineplot"
   config$test <- FALSE
   config$released <- TRUE
   config$set <- "resp"
@@ -289,7 +289,7 @@ print(practice_deciles)
 practice_deciles <- practice_deciles %>% filter(!is.na(season))
 
 # For dotplot, stratify by season WITHIN a single plot
-if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (RR_PLOT == "dotplot")) {
+if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (config$rr_plot == "dotplot")) {
   # Move season info to new column so that the original season column can be set to "all" so only 1 plot gets created
   practice_deciles$season_strata <- practice_deciles$season
   practice_deciles$season <- "all" 
@@ -315,9 +315,9 @@ for (group_name in names(measure_groups)) {
       next
     }
     if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
-      create_and_save_decile_plot(RR_PLOT, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+      create_and_save_decile_plot(config$rr_plot, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
     } else {
-      create_and_save_decile_plot(RATE_PLOT, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+      create_and_save_decile_plot(config$rate_plot, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
     }
   }
 }
