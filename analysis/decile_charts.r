@@ -48,6 +48,9 @@ if (LOCAL) {
   config <- recompute_config(config)
 }
 
+# Use dummy data if in development mode
+dummy_folder <- if (DUMMY) "practice_measures_resp_DUMMY/" else ""
+
 # ------------ Generate decile tables ----------------------------------------------------
 
 if (config$released == FALSE){
@@ -172,8 +175,6 @@ if (config$released == FALSE){
 
   print("Reading in released decile tables...")
   
-  # Use dummy data if in development mode
-  dummy_folder <- if (DUMMY) "practice_measures_resp_DUMMY/" else ""
   metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
   file_pattern <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/")
 
