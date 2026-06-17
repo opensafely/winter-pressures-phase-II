@@ -242,7 +242,7 @@ yaml_viz_template = """
     needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/decile_chart_*{y_val}.png
+        deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/*{y_val}.png
         deciles_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*{y_val}{test_suffix}.csv
   # generate_decomposition_plots_{set}{appt_suffix}_{y_val}{test_suffix}:
   #   run: >
