@@ -143,18 +143,25 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
     # Set y_intercept line for clearer interpretation
 
     p <- ggplot(
-      filter(deciles_df, measure %in% measures_subset),
+      filter(deciles_df, measure %in% measures_subset) |>
+        # Label x axis with year of season
+        mutate(
+          x_label = glue(
+            "{lubridate::year(.data[[x_var]])}"
+          )
+        ),
       aes(
+        # Creates each combination of season and year
         x = interaction(
-          factor(!!sym(x_var)),
+          factor(x_label),
           factor(season_strata),
           sep = " / ",
           lex.order = TRUE
         ),
-        y = !!sym(y_var)
+        y = log10(!!sym(y_var))
       )
     ) +
-      geom_hline(yintercept = if (y_var == "RD_prev_summr") 0 else 1,
+      geom_hline(yintercept = 0,
         linetype = "dashed",
         colour = "grey40") +
       geom_point(
@@ -180,7 +187,7 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
       labs(
         title = glue("Decile dotplot for {plots_dir}_{y_var}{season}"),
         x = x_var,
-        y = y_var,
+        y = glue("Log10({y_var})"),
         fill = "Season strata"
       ) +
       facet_wrap(vars(measure), scales = "free_y") +

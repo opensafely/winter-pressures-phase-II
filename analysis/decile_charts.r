@@ -28,7 +28,7 @@ print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
 LOCAL <- FALSE # Set to true when working locally
-FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021
+FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021, 2022
 
 if (LOCAL) {
   print("Using local data - SET PARAMETERS HERE:")
@@ -38,7 +38,7 @@ if (LOCAL) {
   config$test <- FALSE
   config$released <- TRUE
   config$set <- "resp"
-  config$y_value <- "RD_prev_summr"
+  config$y_value <- "RR_prev_summr"
   config$practice_measures <- TRUE
   config$practice_subgroup_measures <- FALSE
   config$weekly_agg <- FALSE
@@ -279,7 +279,7 @@ practice_deciles <- practice_deciles %>%
 
 # Filter out pandemic seasons
 if (FILTER_PANDEMIC){
-  practice_deciles <- practice_deciles %>% filter(!season_year %in% c("2019/20", "2020/21", "2021/22"))
+  practice_deciles <- practice_deciles %>% filter(!season_year %in% c("2019/20", "2020/21", "2021/22", "2022/23"))
 }
 
 # Filter out rows with NA season before plotting
