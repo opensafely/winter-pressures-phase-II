@@ -4,6 +4,7 @@ library(glue)
 library(readr)
 library(readr)
 library(arrow)
+library(ggplot2)
 
 roundmid_any <- function(x, to = 6) {
   # Midpoint rounding function
@@ -92,7 +93,7 @@ read_write <- function(read_or_write, path, test = config$test, file_type = conf
   }
 }
 
-create_and_save_decile_plot <- function(deciles_df, group_name, measures_subset, plots_dir, y_var, x_var = "interval_start", season="") {
+create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, measures_subset, plots_dir, y_var, x_var = "interval_start", season="") {
   # Function to create and save a decile plot for a given group of measures and season
   # Args:
   #   group_name: Name of the measure group (e.g. "prioritized", "deprioritized", "other")
@@ -106,33 +107,124 @@ create_and_save_decile_plot <- function(deciles_df, group_name, measures_subset,
   if (season != "") {
     season <- paste0("_", season)
   }
-
-  # Create the plot
-  plot <- ggplot(
-    filter(deciles_df, measure %in% measures_subset),
-    aes(
-      x = !!sym(x_var), y = !!sym(y_var),
-      group = factor(decile),
-      linetype = decile,
-      color = decile
-    )
-  ) +
-    geom_line() +
-    scale_linetype_manual(values = line_types) +
-    scale_color_manual(values = line_colors) +
-    labs(
-      title = glue("Decile Charts for {plots_dir}_{y_var}{season}"),
-      x = x_var,
-      y = y_var
+  scale_seasons = c(
+    "Sep-Oct" = "#00ff1554",
+    "Nov-Dec" = "#00ffff6e",
+    "Jan-Feb" = "#8270b376",
+    "Mar-Apr" = "#ffd5006d",
+    "Jun-Jul" = "#ff0000"
+  )
+  print(head(deciles_df))
+  if (chart_type == "decile"){
+    # Create the plot
+    p <- ggplot(
+      filter(deciles_df, measure %in% measures_subset),
+      aes(
+        x = !!sym(x_var), y = !!sym(y_var),
+        group = factor(decile),
+        linetype = decile,
+        color = decile
+      )
     ) +
-    facet_wrap(vars(measure), scales = "free_y") +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+      geom_line() +
+      scale_linetype_manual(values = line_types) +
+      scale_color_manual(values = line_colors) +
+      labs(
+        title = glue("Decile Charts for {plots_dir}_{y_var}{season}"),
+        x = x_var,
+        y = y_var
+      ) +
+      facet_wrap(vars(measure), scales = "free_y") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+  else if (chart_type == "dotplot") {
 
-  # Save the plot
-  filename <- glue("{plots_dir}/decile_chart_{group_name}{season}_{y_var}.png")
+    # Set y_intercept line for clearer interpretation
 
-  ggsave(filename, plot = plot, width = 20, height = 12, dpi = 400)
+    p <- ggplot(
+      filter(deciles_df, measure %in% measures_subset) |>
+        # Label x axis with year of season
+        mutate(
+          x_label = glue(
+            "{lubridate::year(.data[[x_var]])}"
+          )
+        ),
+      aes(
+        # Creates each combination of season and year
+        x = interaction(
+          factor(x_label),
+          factor(season_strata),
+          sep = " / ",
+          lex.order = TRUE
+        ),
+        y = log10(!!sym(y_var))
+      )
+    ) +
+      geom_hline(yintercept = 0,
+        linetype = "dashed",
+        colour = "grey40") +
+      geom_point(
+        data = \(d) d |> dplyr::filter(decile != "d5"),
+        aes(fill = season_strata),
+        shape = 21,
+        size = 2.2,
+        alpha = 0.5,
+        colour = "grey30",
+        stroke = 0.2,
+        position = position_identity()
+      ) +
+      geom_point(
+        data = \(d) d |> dplyr::filter(decile == "d5"),
+        aes(fill = season_strata),
+        shape = 21,
+        size = 3,
+        colour = "black",
+        stroke = 0.5,
+        position = position_identity()
+      ) +
+      scale_fill_manual(values = scale_seasons) +
+      labs(
+        title = glue("Decile dotplot for {plots_dir}_{y_var}{season}"),
+        x = x_var,
+        y = glue("Log10({y_var})"),
+        fill = "Season strata"
+      ) +
+      facet_wrap(vars(measure), scales = "free_y") +
+      theme_bw(base_size = 15) +
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  }
+  else if (chart_type == "seasonal lineplot") {
+
+    p <- ggplot(
+      filter(deciles_df, (measure %in% measures_subset) & (decile == "d5")),
+      aes(
+        x = season_x,
+        y = !!sym(y_var),
+        group = season_year,
+        color = season_year
+      )
+    ) +
+      geom_line() +
+      scale_x_date(
+        date_breaks = "1 month",
+        date_labels = "%b",
+        limits = as.Date(c("2000-06-01", "2001-05-31"))
+      ) +
+      labs(
+        title = glue("Seasonal Line Plot for {plots_dir}_{y_var}{season}"),
+        x = "Month",
+        y = glue("Median {y_var}"),
+        color = "Season year"
+      ) +
+      facet_wrap(vars(measure), scales = "free_y") +
+      theme_bw() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+
+    # Save the plot
+    filename <- glue("{plots_dir}/{chart_type}_chart_{group_name}{season}_{y_var}.png")
+    ggsave(filename, plot = p, width = 20, height = 12, dpi = 400)
 }
 
 summarise_demographics_rate_zero <-function(df, demo_var) {

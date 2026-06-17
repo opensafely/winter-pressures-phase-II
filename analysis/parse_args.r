@@ -67,12 +67,12 @@ option_list <- list(
     action = "store_true",
     default = config$yearly, help = "Use yearly measures data"
   ),
-  make_option("--released", 
-    action = "store_true", 
+  make_option("--released",
+    action = "store_true",
     default = FALSE, help = "Use already released data"
   ),
-  make_option("--weekly_agg", 
-    action = "store_true", 
+  make_option("--weekly_agg",
+    action = "store_true",
     default = config$weekly_agg, help = "Generate weekly aggregates"
   ),
   make_option("--y_value",
@@ -93,50 +93,60 @@ for (key in names(args_list)) {
 
 # ----------------- Apply conditional logic to config -------------------
 
-# Configure dates (not needed in R)
+recompute_config <- function(config) {
+  # Configure dates (not needed in R)
 
-# Initialize dtype_dict with base (not used in R, but for consistency)
-config$dtype_dict <- config$base_dtype_dict
+  # Reset derived fields before recomputing them
+  config$group <- NULL
+  config$dtype_dict <- config$base_dtype_dict
+  config$appt_suffix <- ""
+  config$agg_suffix <- ""
+  config$test_suffix <- ""
 
-# Apply group-specific configuration
-group_selected <- FALSE
-for (group in c("demograph", "practice", "comorbid", "practice_subgroup")) {
-  group_flag <- paste0(group, "_measures")
-  if (config[[group_flag]]) {
-    config$group <- group
-    config$dtype_dict <- c(config$dtype_dict, config$groups[[group]]$dtype_dict)
-    group_selected <- TRUE
-    break  # Only one group can be selected
+  # Apply group-specific configuration
+  group_selected <- FALSE
+  for (group in c("demograph", "practice", "comorbid", "practice_subgroup")) {
+    group_flag <- paste0(group, "_measures")
+    if (config[[group_flag]]) {
+      config$group <- group
+      config$dtype_dict <- c(config$dtype_dict, config$groups[[group]]$dtype_dict)
+      group_selected <- TRUE
+      break  # Only one group can be selected
+    }
   }
-}
 
-if (config$appt) {
-  config$appt_suffix <- "_appt"
-} 
+  if (config$appt) {
+    config$appt_suffix <- "_appt"
+  }
 
-if (config$yearly) {
+  if (config$yearly) {
     config$agg_suffix <- "_yearly"
   }
-if (config$weekly_agg) {
+  if (config$weekly_agg) {
     config$agg_suffix <- "_weeklyagg"
   }
 
-if (config$test) {
-  config$test_suffix <- "_test"
-}
-
-config$deprioritized <- setdiff(names(config$sro_dict), config$prioritized)
-
-if (config$use_csv) {
-  config$file_type <- "csv"
-}
-
-if (!is.null(config$set)) {
-  if (config$set == "sro") {
-    config$pipeline_measures <- config$measures_list$sro
-  } else if (config$set == "resp") {
-    config$pipeline_measures <- config$measures_list$resp
-  } else if (config$set == "appts_table") {
-    config$pipeline_measures <- config$measures_list$appts_table
+  if (config$test) {
+    config$test_suffix <- "_test"
   }
+
+  config$deprioritized <- setdiff(names(config$sro_dict), config$prioritized)
+
+  if (config$use_csv) {
+    config$file_type <- "csv"
+  }
+
+  if (!is.null(config$set)) {
+    if (config$set == "sro") {
+      config$pipeline_measures <- config$measures_list$sro
+    } else if (config$set == "resp") {
+      config$pipeline_measures <- config$measures_list$resp
+    } else if (config$set == "appts_table") {
+      config$pipeline_measures <- config$measures_list$appts_table
+    }
+  }
+
+  config
 }
+
+config <- recompute_config(config)

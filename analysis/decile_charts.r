@@ -1,5 +1,7 @@
-# This script generates decile charts for practice measures.
-# USAGE: Rscript analysis/decile_charts.r
+# This script generates charts for visualising rates, RRs and RDs for practice measures.
+# USAGE: 
+# From codespaces: Rscript analysis/decile_charts.r --params
+# From positron: Source("analysis/decile_charts.r") using local params
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
 # --test uses test data
@@ -25,6 +27,30 @@ source("analysis/parse_args.r")
 print(if (config$test) "Using test data" else "Using full data")
 non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
 N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
+LOCAL <- FALSE # Set to true when working locally
+FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021, 2022
+
+
+if (LOCAL) {
+  print("Using local data - SET PARAMETERS HERE:")
+  config$dummy <- FALSE # Set to TRUE to use dummy data folder
+  config$rr_plot <- "dotplot"
+  config$rate_plot <- "seasonal lineplot"
+  config$test <- FALSE
+  config$released <- TRUE
+  config$set <- "resp"
+  config$y_value <- "RR_prev_summr"
+  config$practice_measures <- TRUE
+  config$practice_subgroup_measures <- FALSE
+  config$weekly_agg <- FALSE
+  config$yearly <- FALSE
+  config$appt <- FALSE
+
+  config <- recompute_config(config)
+}
+
+# Use dummy data if in development mode
+dummy_folder <- if (config$dummy) "practice_measures_resp_DUMMY/" else ""
 
 # ------------ Generate decile tables ----------------------------------------------------
 
@@ -151,10 +177,11 @@ if (config$released == FALSE){
   print("Reading in released decile tables...")
   
   metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
+  file_pattern <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/")
 
   # List all measure-specific files
   files <- list.files(
-    glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/"),
+    file_pattern,
     pattern = metric_file_suffix,
     full.names = TRUE
   )
@@ -163,6 +190,12 @@ if (config$released == FALSE){
   practice_deciles <- files %>%
     lapply(read_csv) %>%
     bind_rows()
+
+  if (config$y_value == "rate_per_1000_mp6"){
+    if ("rate_per_1000" %in% colnames(practice_deciles)) {
+      practice_deciles <- practice_deciles %>% rename(rate_per_1000_mp6 = rate_per_1000)
+    }
+  }
 }
 
 # ------------ Create decile charts -----------------------------------------------------------
@@ -223,38 +256,69 @@ if (config$appt) {
 }
 
 # Setup output directory
-plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/plots{config$test_suffix}")
+plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}plots{config$test_suffix}")
 if (!dir.exists(plots_dir)) {
   dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
+}
+
+# Reformat years into split year formate (e.g. 2016/17)
+practice_deciles <- practice_deciles %>%
+  mutate(
+    season_year_start = if_else(
+      month(interval_start) >= 6,
+      year(interval_start),
+      year(interval_start) - 1
+    ),
+    season_year = glue("{season_year_start}/{substr(season_year_start + 1, 3, 4)}"),
+    season_year = factor(season_year),
+    season_x = make_date(
+      year = if_else(month(interval_start) >= 6, 2000L, 2001L),
+      month = month(interval_start),
+      day = day(interval_start)
+    )
+  )
+
+# Filter out pandemic seasons
+if (FILTER_PANDEMIC){
+  practice_deciles <- practice_deciles %>% filter(!season_year %in% c("2019/20", "2020/21", "2021/22", "2022/23"))
 }
 
 # Filter out rows with NA season before plotting
 print(practice_deciles)
 
+# Remove NAs from season columns
+practice_deciles <- practice_deciles %>% filter(!is.na(season))
+
+# For dotplot, stratify by season WITHIN a single plot
+if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (config$rr_plot == "dotplot")) {
+  # Move season info to new column so that the original season column can be set to "all" so only 1 plot gets created
+  practice_deciles$season_strata <- practice_deciles$season
+  practice_deciles$season <- "all" 
+
+  # For rate_per_1000 decile chart, don't stratify by season
+} else if ((config$y_value == "rate_per_1000")) {
+    practice_deciles$season <- "all" 
+  }
 
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
 
-  # Loop over each season, filtering the decile table each time
-  if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
-    practice_deciles <- practice_deciles %>% filter(!is.na(season)) 
-  }
-  else{
-    # Add season column with "all" values for rate measures to avoid issues
-    practice_deciles$season <- "all" 
-  }
   for (season in unique(practice_deciles$season)) {
     print(glue("Creating plot for:{group_name} (Season: {season}) (Y-axis: {config$y_value})..."))
 
     # Filter measures and deciles for the current group and season
     measures_subset <- measure_groups[[group_name]]
     filtered_deciles <- practice_deciles %>% filter(season == !!season)
-
+    print(head(filtered_deciles))
     # Skip plotting if no measures in this group
     if (length(measures_subset) == 0) {
       print(paste("Skipping plot for", group_name, "(no measures)"))
       next
     }
-    create_and_save_decile_plot(filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
+      create_and_save_decile_plot(config$rr_plot, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    } else {
+      create_and_save_decile_plot(config$rate_plot, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    }
   }
 }

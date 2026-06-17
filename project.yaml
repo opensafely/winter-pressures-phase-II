@@ -1747,7 +1747,7 @@ actions:
     needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_appts_table/plots/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*rate_per_1000_mp6.csv
   # generate_decomposition_plots_appts_table_rate_per_1000_mp6:
   #   run: >
@@ -1764,7 +1764,7 @@ actions:
     needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table/plots/*RR_prev_summr.png
         deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_appts_table_RR_prev_summr:
   #   run: >
@@ -1781,7 +1781,7 @@ actions:
     needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table/plots/*RD_prev_summr.png
         deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_appts_table_RD_prev_summr:
   #   run: >
@@ -1798,7 +1798,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_appts_table_appt/plots/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_mp6.csv
   # generate_decomposition_plots_appts_table_appt_rate_per_1000_mp6:
   #   run: >
@@ -1815,7 +1815,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table_appt/plots/*RR_prev_summr.png
         deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_appts_table_appt_RR_prev_summr:
   #   run: >
@@ -1832,7 +1832,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table_appt/plots/*RD_prev_summr.png
         deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_appts_table_appt_RD_prev_summr:
   #   run: >
@@ -1849,7 +1849,7 @@ actions:
     needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_sro/plots/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*rate_per_1000_mp6.csv
   # generate_decomposition_plots_sro_rate_per_1000_mp6:
   #   run: >
@@ -1866,7 +1866,7 @@ actions:
     needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_sro/plots/*RR_prev_summr.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_sro_RR_prev_summr:
   #   run: >
@@ -1883,7 +1883,7 @@ actions:
     needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_sro/plots/*RD_prev_summr.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_sro_RD_prev_summr:
   #   run: >
@@ -1900,7 +1900,7 @@ actions:
     needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_sro_appt/plots/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*rate_per_1000_mp6.csv
   # generate_decomposition_plots_sro_appt_rate_per_1000_mp6:
   #   run: >
@@ -1917,7 +1917,7 @@ actions:
     needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_sro_appt/plots/*RR_prev_summr.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_sro_appt_RR_prev_summr:
   #   run: >
@@ -1934,7 +1934,7 @@ actions:
     needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_sro_appt/plots/*RD_prev_summr.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_sro_appt_RD_prev_summr:
   #   run: >
@@ -1951,7 +1951,7 @@ actions:
     needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_resp/plots/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*rate_per_1000_mp6.csv
   # generate_decomposition_plots_resp_rate_per_1000_mp6:
   #   run: >
@@ -1968,7 +1968,7 @@ actions:
     needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_resp/plots/*RR_prev_summr.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_resp_RR_prev_summr:
   #   run: >
@@ -1985,7 +1985,7 @@ actions:
     needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_resp/plots/*RD_prev_summr.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_resp_RD_prev_summr:
   #   run: >
@@ -2002,7 +2002,7 @@ actions:
     needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_resp_appt/plots/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*rate_per_1000_mp6.csv
   # generate_decomposition_plots_resp_appt_rate_per_1000_mp6:
   #   run: >
@@ -2019,7 +2019,7 @@ actions:
     needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_resp_appt/plots/*RR_prev_summr.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_resp_appt_RR_prev_summr:
   #   run: >
@@ -2036,7 +2036,7 @@ actions:
     needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_resp_appt/plots/*RD_prev_summr.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_resp_appt_RD_prev_summr:
   #   run: >
@@ -2053,7 +2053,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots_test/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_appts_table/plots_test/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*rate_per_1000_mp6_test.csv
   # generate_decomposition_plots_appts_table_rate_per_1000_mp6_test:
   #   run: >
@@ -2070,7 +2070,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots_test/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table/plots_test/*RR_prev_summr.png
         deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_RR_prev_summr_test:
   #   run: >
@@ -2087,7 +2087,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots_test/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table/plots_test/*RD_prev_summr.png
         deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_RD_prev_summr_test:
   #   run: >
@@ -2104,7 +2104,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots_test/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_appts_table_appt/plots_test/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_mp6_test.csv
   # generate_decomposition_plots_appts_table_appt_rate_per_1000_mp6_test:
   #   run: >
@@ -2121,7 +2121,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots_test/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table_appt/plots_test/*RR_prev_summr.png
         deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_appt_RR_prev_summr_test:
   #   run: >
@@ -2138,7 +2138,7 @@ actions:
     needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots_test/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_appts_table_appt/plots_test/*RD_prev_summr.png
         deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_appt_RD_prev_summr_test:
   #   run: >
@@ -2155,7 +2155,7 @@ actions:
     needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots_test/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_sro/plots_test/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*rate_per_1000_mp6_test.csv
   # generate_decomposition_plots_sro_rate_per_1000_mp6_test:
   #   run: >
@@ -2172,7 +2172,7 @@ actions:
     needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots_test/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_sro/plots_test/*RR_prev_summr.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_sro_RR_prev_summr_test:
   #   run: >
@@ -2189,7 +2189,7 @@ actions:
     needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro/plots_test/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_sro/plots_test/*RD_prev_summr.png
         deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_sro_RD_prev_summr_test:
   #   run: >
@@ -2206,7 +2206,7 @@ actions:
     needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots_test/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_sro_appt/plots_test/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*rate_per_1000_mp6_test.csv
   # generate_decomposition_plots_sro_appt_rate_per_1000_mp6_test:
   #   run: >
@@ -2223,7 +2223,7 @@ actions:
     needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots_test/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_sro_appt/plots_test/*RR_prev_summr.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_sro_appt_RR_prev_summr_test:
   #   run: >
@@ -2240,7 +2240,7 @@ actions:
     needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_sro_appt/plots_test/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_sro_appt/plots_test/*RD_prev_summr.png
         deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_sro_appt_RD_prev_summr_test:
   #   run: >
@@ -2257,7 +2257,7 @@ actions:
     needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots_test/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_resp/plots_test/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*rate_per_1000_mp6_test.csv
   # generate_decomposition_plots_resp_rate_per_1000_mp6_test:
   #   run: >
@@ -2274,7 +2274,7 @@ actions:
     needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots_test/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_resp/plots_test/*RR_prev_summr.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_resp_RR_prev_summr_test:
   #   run: >
@@ -2291,7 +2291,7 @@ actions:
     needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp/plots_test/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_resp/plots_test/*RD_prev_summr.png
         deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_resp_RD_prev_summr_test:
   #   run: >
@@ -2308,7 +2308,7 @@ actions:
     needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots_test/decile_chart_*rate_per_1000_mp6.png
+        deciles_charts: output/practice_measures_resp_appt/plots_test/*rate_per_1000_mp6.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*rate_per_1000_mp6_test.csv
   # generate_decomposition_plots_resp_appt_rate_per_1000_mp6_test:
   #   run: >
@@ -2325,7 +2325,7 @@ actions:
     needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots_test/decile_chart_*RR_prev_summr.png
+        deciles_charts: output/practice_measures_resp_appt/plots_test/*RR_prev_summr.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_resp_appt_RR_prev_summr_test:
   #   run: >
@@ -2342,7 +2342,7 @@ actions:
     needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_resp_appt/plots_test/decile_chart_*RD_prev_summr.png
+        deciles_charts: output/practice_measures_resp_appt/plots_test/*RD_prev_summr.png
         deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_resp_appt_RD_prev_summr_test:
   #   run: >
