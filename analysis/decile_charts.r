@@ -30,6 +30,7 @@ N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to pl
 LOCAL <- FALSE # Set to true when working locally
 FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021, 2022
 
+
 if (LOCAL) {
   print("Using local data - SET PARAMETERS HERE:")
   config$dummy <- FALSE # Set to TRUE to use dummy data folder
@@ -49,7 +50,7 @@ if (LOCAL) {
 }
 
 # Use dummy data if in development mode
-dummy_folder <- if (DUMMY) "practice_measures_resp_DUMMY/" else ""
+dummy_folder <- if (config$dummy) "practice_measures_resp_DUMMY/" else ""
 
 # ------------ Generate decile tables ----------------------------------------------------
 
