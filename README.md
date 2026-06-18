@@ -1,3 +1,20 @@
+# WRITEUP REPO
+
+This repo is a private copy of https://github.com/opensafely/winter-pressures-phase-II.
+
+Its purpose is a private location for writing the manuscript.
+
+It has 2 remotes:
+1.  origin (this repo)
+2.  upstream (pointed at original repo)
+
+To pull in changes from the original repo, use:
+```
+git fetch upstream
+git checkout main
+git merge upstream/main
+```
+
 # winter-pressures-phase-II
 
 ## Pipeline Overview
