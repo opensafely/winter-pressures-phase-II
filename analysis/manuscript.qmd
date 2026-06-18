@@ -175,12 +175,57 @@ Data management and analysis was performed using Python v3.8 and R v4.0.5. Code 
 
 # **Results**
 
+```{r}
+# ------------ Configuration -----------------------------------------------------------
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(glue)
+library(optparse)
+library(lubridate)
+library(arrow)
+source("analysis/utils.r")
+source("analysis/parse_args.r")
+
+# SET PARAMETERS HERE:
+config$dummy <- FALSE # Set to TRUE to use dummy data folder
+config$test <- FALSE
+config$released <- TRUE
+config$practice_measures <- TRUE
+config$practice_subgroup_measures <- FALSE
+config$weekly_agg <- FALSE
+config$yearly <- FALSE
+config$appt <- FALSE
+
+config <- recompute_config(config)
+
+# Use dummy data if developing locally
+dummy_folder <- if (config$dummy) "practice_measures_resp_DUMMY/" else ""
+```
+
 Outline
 
 - Appts decile charts (2)  
 - Respiratory decile charts (2)  
 - Pathology decile charts (2)  
-- Rate ratios of best measures (1)  
+- Rate ratios of best measures (1) 
+
+```{r}
+decile_table <- load_decile_table(config)
+result <- process_decile_tables(decile_table, config, n_deciles_plot = "all", filter_pandemic = TRUE, set = "resp", y_value = "RR_prev_summr", rr_plot = "dotplot")
+
+practice_deciles  <- result$decile_table
+measure_groups <- result$measure_groups
+plots_dir     <- result$plots_dir
+line_types    <- result$line_types
+line_colors   <- result$line_colors
+
+print(head(filtered_deciles))
+
+create_and_save_decile_plot("dotplot", filtered_deciles, group_name, measure_groups[["resp"]], plots_dir, "RR_prev_summr", season = "all")
+
+```
+
 - SDR results to different paper, not enough room  
 - Supplementary results  
   - Of appt-restricted vs unrestricted measures, add whichever set **wasn’t** used as best measures as supplementary decile charts.
