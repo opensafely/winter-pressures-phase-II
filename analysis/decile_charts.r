@@ -25,14 +25,10 @@ source("analysis/parse_args.r")
 
 # Message about test or full
 print(if (config$test) "Using test data" else "Using full data")
-non_appts_table_measures <- FALSE # Set to TRUE to process non-appts table measures (e.g. call_from_gp)
-N_DECILES_PLOT <- "all" # Options are "all" to plot all deciles or "light" to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
-LOCAL <- FALSE # Set to true when working locally
-FILTER_PANDEMIC <- TRUE # Set to true to filter out 2020, 2021, 2022
 
-
-if (LOCAL) {
-  print("Using local data - SET PARAMETERS HERE:")
+# If running locally in positron using source(), set CLI args manually
+if (interactive()) {
+  # SET PARAMETERS HERE:
   config$dummy <- FALSE # Set to TRUE to use dummy data folder
   config$rr_plot <- "dotplot"
   config$rate_plot <- "seasonal lineplot"
@@ -49,7 +45,7 @@ if (LOCAL) {
   config <- recompute_config(config)
 }
 
-# Use dummy data if in development mode
+# Use dummy data if developing locally
 dummy_folder <- if (config$dummy) "practice_measures_resp_DUMMY/" else ""
 
 # ------------ Generate decile tables ----------------------------------------------------
@@ -174,131 +170,19 @@ if (config$released == FALSE){
   
 } else if (config$released == TRUE) { # If data is already released, read in the decile tables instead of generating them from raw data
 
-  print("Reading in released decile tables...")
-  
-  metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
-  file_pattern <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/")
-
-  # List all measure-specific files
-  files <- list.files(
-    file_pattern,
-    pattern = metric_file_suffix,
-    full.names = TRUE
-  )
-
-  # Read and combine into one dataframe
-  practice_deciles <- files %>%
-    lapply(read_csv) %>%
-    bind_rows()
-
-  if (config$y_value == "rate_per_1000_mp6"){
-    if ("rate_per_1000" %in% colnames(practice_deciles)) {
-      practice_deciles <- practice_deciles %>% rename(rate_per_1000_mp6 = rate_per_1000)
-    }
-  }
+  decile_table <- load_decile_table(config)
 }
 
 # ------------ Create decile charts -----------------------------------------------------------
-print("Creating decile charts..."
-)
-# Define line types
-line_types <- c(
-  "d1" = "dotted", "d3" = "dashed",
-  "d5" = "solid", # Median (d5) is solid
-  "d7" = "dashed", "d9" = "dotted"
-)
+print("Creating decile charts...")
 
-# Define colors
-line_colors <- c(
-  "d1" = "black", "d3" = "black",
-  "d5" = "red", # d5 is red
-  "d7" = "black", "d9" = "black"
-)
+result <- process_decile_tables(decile_table, config, n_deciles_plot = "all", filter_pandemic = TRUE)
 
-# Add additional deciles for yearly data
-if (N_DECILES_PLOT == "all") {
-  line_types <- c(line_types, "d2" = "dashed", "d4" = "dashed", "d6" = "dashed", "d8" = "dashed")
-  line_colors <- c(line_colors, "d2" = "black", "d4" = "black", "d6" = "black", "d8" = "black")
-} 
-
-# Define your groups of measures dynamically
-print("Defining measure groups for plotting...")
-df_measures <- practice_deciles %>% select(measure) %>% distinct()
-measure_groups <- list()
-if ((config$set == "resp") | (config$set == "appts_table")) {
-
-  measure_groups[[config$set]] <- config$measures_list[[config$set]]
-  # Filter out config list of measures to get remaining measures
-  measure_groups[["other"]] <- setdiff(df_measures$measure, config$measures_list[[config$set]])
-
-  # Remove "other" group if empty
-  if (length(measure_groups[["other"]]) == 0) {
-    measure_groups[["other"]] <- NULL 
-  }
-
-} else if (config$set == "sro") {
-
-  sro_measures <- append(config$prioritized, "sro_prioritized")
-  sro_measures <- append(sro_measures, "sick_notes")
-  measure_groups <- list(
-    # Plot 1: De-prioritized measures
-    deprioritized = append(config$deprioritized, "sro_deprioritized"),
-    # Plot 2: Prioritized measures
-    prioritized = sro_measures
-  )
-} 
-
-# Update measure names if restricting to appts in interval
-if (config$appt) {
-  for (group_name in names(measure_groups)) {
-    measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
-  }
-}
-
-# Setup output directory
-plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}plots{config$test_suffix}")
-if (!dir.exists(plots_dir)) {
-  dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
-}
-
-# Reformat years into split year formate (e.g. 2016/17)
-practice_deciles <- practice_deciles %>%
-  mutate(
-    season_year_start = if_else(
-      month(interval_start) >= 6,
-      year(interval_start),
-      year(interval_start) - 1
-    ),
-    season_year = glue("{season_year_start}/{substr(season_year_start + 1, 3, 4)}"),
-    season_year = factor(season_year),
-    season_x = make_date(
-      year = if_else(month(interval_start) >= 6, 2000L, 2001L),
-      month = month(interval_start),
-      day = day(interval_start)
-    )
-  )
-
-# Filter out pandemic seasons
-if (FILTER_PANDEMIC){
-  practice_deciles <- practice_deciles %>% filter(!season_year %in% c("2019/20", "2020/21", "2021/22", "2022/23"))
-}
-
-# Filter out rows with NA season before plotting
-print(practice_deciles)
-
-# Remove NAs from season columns
-practice_deciles <- practice_deciles %>% filter(!is.na(season))
-
-# For dotplot, stratify by season WITHIN a single plot
-if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (config$rr_plot == "dotplot")) {
-  # Move season info to new column so that the original season column can be set to "all" so only 1 plot gets created
-  practice_deciles$season_strata <- practice_deciles$season
-  practice_deciles$season <- "all" 
-
-  # For rate_per_1000 decile chart, don't stratify by season
-} else if ((config$y_value == "rate_per_1000")) {
-    practice_deciles$season <- "all" 
-  }
+practice_deciles  <- result$decile_table
+measure_groups <- result$measure_groups
+plots_dir     <- result$plots_dir
+line_types    <- result$line_types
+line_colors   <- result$line_colors
 
 # Loop over the groups and create plots dynamically
 for (group_name in names(measure_groups)) {
