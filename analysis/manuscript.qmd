@@ -1,3 +1,12 @@
+---
+title: "Winter Pressures Manuscript"
+execute:
+  echo: false
+  warning: false
+  fig-width: 20
+  fig-height: 12
+---
+
 # **Research question. Study design.**
 
 Authors1, Authors2, Authors3, Authors1,\*
@@ -176,6 +185,8 @@ Data management and analysis was performed using Python v3.8 and R v4.0.5. Code 
 # **Results**
 
 ```{r}
+#| message: false
+#| output: false
 # ------------ Configuration -----------------------------------------------------------
 library(ggplot2)
 library(dplyr)
@@ -184,8 +195,8 @@ library(glue)
 library(optparse)
 library(lubridate)
 library(arrow)
-source("analysis/utils.r")
-source("analysis/parse_args.r")
+source(here::here("analysis/utils.r"))
+source(here::here("analysis/parse_args.r"))
 
 # SET PARAMETERS HERE:
 config$dummy <- FALSE # Set to TRUE to use dummy data folder
@@ -212,6 +223,8 @@ Outline
 - Rate ratios of best measures (1) 
 
 ```{r}
+#| message: false
+#| output: false
 config$y_value <- "RR_prev_summr"
 config$set <- "resp"
 config$rr_plot <- "dotplot"
@@ -226,9 +239,10 @@ plots_dir     <- result$plots_dir
 line_types    <- result$line_types
 line_colors   <- result$line_colors
 
-print(head(filtered_deciles))
+p <- create_and_save_decile_plot(config$rr_plot, practice_deciles, group_name, measure_groups[[group_name]], plots_dir, config$y_value, season = "all")
+```
 
-p <- create_and_save_decile_plot(config$rr_plot, filtered_deciles, group_name, measure_groups[[group_name]], plots_dir, config$y_value, season = "all")
+```{r}
 print(p)
 ```
 
