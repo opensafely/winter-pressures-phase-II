@@ -4,7 +4,8 @@
       "*": "allow"
     },
     "edit": {
-      "*.r": "allow"
+      "*.r": "allow",
+      "*.qmd": "allow"
     }
   }
 }

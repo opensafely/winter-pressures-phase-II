@@ -540,7 +540,7 @@ load_decile_table <- function(config) {
   print("Reading in released decile tables...")
   
   metric_file_suffix <- glue("_{config$y_value}{config$test_suffix}\\.csv$")
-  file_pattern <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/")
+  file_pattern <- here::here(glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}decile_tables/"))
 
   # List all measure-specific files
   files <- list.files(
@@ -626,7 +626,7 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   }
 
   # Setup output directory
-  plots_dir <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}plots{config$test_suffix}")
+  plots_dir <- here::here(glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{dummy_folder}plots{config$test_suffix}"))
   if (!dir.exists(plots_dir)) {
     dir.create(plots_dir, recursive = TRUE, showWarnings = FALSE)
   }
