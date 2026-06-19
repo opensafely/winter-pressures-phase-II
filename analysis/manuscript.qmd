@@ -196,6 +196,7 @@ config$practice_subgroup_measures <- FALSE
 config$weekly_agg <- FALSE
 config$yearly <- FALSE
 config$appt <- FALSE
+config$rate_plot <- "seasonal lineplot"
 
 config <- recompute_config(config)
 
@@ -211,8 +212,13 @@ Outline
 - Rate ratios of best measures (1) 
 
 ```{r}
+config$y_value <- "RR_prev_summr"
+config$set <- "resp"
+config$rr_plot <- "dotplot"
+group_name <- "resp" # or "other"
+
 decile_table <- load_decile_table(config)
-result <- process_decile_tables(decile_table, config, n_deciles_plot = "all", filter_pandemic = TRUE, set = "resp", y_value = "RR_prev_summr", rr_plot = "dotplot")
+result <- process_decile_tables(decile_table, config, n_deciles_plot = "all", filter_pandemic = TRUE)
 
 practice_deciles  <- result$decile_table
 measure_groups <- result$measure_groups
@@ -222,8 +228,8 @@ line_colors   <- result$line_colors
 
 print(head(filtered_deciles))
 
-create_and_save_decile_plot("dotplot", filtered_deciles, group_name, measure_groups[["resp"]], plots_dir, "RR_prev_summr", season = "all")
-
+p <- create_and_save_decile_plot(config$rr_plot, filtered_deciles, group_name, measure_groups[[group_name]], plots_dir, config$y_value, season = "all")
+print(p)
 ```
 
 - SDR results to different paper, not enough room  

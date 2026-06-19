@@ -225,6 +225,8 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
     # Save the plot
     filename <- glue("{plots_dir}/{chart_type}_chart_{group_name}{season}_{y_var}.png")
     ggsave(filename, plot = p, width = 20, height = 12, dpi = 400)
+
+    invisible(p)
 }
 
 summarise_demographics_rate_zero <-function(df, demo_var) {
@@ -553,24 +555,21 @@ load_decile_table <- function(config) {
     bind_rows()
 
   # Add the mp6 suffix to the rate column if its missing from the table
-  if ("rate_per_1000" %in% colnames(practice_deciles)) {
+  if (config$y_value == "rate_per_1000_mp6"){
+    if ("rate_per_1000" %in% colnames(practice_deciles)) {
       practice_deciles <- practice_deciles %>% rename(rate_per_1000_mp6 = rate_per_1000)
     }
+  }
 
   return(practice_deciles)
 }
 
-process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_pandemic, set, y_value = None, rr_plot = None, rate_plot = None) {
+process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_pandemic) {
   "Process decile table ready for visualisation
   Args: 
     config: Configuration list containing settings for the analysis, defined at runtime
     n_deciles_plot: Options are 'all' to plot all deciles or 'light' to plot only key deciles (d1, d3, d5, d7, d9) for clearer visuals
-    filter_pandemic: Set to true to filter out 2020, 2021, 2022
-    set: The set of measures being analyzed
-    y_value: The y-axis variable for plotting
-    rr_plot: The type of plot for RR values
-    rate_plot: The type of plot for rate values
-    "
+    filter_pandemic: Set to true to filter out 2020, 2021, 2022"
 
   # Define line types
   line_types <- c(
@@ -596,11 +595,11 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   print("Defining measure groups for plotting...")
   df_measures <- decile_table %>% select(measure) %>% distinct()
   measure_groups <- list()
-  if ((set == "resp") | (set == "appts_table")) {
+  if ((config$set == "resp") | (config$set == "appts_table")) {
 
-    measure_groups[[set]] <- config$measures_list[[set]]
+    measure_groups[[config$set]] <- config$measures_list[[config$set]]
     # Filter out config list of measures to get remaining measures
-    measure_groups[["other"]] <- setdiff(df_measures$measure, config$measures_list[[set]])
+    measure_groups[["other"]] <- setdiff(df_measures$measure, config$measures_list[[config$set]])
 
     # Remove "other" group if empty
     if (length(measure_groups[["other"]]) == 0) {
@@ -661,13 +660,13 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   decile_table <- decile_table %>% filter(!is.na(season))
 
   # For dotplot, stratify by season WITHIN a single plot
-  if ((y_value == "RR_prev_summr" | y_value == "RD_prev_summr") & (rr_plot == "dotplot")) {
+  if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (config$rr_plot == "dotplot")) {
     # Move season info to new column so that the original season column can be set to "all" so only 1 plot gets created
     decile_table$season_strata <- decile_table$season
     decile_table$season <- "all" 
 
     # For rate_per_1000 decile chart, don't stratify by season
-  } else if ((y_value == "rate_per_1000")) {
+  } else if ((config$y_value == "rate_per_1000")) {
       decile_table$season <- "all" 
     }
   
