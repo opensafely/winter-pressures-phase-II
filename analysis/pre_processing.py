@@ -36,6 +36,7 @@ core_columns = [
     "interval_start",
     "numerator",
     "list_size",
+    "wdays_in_interval",
 ]
 
 # -------- Patient measures processing ----------------------------------
@@ -316,12 +317,15 @@ for subgroup in config["subgroups"]:
         measures_dict[subgroup]["interval_start"].dt.year,
     )
 
+    #  Normalize by bank holidays
+    measures_dict[subgroup] = count_working_days(measures_dict[subgroup])
+
     # Calculate rate per 1000
-    measures_dict[subgroup]["Rate_per_1000"] = (
+    measures_dict[subgroup]["Rate_per_1000_per_wday"] = (
         measures_dict[subgroup]["numerator"]
         / measures_dict[subgroup]["list_size"]
         * 1000
-    )
+    ) / measures_dict[subgroup]["wdays_in_interval"]
 
     # Define pandemic dates
     if config["test"]:
@@ -365,5 +369,15 @@ for subgroup in config["subgroups"]:
         df=measures_dict[subgroup],
         file_type="arrow",
     )
+
+    # Create a readable test csv file
+    if config['test']:
+        read_write(
+            read_or_write="write",
+            path=output_path_subgroup,
+            df=measures_dict[subgroup],
+            file_type="csv",
+        )
+        
     del measures_dict[subgroup]  # Delete dataframe to save memory
     log_memory_usage(label=f"After saving and deleting {subgroup} dataframe")
