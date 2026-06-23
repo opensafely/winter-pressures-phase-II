@@ -48,11 +48,12 @@ log_memory_usage(label="After loading data")
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
 
 # Remove interval containing xmas shutdown
-date_col = practice_interval_df["interval_start"]
-exclude_mask = ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26)) | (
-    date_col >= pd.Timestamp(MEASURES_END_DATE)
-)
-practice_interval_df = practice_interval_df.loc[~exclude_mask]
+# date_col = practice_interval_df["interval_start"]
+# exclude_mask = ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26)) | (
+#     date_col >= pd.Timestamp(MEASURES_END_DATE)
+# )
+# practice_interval_df = practice_interval_df.loc[~exclude_mask]
+
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
 # Only keep intervals inside the periods of interest
@@ -118,7 +119,7 @@ for seasonal_group in seasonal_groups:
     seasonal_group["interval_season_df"] = build_aggregate_df(
         seasonal_group["practice_interval_df"],
         ["measure", "interval_start", "pandemic"],
-        {"Rate_per_1000": ["var"]},
+        {"Rate_per_1000_per_wday": ["var"]},
     )
 
     # Identify season for each week
@@ -130,15 +131,15 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_btwn_df"] = build_aggregate_df(
         seasonal_group["interval_season_df"],
         ["measure", "season", "pandemic"],
-        {"Rate_per_1000_var": ["median", "mean", "count"]},
+        {"Rate_per_1000_per_wday_var": ["median", "mean", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_btwn_df"].rename(
         columns={
-            "Rate_per_1000_var_median": "var_rate_btwn_prac_season_median",
-            "Rate_per_1000_var_mean": "var_rate_btwn_prac_season_mean",
-            "Rate_per_1000_var_count": "var_rate_btwn_prac_season_n_weeks",
+            "Rate_per_1000_per_wday_var_median": "var_rate_btwn_prac_season_median",
+            "Rate_per_1000_per_wday_var_mean": "var_rate_btwn_prac_season_mean",
+            "Rate_per_1000_per_wday_var_count": "var_rate_btwn_prac_season_n_weeks",
         },
         inplace=True,
     )
@@ -148,7 +149,7 @@ for seasonal_group in seasonal_groups:
     seasonal_group["practice_season_numerator_df"] = build_aggregate_df(
         seasonal_group["practice_interval_df"],
         ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
-        {"numerator": ["sum"], "Rate_per_1000": ["var"]},
+        {"numerator": ["sum"], "Rate_per_1000_per_wday": ["var"], "wdays_in_interval": ["sum"]},
     )
 
     # Filter denominator table to season
@@ -202,15 +203,15 @@ for seasonal_group in seasonal_groups:
     seasonal_group["season_var_w/in_df"] = build_aggregate_df(
         seasonal_group["practice_season_df"],
         ["measure", "season", "pandemic"],
-        {"Rate_per_1000_var": ["median", "mean", "count"]},
+        {"Rate_per_1000_per_wday_var": ["median", "mean", "count"]},
     )
 
     # Rename columns for clarity
     seasonal_group["season_var_w/in_df"].rename(
         columns={
-            "Rate_per_1000_var_median": "var_rate_w/in_prac_season_median",
-            "Rate_per_1000_var_mean": "var_rate_w/in_prac_season_mean",
-            "Rate_per_1000_var_count": "var_rate_w/in_prac_season_n_practice-years",
+            "Rate_per_1000_per_wday_var_median": "var_rate_w/in_prac_season_median",
+            "Rate_per_1000_per_wday_var_mean": "var_rate_w/in_prac_season_mean",
+            "Rate_per_1000_per_wday_var_count": "var_rate_w/in_prac_season_n_practice-years",
         },
         inplace=True,
     )
@@ -285,6 +286,7 @@ for seasonal_group in seasonal_groups:
             "numerator_sum": ["sum"],
             "list_size_initial": ["sum"],
             "list_size_count": ["sum"],
+            "wdays_in_interval_sum": ["max"],
         },
     )
 
@@ -325,6 +327,7 @@ non_summer["season_df"] = roundmid_any(
 combined_seasons_df = calculate_rate_ratios(
     summer["season_df"], non_summer["season_df"], practice_level=False, mp6_input=True
 )
+
 rename_map = {
     "numerator_sum_sum_mp6": "num_sum_mp6",
     "list_size_initial_sum_mp6": "list_size_initial_mp6",
@@ -334,9 +337,9 @@ rename_map = {
     "numerator_sum_sum_mp6_first_summr": "num_first_summer_mp6",
     "list_size_initial_sum_mp6_first_summr": "list_first_summer_mp6",
     "list_size_count_sum_mp6_first_summr": "n_practices_first_summer_mp6",
-    "Rate_per_1000_mp6": "rate_/1000_mp6",
-    "Rate_per_1000_prev_summr_mp6": "rate_/1000_prev_summer_mp6",
-    "Rate_per_1000_first_summr_mp6": "rate_/1000_first_summer_mp6",
+    "Rate_per_1000_per_wday_mp6": "rate_/1000_mp6",
+    "Rate_per_1000_per_wday_prev_summr_mp6": "rate_/1000_prev_summer_mp6",
+    "Rate_per_1000_per_wday_first_summr_mp6": "rate_/1000_first_summer_mp6",
 }
 
 # Format output table
@@ -432,8 +435,8 @@ for yearly_df, baseline in zip(yearly_unweighted_results, ["first", "prev"]):
     yearly_df = roundmid_any(
         yearly_df,
         [
-            "Rate_per_1000_median",
-            f"Rate_per_1000_{baseline}_summr_median",
+            "Rate_per_1000_per_wday_median",
+            f"Rate_per_1000_per_wday_{baseline}_summr_median",
             f"n_practice_{baseline}_summer",
         ],
         to=6,
@@ -468,8 +471,8 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
     pandemic_df = roundmid_any(
         pandemic_df,
         [
-            "Rate_per_1000_median",
-            f"Rate_per_1000_{baseline}_summr_median",
+            "Rate_per_1000_per_wday_median",
+            f"Rate_per_1000_per_wday_{baseline}_summr_median",
             f"n_practice-years_{baseline}_summer",
         ],
         to=6,
