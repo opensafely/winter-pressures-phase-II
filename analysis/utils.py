@@ -797,7 +797,7 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
 
 def count_working_days(df, config=config):
 
-    bank_holidays = pd.read_json("https://www.gov.uk/bank-holidays.json")
+    bank_holidays = pd.read_json("analysis/bank_holidays.json")
     
     # Convert to DataFrame and extract dates
     bank_holidays = bank_holidays["england-and-wales"]["events"]
