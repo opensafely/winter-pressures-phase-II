@@ -140,5 +140,6 @@
   },
   "rr_plot": "dotplot",
   "rate_plot": "seasonal lineplot",
-  "dummy": false
+  "dummy": false,
+  "normalize_holidays": true
 }

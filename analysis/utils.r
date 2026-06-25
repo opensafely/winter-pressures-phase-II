@@ -143,7 +143,7 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
     # Set y_intercept line for clearer interpretation
 
     p <- ggplot(
-      filter(deciles_df, measure %in% measures_subset) |>
+      filter(deciles_df, measure %in% measures_subset) %>%
         # Label x axis with year of season
         mutate(
           x_label = glue(
@@ -165,7 +165,7 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
         linetype = "dashed",
         colour = "grey40") +
       geom_point(
-        data = \(d) d |> dplyr::filter(decile != "d5"),
+        data = function(d) d %>% dplyr::filter(decile != "d5"),
         aes(fill = season_strata),
         shape = 21,
         size = 2.2,
@@ -175,7 +175,7 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
         position = position_identity()
       ) +
       geom_point(
-        data = \(d) d |> dplyr::filter(decile == "d5"),
+        data = function(d) d %>% dplyr::filter(decile == "d5"),
         aes(fill = season_strata),
         shape = 21,
         size = 3,
@@ -248,7 +248,7 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
       numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
       list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
     ) %>%
-    mutate(rate_per_1000_mp6 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+    mutate(rate_per_1000_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval) %>%
     ungroup()
 
   # Export measure-demo_var table
@@ -555,9 +555,10 @@ load_decile_table <- function(config) {
     bind_rows()
 
   # Add the mp6 suffix to the rate column if its missing from the table
+  # Only used for old decile tables released before the mp6 suffix was added to the rate column
   if (config$y_value == "rate_per_1000_mp6"){
-    if ("rate_per_1000" %in% colnames(practice_deciles)) {
-      practice_deciles <- practice_deciles %>% rename(rate_per_1000_mp6 = rate_per_1000)
+    if ("rate_per_1000_wday" %in% colnames(practice_deciles)) {
+      practice_deciles <- practice_deciles %>% rename(rate_per_1000_wday_mp6 = rate_per_1000_wday)
     }
   }
 
@@ -656,17 +657,22 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   # Filter out rows with NA season before plotting
   print(decile_table)
 
-  # Remove NAs from season columns
-  decile_table <- decile_table %>% filter(!is.na(season))
+  # Remove NAs from season when the column is present
+  if ("season" %in% colnames(decile_table)) {
+    decile_table <- decile_table %>% filter(!is.na(season))
+  } else {
+    # Rate-based decile tables may not carry season; use a single plotting stratum
+    decile_table$season <- "all"
+  }
 
   # For dotplot, stratify by season WITHIN a single plot
-  if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (config$rr_plot == "dotplot")) {
+  if ((config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") & (config$rr_plot == "dotplot") & ("season" %in% colnames(decile_table))) {
     # Move season info to new column so that the original season column can be set to "all" so only 1 plot gets created
     decile_table$season_strata <- decile_table$season
     decile_table$season <- "all" 
 
     # For rate_per_1000 decile chart, don't stratify by season
-  } else if ((config$y_value == "rate_per_1000")) {
+  } else if (grepl("^rate_per_1000_wday", config$y_value)) {
       decile_table$season <- "all" 
     }
   

@@ -636,9 +636,10 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         df,
         group_cols,
         {
-            "Rate_per_1000": ["median"],
-            "Rate_per_1000_prev_summr": ["median"],
-            "Rate_per_1000_first_summr": ["median"],
+            "Rate_per_1000_per_wday": ["median"],
+            "Rate_per_1000_per_wday_prev_summr": ["median"],
+            "Rate_per_1000_per_wday_first_summr": ["median"],
+            "wdays_in_interval_sum": ["max"],
             "list_size_count": ["sum"],
             "list_size_count_first_summr": ["sum"],
             "list_size_count_prev_summr": ["sum"],
@@ -681,7 +682,8 @@ def aggregate_unweighted_rr_results(practice_level_df, group_cols):
         "season",
         "pandemic",
         "summer_year",
-        "Rate_per_1000_median",
+        "Rate_per_1000_per_wday_median",
+        "wdays_in_interval_sum_max",
     ]
     results_df_first_summer = results_df[
         [
@@ -742,9 +744,11 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     if practice_level == True:
         numerator_col = f"numerator_sum{mp6_suffix}"
         denominator_col = f"list_size_initial{mp6_suffix}"
+        wdays_col = f"wdays_in_interval_sum"
     else:
         numerator_col = f"numerator_sum_sum{mp6_suffix}"
         denominator_col = f"list_size_initial_sum{mp6_suffix}"
+        wdays_col = f"wdays_in_interval_sum_max"
 
     # Set the count column based on whether the practice data has been aggregated
     count_col = f"list_size_count{mp6_suffix}" if practice_level else f"list_size_count_sum{mp6_suffix}"
@@ -755,25 +759,28 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     if practice_level:
         merge_keys.append("practice_pseudo_id")
 
-    required_cols = merge_keys + ["season", numerator_col, denominator_col, count_col]
+    required_cols = merge_keys + ["season", numerator_col, denominator_col, count_col, wdays_col]
     non_summer_rr = non_summer_df[required_cols].copy()
     summer_rr = summer_df[required_cols].copy()
 
     rr_df = merge_seasons(summer_rr, non_summer_rr, practice_level=practice_level)
 
     # Calculate rate ratios
-    rate_per_1000_col = f"Rate_per_1000{mp6_suffix}"
-    rr_df[rate_per_1000_col] = (rr_df[numerator_col] / rr_df[denominator_col]) * 1000
+    rate_per_1000_col = f"Rate_per_1000_per_wday{mp6_suffix}"
+    rr_df[rate_per_1000_col] = ((rr_df[numerator_col] / rr_df[denominator_col]) * 1000) / rr_df[wdays_col]
+
     baselines = ["_prev_summr", "_first_summr"]
 
     for baseline in baselines:
-        baseline_rate_col = f"Rate_per_1000{baseline}{mp6_suffix}"
+        # Calculate baseline rate per 1000 per wday, rate ratio (RR), and rate difference (RD) for each baseline
+        baseline_rate_col = f"Rate_per_1000_per_wday{baseline}{mp6_suffix}"
         rr_col = f"RR{baseline}{mp6_suffix}"
         rd_col = f"RD{baseline}{mp6_suffix}"
 
-        rr_df[baseline_rate_col] = (
+        # Calculate baseline rate per 1000 per wday for the summer baseline
+        rr_df[baseline_rate_col] = ((
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
-        ) * 1000
+        ) * 1000) / rr_df[f"{wdays_col}{baseline}"]
 
         # Offset-based RR avoids NaNs for true 0/0 cases while limiting
         # memory overhead by reusing preallocated arrays.
@@ -789,3 +796,38 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     # temporarily removed filter_pandemic_mismatches to see if it is necessary
     # rr_df = filter_pandemic_mismatches(rr_df)
     return rr_df
+
+def count_working_days(df, config=config):
+
+    bank_holidays = pd.read_json("analysis/bank_holidays.json")
+    
+    # Convert to DataFrame and extract dates
+    bank_holidays = bank_holidays["england-and-wales"]["events"]
+    bank_holidays_df = pd.DataFrame(bank_holidays)
+    bank_holidays_df["date"] = pd.to_datetime(bank_holidays_df["date"])
+
+    df["interval_start"] = pd.to_datetime(df["interval_start"])
+    df["interval_end"] = df["interval_start"] + pd.Timedelta(days=6)
+
+    # Sort bank holidays in ascending order
+    holiday_dates = np.sort(bank_holidays_df["date"].to_numpy(dtype="datetime64[D]"))
+    interval_starts = df["interval_start"].to_numpy(dtype="datetime64[D]")
+    interval_ends = df["interval_end"].to_numpy(dtype="datetime64[D]")
+
+    # Find the position of the earliest bank holiday that is after interval start
+    left_idx = np.searchsorted(holiday_dates, interval_starts, side="left")
+    # Find the position of the earliest bank holiday that is after interval end
+    right_idx = np.searchsorted(holiday_dates, interval_ends, side="right")
+    # The difference between their positions gives the number of bank holidays that occur in the interval
+    holiday_counts = right_idx - left_idx
+
+    if config["normalize_holidays"]:
+        df["wdays_in_interval"] = 7 - holiday_counts
+    else:
+        # Set 7 day intervals if not normalizing
+        df["wdays_in_interval"] = 7
+    df.drop(columns=["interval_end"], inplace=True)
+
+    return(df)
+
+    

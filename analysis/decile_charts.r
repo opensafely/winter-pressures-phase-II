@@ -9,7 +9,7 @@
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
 # --weekly_agg aggregates weekly intervals to yearly
-# --y_value choose RR_prev_summr/RD_prev_summr/rate_per_1000 charts
+# --y_value choose RR_prev_summr/RD_prev_summr/rate_per_1000_wday charts
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -83,7 +83,7 @@ if (config$released == FALSE){
     }
     
     # Calculate rate per 1000
-    practice_measures <- mutate(practice_measures, rate_per_1000_mp6 = (numerator_midpoint6 / list_size_midpoint6) * 1000)
+    practice_measures <- mutate(practice_measures, rate_per_1000_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval)
     practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
 
@@ -96,12 +96,12 @@ if (config$released == FALSE){
 
       # Aggregate measures-age groups to measure level
       practice_measures <- practice_measures %>%
-        group_by(practice_pseudo_id, measure, interval_start) %>%
+        group_by(practice_pseudo_id, measure, interval_start, wdays_in_interval) %>%
         summarise(
           numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
           list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE)
         ) %>%
-        mutate(rate_per_1000_mp6 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+        mutate(rate_per_1000_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval) %>%
         ungroup()
 
       # Remove "_age" suffix from measure names to match group definitions
@@ -170,13 +170,13 @@ if (config$released == FALSE){
   
 } else if (config$released == TRUE) { # If data is already released, read in the decile tables instead of generating them from raw data
 
-  decile_table <- load_decile_table(config)
+  practice_deciles <- load_decile_table(config)
 }
 
 # ------------ Create decile charts -----------------------------------------------------------
 print("Creating decile charts...")
 
-result <- process_decile_tables(decile_table, config, n_deciles_plot = "all", filter_pandemic = TRUE)
+result <- process_decile_tables(practice_deciles, config, n_deciles_plot = "all", filter_pandemic = TRUE)
 
 practice_deciles  <- result$decile_table
 measure_groups <- result$measure_groups
