@@ -248,7 +248,7 @@ summarise_demographics_rate_zero <-function(df, demo_var) {
       numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
       list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE),
     ) %>%
-    mutate(rate_per_1000_per_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval) %>%
+    mutate(rate_per_1000_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval) %>%
     ungroup()
 
   # Export measure-demo_var table
@@ -555,6 +555,7 @@ load_decile_table <- function(config) {
     bind_rows()
 
   # Add the mp6 suffix to the rate column if its missing from the table
+  # Only used for old decile tables released before the mp6 suffix was added to the rate column
   if (config$y_value == "rate_per_1000_mp6"){
     if ("rate_per_1000_wday" %in% colnames(practice_deciles)) {
       practice_deciles <- practice_deciles %>% rename(rate_per_1000_wday_mp6 = rate_per_1000_wday)

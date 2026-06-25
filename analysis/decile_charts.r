@@ -96,7 +96,7 @@ if (config$released == FALSE){
 
       # Aggregate measures-age groups to measure level
       practice_measures <- practice_measures %>%
-        group_by(practice_pseudo_id, measure, interval_start) %>%
+        group_by(practice_pseudo_id, measure, interval_start, wdays_in_interval) %>%
         summarise(
           numerator_midpoint6 = sum(numerator_midpoint6, na.rm = TRUE),
           list_size_midpoint6 = sum(list_size_midpoint6, na.rm = TRUE)
