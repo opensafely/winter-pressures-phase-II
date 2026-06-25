@@ -284,7 +284,7 @@ yaml_viz_template = """
 
 suffixes = ["", "_test"]
 test_flags = ["", "--test"]
-y_vals = ["rate_per_1000_mp6", "RR_prev_summr", "RD_prev_summr"] 
+y_vals = ["rate_per_1000_wday_mp6", "RR_prev_summr", "RD_prev_summr"] 
 for test_suffix, test_flag in zip(suffixes, test_flags):
     for set in measure_sets:
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):

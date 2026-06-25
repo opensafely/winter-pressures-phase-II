@@ -9,7 +9,7 @@
 # --released uses already released data
 # --appt restricts measures to those with an appointment in interval
 # --weekly_agg aggregates weekly intervals to yearly
-# --y_value choose RR_prev_summr/RD_prev_summr/rate_per_1000_wday charts
+# --y_value choose RR_prev_summr/RD_prev_summr/rate_per_1000_wday_mp6 charts
 
 # ------------ Configuration -----------------------------------------------------------
 
@@ -75,7 +75,6 @@ if (config$released == FALSE){
     practice_measures <- practice_measures %>%
       mutate(numerator_midpoint6 = roundmid_any(numerator), list_size_midpoint6 = roundmid_any(list_size))
 
-    config$y_value <- paste0(config$y_value, "_mp6") # Add midpoint suffix to Y_VALUE for plotting
     if (config$test) {
         # Generate simulated rate data (since dummy data contains too many 0's to graph)
         practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
