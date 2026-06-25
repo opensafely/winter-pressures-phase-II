@@ -598,9 +598,17 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   measure_groups <- list()
   if ((config$set == "resp") | (config$set == "appts_table")) {
 
-    measure_groups[[config$set]] <- config$measures_list[[config$set]]
+    configured_measures <- config$measures_list[[config$set]]
+    if (config$appt) {
+      configured_measures <- ifelse(
+        grepl("^appt_", configured_measures),
+        configured_measures,
+        paste0("appt_", configured_measures)
+      )
+    }
+    measure_groups[[config$set]] <- configured_measures
     # Filter out config list of measures to get remaining measures
-    measure_groups[["other"]] <- setdiff(df_measures$measure, config$measures_list[[config$set]])
+    measure_groups[["other"]] <- setdiff(df_measures$measure, configured_measures)
 
     # Remove "other" group if empty
     if (length(measure_groups[["other"]]) == 0) {
@@ -622,7 +630,11 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   # Update measure names if restricting to appts in interval
   if (config$appt) {
     for (group_name in names(measure_groups)) {
-      measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
+      measure_groups[[group_name]] <- ifelse(
+        grepl("^appt_", measure_groups[[group_name]]),
+        measure_groups[[group_name]],
+        paste0("appt_", measure_groups[[group_name]])
+      )
     }
   }
 
