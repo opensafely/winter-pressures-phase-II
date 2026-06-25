@@ -772,13 +772,15 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
     baselines = ["_prev_summr", "_first_summr"]
 
     for baseline in baselines:
+        # Calculate baseline rate per 1000 per wday, rate ratio (RR), and rate difference (RD) for each baseline
         baseline_rate_col = f"Rate_per_1000_per_wday{baseline}{mp6_suffix}"
         rr_col = f"RR{baseline}{mp6_suffix}"
         rd_col = f"RD{baseline}{mp6_suffix}"
 
-        rr_df[baseline_rate_col] = (
+        # Calculate baseline rate per 1000 per wday for the summer baseline
+        rr_df[baseline_rate_col] = ((
             rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
-        ) * 1000
+        ) * 1000) / rr_df[f"{wdays_col}{baseline}"]
 
         # Offset-based RR avoids NaNs for true 0/0 cases while limiting
         # memory overhead by reusing preallocated arrays.
