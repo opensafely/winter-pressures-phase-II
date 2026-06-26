@@ -158,10 +158,10 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
           sep = " / ",
           lex.order = TRUE
         ),
-        y = log10(!!sym(y_var))
+        y = !!sym(y_var)
       )
     ) +
-      geom_hline(yintercept = 0,
+      geom_hline(yintercept = ifelse(config$y_value == "RR_prev_summr", 1, 0),
         linetype = "dashed",
         colour = "grey40") +
       geom_point(
@@ -184,15 +184,20 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
         position = position_identity()
       ) +
       scale_fill_manual(values = scale_seasons) +
+    
       labs(
         title = glue("Decile dotplot for {plots_dir}_{y_var}{season}"),
         x = x_var,
-        y = glue("Log10({y_var})"),
+        y = y_var,
         fill = "Season strata"
       ) +
       facet_wrap(vars(measure), scales = "free_y") +
       theme_bw(base_size = 15) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+    if (config$y_value == "RR_prev_summr"){
+      p <- p + scale_y_continuous(trans = "log10")
+    }
   }
   else if (chart_type == "seasonal lineplot") {
 
@@ -598,9 +603,17 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   measure_groups <- list()
   if ((config$set == "resp") | (config$set == "appts_table")) {
 
-    measure_groups[[config$set]] <- config$measures_list[[config$set]]
+    configured_measures <- config$measures_list[[config$set]]
+    if (config$appt) {
+      configured_measures <- ifelse(
+        grepl("^appt_", configured_measures),
+        configured_measures,
+        paste0("appt_", configured_measures)
+      )
+    }
+    measure_groups[[config$set]] <- configured_measures
     # Filter out config list of measures to get remaining measures
-    measure_groups[["other"]] <- setdiff(df_measures$measure, config$measures_list[[config$set]])
+    measure_groups[["other"]] <- setdiff(df_measures$measure, configured_measures)
 
     # Remove "other" group if empty
     if (length(measure_groups[["other"]]) == 0) {
@@ -622,7 +635,11 @@ process_decile_tables <- function(decile_table, config, n_deciles_plot, filter_p
   # Update measure names if restricting to appts in interval
   if (config$appt) {
     for (group_name in names(measure_groups)) {
-      measure_groups[[group_name]] <- paste0("appt_", measure_groups[[group_name]])
+      measure_groups[[group_name]] <- ifelse(
+        grepl("^appt_", measure_groups[[group_name]]),
+        measure_groups[[group_name]],
+        paste0("appt_", measure_groups[[group_name]])
+      )
     }
   }
 
