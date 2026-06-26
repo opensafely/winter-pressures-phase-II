@@ -158,10 +158,10 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
           sep = " / ",
           lex.order = TRUE
         ),
-        y = log10(!!sym(y_var))
+        y = !!sym(y_var)
       )
     ) +
-      geom_hline(yintercept = 0,
+      geom_hline(yintercept = ifelse(config$y_value == "RR_prev_summr", 1, 0),
         linetype = "dashed",
         colour = "grey40") +
       geom_point(
@@ -184,15 +184,20 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
         position = position_identity()
       ) +
       scale_fill_manual(values = scale_seasons) +
+    
       labs(
         title = glue("Decile dotplot for {plots_dir}_{y_var}{season}"),
         x = x_var,
-        y = glue("Log10({y_var})"),
+        y = y_var,
         fill = "Season strata"
       ) +
       facet_wrap(vars(measure), scales = "free_y") +
       theme_bw(base_size = 15) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+    if (config$y_value == "RR_prev_summr"){
+      p <- p + scale_y_continuous(trans = "log10")
+    }
   }
   else if (chart_type == "seasonal lineplot") {
 
