@@ -337,9 +337,9 @@ rename_map = {
     "numerator_sum_sum_mp6_first_summr": "num_first_summer_mp6",
     "list_size_initial_sum_mp6_first_summr": "list_first_summer_mp6",
     "list_size_count_sum_mp6_first_summr": "n_practices_first_summer_mp6",
-    "Rate_per_1000_per_wday_mp6": "rate_/1000_mp6",
-    "Rate_per_1000_per_wday_prev_summr_mp6": "rate_/1000_prev_summer_mp6",
-    "Rate_per_1000_per_wday_first_summr_mp6": "rate_/1000_first_summer_mp6",
+    "Rate_per_1000_per_wday_mp6": "rate_/1000_wday_mp6",
+    "Rate_per_1000_per_wday_prev_summr_mp6": "rate_/1000_wday_prev_summer_mp6",
+    "Rate_per_1000_per_wday_first_summr_mp6": "rate_/1000_wday_first_summer_mp6",
 }
 
 # Format output table
@@ -466,13 +466,10 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
     pandemic_df = pandemic_df.rename(columns=rename_map)
     pandemic_df = pandemic_df.round(4)
 
-    # Apply SDC rounding to rates rather than counts
-    # because rounding sparse counts leads to biased results
+    # No longer rounding rates as we lose crucial detail, and median rates are not disclosive
     pandemic_df = roundmid_any(
         pandemic_df,
         [
-            "Rate_per_1000_per_wday_median",
-            f"Rate_per_1000_per_wday_{baseline}_summr_median",
             f"n_practice-years_{baseline}_summer",
         ],
         to=6,
