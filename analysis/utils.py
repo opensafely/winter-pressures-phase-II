@@ -789,8 +789,12 @@ def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
         rr_values += offset
         baseline_values = rr_df[baseline_rate_col].to_numpy(copy=True)
         baseline_values += offset
+
+        # Calculate rate ratios
         np.divide(rr_values, baseline_values, out=rr_values)
         rr_df[rr_col] = rr_values
+
+        # Calculate rate differences
         rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
 
     # temporarily removed filter_pandemic_mismatches to see if it is necessary
