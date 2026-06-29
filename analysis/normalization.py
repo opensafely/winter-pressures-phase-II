@@ -24,6 +24,9 @@ import os
 
 # -------- Load data ----------------------------------
 
+# create log for list of wdays_in_interval counts for error identification
+wdays_log = []
+
 # Generate dates
 dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
@@ -37,6 +40,8 @@ print(
     f"1. Total numerator = {practice_interval_df['numerator'].sum()}, \nTotal denominator = {practice_interval_df['list_size'].sum()}, \nTotal practices = {practice_interval_df['practice_pseudo_id'].nunique()}"
 )
 log_memory_usage(label="After loading data")
+
+wdays_log.append(f"1 - {practice_interval_df['wdays_in_interval'].max()}")
 
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
 
@@ -59,7 +64,8 @@ print(
     f"2. Total numerator after filtering = {practice_interval_df['numerator'].sum()}, \nTotal denominator after filtering = {practice_interval_df['list_size'].sum()}, \nTotal practices after filtering = {practice_interval_df['practice_pseudo_id'].nunique()}"
 )
 
-#
+wdays_log.append(f"2 - {practice_interval_df['wdays_in_interval'].max()}")
+
 practice_interval_denominator_df = practice_interval_df.sort_values(
     ["practice_pseudo_id", "interval_start", "measure"]
 ).drop_duplicates(subset=["practice_pseudo_id", "interval_start"], keep="first")[
@@ -75,6 +81,8 @@ practice_interval_denominator_df = practice_interval_df.sort_values(
 
 # Exctract list of measures
 measure_names_df = practice_interval_df[["measure"]].drop_duplicates()
+
+wdays_log.append(f"3 - {practice_interval_df['wdays_in_interval'].max()}")
 
 # ----------------------- Seasonality analysis ----------------------------------
 
@@ -137,6 +145,7 @@ for seasonal_group in seasonal_groups:
         ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
         {"numerator": ["sum"], "Rate_per_1000_per_wday": ["var"], "wdays_in_interval": ["sum"]},
     )
+    wdays_log.append(f"3A/B - {seasonal_group['practice_season_numerator_df']['wdays_in_interval_sum'].max()}")
 
     # Filter denominator table to season
     if seasonal_group["is_summer"]:
@@ -275,6 +284,8 @@ for seasonal_group in seasonal_groups:
             "wdays_in_interval_sum": ["max"],
         },
     )
+    wdays_log.append(f"6A/B - {seasonal_group['season_df']['wdays_in_interval_sum_max'].max()}")
+
 
     print(
         f"9. Total numerator for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['numerator_sum_sum'].sum()}, \nTotal denominator for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['list_size_initial_sum'].sum()}, \nTotal practices for {seasonal_group['season_df']['season'].iloc[0]} after season-level aggregation = {seasonal_group['season_df']['list_size_count_sum'].sum()}"
@@ -290,6 +301,7 @@ long_df = long_df.rename(
         "list_size_count": "n_practices",
     }
 )
+
 # Practice level counts used in stat_test.r
 read_write(
     read_or_write="write",
@@ -466,6 +478,7 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
 
 log_memory_usage(label="After saving pandemic unweighted RRs")
 print("Rate Ratios Saved")
+print(wdays_log)
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats
