@@ -39,6 +39,11 @@ core_columns = [
     "wdays_in_interval",
 ]
 
+if not config["test"]:
+    MEASURES_END_DATE = "2025-06-01"  # Exclude intervals after June 2025 as the set of comparisons are not yet complete
+else:
+    MEASURES_END_DATE = "2026-06-01"  # For test data, push back end of measures to allow for simulated data
+
 # -------- Patient measures processing ----------------------------------
 
 # Instantiate list of yearly dataframes for each subgroup
@@ -82,6 +87,7 @@ for date in dates:
             count without nan list_size: {df[(df['list_size'].notna())].shape}""",
         flush=True,
     )
+    
 
     # Drop rows with 0 list_size or nan list_size
     df = df[(df["list_size"] > 0) & (df["list_size"].notna())]
@@ -345,6 +351,11 @@ for subgroup in config["subgroups"]:
     log_memory_usage(
         label=f"Final memory usage"
     )  # test is 10 times higher for practice_subgroups
+
+    # Remove intervals past end date
+    measures_dict[subgroup] = measures_dict[subgroup][
+        measures_dict[subgroup]["interval_start"] < pd.to_datetime(MEASURES_END_DATE)
+    ]
 
     # Save processed file
     if config["practice_subgroup_measures"]:
