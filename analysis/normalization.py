@@ -22,13 +22,6 @@ from itertools import combinations
 from scipy.stats import pearsonr, spearmanr
 import os
 
-# ------- CONFIGURATION ----------------------------------
-
-if not config["test"]:
-    MEASURES_END_DATE = "2025-06-01"  # Exclude intervals after June 2025 as the set of comparisons are not yet complete
-else:
-    MEASURES_END_DATE = "2026-06-01"  # For test data, push back end of measures to allow for simulated data
-
 # -------- Load data ----------------------------------
 
 # Generate dates
@@ -46,13 +39,6 @@ print(
 log_memory_usage(label="After loading data")
 
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
-
-# Remove interval containing xmas shutdown
-# date_col = practice_interval_df["interval_start"]
-# exclude_mask = ((date_col.dt.month == 12) & date_col.dt.day.between(19, 26)) | (
-#     date_col >= pd.Timestamp(MEASURES_END_DATE)
-# )
-# practice_interval_df = practice_interval_df.loc[~exclude_mask]
 
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
 
@@ -430,13 +416,10 @@ for yearly_df, baseline in zip(yearly_unweighted_results, ["first", "prev"]):
     # Save unweighted RRs per year
     yearly_df = yearly_df.rename(columns=rename_map)
     
-    # Apply SDC rounding to rates rather than counts
-    # because rounding sparse counts leads to biased results
+    # Avoid rounding rates as we lose crucial detail, and median rates are not disclosive
     yearly_df = roundmid_any(
         yearly_df,
         [
-            "Rate_per_1000_per_wday_median",
-            f"Rate_per_1000_per_wday_{baseline}_summr_median",
             f"n_practice_{baseline}_summer",
         ],
         to=6,

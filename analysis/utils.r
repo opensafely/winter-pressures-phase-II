@@ -152,12 +152,7 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
         ),
       aes(
         # Creates each combination of season and year
-        x = interaction(
-          factor(x_label),
-          factor(season_strata),
-          sep = " / ",
-          lex.order = TRUE
-        ),
+        x = interval_start,
         y = !!sym(y_var)
       )
     ) +
