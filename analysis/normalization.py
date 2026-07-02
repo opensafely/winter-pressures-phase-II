@@ -22,16 +22,51 @@ from itertools import combinations
 from scipy.stats import pearsonr, spearmanr
 import os
 
-def query_season(df):
-
-    queried_season_df = df[
+def tshoot_wdays(df):
+    "Function that produces summaries of wdays to identify cause of inflated wday counts upon aggregation"
+    
+    # Example specific season, year, measure, and practice combination
+    example_season_df = df[
         (df["season"] == "Nov-Dec") &
         (df["summer_year"] == 2023) &
         (df["measure"] == "overall_resp_sensitive") &
         (df["practice_pseudo_id"] == np.random.choice(df["practice_pseudo_id"].unique()))
     ]
 
-    return (queried_season_df, f"LENGTH = {queried_season_df.shape[0]}", f"SUM WDAYS = {queried_season_df['wdays_in_interval'].sum()}")
+    # Example of a practice with inflated wdays_in_interval counts
+    filtered_df = df[df["measure"] == "overall_resp_sensitive"]
+    agg_practice_seasons_df = build_aggregate_df(
+        filtered_df,
+        ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        {"numerator": ["sum"], "list_size": ["sum"], "wdays_in_interval": ["sum"]},
+    )
+
+    # Merge aggregate with original to show the wday sum for each interval
+    merged_df = agg_practice_seasons_df.merge(
+        filtered_df,
+        on=["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        how="left",
+    )
+
+    # Identify practice-season combinations with inflated wdays_in_interval counts
+    inflated_practice_seasons_df = merged_df[
+        merged_df["wdays_in_interval_sum"] > 100
+    ]
+
+    # If any of the dfs exceed 5000 rows, only extract the first 5000 rows
+    if len(example_season_df) > 5000:
+        example_season_df = example_season_df.head(5000)
+    if len(agg_practice_seasons_df) > 5000:
+        agg_practice_seasons_df = agg_practice_seasons_df.head(5000)
+    if len(inflated_practice_seasons_df) > 5000:
+        inflated_practice_seasons_df = inflated_practice_seasons_df.head(5000)
+
+    # Annonymize counts
+    example_season_df = roundmid_any(example_season_df, ['numerator','list_size'], to=6)
+    agg_practice_seasons_df = roundmid_any(agg_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
+    inflated_practice_seasons_df = roundmid_any(inflated_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
+
+    return (example_season_df, agg_practice_seasons_df, inflated_practice_seasons_df)
 
 # -------- Load data ----------------------------------
 
@@ -57,7 +92,26 @@ wdays_log.append(f"1 - {practice_interval_df['wdays_in_interval'].max()}")
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
 
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
-wdays_df_log.append(f"1 - {query_season(practice_interval_df)}")
+
+example_season_df, agg_practice_seasons_df, inflated_practice_seasons_df = tshoot_wdays(practice_interval_df)
+read_write(
+    read_or_write="write",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_inflated_practice_seasons_df",
+    df=inflated_practice_seasons_df,
+    file_type="csv",
+)
+read_write(
+    read_or_write="write",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_example_season_df",
+    df=example_season_df,
+    file_type="csv",
+)
+read_write(
+    read_or_write="write",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_agg_practice_seasons_df",
+    df=agg_practice_seasons_df,
+    file_type="csv",
+)
 
 # Only keep intervals inside the periods of interest
 practice_interval_df = practice_interval_df.loc[
@@ -77,7 +131,6 @@ print(
 )
 
 wdays_log.append(f"2 - {practice_interval_df['wdays_in_interval'].max()}")
-wdays_df_log.append(f"2 - {query_season(practice_interval_df)}")
 
 practice_interval_denominator_df = practice_interval_df.sort_values(
     ["practice_pseudo_id", "interval_start", "measure"]
@@ -96,7 +149,6 @@ practice_interval_denominator_df = practice_interval_df.sort_values(
 measure_names_df = practice_interval_df[["measure"]].drop_duplicates()
 
 wdays_log.append(f"3 - {practice_interval_df['wdays_in_interval'].max()}")
-wdays_df_log.append(f"3 - {query_season(practice_interval_df)}")
 
 # ----------------------- Seasonality analysis ----------------------------------
 
@@ -154,8 +206,7 @@ for seasonal_group in seasonal_groups:
 
     ## VARIANCE WITHIN PRACTICES
     # Aggregate counts per practice-season, and calculate variance within practices across weeks
-    
-    wdays_df_log.append(f"3A/B - {query_season(seasonal_group['practice_interval_df'])}")
+
 
     seasonal_group["practice_season_numerator_df"] = build_aggregate_df(
         seasonal_group["practice_interval_df"],
@@ -496,8 +547,7 @@ for pandemic_df, baseline in zip(pandemic_unweighted_results, ["first", "prev"])
 log_memory_usage(label="After saving pandemic unweighted RRs")
 print("Rate Ratios Saved")
 print(wdays_log)
-for log_entry in wdays_df_log:
-    print(log_entry)
+
 # # --------------- Describing long-term trend --------------------------------------------
 
 # from scipy import stats
