@@ -3118,6 +3118,21 @@ actions:
     outputs:
       moderately_sensitive:
         national_weekly_aggregates: output/practice_measures_resp/national_weekly*.csv
+
+  # Troubleshoot duplicate rows in the raw measure outputs.
+  check_raw_measure_duplicates:
+    run: python:v2 analysis/check_raw_measure_duplicates.py --path output/practice_measures_resp/practice_measures_2023-04-03.arrow
+    needs: [generate_practice_measures_resp_2023-04-03]
+    outputs:
+      moderately_sensitive:
+        duplicate_summary: output/practice_measures_resp/duplicate_summary.csv
+  # Troubleshoot duplicate rows in the raw measure outputs.
+  check_raw_measure_duplicates_test:
+    run: python:v2 analysis/check_raw_measure_duplicates.py --path output/practice_measures_resp/practice_measures_2023-05-08_test.csv
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        duplicate_summary: output/practice_measures_resp/duplicate_summary_test.csv
  
  # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------
   # Weekly aggregates
