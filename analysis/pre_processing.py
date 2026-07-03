@@ -80,9 +80,17 @@ log_memory_usage(label="Before loading data")
 for date in dates:
 
     print(f"Loading {config['group']} measures {date}", flush=True)
+    
     input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/{config['group']}_measures_{date}"
     output_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"  # Read in measures
+    print(config["dtype_dict"])
+    config["dtype_dict"]["practice_pseudo_id"] = "int16"
     df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
+    log_duplicate_intervals(df, f"{date} rawest input with int16")
+
+    config["dtype_dict"]["practice_pseudo_id"] = "int64"
+    df = read_write(read_or_write="read", path=input_path, dtype=config["dtype_dict"])
+    log_duplicate_intervals(df, f"{date} rawest input with int64")
 
     # Count total rsv_specific cases in 2023 for sense check
     if config["set"] == "resp":
