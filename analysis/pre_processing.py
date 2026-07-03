@@ -44,6 +44,29 @@ if not config["test"]:
 else:
     MEASURES_END_DATE = "2026-06-01"  # For test data, push back end of measures to allow for simulated data
 
+
+def log_duplicate_intervals(df, stage, keys=None, max_rows=5):
+    if keys is None:
+        keys = ["practice_pseudo_id", "measure", "interval_start"]
+
+    duplicate_mask = df.duplicated(subset=keys, keep=False)
+    duplicate_groups = (
+        df.loc[duplicate_mask]
+        .groupby(keys, observed=True)
+        .size()
+        .reset_index(name="n_rows")
+        .query("n_rows > 1")
+        .sort_values("n_rows", ascending=False)
+    )
+
+    print(
+        f"{stage}: rows={len(df)}, unique_keys={df.drop_duplicates(subset=keys).shape[0]}, duplicate_rows={int(duplicate_mask.sum())}, duplicate_groups={len(duplicate_groups)}",
+        flush=True,
+    )
+
+    if not duplicate_groups.empty:
+        print(duplicate_groups.head(max_rows).to_string(index=False), flush=True)
+
 # -------- Patient measures processing ----------------------------------
 
 # Instantiate list of yearly dataframes for each subgroup
@@ -87,6 +110,7 @@ for date in dates:
             count without nan list_size: {df[(df['list_size'].notna())].shape}""",
         flush=True,
     )
+    log_duplicate_intervals(df, f"{date} raw input")
     
 
     # Drop rows with 0 list_size or nan list_size
@@ -95,6 +119,7 @@ for date in dates:
         f"After dropping rows with 0 list_size or nan list_size shape: {df.shape}",
         flush=True,
     )
+    log_duplicate_intervals(df, f"{date} after list_size filter")
 
     # Count total rsv_specific cases in 2023 for sense check
     if config["set"] == "resp":
@@ -147,6 +172,7 @@ for subgroup in config["subgroups"]:
     measures_dict[subgroup] = pd.concat(measures_dict[subgroup])
 
     print(f"Data types of input: {measures_dict[subgroup].dtypes}", flush=True)
+    log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after concat")
     log_memory_usage(label=f"After deletion of dataframes")
     # Count total rsv_specific cases in 2023 for sense check
     if config["set"] == "resp":
@@ -269,6 +295,7 @@ for subgroup in config["subgroups"]:
     measures_dict[subgroup] = measures_dict[subgroup][
         measures_dict[subgroup]["interval_start"] > "2016-05-31"
     ]
+    log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after pre-2016 filter")
 
     # Remove practices with < 750 list size
     if config["practice_measures"]:
@@ -283,6 +310,7 @@ for subgroup in config["subgroups"]:
             f"Number of practices after filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
             flush=True,
         )
+        log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after list_size > 750 filter")
 
     # Count total rsv_specific cases in 2023 for sense check
     if config["set"] == "resp":
@@ -325,6 +353,7 @@ for subgroup in config["subgroups"]:
 
     #  Normalize by bank holidays
     measures_dict[subgroup] = count_working_days(measures_dict[subgroup])
+    log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after working-day normalization")
 
     # Calculate rate per 1000
     measures_dict[subgroup]["Rate_per_1000_per_wday"] = (
@@ -356,6 +385,7 @@ for subgroup in config["subgroups"]:
     measures_dict[subgroup] = measures_dict[subgroup][
         measures_dict[subgroup]["interval_start"] < pd.to_datetime(MEASURES_END_DATE)
     ]
+    log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after end-date filter")
 
     # Save processed file
     if config["practice_subgroup_measures"]:
