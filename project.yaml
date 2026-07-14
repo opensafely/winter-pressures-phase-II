@@ -1743,12 +1743,12 @@ actions:
  # --------------- VISUALIZATION ACTIONS ------------------------------------------
   generate_deciles_charts_appts_table_rate_per_1000_wday_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_value rate_per_1000_wday_mp6
-    needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table, generate_pre_processing_practice_subgroup_appts_table] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots/*rate_per_1000_wday_mp6.png
-        deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
   # generate_decomposition_plots_appts_table_rate_per_1000_wday_mp6:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --y_val rate_per_1000_wday_mp6
@@ -1760,12 +1760,12 @@ actions:
 
   generate_deciles_charts_appts_table_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_value RR_prev_summr
-    needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table, generate_pre_processing_practice_subgroup_appts_table] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots/*RR_prev_summr.png
-        deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RR_prev_summr.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_appts_table_RR_prev_summr:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --y_val RR_prev_summr
@@ -1777,12 +1777,12 @@ actions:
 
   generate_deciles_charts_appts_table_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --y_value RD_prev_summr
-    needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table, generate_pre_processing_practice_subgroup_appts_table] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots/*RD_prev_summr.png
-        deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RD_prev_summr.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_appts_table_RD_prev_summr:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --y_val RD_prev_summr
@@ -1794,12 +1794,12 @@ actions:
 
   generate_deciles_charts_appts_table_appt_rate_per_1000_wday_mp6:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_value rate_per_1000_wday_mp6
-    needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table_appt, generate_pre_processing_practice_subgroup_appts_table_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots/*rate_per_1000_wday_mp6.png
-        deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
   # generate_decomposition_plots_appts_table_appt_rate_per_1000_wday_mp6:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --appt --y_val rate_per_1000_wday_mp6
@@ -1811,12 +1811,12 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RR_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_value RR_prev_summr
-    needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt, generate_pre_processing_practice_subgroup_appts_table_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots/*RR_prev_summr.png
-        deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr.csv
   # generate_decomposition_plots_appts_table_appt_RR_prev_summr:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --appt --y_val RR_prev_summr
@@ -1828,12 +1828,12 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RD_prev_summr:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures  --set appts_table --appt --y_value RD_prev_summr
-    needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt, generate_pre_processing_practice_subgroup_appts_table_appt] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots/*RD_prev_summr.png
-        deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr.csv
   # generate_decomposition_plots_appts_table_appt_RD_prev_summr:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --appt --y_val RD_prev_summr
@@ -2049,12 +2049,12 @@ actions:
 
   generate_deciles_charts_appts_table_rate_per_1000_wday_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_value rate_per_1000_wday_mp6
-    needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table_test, generate_pre_processing_practice_subgroup_appts_table_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots_test/*rate_per_1000_wday_mp6.png
-        deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
   # generate_decomposition_plots_appts_table_rate_per_1000_wday_mp6_test:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --y_val rate_per_1000_wday_mp6
@@ -2066,12 +2066,12 @@ actions:
 
   generate_deciles_charts_appts_table_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_value RR_prev_summr
-    needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_test, generate_pre_processing_practice_subgroup_appts_table_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots_test/*RR_prev_summr.png
-        deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RR_prev_summr_test.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_RR_prev_summr_test:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --y_val RR_prev_summr
@@ -2083,12 +2083,12 @@ actions:
 
   generate_deciles_charts_appts_table_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --y_value RD_prev_summr
-    needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_test, generate_pre_processing_practice_subgroup_appts_table_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table/plots_test/*RD_prev_summr.png
-        deciles_table: output/practice_measures_appts_table/decile_tables/decile_table_*RD_prev_summr_test.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_RD_prev_summr_test:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --y_val RD_prev_summr
@@ -2100,12 +2100,12 @@ actions:
 
   generate_deciles_charts_appts_table_appt_rate_per_1000_wday_mp6_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_value rate_per_1000_wday_mp6
-    needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table_appt_test, generate_pre_processing_practice_subgroup_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots_test/*rate_per_1000_wday_mp6.png
-        deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
   # generate_decomposition_plots_appts_table_appt_rate_per_1000_wday_mp6_test:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --appt --y_val rate_per_1000_wday_mp6
@@ -2117,12 +2117,12 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RR_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_value RR_prev_summr
-    needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt_test, generate_pre_processing_practice_subgroup_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots_test/*RR_prev_summr.png
-        deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_appt_RR_prev_summr_test:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --appt --y_val RR_prev_summr
@@ -2134,12 +2134,12 @@ actions:
 
   generate_deciles_charts_appts_table_appt_RD_prev_summr_test:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures --test --set appts_table --appt --y_value RD_prev_summr
-    needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test] 
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt_test, generate_pre_processing_practice_subgroup_appts_table_appt_test] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/practice_measures_appts_table_appt/plots_test/*RD_prev_summr.png
-        deciles_table: output/practice_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
   # generate_decomposition_plots_appts_table_appt_RD_prev_summr_test:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --appt --y_val RD_prev_summr

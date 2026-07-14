@@ -834,4 +834,50 @@ def count_working_days(df, config=config):
 
     return(df)
 
+def tshoot_wdays(df):
+    "Function that produces summaries of wdays to identify cause of inflated wday counts upon aggregation"
+    
+    # Example specific season, year, measure, and practice combination
+    example_season_df = df[
+        (df["season"] == "Nov-Dec") &
+        (df["summer_year"] == 2023) &
+        (df["measure"] == "overall_resp_sensitive") &
+        (df["practice_pseudo_id"] == np.random.choice(df["practice_pseudo_id"].unique()))
+    ]
+
+    # Example of a practice with inflated wdays_in_interval counts
+    filtered_df = df[df["measure"] == "overall_resp_sensitive"]
+    agg_practice_seasons_df = build_aggregate_df(
+        filtered_df,
+        ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        {"numerator": ["sum"], "list_size": ["sum"], "wdays_in_interval": ["sum"]},
+    )
+
+    # Merge aggregate with original to show the wday sum for each interval
+    merged_df = agg_practice_seasons_df.merge(
+        filtered_df,
+        on=["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        how="left",
+    )
+
+    # Identify practice-season combinations with inflated wdays_in_interval counts
+    inflated_practice_seasons_df = merged_df[
+        merged_df["wdays_in_interval_sum"] > 100
+    ]
+
+    # If any of the dfs exceed 5000 rows, only extract the first 5000 rows
+    if len(example_season_df) > 5000:
+        example_season_df = example_season_df.head(5000)
+    if len(agg_practice_seasons_df) > 5000:
+        agg_practice_seasons_df = agg_practice_seasons_df.head(5000)
+    if len(inflated_practice_seasons_df) > 5000:
+        inflated_practice_seasons_df = inflated_practice_seasons_df.head(5000)
+
+    # Annonymize counts
+    example_season_df = roundmid_any(example_season_df, ['numerator','list_size'], to=6)
+    agg_practice_seasons_df = roundmid_any(agg_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
+    inflated_practice_seasons_df = roundmid_any(inflated_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
+
+    return (example_season_df, agg_practice_seasons_df, inflated_practice_seasons_df)
+
     

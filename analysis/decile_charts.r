@@ -1,6 +1,6 @@
 # This script generates charts for visualising rates, RRs and RDs for practice measures.
 # USAGE: 
-# From codespaces: Rscript analysis/decile_charts.r --params
+# From codespaces: Rscript analysis/decile_charts.r --y_value [y_value] --practice_measures --practice_subgroup_measures --test --set [set]
 # From positron: Source("analysis/decile_charts.r") using local params
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
@@ -52,7 +52,6 @@ dummy_folder <- if (config$dummy) "practice_measures_resp_DUMMY/" else ""
 
 if (config$released == FALSE){
 
-  # RR PROCESSING
   if (config$y_value == "RR_prev_summr" | config$y_value == "RD_prev_summr") {
 
     print("Processing rate ratios...")
@@ -68,9 +67,10 @@ if (config$released == FALSE){
   # RATES PROCESSING
   else {
     print("Processing rates...")
+
     input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/proc_{config$group}_measures")
     practice_measures <- read_write("read", input_path)
-
+    print(head(practice_measures))
     # Round rates
     practice_measures <- practice_measures %>%
       mutate(numerator_midpoint6 = roundmid_any(numerator), list_size_midpoint6 = roundmid_any(list_size))
