@@ -22,52 +22,6 @@ from itertools import combinations
 from scipy.stats import pearsonr, spearmanr
 import os
 
-def tshoot_wdays(df):
-    "Function that produces summaries of wdays to identify cause of inflated wday counts upon aggregation"
-    
-    # Example specific season, year, measure, and practice combination
-    example_season_df = df[
-        (df["season"] == "Nov-Dec") &
-        (df["summer_year"] == 2023) &
-        (df["measure"] == "overall_resp_sensitive") &
-        (df["practice_pseudo_id"] == np.random.choice(df["practice_pseudo_id"].unique()))
-    ]
-
-    # Example of a practice with inflated wdays_in_interval counts
-    filtered_df = df[df["measure"] == "overall_resp_sensitive"]
-    agg_practice_seasons_df = build_aggregate_df(
-        filtered_df,
-        ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
-        {"numerator": ["sum"], "list_size": ["sum"], "wdays_in_interval": ["sum"]},
-    )
-
-    # Merge aggregate with original to show the wday sum for each interval
-    merged_df = agg_practice_seasons_df.merge(
-        filtered_df,
-        on=["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
-        how="left",
-    )
-
-    # Identify practice-season combinations with inflated wdays_in_interval counts
-    inflated_practice_seasons_df = merged_df[
-        merged_df["wdays_in_interval_sum"] > 100
-    ]
-
-    # If any of the dfs exceed 5000 rows, only extract the first 5000 rows
-    if len(example_season_df) > 5000:
-        example_season_df = example_season_df.head(5000)
-    if len(agg_practice_seasons_df) > 5000:
-        agg_practice_seasons_df = agg_practice_seasons_df.head(5000)
-    if len(inflated_practice_seasons_df) > 5000:
-        inflated_practice_seasons_df = inflated_practice_seasons_df.head(5000)
-
-    # Annonymize counts
-    example_season_df = roundmid_any(example_season_df, ['numerator','list_size'], to=6)
-    agg_practice_seasons_df = roundmid_any(agg_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
-    inflated_practice_seasons_df = roundmid_any(inflated_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
-
-    return (example_season_df, agg_practice_seasons_df, inflated_practice_seasons_df)
-
 # -------- Load data ----------------------------------
 
 # create log for list of wdays_in_interval counts for error identification
@@ -79,8 +33,9 @@ dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
 log_memory_usage(label="Before loading data")
-
 input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"
+
+
 practice_interval_df = read_write("read", input_path)
 print(
     f"1. Total numerator = {practice_interval_df['numerator'].sum()}, \nTotal denominator = {practice_interval_df['list_size'].sum()}, \nTotal practices = {practice_interval_df['practice_pseudo_id'].nunique()}"
@@ -92,26 +47,6 @@ wdays_log.append(f"1 - {practice_interval_df['wdays_in_interval'].max()}")
 # -------- Filter out unrepresentative intervals for calculating RRs ----------------------------------
 
 practice_interval_df["season"] = practice_interval_df["month"].apply(get_season)
-
-example_season_df, agg_practice_seasons_df, inflated_practice_seasons_df = tshoot_wdays(practice_interval_df)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_inflated_practice_seasons_df",
-    df=inflated_practice_seasons_df,
-    file_type="csv",
-)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_example_season_df",
-    df=example_season_df,
-    file_type="csv",
-)
-read_write(
-    read_or_write="write",
-    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/Results_agg_practice_seasons_df",
-    df=agg_practice_seasons_df,
-    file_type="csv",
-)
 
 # Only keep intervals inside the periods of interest
 practice_interval_df = practice_interval_df.loc[
