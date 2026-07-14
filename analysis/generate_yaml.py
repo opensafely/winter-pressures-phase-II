@@ -238,12 +238,12 @@ yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------
 yaml_viz_template = """
   generate_deciles_charts_{set}{appt_suffix}_{y_val}{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --practice_measures {test_flag} --set {set}{appt_flag} --y_value {y_val}
-    needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}] 
+      r:v2 analysis/decile_charts.r --practice{subgroup}_measures {test_flag} --set {set}{appt_flag} --y_value {y_val}
+    needs: [generate_normalization_{group}{subgroup}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}{subgroup}_{set}{appt_suffix}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/*{y_val}.png
-        deciles_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*{y_val}{test_suffix}.csv
+        deciles_charts: output/{group}{subgroup}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/*{y_val}.png
+        deciles_table: output/{group}{subgroup}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*{y_val}{test_suffix}.csv
   # generate_decomposition_plots_{set}{appt_suffix}_{y_val}{test_suffix}:
   #   run: >
   #     r:v2 analysis/decomposition.r --practice_measures {test_flag} --set {set}{appt_flag} --y_val {y_val}
@@ -289,6 +289,11 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
     for set in measure_sets:
         for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
             for y_val in y_vals: # decomposition actually doesn't use y_val but included for simplicty of looping
+              if set == "appts_table":
+                subgroup = "_subgroup"
+              else:
+                subgroup = ""
+              
               yaml_viz += yaml_viz_template.format(
                   test_suffix=test_suffix,
                   test_flag=test_flag,
@@ -298,6 +303,7 @@ for test_suffix, test_flag in zip(suffixes, test_flags):
                   group="practice",
                   agg_suffix="",
                   y_val=y_val,
+                  subgroup=subgroup,
               )
 
 yaml_sense_check = " \n # --------------- SENSE CHECK ACTIONS ------------------------------------------"

@@ -40,7 +40,8 @@ if config['group'] == "practice_subgroup":
     subgroup_dfs = {}
     # Load all the csvs into seperate dataframes
     for subgroup in config["subgroups"]:
-
+        print("Loading data for subgroup:", subgroup)
+        
         subgroup_dfs[subgroup] = read_write(
             read_or_write="read",
             path=input_path + f"_{subgroup}",
@@ -76,6 +77,9 @@ if config['group'] == "practice_subgroup":
     
     # Recalculate Rate_per_1000_per_wday after aggregation
     practice_interval_df["Rate_per_1000_per_wday"] = ((practice_interval_df["numerator"] / practice_interval_df["list_size"]) * 1000) / practice_interval_df["wdays_in_interval"]
+
+    # Save practice level data for appts_table
+    read_write(read_or_write="write", path=input_path, df=practice_interval_df)
 else:
     practice_interval_df = read_write("read", input_path)
 
