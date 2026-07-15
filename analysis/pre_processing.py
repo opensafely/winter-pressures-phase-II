@@ -430,3 +430,52 @@ for subgroup in config["subgroups"]:
         
     del measures_dict[subgroup]  # Delete dataframe to save memory
     log_memory_usage(label=f"After saving and deleting {subgroup} dataframe")
+
+# If using practice-subgroups, create a non-stratified practice level version from the subgroup dataframes
+print(f"Config group: {config['group']}")
+if config['group'] == "practice_subgroup":
+    print("Creating non-stratified practice level version from subgroup dataframes")
+
+    subgroup_dfs = {}
+    # Load all the csvs into seperate dataframes
+    for subgroup in config["subgroups"]:
+        print("Loading data for subgroup:", subgroup)
+        
+        subgroup_dfs[subgroup] = read_write(
+            read_or_write="read",
+            path=output_path + f"_{subgroup}",
+        )
+
+        # Aggregate to practice-week-measure level
+        subgroup_dfs[subgroup] = build_aggregate_df(
+            subgroup_dfs[subgroup],
+            ["measure", "practice_pseudo_id", "interval_start", "pandemic", "summer_year", "month", "wdays_in_interval"],
+            {
+                "numerator": ["sum"],
+                "list_size": ["sum"],
+            },
+        )
+
+        # Split subgroup suffix into seperate column
+        subgroup_dfs[subgroup]["subgroup"] = subgroup
+        subgroup_dfs[subgroup]["measure"] = subgroup_dfs[subgroup]["measure"].str.replace(f"_{subgroup}$", "", regex=True)
+
+    # Concatenate all subgroups into one dataframe
+    practice_interval_df = pd.concat(subgroup_dfs.values(), ignore_index=True)
+    del subgroup_dfs  # Free up memory
+
+    # Aggregate to practice-week-measure level again to ensure no duplicates across subgroups
+    practice_interval_df = build_aggregate_df(
+        practice_interval_df,
+            ["measure", "practice_pseudo_id", "interval_start", "pandemic", "summer_year", "month", "wdays_in_interval"],
+            {
+                "numerator_sum": ["sum"],
+                "list_size_sum": ["sum"],
+            },
+        ).rename(columns={"numerator_sum_sum": "numerator", "list_size_sum_sum": "list_size"})
+    
+    # Recalculate Rate_per_1000_per_wday after aggregation
+    practice_interval_df["Rate_per_1000_per_wday"] = ((practice_interval_df["numerator"] / practice_interval_df["list_size"]) * 1000) / practice_interval_df["wdays_in_interval"]
+
+    # Save practice level data for appts_table
+    read_write(read_or_write="write", path=output_path, df=practice_interval_df)

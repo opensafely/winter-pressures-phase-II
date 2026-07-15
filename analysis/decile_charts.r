@@ -90,8 +90,10 @@ if (config$released == FALSE){
     if (config$practice_subgroup_measures) {
 
       print("Aggregating subgroup measures to overall practice level...")
-      # Temp - filter out non-age measures
-      practice_measures <- filter(practice_measures, grepl("_age", measure))
+      # Only restrict to age-suffixed measures when they are present in the input.
+      if (any(grepl("_age", practice_measures$measure))) {
+        practice_measures <- filter(practice_measures, grepl("_age", measure))
+      }
 
       # Aggregate measures-age groups to measure level
       practice_measures <- practice_measures %>%
@@ -175,7 +177,7 @@ if (config$released == FALSE){
 # ------------ Create decile charts -----------------------------------------------------------
 print("Creating decile charts...")
 
-result <- process_decile_tables(practice_deciles, config, n_deciles_plot = "all", filter_pandemic = TRUE)
+result <- process_decile_tables(practice_deciles, config, n_deciles_plot = "all", filter_pandemic = !config$test)
 
 practice_deciles  <- result$decile_table
 measure_groups <- result$measure_groups
