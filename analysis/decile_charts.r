@@ -1,6 +1,6 @@
 # This script generates charts for visualising rates, RRs and RDs for practice measures.
 # USAGE: 
-# From codespaces: Rscript analysis/decile_charts.r --y_value [y_value] --practice_measures --practice_subgroup_measures --test --set [set]
+# From codespaces: Rscript analysis/decile_charts.r --y_value rate_per_1000_wday_mp6 --practice_subgroup_measures --test --set appts_table
 # From positron: Source("analysis/decile_charts.r") using local params
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
@@ -64,7 +64,7 @@ if (config$released == FALSE){
 
   } 
   
-  # RATES PROCESSING
+  # RATES_PER_1000 PROCESSING
   else {
     print("Processing rates...")
 
@@ -156,6 +156,12 @@ if (config$released == FALSE){
     ) %>%
     ungroup() %>%
     pivot_longer(cols = starts_with("d"), names_to = "decile", values_to = config$y_value)
+
+  read_write("write",
+    glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/decile_tables/national_rates_{config$y_value}"),
+    df = national_rates,
+    file_type = "csv"
+  )
 
   # Save tables, generating a separate file for each measure
   for (measure in unique(practice_deciles$measure)) {

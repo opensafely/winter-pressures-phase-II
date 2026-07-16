@@ -363,6 +363,48 @@ read_write(
 #     / practice_season_df["Rate_per_1000_mean_mean"]
 # )
 
+# ------------ NATIONAL WEEKLY RATES -------------------------
+
+# Create interval-level national table of rates
+weekly_national_rates_df = build_aggregate_df(
+    practice_interval_df,
+    ["measure", "interval_start", "pandemic", "summer_year"],
+    {
+        "numerator": ["sum"],
+        "list_size": ["sum"],
+        "practice_pseudo_id": ["nunique"],
+        "wdays_in_interval": ["max"],
+    },
+)
+# Apply SDC to interval-level national counts
+weekly_national_rates_df = roundmid_any(
+    weekly_national_rates_df,
+    ["numerator_sum", "list_size_sum", "practice_pseudo_id_nunique"],
+    to=6,
+)
+# Calculate weekly national rates per 1000 wdays
+weekly_national_rates_df["rate_per_1000_wday_mp6"] = (
+    weekly_national_rates_df["numerator_sum_mp6"]
+    / weekly_national_rates_df["list_size_sum_mp6"]
+    * 1000
+    / weekly_national_rates_df["wdays_in_interval_max"]
+)
+# Rename columns for clarity
+weekly_national_rates_df = weekly_national_rates_df.rename(
+    columns={
+        "list_size_sum_mp6": "list_size_initial_mp6",
+        "practice_pseudo_id_nunique_mp6": "n_practices_mp6",
+        "wdays_in_interval_max": "wdays_in_interval",
+    }
+)
+
+read_write(
+    read_or_write="write",
+    path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/weekly_national_rates",
+    df=weekly_national_rates_df,
+    file_type="csv",
+)
+    
 # ------------ PRACTICE-LEVEL (UNWEIGHTED) EFFECT -------------------------
 
 ## Practice-level RRs

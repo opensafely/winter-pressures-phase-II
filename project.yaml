@@ -1507,7 +1507,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_appts_table/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_appts_table/Results*.csv
+        seasonal_tables: output/practice_measures_appts_table/Results*.csv
+        weekly_tables: output/practice_measures_appts_table/weekly*.csv
 
   generate_pre_processing_practice_appts_table_appt:
     run: python:v2 analysis/pre_processing.py --practice_measures --set appts_table --appt
@@ -1528,7 +1529,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_appts_table_appt/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_appts_table_appt/Results*.csv
+        seasonal_tables: output/practice_measures_appts_table_appt/Results*.csv
+        weekly_tables: output/practice_measures_appts_table_appt/weekly*.csv
 
   generate_pre_processing_practice_sro:
     run: python:v2 analysis/pre_processing.py --practice_measures --set sro
@@ -1549,7 +1551,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_sro/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_sro/Results*.csv
+        seasonal_tables: output/practice_measures_sro/Results*.csv
+        weekly_tables: output/practice_measures_sro/weekly*.csv
 
   generate_pre_processing_practice_sro_appt:
     run: python:v2 analysis/pre_processing.py --practice_measures --set sro --appt
@@ -1570,7 +1573,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_sro_appt/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_sro_appt/Results*.csv
+        seasonal_tables: output/practice_measures_sro_appt/Results*.csv
+        weekly_tables: output/practice_measures_sro_appt/weekly*.csv
 
   generate_pre_processing_practice_resp:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp
@@ -1591,7 +1595,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_resp/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_resp/Results*.csv
+        seasonal_tables: output/practice_measures_resp/Results*.csv
+        weekly_tables: output/practice_measures_resp/weekly*.csv
 
   generate_pre_processing_practice_resp_appt:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --appt
@@ -1612,7 +1617,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_resp_appt/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_resp_appt/Results*.csv
+        seasonal_tables: output/practice_measures_resp_appt/Results*.csv
+        weekly_tables: output/practice_measures_resp_appt/weekly*.csv
 
   generate_pre_processing_practice_subgroup_appts_table:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table
@@ -1633,7 +1639,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_appts_table/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_appts_table/Results*.csv
+        seasonal_tables: output/practice_subgroup_measures_appts_table/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table/weekly*.csv
 
   generate_pre_processing_practice_subgroup_appts_table_appt:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table --appt
@@ -1654,7 +1661,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_appts_table_appt/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_appts_table_appt/Results*.csv
+        seasonal_tables: output/practice_subgroup_measures_appts_table_appt/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table_appt/weekly*.csv
 
   generate_pre_processing_practice_subgroup_sro:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro
@@ -1675,7 +1683,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_sro/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_sro/Results*.csv
+        seasonal_tables: output/practice_subgroup_measures_sro/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_sro/weekly*.csv
 
   generate_pre_processing_practice_subgroup_sro_appt:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro --appt
@@ -1696,7 +1705,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_sro_appt/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_sro_appt/Results*.csv
+        seasonal_tables: output/practice_subgroup_measures_sro_appt/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_sro_appt/weekly*.csv
 
   generate_pre_processing_practice_subgroup_resp:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp
@@ -1717,7 +1727,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_resp/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_resp/Results*.csv
+        seasonal_tables: output/practice_subgroup_measures_resp/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_resp/weekly*.csv
 
   generate_pre_processing_practice_subgroup_resp_appt:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp --appt
@@ -1738,7 +1749,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_resp_appt/practice_level*.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_resp_appt/Results*.csv
+        seasonal_tables: output/practice_subgroup_measures_resp_appt/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_resp_appt/weekly*.csv
  
  # --------------- VISUALIZATION ACTIONS ------------------------------------------
   generate_deciles_charts_appts_table_rate_per_1000_wday_mp6:
@@ -2804,7 +2816,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_appts_table/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_appts_table/Results*_test.csv
+        seasonal_tables: output/practice_measures_appts_table/Results*_test.csv
+        weekly_tables: output/practice_measures_appts_table/weekly*_test.csv
 
   generate_pre_processing_practice_appts_table_appt_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --set appts_table --appt --test
@@ -2825,7 +2838,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_appts_table_appt/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_appts_table_appt/Results*_test.csv
+        seasonal_tables: output/practice_measures_appts_table_appt/Results*_test.csv
+        weekly_tables: output/practice_measures_appts_table_appt/weekly*_test.csv
 
   generate_pre_processing_practice_sro_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --set sro --test
@@ -2846,7 +2860,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_sro/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_sro/Results*_test.csv
+        seasonal_tables: output/practice_measures_sro/Results*_test.csv
+        weekly_tables: output/practice_measures_sro/weekly*_test.csv
 
   generate_pre_processing_practice_sro_appt_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --set sro --appt --test
@@ -2867,7 +2882,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_sro_appt/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_sro_appt/Results*_test.csv
+        seasonal_tables: output/practice_measures_sro_appt/Results*_test.csv
+        weekly_tables: output/practice_measures_sro_appt/weekly*_test.csv
 
   generate_pre_processing_practice_resp_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --test
@@ -2888,7 +2904,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_resp/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_resp/Results*_test.csv
+        seasonal_tables: output/practice_measures_resp/Results*_test.csv
+        weekly_tables: output/practice_measures_resp/weekly*_test.csv
 
   generate_pre_processing_practice_resp_appt_test:
     run: python:v2 analysis/pre_processing.py --practice_measures --set resp --appt --test
@@ -2909,7 +2926,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_measures_resp_appt/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_measures_resp_appt/Results*_test.csv
+        seasonal_tables: output/practice_measures_resp_appt/Results*_test.csv
+        weekly_tables: output/practice_measures_resp_appt/weekly*_test.csv
 
   generate_pre_processing_practice_subgroup_appts_table_test:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table --test
@@ -2930,7 +2948,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_appts_table/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_appts_table/Results*_test.csv
+        seasonal_tables: output/practice_subgroup_measures_appts_table/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table/weekly*_test.csv
 
   generate_pre_processing_practice_subgroup_appts_table_appt_test:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table --appt --test
@@ -2951,7 +2970,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_appts_table_appt/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_appts_table_appt/Results*_test.csv
+        seasonal_tables: output/practice_subgroup_measures_appts_table_appt/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table_appt/weekly*_test.csv
 
   generate_pre_processing_practice_subgroup_sro_test:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro --test
@@ -2972,7 +2992,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_sro/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_sro/Results*_test.csv
+        seasonal_tables: output/practice_subgroup_measures_sro/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_sro/weekly*_test.csv
 
   generate_pre_processing_practice_subgroup_sro_appt_test:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro --appt --test
@@ -2993,7 +3014,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_sro_appt/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_sro_appt/Results*_test.csv
+        seasonal_tables: output/practice_subgroup_measures_sro_appt/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_sro_appt/weekly*_test.csv
 
   generate_pre_processing_practice_subgroup_resp_test:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp --test
@@ -3014,7 +3036,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_resp/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_resp/Results*_test.csv
+        seasonal_tables: output/practice_subgroup_measures_resp/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_resp/weekly*_test.csv
 
   generate_pre_processing_practice_subgroup_resp_appt_test:
     run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp --appt --test
@@ -3035,7 +3058,8 @@ actions:
       highly_sensitive:
         practice_level_arrow: output/practice_subgroup_measures_resp_appt/practice_level*_test.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/practice_subgroup_measures_resp_appt/Results*_test.csv
+        seasonal_tables: output/practice_subgroup_measures_resp_appt/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_resp_appt/weekly*_test.csv
  
  # --------------- SENSE CHECK ACTIONS ------------------------------------------
 
