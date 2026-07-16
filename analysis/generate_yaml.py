@@ -198,7 +198,8 @@ yaml_processing_template = """
       highly_sensitive:
         practice_level_arrow: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/practice_level*{test_suffix}.arrow
       moderately_sensitive:
-        seasonal_tables_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/Results*{test_suffix}.csv
+        seasonal_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/Results*{test_suffix}.csv
+        weekly_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/weekly*{test_suffix}.csv
 """
 
 yaml_processing = ""

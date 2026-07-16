@@ -1,6 +1,6 @@
 # This script generates charts for visualising rates, RRs and RDs for practice measures.
 # USAGE: 
-# From codespaces: Rscript analysis/decile_charts.r --y_value [y_value] --practice_measures --practice_subgroup_measures --test --set [set]
+# From codespaces: Rscript analysis/decile_charts.r --y_value rate_per_1000_wday_mp6 --practice_subgroup_measures --test --set appts_table
 # From positron: Source("analysis/decile_charts.r") using local params
 # Options
 # --practice_measures/practice_subgroup_measures to choose which type of measures to process
@@ -64,7 +64,7 @@ if (config$released == FALSE){
 
   } 
   
-  # RATES PROCESSING
+  # RATES_PER_1000 PROCESSING
   else {
     print("Processing rates...")
 
@@ -204,6 +204,36 @@ for (group_name in names(measure_groups)) {
       create_and_save_decile_plot(config$rr_plot, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
     } else {
       create_and_save_decile_plot(config$rate_plot, filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
+    }
+  }
+}
+
+if (config$y_value == "rate_per_1000_wday_mp6") {
+  print("Reading weekly national rates for seasonal lineplots...")
+  weekly_national_rates <- read_write(
+    "read",
+    glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/weekly_national_rates"),
+    file_type = "csv"
+  )
+
+  national_result <- process_decile_tables(weekly_national_rates, config, n_deciles_plot = "all", filter_pandemic = !config$test)
+  weekly_national_rates <- national_result$decile_table
+  national_measure_groups <- national_result$measure_groups
+
+  for (group_name in names(national_measure_groups)) {
+    for (season in unique(weekly_national_rates$season)) {
+      print(glue("Creating national weekly plot for:{group_name} (Season: {season}) (Y-axis: {config$y_value})..."))
+
+      measures_subset <- national_measure_groups[[group_name]]
+      filtered_deciles <- weekly_national_rates %>% filter(season == !!season)
+      print(head(filtered_deciles))
+
+      if (length(measures_subset) == 0) {
+        print(paste("Skipping national weekly plot for", group_name, "(no measures)"))
+        next
+      }
+
+      create_and_save_decile_plot("seasonal lineplot national", filtered_deciles, group_name, measures_subset, plots_dir, config$y_value, season = season)
     }
   }
 }

@@ -194,10 +194,18 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
       p <- p + scale_y_continuous(trans = "log10")
     }
   }
-  else if (chart_type == "seasonal lineplot") {
+  else if (grepl("^seasonal lineplot", chart_type)) {
+
+    plot_df <- filter(deciles_df, measure %in% measures_subset)
+    y_label <- glue("Median {y_var}")
+    if ("decile" %in% colnames(plot_df)) {
+      plot_df <- filter(plot_df, decile == "d5")
+    } else {
+      y_label <- y_var
+    }
 
     p <- ggplot(
-      filter(deciles_df, (measure %in% measures_subset) & (decile == "d5")),
+      plot_df,
       aes(
         x = season_x,
         y = !!sym(y_var),
@@ -214,7 +222,7 @@ create_and_save_decile_plot <- function(chart_type, deciles_df, group_name, meas
       labs(
         title = glue("Seasonal Line Plot for {plots_dir}_{y_var}{season}"),
         x = "Month",
-        y = glue("Median {y_var}"),
+        y = y_label,
         color = "Season year"
       ) +
       facet_wrap(vars(measure), scales = "free_y") +
