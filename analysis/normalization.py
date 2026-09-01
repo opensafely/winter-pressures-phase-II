@@ -403,6 +403,7 @@ read_write(
     path=f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}{config['agg_suffix']}/weekly_national_rates",
     df=weekly_national_rates_df,
     file_type="csv",
+    split = True
 )
     
 # ------------ PRACTICE-LEVEL (UNWEIGHTED) EFFECT -------------------------
