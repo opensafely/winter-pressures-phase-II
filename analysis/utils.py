@@ -332,6 +332,7 @@ def read_write(
     file_type="arrow",
     test=config["test"],
     yearly=config["yearly"],
+    split=False,
     df=None,
     dtype=None,
     **kwargs,
@@ -382,19 +383,41 @@ def read_write(
         if df is None:
             raise Exception("Must supply dataframe when writing")
 
-        if file_type == "csv":
-            df.to_csv(path + ".csv", **kwargs)
+        test_suffix = "_test" if path.endswith("_test") else ""
+        output_path = path[:-len(test_suffix)] if test_suffix else path
 
-        elif file_type == "csv.gz":
-            df.to_csv(path + ".csv.gz", compression="gzip", **kwargs)
+        # Split large dataframes into multiple files if split == True
+        rows_per_file = 5000
+        n_files = max(1, (len(df) + rows_per_file - 1) // rows_per_file) if split else 1
 
-        elif file_type == "arrow":
-            # Convert boolean columns to string type
-            feather.write_feather(df, path + ".arrow")
+        if split and n_files > 4:
+            raise ValueError("File is too large to write across four files")
 
-        elif file_type == "pickle":
-            with open(path + ".pickle", "wb") as handle:
-                pickle.dump(df, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        for file_number in range(1, n_files + 1):
+            start = (file_number - 1) * rows_per_file
+            end = file_number * rows_per_file
+            output_df = df.iloc[start:end] if split else df
+            file_num = f"_{file_number}" if n_files > 1 else ""
+
+            if file_type == "csv":
+                print(f"Writing CSV: {output_path}{file_num}{test_suffix}")
+                output_df.to_csv(f"{output_path}{file_num}{test_suffix}.csv", **kwargs)
+
+            elif file_type == "csv.gz":
+                output_df.to_csv(
+                    f"{output_path}{file_num}{test_suffix}.csv.gz",
+                    compression="gzip",
+                    **kwargs,
+                )
+
+            elif file_type == "arrow":
+                feather.write_feather(
+                    output_df, f"{output_path}{file_num}{test_suffix}.arrow"
+                )
+
+            elif file_type == "pickle":
+                with open(f"{output_path}{file_num}{test_suffix}.pickle", "wb") as handle:
+                    pickle.dump(output_df, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def simulate_dataframe(dtype_dict, n_rows):
