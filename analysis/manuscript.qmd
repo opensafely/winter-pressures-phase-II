@@ -1,0 +1,345 @@
+---
+title: "Winter Pressures Manuscript"
+execute:
+  echo: false
+  warning: false
+  fig-width: 20
+  fig-height: 12
+---
+
+# **Research question. Study design.**
+
+Authors1, Authors2, Authors3, Authors1,\*
+
+For OpenSAFELY studies, include OpenSAFELY in the title, and The OpenSAFELY Collaborative as a middle author.
+
+1 Bennett Institute for Applied Data Science, Nuffield Department of Primary Care Health Sciences, University of Oxford, OX2 6GG, UK
+
+2 London School of Hygiene and Tropical Medicine, Keppel Street, London WC1E 7HT, UK
+
+3 TPP, TPP House, 129 Low Lane, Horsforth, Leeds, LS18 5PX, UK
+
+\* Corresponding author
+
+| Notes on authorship: A list of email addresses and affiliations for Bennett and affiliated individuals is available [here](https://docs.google.com/spreadsheets/d/1LEtnu4MpACv7h7hV9pnYEnfwkdgoJ32KkjqP7fv1_Cs/edit#gid=0). For OpenSAFELY studies: Please see full authorship guidance here: [https://www.opensafely.org/policies-for-researchers/\#authorship-policy](https://www.opensafely.org/policies-for-researchers/#authorship-policy) For guidance on authorship of co-piloted projects, see here: [https://docs.opensafely.org/copiloting-service/\#what-is-our-authorship-policy](https://docs.opensafely.org/copiloting-service/#what-is-our-authorship-policy)  The full membership of the Collaborative should be listed in the Acknowledgements (see [here](https://docs.google.com/spreadsheets/d/1qZKX5U2ofNl_OazmaMJAnMGM5N8TNDR-q8oDkD8nIMI/edit#gid=0) for full list).  |
+| :---- |
+
+# 
+
+# **Abstract**
+
+## Background
+
+## Methods*:* OpenSAFELY studies must include the following text: “*With the approval of NHS England we…*” [https://www.opensafely.org/policies-for-researchers/\#abstract](https://www.opensafely.org/policies-for-researchers/#abstract)
+
+## Results
+
+## Conclusions
+
+## Abbreviations
+
+## Keywords 
+
+## 
+
+## 
+
+# 
+
+# **Background**
+
+Typically three paragraphs. The last paragraph should state the specific aims of the project, starting with: “*We therefore set out to do x, y, z…”*
+
+- [ ] Use different term than pressure in paper such as activity and mention limitation of having no staff availability data
+
+# **Methods**
+
+### Research Objectives (from original research plan)
+
+- Comprehensively describe the winter pressures experienced by general practice in England  
+- Develop metrics to identify the onset, duration and intensity of winter pressures at a practice level.  
+- Conduct a quantitative survey of general practice staff to validate our metrics of pressures
+
+### Methods
+
+#### Dataset Definition
+
+Measures were extracted using OpenSAFELY, an Electronic Health Record (EHR) platform containing the GP records for all patients registered to TPP practices. Counts were extracted at weekly intervals between April 2016 and April 2026\. Patients were included based on the following characteristics: recorded age at start of interval between 0 and 110, recorded sex either male, female or intersex, alive at the start of the interval, registered at a TPP practice at the start of the interval and no missing age or sex data. Table 1 describes the list of measures that were extracted:
+
+| Measure | Definition |
+| :---- | :---- |
+| seen\_in\_interval | Counts appointments with a seen\_date in the interval |
+| start\_in\_interval | Counts appointments with a start\_date in the interval |
+| follow\_up\_app | Counts appointments for patients who had an appointment with a seen\_date in the previous week |
+| Appointments with status: Waiting DidNotAttend CancelledbyPatient CancelledbyUnit | Counts appointments with the specified status in interval (based on the start\_date) |
+| vax\_app | Counts any vaccinations in interval |
+| vax\_app\_flu | Counts flu vaccinations in interval |
+| vax\_app\_covid | Counts covid vaccinations in interval |
+| secondary\_referral | Counts referral request received dates in interval |
+| online\_consult | Counts online consultations in interval |
+| call\_from\_patient | Counts calls from patient in interval |
+| call\_from\_gp | Counts calls from GP in interval |
+| GP\_ooh\_admin | Counts GP out of hours admin in interval |
+| tele\_consult | Counts telephone consultations in interval |
+| emergency\_care | Counts emergency care attendances in interval |
+| sick\_notes\_app | Counts appointments for sick notes |
+| SRO measures Blood Pressure Monitoring CVD 10 Year Risk  ALT Tests Sodium Tests Cholesterol Tests RBC Tests HbA1c Tests Thyroid Tests Medication Reviews Asthma Reviews COPD Reviews | Counts number of tests in interval. These routine tests were chosen as they represent a variety of levels of importance, and may therefore indicate reprioritization of resources. This appropriate re-prioritization was [seen during covid](https://reports.opensafely.org/reports/sro-measures/). Tests that should not see decreases during times of pressure: Blood pressure, CVD 10yr, Cholesterol, ALT, Thyroid, RBC, HbA1c, Sodium) Tests that may see decreases due to re-prioritization: Asthma, COPD, Medication |
+| Seasonal Respiratory Illnesses, with or without accompanying GP appointment that week Flu RSV COVID Any of the above | Counts number of patients with the specified illness in interval.  Definitions were defined based on criteria maximizing sensitivity, previously defined [here](https://github.com/opensafely/disparities-comparison/issues/1). |
+
+#### Metrics at a per-practice, per-week level
+
+All raw counts were first rounded using midpoint six to comply with statistical disclosure control principles. Rates were calculated at weekly intervals per 1000 patients that were registered at the specified practice that week and 90 days prior:
+
+rate per 1000practice, week=CountList size\*1000
+
+Mean rates were calculated per season and year, where seasons were either summer (June \- July) or a winter period (split between September \- October, November \- December, January \- February). The mean rate for a season was then calculated as the mean rate per 1000 patients across all practices and weeks for a given year and season:  
+rate per 1000 meanyear, practice= (rate per 1000practice, week)N of rate per 1000practice, week
+
+rate per 1000 meanyear, season= (rate per 1000 meanyear, practice)N of rate per 1000 meanyear, practice
+
+The rate ratio (RR) for a given practice on a given week was then calculated as the rate normalised to the mean summer rate for that year. The rate difference (RD) was calculated as the difference between the rate and the summer mean:
+
+RRpractice, week=rate per 1000practice,  weekrate per 1000 meanyear, season \= summer
+
+RDpractice, week=rate per 1000practice, week-rate per 1000 meanyear, sesason \= summer
+
+#### Metrics at a national, per-season level
+
+The mean RR and mean RD were then calculated across the practices, weeks and years for a given season:  
+RR meanseason, practice= (RRpractice, week)N of RRpractice, week
+
+RR meanseason= (RR meanpractice, season)N of RRpractice, season
+
+RD meanseason= (RDpractice, week)N of RDpractice, week
+
+#### Statistical analysis
+
+Statistical analysis was performed to test whether the rates for a given practice in summer to the rates for the same practice in winter. This was done using the Poisson means test via the `scipy.stats.Poisson_means_test()` function. The proportion of practices showing a significant difference in summer-winter rate was then reported.
+
+#### Practice-level analysis
+
+Analysis was conducted using three independent stratifications: practice-level, demographic-level, and comorbidity-level. For practice-level analysis, rates were stratified by practice ID. Only TPP practices with a list size greater than 750 were included.
+
+#### Demographic-level analysis
+
+For the demographic-level analysis, rates were stratified by the characteristics described in Table (n).
+
+| Subgroup | Definition |
+| :---- | :---- |
+| Age | 0-4, 5-11, 12-17, 18-29, 30-44, 45-54, 55-64, 65-74, 75-79, 80-84, 85+ |
+| Sex | Male, female or intersex |
+| Ethnicity | A list of ethnicity codes in use in UK general practice: 1 \- White 2 \- Mixed 3 \- Asian 4 \- Black 5 \- Chinese or Other 6 \- Not stated Missing ethnicity codes were partially imputed using recorded ethnicity SUS codes. |
+| imd\_quantile | IMD quantile (1 \- 5\) |
+| carehome | Indicating whether the patient's address matched with a care home, using TPP's algorithm. |
+| rur\_urb\_class | Rural-urban classification: 1 \- Conurbation 2 \- Urban city and town 3 \- Rural town 4 \- Rural village  |
+| region | Name of the NUTS level 1 region of England to which the practice that the patient was registered belongs. Possible values: North East, North West, Yorkshire and The Humber, East Midlands, West Midlands, East, London, South East, South West |
+
+#### Comorbidity-level analysis
+
+For the comorbidity-level analysis, rates were stratified by the characteristics described in Table (n).
+
+| Subgroup | Definition |
+| :---- | :---- |
+| Chronic condition which cannot resolve: Chronic respiratory disease Immunosupression | Binary. Chronic respiratory condition coded before interval start. Binary. Immunosupression coded before interval start. |
+| Chronic condition which can resolve: COPD Asthma Diabetes Hypertension | Binary. COPD coded & not resolved before interval start. Binary. Asthma coded & not resolved before interval start. Binary. Diabetes coded & not resolved before interval start. Binary. Hypertension coded & not resolved before interval start. |
+| ~~comorbid\_depres~~ | ~~Binary. Depression coded & not resolved before interval start.~~ |
+| ~~comorbid\_mh~~ | ~~Binary. Mental health condition coded before interval start.~~ |
+| ~~comorbid\_neruo~~ | ~~Binary. Neurological condition coded before interval start.~~ |
+| Vaccinated in the last 12 months for:FluCOVID | Binary. Had flu vaccination in the last 12 months. Binary. Had COVID-19 vaccination in the last 12 months. |
+| Vaccinated in lifetime for: Pneumococcal RSV | Binary. Had pneumococcal vaccination in lifetime. Binary. Had RSV vaccination in the lifetime. |
+
+## Study Design 
+
+## Data Sharing *OR* Data Source
+
+## OpenSAFELY studies must include the following text: [https://www.opensafely.org/policies-for-researchers/\#methods---data-sharing-or-data-source-headings](https://www.opensafely.org/policies-for-researchers/#methods---data-sharing-or-data-source-headings)
+
+## Study Population
+
+Papers describing OpenSAFELY studies should mention that people who registered a Type 1 Opt-out are excluded. 
+
+Study Measures
+
+Exposures
+
+Outcomes
+
+Covariates
+
+## Statistical Methods
+
+## Software and Reproducibility
+
+Data management and analysis was performed using Python v3.8 and R v4.0.5. Code for data management and analysis, as well as codelists, are archived online: https://github.com/opensafely/winter-pressures-phase-II. 
+
+## 
+
+## Patient and Public Involvement and Engagement
+
+## If required, add project-specific PPIE if relevant, and for OpenSAFELY studies consider including the following text: [https://www.opensafely.org/policies-for-researchers/\#patient-and-public-involvement-and-engagement-ppie](https://www.opensafely.org/policies-for-researchers/#patient-and-public-involvement-and-engagement-ppie) 
+
+# 
+
+# 
+
+# **Results**
+
+```{r}
+#| message: false
+#| output: false
+# ------------ Configuration -----------------------------------------------------------
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(glue)
+library(optparse)
+library(lubridate)
+library(arrow)
+source(here::here("analysis/utils.r"))
+source(here::here("analysis/parse_args.r"))
+
+# SET PARAMETERS HERE:
+config$dummy <- FALSE # Set to TRUE to use dummy data folder
+config$test <- FALSE
+config$released <- TRUE
+config$practice_measures <- TRUE
+config$practice_subgroup_measures <- FALSE
+config$weekly_agg <- FALSE
+config$yearly <- FALSE
+config$appt <- FALSE
+config$rate_plot <- "seasonal lineplot"
+
+config <- recompute_config(config)
+
+# Use dummy data if developing locally
+dummy_folder <- if (config$dummy) "practice_measures_resp_DUMMY/" else ""
+```
+
+Outline
+
+- Appts decile charts (2)  
+- Respiratory decile charts (2)  
+- Pathology decile charts (2)  
+- Rate ratios of best measures (1) 
+
+```{r}
+#| message: false
+#| output: false
+config$y_value <- "RR_prev_summr"
+config$set <- "resp"
+config$rr_plot <- "dotplot"
+group_name <- "resp" # or "other"
+
+decile_table <- load_decile_table(config)
+result <- process_decile_tables(decile_table, config, n_deciles_plot = "all", filter_pandemic = TRUE)
+
+practice_deciles  <- result$decile_table
+measure_groups <- result$measure_groups
+plots_dir     <- result$plots_dir
+line_types    <- result$line_types
+line_colors   <- result$line_colors
+
+p <- create_and_save_decile_plot(config$rr_plot, practice_deciles, group_name, measure_groups[[group_name]], plots_dir, config$y_value, season = "all")
+```
+
+```{r}
+print(p)
+```
+
+- SDR results to different paper, not enough room  
+- Supplementary results  
+  - Of appt-restricted vs unrestricted measures, add whichever set **wasn’t** used as best measures as supplementary decile charts.
+
+# **Discussion**
+
+The headings below may be helpful in structuring your Discussion. Even if these specific headings are not used (e.g. because the journal has other requirements), your Discussion should address each of these topics.
+
+## Summary
+
+Restate main findings
+
+## Strengths and Weaknesses
+
+## Findings in Context
+
+## Policy Implications 
+
+## Future Research
+
+## Conclusion
+
+## 
+
+## 
+
+# **Administrative**
+
+## Acknowledgements
+
+| For OpenSAFELY studies: Include the full list of members of the OpenSAFELY Collaborative, who are listed [here](https://docs.google.com/spreadsheets/d/1qZKX5U2ofNl_OazmaMJAnMGM5N8TNDR-q8oDkD8nIMI/edit#gid=0). Include the following text acknowledging TPP and/or EMIS: [https://www.opensafely.org/policies-for-researchers/\#all-datasets-acknowledgement](https://www.opensafely.org/policies-for-researchers/#all-datasets-acknowledgement) For other data sources within OpenSAFELY (e.g., ONS-CIS, PHOSP, ISARIC) check: [https://www.opensafely.org/policies-for-researchers/\#for-the-datasets-listed-below](https://www.opensafely.org/policies-for-researchers/#for-the-datasets-listed-below)  Declare substantial use of AI  |
+| :---- |
+
+## Conflicts of Interest
+
+| For all studies: COIs should be updated to reflect the current author list. BG’s COI: (Last updated 05/02/2024) *BG has received research funding from the Bennett Foundation, the Laura and John Arnold Foundation, the NHS National Institute for Health Research (NIHR), the NIHR School of Primary Care Research, NHS England, the NIHR Oxford Biomedical Research Centre, the Mohn-Westlake Foundation, NIHR Applied Research Collaboration Oxford and Thames Valley, the Wellcome Trust, the Good Thinking Foundation, Health Data Research UK, the Health Foundation, the World Health Organisation, UKRI MRC, Asthma UK, the British Lung Foundation, and the Longitudinal Health and Wellbeing strand of the National Core Studies programme; he has previously been a Non-Executive Director at NHS Digital; he also receives personal income from speaking and writing for lay audiences on the misuse of science.*  BMK’s COI: *BMK is also employed by NHS England working on medicines policy and clinical lead for primary care medicines data.*  AM’s COI: *AM has represented the RCGP in the health informatics group and the Profession Advisory Group that advises on access to GP Data for Pandemic Planning and Research (GDPPR); the latter was a paid role. AM is a former employee and interim Chief Medical Officer of NHS Digital. AM has consulted for health care vendors, the last time in 2022; the companies consulted in the last 3 years have no relationship to OpenSAFELY.*  |
+| :---- |
+
+## 
+
+## Funding
+
+| Include the following text describing funders who have supported OpenSAFELY: [https://www.opensafely.org/policies-for-researchers/\#funding](https://www.opensafely.org/policies-for-researchers/#funding) |
+| :---- |
+
+*For info: all Bennett Institute grants should be listed here: [https://docs.google.com/spreadsheets/d/11UCwLt7brpB3OXkJ8S4LK43U0Cc35wahtJ15feNlo9g/edit](https://docs.google.com/spreadsheets/d/11UCwLt7brpB3OXkJ8S4LK43U0Cc35wahtJ15feNlo9g/edit)* 
+
+## Information governance and ethical approval
+
+For OpenSAFELY studies this section is required and must include the following text: [https://www.opensafely.org/policies-for-researchers/\#information-governance-and-ethical-approval](https://www.opensafely.org/policies-for-researchers/#information-governance-and-ethical-approval). 
+
+For projects completed under COPI (pre-June 2024), the following text can be used:
+
+*“This study was approved by the Health Research Authority (Research Ethics Committee reference 20/LO/0651) and by the London School of Hygiene and Tropical Medicine Ethics Board (reference 21863).”*
+
+For projects completed after July 2024, please contact the IG team (Liam or Amir).
+
+If required by the journal, the ethics text can be included in the Methods instead.
+
+## Data access and verification
+
+If this section is required by the journal, for OpenSAFELY studies use the following text: [https://www.opensafely.org/policies-for-researchers/\#data-access-and-verification](https://www.opensafely.org/policies-for-researchers/#data-access-and-verification) 
+
+## Guarantor
+
+For all studies, if guarantor is required, it is usually BG and/or the last author: *“BG/last author is guarantor”*
+
+## Contributorship
+
+For all studies, use the CRediT taxonomy [contributor template](https://docs.google.com/spreadsheets/d/1PgtKMkcVOJBMz5mwlb0YVwJaCS8wnmHTlaSbappKXGY/edit#gid=0) to specify contributions from each author. The definitions of each role are included in the second sheet of the linked document.
+
+# References
+
+You can use either Paperpile or Zotero to reference within the Google doc; Zotero is free.
+
+See [https://www.opensafely.org/policies-for-researchers/\#information-governance-and-ethical-approval](https://www.opensafely.org/policies-for-researchers/#information-governance-and-ethical-approval) for required references to be included.
+
+## Supplementary Information
+
+| Information | Codelist link |
+| :---- | :---- |
+| Asthma | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/ast\_cod/20250627 |
+| Asthma resolution | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/astres\_cod/20250627 |
+| COPD  | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/copd\_cod/20250627 |
+| COPD resolution | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/copdres\_cod/20250627 |
+| Chronic respiratory disease | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/crdatrisk1\_cod/20250627 |
+| Diabetes  | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/dm\_cod/20250627 |
+| Diabetes resolution | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/dmres\_cod/20250627 |
+| Ethnicity | opensafely/ethnicity-snomed-0removed/22911876/ |
+| Hypertension | [https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hyp\_cod/20241205/](https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hyp_cod/20241205/) |
+| Hypertension \- resolution | https://www.opencodelists.org/codelist/nhsd-primary-care-domain-refsets/hypres\_cod/20250627 |
+| Immunosuppression | nhsd/immunosupression-pcdcluster-snomed-ct/0993606d |
+| Coronary heart disease | [https://www.opencodelists.org/codelist/bristol/multimorbidity\_coronary-heart-disease/6b200f80/](https://www.opencodelists.org/codelist/bristol/multimorbidity_coronary-heart-disease/6b200f80/) |
+| Stroke | [https://www.opencodelists.org/codelist/bristol/multimorbidity\_stroketransient-ischemic-attack/39012916/](https://www.opencodelists.org/codelist/bristol/multimorbidity_stroketransient-ischemic-attack/39012916/) |
+| Connective tissue disorder | [https://www.opencodelists.org/codelist/bristol/multimorbidity\_connective-tissue-disorder/52109c4b/](https://www.opencodelists.org/codelist/bristol/multimorbidity_connective-tissue-disorder/52109c4b/) |
+
+### 

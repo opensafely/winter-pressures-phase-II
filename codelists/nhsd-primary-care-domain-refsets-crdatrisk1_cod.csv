@@ -1,41 +1,73 @@
 code,term
+1010333003,Emphysema of left lung
+1010334009,Emphysema of right lung
+1010616001,Cirrhosis of liver due to classical cystic fibrosis
+1010670004,Chronic endogenous lipoid pneumonitis
+1017196003,Interstitial pulmonary fibrosis due to inhalation of substance
+1017197007,Interstitial pulmonary fibrosis due to inhalation of drug
 102361000119104,Chronic pneumonia
-106001000119101,Chronic obstructive lung disease co-occurrent with acute bronchitis
+106001000119101,Chronic obstructive pulmonary disease with acute bronchitis
 10672271000119100,Acute-on-chronic hypoxemic respiratory failure
 10692761000119107,Asthma-chronic obstructive pulmonary disease overlap syndrome
 10713006,Diffuse interstitial rheumatoid disease of lung
+1163147006,Chronic fibrosis of lung caused by Aspergillus
+1163150009,Chronic cavitation of lung caused by Aspergillus
+1172606002,Idiopathic pleuroparenchymal fibroelastosis
+1172688004,"Congenital muscular dystrophy, respiratory failure, skin abnormalities, joint hyperlaxity syndrome"
+1177120001,Bronchiolitis obliterans syndrome following allogeneic stem cell transplant
+12200321000119107,Failure of lung transplant
+1222677008,Interstitial lung disease due to surfactant protein C deficiency
+1222678003,Interstitial lung disease due to ATP-binding cassette subfamily A member 3 deficiency
+1228876007,Severe early-onset pulmonary alveolar proteinosis due to methionyl-transfer ribonucleic acid synthetase 1 deficiency
 12295008,Bronchiectasis
 12310001,Childhood bronchiectasis
+123592004,Acute mucous pneumonia
 123713005,Chronic atelectasis
 1259003,Schistosis
-129452008,Nonspecific interstitial pneumonia
+1284850005,Interstitial lung disease due to and following radiotherapy
+1287820006,Chronic respiratory disease originating in perinatal period
+129451001,Respiratory bronchiolitis associated interstitial lung disease
+129452008,Nonspecific interstitial pneumonitis
 129458007,Bronchiolitis obliterans organizing pneumonia
+129459004,Acute interstitial pneumonia
+1296527009,Cystic fibrosis due to heterozygous deltaF508 mutation
+1296528004,Cystic fibrosis due to homozygous deltaF508 mutation
+1300194008,Mitchell syndrome
+1303458001,Moderate bronchopulmonary dysplasia of newborn
+1303459009,Severe bronchopulmonary dysplasia of newborn
 13151001,Flax-dressers' disease
 13217005,Fusiform bronchiectasis
 13274008,Atrophic fibrosis of lung
 133971000119108,Chronic pulmonary embolism
-135836000,End stage chronic obstructive airways disease
-13645005,Chronic obstructive lung disease
+135836000,End stage chronic obstructive pulmonary disease
+13645005,Chronic obstructive pulmonary disease
 14700006,Bauxite fibrosis of lung
+155554001,Mycoplasmal pneumonia
+155624004,Idiopath. fibrosing alveolitis (& Hamman-Rich syndrome)
 15708009,Benign pneumoconiosis
 16003001,Giant bullous emphysema
 161672008,History of being lung transplant recipient
-16434671000119101,Cystic fibrosis transmembrane conductance regulator related metabolic syndrome
+16434671000119101,Cystic fibrosis transmembrane conductance regulator-related metabolic syndrome
 16838000,Mediastinal emphysema
 16846004,Obstructive emphysema
 17097001,Chronic disease of respiratory system
 17385007,Graphite fibrosis of lung
-1751000119100,Acute exacerbation of chronic obstructive airways disease with asthma
+1751000119100,Acute exacerbation of chronic obstructive pulmonary disease with asthma
 17996008,Pneumoconiosis caused by inorganic dust
 18121009,Chronic berylliosis
 18354001,Chronic induration of lung
 185086009,Chronic obstructive bronchitis
+186726005,Human immunodeficiency virus disease resulting in lymphoid interstitial pneumonitis
 190905008,Cystic fibrosis
 190909002,Cystic fibrosis with intestinal manifestations
 19242006,Pulmonary edema
+192681000000108,Cryptogenic organising pneumonitis
 19325002,Traction bronchiectasis
+195894001,Mycoplasmal pneumonia
+195895000,Mycoplasmal pneumonia
+195896004,Pneumonia caused by pleuropneumonia-like organism
 195949008,Chronic asthmatic bronchitis
-195951007,Acute exacerbation of chronic obstructive airways disease
+195951007,Acute exacerbation of chronic obstructive pulmonary disease
 195953005,Mixed simple and mucopurulent chronic bronchitis
 195957006,Chronic bullous emphysema
 195958001,Segmental bullous emphysema
@@ -51,7 +83,9 @@ code,term
 196028003,Chronic pulmonary fibrosis caused by chemical fumes
 196049002,Chronic pulmonary radiation disease
 196051003,Drug-induced interstitial lung disorder
+196123009,Fibrosing alveolitis: [idiopathic] or [cryptogenic]) or (Hamman - Rich syndrome)
 196125002,Diffuse interstitial pulmonary fibrosis
+196126001,Idiopathic fibrosing alveolitis NOS
 196133001,Lung disease with systemic sclerosis
 196137000,Lung disease with Sjögren's disease
 20091000175107,Acute on chronic hypoxemic and hypercapnic respiratory failure
@@ -64,14 +98,15 @@ code,term
 232659001,Double lung transplant as a block
 232660006,Bilateral sequential single lung transplant
 233615002,Chronic pulmonary coccidioidomycosis
-233623000,Mononuclear interstitial pneumonia
+233621003,Rickettsial pneumonia
+233623000,Mononuclear interstitial pneumonitis
 233627004,Congenital cystic bronchiectasis
 233628009,Acquired bronchiectasis
 233629001,Idiopathic bronchiectasis
 233630006,Obstructive bronchiectasis
 233631005,Toxin-induced bronchiectasis
-233632003,Bronchiectasis caused by toxic aspiration
-233633008,Bronchiectasis caused by toxic inhalation
+233632003,Bronchiectasis due to aspiration of toxic substance
+233633008,Bronchiectasis due to inhalation of toxic substance
 233634002,Post-lung transplantation bronchiectasis
 233666007,Young's syndrome
 233672007,Byssinosis grade 3
@@ -80,10 +115,11 @@ code,term
 233675009,Toxic emphysema
 233677001,Scar emphysema
 233713004,Seasonal cryptogenic organizing pneumonia with biochemical cholestasis
+233721005,Usual interstitial pneumonitis
 233723008,Bronchiolitis obliterans with usual interstitial pneumonitis
 233724002,Toxic diffuse interstitial pulmonary fibrosis
 233725001,Drug-induced diffuse interstitial pulmonary fibrosis
-233727009,Mediastinal radiation fibrosis
+233727009,Fibrosis of mediastinum caused by ionizing radiation
 233748006,Simple pneumoconiosis
 233749003,Complicated pneumoconiosis
 233750003,Erionite pneumoconiosis
@@ -100,6 +136,7 @@ code,term
 233763009,Silicotuberculosis
 233764003,Wollastonite pneumoconiosis
 235978006,Cystic fibrosis of pancreas
+236302005,Acute interstitial pneumonitis
 238676008,Lofgrens syndrome
 23958009,Vanishing lung
 240742009,Chronic pulmonary African histoplasmosis
@@ -110,9 +147,11 @@ code,term
 266356006,Atrophic (senile) emphysema
 266368002,Post-inflammatory pulmonary fibrosis
 266404004,Chronic chemical respiratory disease
+266410004,Idiopath. fibrosing alveolitis (& Hamman-Rich syndrome)
 277656005,Primary pulmonary hypoplasia
 28122003,Pulmonary eosinophilic granuloma
-285381006,Acute infective exacerbation of chronic obstructive airways disease
+28168000,"Idiopathic fibrosing alveolitis, chronic form"
+285381006,Acute infective exacerbation of chronic obstructive pulmonary disease
 28791000119105,Chronic coccidioidomycotic pneumonia
 2912004,Cystic-bullous disease of the lung
 293241000119100,Acute exacerbation of chronic obstructive bronchitis
@@ -123,7 +162,7 @@ code,term
 313296004,Mild chronic obstructive pulmonary disease
 313297008,Moderate chronic obstructive pulmonary disease
 313299006,Severe chronic obstructive pulmonary disease
-314954002,Local recurrence of malignant tumor of lung
+314954002,Local recurrence of malignant neoplasm of lung
 31886003,Bronchiolitis fibrosa obliterans
 31898008,Paraseptal emphysema
 32139003,Mixed dust pneumoconiosis
@@ -134,14 +173,16 @@ code,term
 34004002,Siderosilicosis
 34371004,Subacute obliterative bronchiolitis caused by inhalation of chemical fumes AND/OR vapors
 35037009,Primary atypical interstitial pneumonia
+350586651000119105,Chronic respiratory failure due to neuromuscular disease
 3514002,Peribronchial fibrosis of lung
 360470001,Chronic mucus hypersecretion
+361194002,Perinatal pulmonary fibroplasia
+361195001,Pulmonary fibroplasia
 361196000,Idiopathic hilar fibrosis
 36599006,Chronic fibrosis of lung
 36696005,Kaolinosis
-37180002,Chronic nonspecific lung disease
 37711000,Cadmium pneumonitis
-398640008,Rheumatoid pneumoconiosis
+398640008,Rheumatoid arthritis with pneumoconiosis
 39871006,Chronic respiratory failure
 40100001,Obliterative bronchiolitis
 40122008,Pneumoconiosis
@@ -156,7 +197,7 @@ code,term
 426853005,Pneumoconiosis caused by silicate
 426896000,Chronic hypercapnic respiratory failure
 427022004,Liver disease due to cystic fibrosis
-427046006,Drug-induced pneumonitis
+427046006,Pneumonitis caused by drug
 427089005,Diabetes mellitus due to cystic fibrosis
 427896006,Chronic respiratory insufficiency
 427928003,Disorder related to lung transplantation
@@ -170,10 +211,12 @@ code,term
 438773007,Recurrent pulmonary embolism
 44165003,Complication of transplanted lung
 442025000,Acute exacerbation of chronic asthmatic bronchitis
-44274007,Lymphoid interstitial pneumonia
+44274007,Lymphoid interstitial pneumonitis
 445378003,Acute exacerbation of bronchiectasis
 44547005,Chalicosis
+45157009,Idiopathic fibrosing alveolitis
 46847001,Chronic pulmonary edema
+46970008,Pneumonia caused by Mycoplasma pneumoniae
 47515009,Simple silicosis
 47895001,Congenital emphysema
 47938003,Chronic obliterative bronchiolitis
@@ -190,7 +233,7 @@ code,term
 52571006,Chronic tracheobronchitis
 526071000000104,Arthropathy in cystic fibrosis
 526091000000100,Cystic fibrosis with distal intestinal obstruction syndrome
-54867000,Rheumatoid fibrosing alveolitis
+54867000,Rheumatoid arthritis with fibrosing alveolitis
 56841008,Massive fibrosis of lung
 57488007,Chronic pulmonary fibrosis due to inhalation of chemical fumes AND/OR vapors
 57686001,Emphysematous bleb of lung
@@ -204,19 +247,22 @@ code,term
 63841001,Chronic pulmonary congestion
 64631008,Fullers' earth disease
 64667001,Interstitial pneumonia
+649171000000104,Idiopathic fibrosing alveolitis NOS
 66110007,Chronic diffuse emphysema caused by inhalation of chemical fumes AND/OR vapors
 66987001,Congenital lobar emphysema
 67569000,Bronchopulmonary dysplasia of newborn
 67905004,Acute-on-chronic respiratory failure
 68328006,Centriacinar emphysema
 68409003,Organized pneumonia
+684633371000119107,Diffuse pulmonary meningotheliomatosis
+68759006,"Idiopathic fibrosing alveolitis, subacute form"
 69454006,Chronic respiratory condition caused by fumes AND/OR vapors
 698940002,Arthropathy associated with cystic fibrosis
-700249006,Idiopathic interstitial pneumonia
+700249006,Idiopathic interstitial pneumonitis
 700250006,Idiopathic pulmonary fibrosis
 700251005,Chronic idiopathic pulmonary fibrosis
 700252003,Subacute idiopathic pulmonary fibrosis
-704345008,Chronic interstitial pneumonia
+704345008,Chronic interstitial pneumonitis
 707412000,Chronic pulmonary thromboembolism
 707413005,Chronic pulmonary thromboembolism without pulmonary hypertension
 707419009,Osteoporosis due to cystic fibrosis
@@ -226,10 +272,10 @@ code,term
 707534000,Chronic lung disease due to surfactant disorder
 707536003,Digestive system manifestation co-occurrent and due to cystic fibrosis
 707542004,Otorhinolaryngological manifestation co-occurrent and due to cystic fibrosis
-707553005,Chronic exogenous lipoid pneumonia
+707553005,Chronic exogenous lipoid pneumonitis
 70756004,Bronchial atresia with segmental pulmonary emphysema
 707578009,Perforation of intestine due to cystic fibrosis with meconium ileus
-707734002,Elevated liver enzymes level due to cystic fibrosis
+707734002,Liver enzymes level above reference range due to cystic fibrosis
 707766007,Exocrine pancreatic manifestation co-occurrent and due to cystic fibrosis
 708026002,Chronic pneumonitis of infancy
 708030004,Pulmonary emphysema co-occurrent with fibrosis of lung
@@ -239,6 +285,7 @@ code,term
 713526000,Recurrent bacterial pneumonia co-occurrent with human immunodeficiency virus infection
 714203003,Acute bronchitis co-occurrent with bronchiectasis
 716088000,Follicular hamartoma with alopecia and cystic fibrosis syndrome
+716198008,Growth delay with hydrocephalus and lung hypoplasia syndrome
 719218000,Cryptogenic organizing pneumonia
 720009004,Intractable diarrhea with choanal atresia and eye anomaly syndrome
 720401009,Cystic fibrosis with gastritis and megaloblastic anemia syndrome
@@ -246,7 +293,7 @@ code,term
 721197001,Polyneuropathy due to classical cystic fibrosis
 72270005,Collagenous pneumoconiosis
 723829000,"Pulmonary fibrosis, hepatic hyperplasia, bone marrow hypoplasia syndrome"
-724500003,Idiopathic chronic eosinophilic pneumonia
+724500003,Idiopathic chronic eosinophilic pneumonitis
 73144008,Pneumoconiosis caused by talc
 733171006,Chronic pulmonary aspergillosis
 733453005,"Congenital nephrotic syndrome, interstitial lung disease, epidermolysis bullosa syndrome"
@@ -261,6 +308,8 @@ code,term
 739025007,Transplanted heart-lung present
 74417001,Mucopurulent chronic bronchitis
 7457009,Chronic tracheitis
+7548000,Rheumatic pneumonitis
+76090006,Pittsburgh pneumonia
 76157009,Bituminosis
 762269004,Classical cystic fibrosis
 762270003,Atypical cystic fibrosis
@@ -271,7 +320,9 @@ code,term
 77593006,Congenital bronchiectasis
 77690003,Interstitial emphysema of lung
 776981000000103,Cirrhosis associated with cystic fibrosis
+781651000000101,Respiratory bronchiolitis associated interstitial lung disease
 782655004,Laparoscopic transplant of kidney using robotic assistance
+783182004,Chronic respiratory distress with surfactant metabolism deficiency
 785345002,Pneumoconiosis caused by sisal dust
 785736001,Chronic bronchitis co-occurrent with wheeze
 78723001,Cannabinosis
@@ -279,6 +330,8 @@ code,term
 79955004,Chronic cor pulmonale
 805002,Pneumoconiosis caused by silica
 805261000000101,Bronchiolitis obliterans syndrome after lung transplantation
+807391000000107,Usual interstitial pneumonitis
+807861000000106,Respiratory bronchiolitis associated interstitial lung disease
 81423003,Cystic fibrosis without meconium ileus
 817966005,Distal intestinal obstruction syndrome due to cystic fibrosis
 818951009,Congenital respiratory biliary fistula
@@ -293,11 +346,12 @@ code,term
 840493007,Congenital lobar emphysema of bilateral lungs
 84409004,Fetid chronic bronchitis
 846634000,Chronic respiratory condition caused by fumes
-846635004,Chronic respiratory condition caused by vapors
+846635004,Chronic respiratory condition caused by vapor
 846636003,Chronic respiratory condition caused by chemical fumes
 846637007,Chronic pulmonary fibrosis caused by chemical vapors
 847091000000104,Acute non-infective exacerbation of chronic obstructive pulmonary disease
 85438006,Diatomaceous earth disease
+8549006,Desquamative interstitial pneumonitis
 85761009,Byssinosis
 859041000000103,Exacerbation of cystic fibrosis
 86092005,Cystic fibrosis with meconium ileus
@@ -305,10 +359,11 @@ code,term
 86555001,Cystic fibrosis of the lung
 866103007,Interstitial lung disease due to juvenile polymyositis
 86680006,Ruptured emphysematous bleb of lung
-870573008,Interstitial pneumonia with autoimmune features
+870573008,Interstitial pneumonitis with autoimmune features
 87433001,Pulmonary emphysema
 87837008,Chronic pulmonary heart disease
 87909002,Hard metal pneumoconiosis
+879963005,Exacerbation of bronchiectasis caused by infection
 88039007,Transplant of lung
 90117007,Tuberculous fibrosis of lung
 90610005,Interstitial pulmonary fibrosis of prematurity

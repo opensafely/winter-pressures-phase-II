@@ -10,3 +10,5 @@ venv/
 .Rhistory
 .Rproj.user/
 .devcontainer/ehrql-main/
+analysis/manuscript_files
+analysis/manuscript.html

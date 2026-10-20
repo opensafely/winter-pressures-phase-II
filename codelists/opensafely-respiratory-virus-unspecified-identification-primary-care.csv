@@ -1,0 +1,263 @@
+code,term
+102453009,Peritonsillar cellulitis
+10351008,Suppurative tonsillitis
+10509002,Acute bronchitis
+10625751000119106,Bronchopneumonia due to virus
+10809006,Parainfluenza virus laryngotracheitis
+1092361000119109,Rubella pneumonia
+111274000,Acute abscess of nasal sinus
+11134001,Acute suppuration of sphenoidal sinus
+111849006,Adenoviral bronchitis
+117723004,Infectious bronchitis virus genotype determination
+1187256004,Viral pneumonia due to infectious mononucleosis caused by human herpesvirus 4
+122403008,Infectious bronchitis virus culture
+123587001,Acute bronchopneumonia
+123588006,Confluent bronchopneumonia with abscess formation
+123590007,Focal pneumonia
+123591006,Confluent pneumonia
+123592004,Acute mucous pneumonia
+128711000119106,Pneumonia caused by methicillin susceptible Staphylococcus aureus
+129451001,Respiratory bronchiolitis associated interstitial lung disease
+13266007,Sphenoidal sinusitis
+133171000119105,Chronic pharyngolaryngitis
+13617004,Tracheobronchitis
+14465002,Ulcerative tonsillitis
+14969004,Catarrhal laryngitis
+155498004,Acute sinusitis
+155499007,Acute maxillary sinusitis
+155500003,Acute frontal sinusitis
+155501004,(Acute sinusitis: [NOS] or [ethmoidal] or [sphenoidal]) or ([pansinusitis])
+155503001,Acute tonsillitis
+155505008,Acute laryngitis and tracheitis
+155506009,Acute laryngitis
+155510007,Acute laryngotracheobronchitis
+155512004,Acute: [bronchitis] or [chest infections] or [tracheobronchitis]
+155515002,Acute bronchitis NOS
+155549005,Viral pneumonia
+155551009,Bronchopneumonia
+155552002,Pneumonia NOS
+155558003,Pneumonia NOS
+155616009,Bronchitis NOS
+15805002,Acute sinusitis
+16146001,Viral bronchitis
+17357005,Acute suppuration of frontal sinus
+17741008,Acute tonsillitis
+17904003,Hypertrophic laryngitis
+18643000,Ethmoidal sinusitis
+195649005,Sinusitis (& acute)
+195651009,Other acute sinusitis
+195652002,Other acute sinusitis NOS
+195653007,Acute sinusitis NOS
+195665006,Tonsillitis (& acute)
+195666007,Acute erythematous tonsillitis
+195667003,Acute follicular tonsillitis
+195668008,Acute ulcerative tonsillitis
+195669000,Acute catarrhal tonsillitis
+195670004,Acute gangrenous tonsillitis
+195676005,Acute viral tonsillitis
+195677001,Recurrent acute tonsillitis
+195678006,Acute tonsillitis NOS
+195679003,Acute laryngitis and tracheitis
+195680000,Acute edematous laryngitis
+195681001,Acute ulcerative laryngitis
+195682008,Acute catarrhal laryngitis
+195683003,Acute phlegmonous laryngitis
+195684009,Acute laryngitis caused by Haemophilus influenzae
+195685005,Acute pneumococcal laryngitis
+195686006,Acute suppurative laryngitis
+195688007,Acute viral laryngitis unspecified
+195690008,Acute laryngitis NOS
+195702002,Acute laryngotracheobronchitis
+195703007,Acute laryngitis and tracheitis NOS
+195709006,Pharyngolaryngitis
+195713004,Acute bronchitis (& wheezy)
+195714005,Acute fibrinous bronchitis
+195715006,Acute membranous bronchitis
+195717003,Acute purulent bronchitis
+195718008,Acute croupous bronchitis
+195730002,Subacute bronchitis unspecified
+195731003,Acute viral bronchitis unspecified
+195733000,Acute bronchitis NOS
+195790000,Pansinusitis
+195803003,Caseous tonsillitis
+195804009,Lingular tonsillitis
+195810009,Chronic laryngitis and laryngotracheitis
+195811008,Chronic simple laryngitis
+195812001,Chronic catarrhal laryngitis
+195813006,Chronic hyperplastic laryngitis
+195880002,Viral pneumonia (& chest infection)
+195882005,Viral pneumonia NEC
+195883000,Viral pneumonia NOS
+195899006,(Pneumonia) or (chest infection) with infectious diseases EC
+195907003,Pneumonia with other infectious diseases EC
+195912002,Pneumonia with other infectious diseases EC NOS
+195913007,Pneumonia with infectious diseases EC NOS
+195914001,Bronchopneumonia: [unspecified organism] or [chest infection - unspecified]
+195915000,Pneumonia due to unspecified organism
+195916004,Lobar pneumonia due to unspecified organism
+195918003,Basal pneumonia due to unspecified organism
+195923003,Influenza with laryngitis
+195932001,Atypical pneumonia
+195936003,Bronchitis: [unspecified (& chest infection)] or [recurrent wheezy]
+195937007,Tracheobronchitis NOS
+195938002,Laryngotracheobronchitis
+195940007,Bronchitis NOS
+196112005,Abscess of lung with pneumonia
+196196007,[X]Other acute sinusitis
+196204006,[X]Other viral pneumonia
+198691000000108,Acute obstructive laryngitis
+214081000000107,Acute obstructive laryngitis
+222008,Acute epiglottitis with obstruction
+22754005,Staphylococcal pneumonia
+232390009,Suppurative sinusitis with complications
+232426008,Acute simple laryngitis
+232428009,Acute membranous laryngitis
+232429001,Acute subglottic laryngitis
+232432003,Pediatric acute epiglottitis and supraglottitis
+232433008,Adult acute epiglottitis and supraglottitis
+233597004,Chest infection - unspecified bronchitis
+233601004,Acute viral bronchitis
+233604007,Pneumonia
+266337001,Acute epiglottitis (non-streptococcal)
+266350000,Pneumococcal lobar pneumonia
+266351001,Pneumonia with infectious diseases EC
+266352008,Bronchopneumonia due to unspecified organism
+266354009,Bronchitis unspecified
+266378004,(Acute sinusitis: [NOS] or [ethmoidal] or [sphenoidal]) or ([pansinusitis])
+266380005,Acute: [bronchitis] or [chest infections] or [tracheobronchitis]
+26650005,Acute tracheitis
+274103002,Pneumonia NOS
+275483004,Sinusitis
+275484005,Maxillary sinusitis
+275485006,Frontal sinusitis
+275499005,Acute wheezy bronchitis
+276443001,Acute laryngitis and/or tracheitis
+278516003,Lobar pneumonia
+29591002,Purulent bronchitis
+29608009,Acute epiglottitis
+29951006,Chronic laryngitis
+300999006,Basal pneumonia
+301000005,Left lower zone pneumonia
+301001009,Right lower zone pneumonia
+301002002,Left upper zone pneumonia
+301003007,Right middle zone pneumonia
+301004001,Right upper zone pneumonia
+301824001,Acute viral laryngotracheitis
+30239003,Acute abscess of sphenoidal sinus
+302911003,Acute lingual tonsillitis
+307500008,Cricoarytenoid joint arthritis
+307763005,Basal pneumonia due to unspecified organism
+308906005,Secondary bacterial pneumonia
+312342009,Infective pneumonia
+312371005,Acute infective bronchitis
+312400008,Acute infective tracheobronchitis
+312423006,Infective laryngitis
+312424000,Infective tonsillitis
+313281000000109,Acute rhinosinusitis
+32398004,Bronchitis
+338111000000109,Acute rhinosinusitis
+34020007,Pneumonia caused by Streptococcus
+35301006,Acute tracheobronchitis
+35339003,Primary pneumonic plague
+36426008,Subacute bronchitis
+36971009,Sinusitis
+371127003,Obstructive sinusitis
+37426002,Ulcerative laryngitis
+37948003,Acute laryngotracheitis without obstruction
+396284006,Lobular pneumonia
+396285007,Bronchopneumonia
+396286008,Bilateral bronchopneumonia
+407671000,Bilateral pneumonia
+408669002,Acute laryngitis with obstruction
+41931000119102,Sinusitis co-occurrent with nasal polyps
+426696003,Lingular pneumonia
+429381000000103,[X]Other viral pneumonia
+430395005,Pneumonia caused by Gram negative bacteria
+431231008,Acute rhinosinusitis
+441551009,Inflammation of larynx caused by virus
+441590008,Pneumonia caused by Severe acute respiratory syndrome coronavirus
+444814009,Viral sinusitis
+445096001,Pneumonia caused by Human metapneumovirus
+454211000000100,[X]Other acute sinusitis
+45913009,Laryngitis
+51209006,Viral tonsillitis
+532291000000105,Pneumonia with infectious diseases EC
+55130001,Laryngotracheitis
+55355000,Acute laryngopharyngitis
+55679008,Peribronchial pneumonia
+576581000000107,Acute viral laryngitis unspecified
+57702005,Unresolved pneumonia
+5875001,Acute bronchitis with obstruction
+59967003,Acute laryngotracheitis with obstruction
+600981000000100,Other acute sinusitis NOS
+600991000000103,Acute sinusitis NOS
+603091000000105,Acute laryngitis NOS
+603111000000100,Pneumonia with other infectious diseases EC
+603131000000108,Acute laryngitis and tracheitis NOS
+60363000,Pneumonia
+60485005,Pleurobronchopneumonia
+607911000000108,Other acute sinusitis
+616111000000105,Pneumonia with other infectious diseases EC NOS
+616131000000102,Pneumonia with infectious diseases EC NOS
+616141000000106,Pneumonia due to unspecified organism
+617941000000107,Viral pneumonia NEC
+617951000000105,Viral pneumonia NOS
+617981000000104,Bacterial pneumonia NOS
+621011000000106,Acute bronchitis NOS
+623471000000106,Acute tonsillitis NOS
+63140003,Acute suppuration of ethmoidal sinus
+64369009,Acute tracheitis without obstruction
+64375000,Acute laryngotracheitis
+644261000000103,Chest infection - unspecified bronchitis
+64703005,Terminal bronchopneumonia
+649111000000109,Tracheobronchitis NOS
+649121000000103,Bronchitis NOS
+64917006,Parainfluenza virus pneumonia
+651931000000103,Subacute bronchitis unspecified
+651941000000107,Acute viral bronchitis unspecified
+652331000000107,Basal pneumonia due to unspecified organism
+656891000000102,Lobar pneumonia due to unspecified organism
+65878001,Septic bronchitis
+66429007,Unresolved lobar pneumonia
+6655004,Acute laryngitis
+670561000000106,Bronchitis unspecified
+677801000000109,Pneumonia NOS
+67814005,Bronchopneumonia
+67832005,Acute ethmoidal sinusitis
+68272006,Acute maxillary sinusitis
+689401000000108,Bronchopneumonia due to unspecified organism
+699014000,Recurrent pneumonia
+709663002,Supraglottitis
+70976000,Viral epiglottitis
+71186008,Croup
+713084008,Pneumonia caused by Human coronavirus
+714203003,Acute bronchitis co-occurrent with bronchiectasis
+721586007,Pharyngotonsillitis caused by Human herpes simplex virus
+725917007,Acute sinusitis caused by virus
+75570004,Viral pneumonia
+7678002,Cytomegaloviral pneumonia
+77919000,Acute sphenoidal sinusitis
+785728005,Bronchitis co-occurrent with wheeze
+785737005,Bronchitis co-occurrent with chronic wheeze
+785744001,Bronchitis co-occurrent with acute wheeze
+785745000,Acute bronchitis co-occurrent with wheeze
+78737005,Frontal sinusitis
+80257001,Acute bronchitis with bronchospasm
+80384002,Epiglottitis
+80600003,Acute suppuration of nasal sinus
+80771000000105,Atypical pneumonia screening test
+82690000,Suppurative laryngitis
+83271005,Chronic laryngotracheitis
+84753008,Pneumonia in systemic mycosis
+85083002,Streptococcal laryngitis
+8519009,Acute tracheitis with obstruction
+85832003,Parainfluenza virus laryngitis
+85915003,Laryngotracheobronchitis
+878818001,Pharyngotonsillitis
+882784691000119100,Pneumonia caused by severe acute respiratory syndrome coronavirus 2
+88348008,Maxillary sinusitis
+89194009,Acute abscess of maxillary sinus
+89549007,Catarrhal bronchitis
+897656009,Rhinosinusitis
+90176007,Tonsillitis
+91038008,Acute frontal sinusitis

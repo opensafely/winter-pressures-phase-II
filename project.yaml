@@ -1,170 +1,1447 @@
 
-version: '3.0'
-
-expectations:
-  population_size: 1000
+version: '5.0'
 
 actions:
 
-  generate_patient_measures_2016-08-10:
+  generate_practice_measures_appts_table_2016-04-11:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2016-08-10.csv.gz
-      --
-      --patient_measures
-      --start_intv 2016-08-10
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2016-08-10.csv.gz
-
-  generate_patient_measures_2017-08-09:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2017-08-09.csv.gz
-      --
-      --patient_measures
-      --start_intv 2017-08-09
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2017-08-09.csv.gz
-
-  generate_patient_measures_2018-08-08:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2018-08-08.csv.gz
-      --
-      --patient_measures
-      --start_intv 2018-08-08
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2018-08-08.csv.gz
-
-  generate_patient_measures_2019-08-07:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2019-08-07.csv.gz
-      --
-      --patient_measures
-      --start_intv 2019-08-07
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2019-08-07.csv.gz
-
-  generate_patient_measures_2020-08-05:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2020-08-05.csv.gz
-      --
-      --patient_measures
-      --start_intv 2020-08-05
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2020-08-05.csv.gz
-
-  generate_patient_measures_2021-08-04:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2021-08-04.csv.gz
-      --
-      --patient_measures
-      --start_intv 2021-08-04
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2021-08-04.csv.gz
-
-  generate_patient_measures_2022-08-03:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2022-08-03.csv.gz
-      --
-      --patient_measures
-      --start_intv 2022-08-03
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2022-08-03.csv.gz
-
-  generate_patient_measures_2023-08-02:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/patient_measures/patient_measures_2023-08-02.csv.gz
-      --
-      --patient_measures
-      --start_intv 2023-08-02
-    outputs:
-      highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2023-08-02.csv.gz
-
-  generate_practice_measures_2016-08-10:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-08-10.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2016-04-11.arrow
       --
       --practice_measures
-      --start_intv 2016-08-10
+      --start_intv 2016-04-11
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-08-10.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2016-04-11.arrow
 
-  generate_practice_measures_2017-08-09:
+  generate_practice_measures_appts_table_2017-04-10:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2017-08-09.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2017-04-10.arrow
       --
       --practice_measures
-      --start_intv 2017-08-09
+      --start_intv 2017-04-10
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2017-08-09.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2017-04-10.arrow
 
-  generate_practice_measures_2018-08-08:
+  generate_practice_measures_appts_table_2018-04-09:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2018-08-08.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2018-04-09.arrow
       --
       --practice_measures
-      --start_intv 2018-08-08
+      --start_intv 2018-04-09
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2018-08-08.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2018-04-09.arrow
 
-  generate_practice_measures_2019-08-07:
+  generate_practice_measures_appts_table_2019-04-08:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2019-08-07.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2019-04-08.arrow
       --
       --practice_measures
-      --start_intv 2019-08-07
+      --start_intv 2019-04-08
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2019-08-07.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2019-04-08.arrow
 
-  generate_practice_measures_2020-08-05:
+  generate_practice_measures_appts_table_2020-04-06:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2020-08-05.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2020-04-06.arrow
       --
       --practice_measures
-      --start_intv 2020-08-05
+      --start_intv 2020-04-06
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2020-08-05.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2020-04-06.arrow
 
-  generate_practice_measures_2021-08-04:
+  generate_practice_measures_appts_table_2021-04-05:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2021-08-04.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2021-04-05.arrow
       --
       --practice_measures
-      --start_intv 2021-08-04
+      --start_intv 2021-04-05
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2021-08-04.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2021-04-05.arrow
 
-  generate_practice_measures_2022-08-03:
+  generate_practice_measures_appts_table_2022-04-04:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2022-08-03.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2022-04-04.arrow
       --
       --practice_measures
-      --start_intv 2022-08-03
+      --start_intv 2022-04-04
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2022-08-03.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2022-04-04.arrow
 
-  generate_practice_measures_2023-08-02:
+  generate_practice_measures_appts_table_2023-04-03:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2023-08-02.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2023-04-03.arrow
       --
       --practice_measures
-      --start_intv 2023-08-02
+      --start_intv 2023-04-03
+      --set appts_table
+      
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2023-08-02.csv.gz
+        dataset: output/practice_measures_appts_table/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_appts_table_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_appts_table_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_appts_table_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_appts_table_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_appts_table_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_appts_table_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_appts_table_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_appts_table_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_appts_table_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_appts_table_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_appts_table_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_appts_table_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_sro_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_sro_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_sro_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_sro_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_sro_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_sro_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_sro_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_sro_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_sro_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_sro_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_sro_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_sro_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_sro_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_sro_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_sro_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_sro_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_sro_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_sro_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_sro_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_sro_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_resp_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_resp_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_resp_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_resp_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_resp_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_resp_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_resp_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_resp_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_resp_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_resp_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2025-03-31.arrow
+
+  generate_practice_measures_resp_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2016-04-11.arrow
+      --
+      --practice_measures
+      --start_intv 2016-04-11
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2016-04-11.arrow
+
+  generate_practice_measures_resp_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2017-04-10.arrow
+      --
+      --practice_measures
+      --start_intv 2017-04-10
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2017-04-10.arrow
+
+  generate_practice_measures_resp_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2018-04-09.arrow
+      --
+      --practice_measures
+      --start_intv 2018-04-09
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2018-04-09.arrow
+
+  generate_practice_measures_resp_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2019-04-08.arrow
+      --
+      --practice_measures
+      --start_intv 2019-04-08
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2019-04-08.arrow
+
+  generate_practice_measures_resp_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2020-04-06.arrow
+      --
+      --practice_measures
+      --start_intv 2020-04-06
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2020-04-06.arrow
+
+  generate_practice_measures_resp_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2021-04-05.arrow
+      --
+      --practice_measures
+      --start_intv 2021-04-05
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2021-04-05.arrow
+
+  generate_practice_measures_resp_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2022-04-04.arrow
+      --
+      --practice_measures
+      --start_intv 2022-04-04
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2022-04-04.arrow
+
+  generate_practice_measures_resp_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2023-04-03.arrow
+      --
+      --practice_measures
+      --start_intv 2023-04-03
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2023-04-03.arrow
+
+  generate_practice_measures_resp_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2024-04-01.arrow
+      --
+      --practice_measures
+      --start_intv 2024-04-01
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2024-04-01.arrow
+
+  generate_practice_measures_resp_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2025-03-31.arrow
+      --
+      --practice_measures
+      --start_intv 2025-03-31
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2025-03-31.arrow
+
+  generate_practice_subgroup_measures_appts_table_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2016-04-11.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2016-04-11
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2016-04-11.arrow
+
+  generate_practice_subgroup_measures_appts_table_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2017-04-10.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2017-04-10
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2017-04-10.arrow
+
+  generate_practice_subgroup_measures_appts_table_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2018-04-09.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2018-04-09
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2018-04-09.arrow
+
+  generate_practice_subgroup_measures_appts_table_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2019-04-08.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2019-04-08
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2019-04-08.arrow
+
+  generate_practice_subgroup_measures_appts_table_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2020-04-06.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2020-04-06
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2020-04-06.arrow
+
+  generate_practice_subgroup_measures_appts_table_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2021-04-05.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2021-04-05
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2021-04-05.arrow
+
+  generate_practice_subgroup_measures_appts_table_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2022-04-04.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2022-04-04
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2022-04-04.arrow
+
+  generate_practice_subgroup_measures_appts_table_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2023-04-03.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-04-03
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2023-04-03.arrow
+
+  generate_practice_subgroup_measures_appts_table_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2024-04-01.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2024-04-01
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2024-04-01.arrow
+
+  generate_practice_subgroup_measures_appts_table_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2025-03-31.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2025-03-31
+      --set appts_table
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2025-03-31.arrow
+
+  generate_practice_subgroup_measures_appts_table_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2016-04-11.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2016-04-11
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2016-04-11.arrow
+
+  generate_practice_subgroup_measures_appts_table_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2017-04-10.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2017-04-10
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2017-04-10.arrow
+
+  generate_practice_subgroup_measures_appts_table_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2018-04-09.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2018-04-09
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2018-04-09.arrow
+
+  generate_practice_subgroup_measures_appts_table_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2019-04-08.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2019-04-08
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2019-04-08.arrow
+
+  generate_practice_subgroup_measures_appts_table_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2020-04-06.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2020-04-06
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2020-04-06.arrow
+
+  generate_practice_subgroup_measures_appts_table_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2021-04-05.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2021-04-05
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2021-04-05.arrow
+
+  generate_practice_subgroup_measures_appts_table_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2022-04-04.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2022-04-04
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2022-04-04.arrow
+
+  generate_practice_subgroup_measures_appts_table_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2023-04-03.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-04-03
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2023-04-03.arrow
+
+  generate_practice_subgroup_measures_appts_table_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2024-04-01.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2024-04-01
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2024-04-01.arrow
+
+  generate_practice_subgroup_measures_appts_table_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2025-03-31.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2025-03-31
+      --set appts_table --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2025-03-31.arrow
+
+  generate_practice_subgroup_measures_sro_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2016-04-11.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2016-04-11
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2016-04-11.arrow
+
+  generate_practice_subgroup_measures_sro_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2017-04-10.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2017-04-10
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2017-04-10.arrow
+
+  generate_practice_subgroup_measures_sro_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2018-04-09.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2018-04-09
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2018-04-09.arrow
+
+  generate_practice_subgroup_measures_sro_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2019-04-08.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2019-04-08
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2019-04-08.arrow
+
+  generate_practice_subgroup_measures_sro_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2020-04-06.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2020-04-06
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2020-04-06.arrow
+
+  generate_practice_subgroup_measures_sro_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2021-04-05.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2021-04-05
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2021-04-05.arrow
+
+  generate_practice_subgroup_measures_sro_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2022-04-04.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2022-04-04
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2022-04-04.arrow
+
+  generate_practice_subgroup_measures_sro_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2023-04-03.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-04-03
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2023-04-03.arrow
+
+  generate_practice_subgroup_measures_sro_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2024-04-01.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2024-04-01
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2024-04-01.arrow
+
+  generate_practice_subgroup_measures_sro_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2025-03-31.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2025-03-31
+      --set sro
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2025-03-31.arrow
+
+  generate_practice_subgroup_measures_sro_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2016-04-11.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2016-04-11
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2016-04-11.arrow
+
+  generate_practice_subgroup_measures_sro_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2017-04-10.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2017-04-10
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2017-04-10.arrow
+
+  generate_practice_subgroup_measures_sro_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2018-04-09.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2018-04-09
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2018-04-09.arrow
+
+  generate_practice_subgroup_measures_sro_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2019-04-08.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2019-04-08
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2019-04-08.arrow
+
+  generate_practice_subgroup_measures_sro_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2020-04-06.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2020-04-06
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2020-04-06.arrow
+
+  generate_practice_subgroup_measures_sro_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2021-04-05.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2021-04-05
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2021-04-05.arrow
+
+  generate_practice_subgroup_measures_sro_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2022-04-04.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2022-04-04
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2022-04-04.arrow
+
+  generate_practice_subgroup_measures_sro_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2023-04-03.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-04-03
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2023-04-03.arrow
+
+  generate_practice_subgroup_measures_sro_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2024-04-01.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2024-04-01
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2024-04-01.arrow
+
+  generate_practice_subgroup_measures_sro_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2025-03-31.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2025-03-31
+      --set sro --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2025-03-31.arrow
+
+  generate_practice_subgroup_measures_resp_2016-04-11:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2016-04-11.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2016-04-11
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2016-04-11.arrow
+
+  generate_practice_subgroup_measures_resp_2017-04-10:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2017-04-10.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2017-04-10
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2017-04-10.arrow
+
+  generate_practice_subgroup_measures_resp_2018-04-09:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2018-04-09.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2018-04-09
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2018-04-09.arrow
+
+  generate_practice_subgroup_measures_resp_2019-04-08:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2019-04-08.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2019-04-08
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2019-04-08.arrow
+
+  generate_practice_subgroup_measures_resp_2020-04-06:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2020-04-06.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2020-04-06
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2020-04-06.arrow
+
+  generate_practice_subgroup_measures_resp_2021-04-05:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2021-04-05.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2021-04-05
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2021-04-05.arrow
+
+  generate_practice_subgroup_measures_resp_2022-04-04:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2022-04-04.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2022-04-04
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2022-04-04.arrow
+
+  generate_practice_subgroup_measures_resp_2023-04-03:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2023-04-03.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-04-03
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2023-04-03.arrow
+
+  generate_practice_subgroup_measures_resp_2024-04-01:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2024-04-01.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2024-04-01
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2024-04-01.arrow
+
+  generate_practice_subgroup_measures_resp_2025-03-31:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2025-03-31.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2025-03-31
+      --set resp
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2025-03-31.arrow
+
+  generate_practice_subgroup_measures_resp_2016-04-11_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2016-04-11.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2016-04-11
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2016-04-11.arrow
+
+  generate_practice_subgroup_measures_resp_2017-04-10_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2017-04-10.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2017-04-10
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2017-04-10.arrow
+
+  generate_practice_subgroup_measures_resp_2018-04-09_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2018-04-09.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2018-04-09
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2018-04-09.arrow
+
+  generate_practice_subgroup_measures_resp_2019-04-08_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2019-04-08.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2019-04-08
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2019-04-08.arrow
+
+  generate_practice_subgroup_measures_resp_2020-04-06_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2020-04-06.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2020-04-06
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2020-04-06.arrow
+
+  generate_practice_subgroup_measures_resp_2021-04-05_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2021-04-05.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2021-04-05
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2021-04-05.arrow
+
+  generate_practice_subgroup_measures_resp_2022-04-04_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2022-04-04.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2022-04-04
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2022-04-04.arrow
+
+  generate_practice_subgroup_measures_resp_2023-04-03_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2023-04-03.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-04-03
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2023-04-03.arrow
+
+  generate_practice_subgroup_measures_resp_2024-04-01_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2024-04-01.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2024-04-01
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2024-04-01.arrow
+
+  generate_practice_subgroup_measures_resp_2025-03-31_appt:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2025-03-31.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2025-03-31
+      --set resp --appt
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2025-03-31.arrow
 
   generate_app_measures_intv_1:
      run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
@@ -203,75 +1480,1753 @@ actions:
          dataset: output/appointments/app_measures_4.csv
  
   generate_app_processing:
-     run: r:latest analysis/appointments/app_processing.r
+     run: r:v2 analysis/appointments/app_processing.r
      needs: [generate_app_measures_intv_1, generate_app_measures_intv_2, generate_app_measures_intv_3, generate_app_measures_intv_4]
      outputs:
        moderately_sensitive:
          table_rounded: output/appointments/app_measures_rounded_*.csv
+ 
+ # --------------- PROCESSING ------------------------------------------
 
-  generate_pre_processing:
-    run: python:latest analysis/pre_processing.py
-    needs: [generate_patient_measures_2016-08-10, generate_patient_measures_2017-08-09, generate_patient_measures_2018-08-08, generate_patient_measures_2019-08-07, generate_patient_measures_2020-08-05, generate_patient_measures_2021-08-04, generate_patient_measures_2022-08-03, generate_patient_measures_2023-08-02, generate_practice_measures_2016-08-10, generate_practice_measures_2017-08-09, generate_practice_measures_2018-08-08, generate_practice_measures_2019-08-07, generate_practice_measures_2020-08-05, generate_practice_measures_2021-08-04, generate_practice_measures_2022-08-03, generate_practice_measures_2023-08-02]
+  generate_pre_processing_practice_appts_table:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set appts_table
+    needs: [generate_practice_measures_appts_table_2016-04-11, generate_practice_measures_appts_table_2017-04-10, generate_practice_measures_appts_table_2018-04-09, generate_practice_measures_appts_table_2019-04-08, generate_practice_measures_appts_table_2020-04-06, generate_practice_measures_appts_table_2021-04-05, generate_practice_measures_appts_table_2022-04-04, generate_practice_measures_appts_table_2023-04-03, generate_practice_measures_appts_table_2024-04-01, generate_practice_measures_appts_table_2025-03-31]
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures.csv.gz
-        patient_measure: output/patient_measures/proc_patient_measures.csv.gz
-      moderately_sensitive:
-        frequency_table: output/patient_measures/frequency_table.csv
-  generate_tables:
-    run: r:latest analysis/table_generation.r
-    needs: [generate_pre_processing]
+        measures: output/practice_measures_appts_table/proc_practice_measures*.arrow
+  generate_freq_table_practice_appts_table:
+    run: python:v2 analysis/freq_table.py --practice_measures --set appts_table
+    needs: [generate_pre_processing_practice_appts_table]
     outputs:
       moderately_sensitive:
-        total_measures_tables: output/total_measures/plots/*.csv
-        practice_measures_tables: output/practice_measures/plots/*.csv
-        patient_measures_tables: output/patient_measures/plots/*.csv
-        total_measures_plots: output/total_measures/plots/*.png
-        practice_measures_plots: output/practice_measures/plots/*.png
-        patient_measures_plots: output/patient_measures/plots/*.png
-
-  generate_patient_measures_test:
-    run: ehrql:v1 generate-measures analysis/wp_measures.py 
-      --output output/patient_measures/patient_measures_2016-08-10_test.csv.gz
-      --
-      --patient_measures
-      --start_intv 2016-08-10
-      --test
+        freq_table: output/practice_measures_appts_table/freq_table_practice.csv
+  generate_normalization_practice_appts_table:
+    run: python:v2 analysis/normalization.py --practice_measures --set appts_table
+    needs: [generate_pre_processing_practice_appts_table]
     outputs:
       highly_sensitive:
-        dataset: output/patient_measures/patient_measures_2016-08-10_test.csv.gz
-  generate_practice_measures_test:
+        practice_level_arrow: output/practice_measures_appts_table/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_appts_table/Results*.csv
+        weekly_tables: output/practice_measures_appts_table/weekly*.csv
+
+  generate_pre_processing_practice_appts_table_appt:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set appts_table --appt
+    needs: [generate_practice_measures_appts_table_2016-04-11_appt, generate_practice_measures_appts_table_2017-04-10_appt, generate_practice_measures_appts_table_2018-04-09_appt, generate_practice_measures_appts_table_2019-04-08_appt, generate_practice_measures_appts_table_2020-04-06_appt, generate_practice_measures_appts_table_2021-04-05_appt, generate_practice_measures_appts_table_2022-04-04_appt, generate_practice_measures_appts_table_2023-04-03_appt, generate_practice_measures_appts_table_2024-04-01_appt, generate_practice_measures_appts_table_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_appts_table_appt/proc_practice_measures*.arrow
+  generate_freq_table_practice_appts_table_appt:
+    run: python:v2 analysis/freq_table.py --practice_measures --set appts_table --appt
+    needs: [generate_pre_processing_practice_appts_table_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_appts_table_appt/freq_table_practice.csv
+  generate_normalization_practice_appts_table_appt:
+    run: python:v2 analysis/normalization.py --practice_measures --set appts_table --appt
+    needs: [generate_pre_processing_practice_appts_table_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_appts_table_appt/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_appts_table_appt/Results*.csv
+        weekly_tables: output/practice_measures_appts_table_appt/weekly*.csv
+
+  generate_pre_processing_practice_sro:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro
+    needs: [generate_practice_measures_sro_2016-04-11, generate_practice_measures_sro_2017-04-10, generate_practice_measures_sro_2018-04-09, generate_practice_measures_sro_2019-04-08, generate_practice_measures_sro_2020-04-06, generate_practice_measures_sro_2021-04-05, generate_practice_measures_sro_2022-04-04, generate_practice_measures_sro_2023-04-03, generate_practice_measures_sro_2024-04-01, generate_practice_measures_sro_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro/proc_practice_measures*.arrow
+  generate_freq_table_practice_sro:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro
+    needs: [generate_pre_processing_practice_sro]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro/freq_table_practice.csv
+  generate_normalization_practice_sro:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro
+    needs: [generate_pre_processing_practice_sro]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_sro/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_sro/Results*.csv
+        weekly_tables: output/practice_measures_sro/weekly*.csv
+
+  generate_pre_processing_practice_sro_appt:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro --appt
+    needs: [generate_practice_measures_sro_2016-04-11_appt, generate_practice_measures_sro_2017-04-10_appt, generate_practice_measures_sro_2018-04-09_appt, generate_practice_measures_sro_2019-04-08_appt, generate_practice_measures_sro_2020-04-06_appt, generate_practice_measures_sro_2021-04-05_appt, generate_practice_measures_sro_2022-04-04_appt, generate_practice_measures_sro_2023-04-03_appt, generate_practice_measures_sro_2024-04-01_appt, generate_practice_measures_sro_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro_appt/proc_practice_measures*.arrow
+  generate_freq_table_practice_sro_appt:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro --appt
+    needs: [generate_pre_processing_practice_sro_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro_appt/freq_table_practice.csv
+  generate_normalization_practice_sro_appt:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro --appt
+    needs: [generate_pre_processing_practice_sro_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_sro_appt/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_sro_appt/Results*.csv
+        weekly_tables: output/practice_measures_sro_appt/weekly*.csv
+
+  generate_pre_processing_practice_resp:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp
+    needs: [generate_practice_measures_resp_2016-04-11, generate_practice_measures_resp_2017-04-10, generate_practice_measures_resp_2018-04-09, generate_practice_measures_resp_2019-04-08, generate_practice_measures_resp_2020-04-06, generate_practice_measures_resp_2021-04-05, generate_practice_measures_resp_2022-04-04, generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2024-04-01, generate_practice_measures_resp_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp/proc_practice_measures*.arrow
+  generate_freq_table_practice_resp:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp
+    needs: [generate_pre_processing_practice_resp]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp/freq_table_practice.csv
+  generate_normalization_practice_resp:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp
+    needs: [generate_pre_processing_practice_resp]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_resp/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_resp/Results*.csv
+        weekly_tables: output/practice_measures_resp/weekly*.csv
+
+  generate_pre_processing_practice_resp_appt:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --appt
+    needs: [generate_practice_measures_resp_2016-04-11_appt, generate_practice_measures_resp_2017-04-10_appt, generate_practice_measures_resp_2018-04-09_appt, generate_practice_measures_resp_2019-04-08_appt, generate_practice_measures_resp_2020-04-06_appt, generate_practice_measures_resp_2021-04-05_appt, generate_practice_measures_resp_2022-04-04_appt, generate_practice_measures_resp_2023-04-03_appt, generate_practice_measures_resp_2024-04-01_appt, generate_practice_measures_resp_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp_appt/proc_practice_measures*.arrow
+  generate_freq_table_practice_resp_appt:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp --appt
+    needs: [generate_pre_processing_practice_resp_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp_appt/freq_table_practice.csv
+  generate_normalization_practice_resp_appt:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp --appt
+    needs: [generate_pre_processing_practice_resp_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_resp_appt/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_resp_appt/Results*.csv
+        weekly_tables: output/practice_measures_resp_appt/weekly*.csv
+
+  generate_pre_processing_practice_subgroup_appts_table:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table
+    needs: [generate_practice_subgroup_measures_appts_table_2016-04-11, generate_practice_subgroup_measures_appts_table_2017-04-10, generate_practice_subgroup_measures_appts_table_2018-04-09, generate_practice_subgroup_measures_appts_table_2019-04-08, generate_practice_subgroup_measures_appts_table_2020-04-06, generate_practice_subgroup_measures_appts_table_2021-04-05, generate_practice_subgroup_measures_appts_table_2022-04-04, generate_practice_subgroup_measures_appts_table_2023-04-03, generate_practice_subgroup_measures_appts_table_2024-04-01, generate_practice_subgroup_measures_appts_table_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_appts_table/proc_practice_subgroup_measures*.arrow
+  generate_freq_table_practice_subgroup_appts_table:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set appts_table
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_appts_table/freq_table_practice_subgroup.csv
+  generate_normalization_practice_subgroup_appts_table:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_appts_table/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_appts_table/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table/weekly*.csv
+
+  generate_pre_processing_practice_subgroup_appts_table_appt:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table --appt
+    needs: [generate_practice_subgroup_measures_appts_table_2016-04-11_appt, generate_practice_subgroup_measures_appts_table_2017-04-10_appt, generate_practice_subgroup_measures_appts_table_2018-04-09_appt, generate_practice_subgroup_measures_appts_table_2019-04-08_appt, generate_practice_subgroup_measures_appts_table_2020-04-06_appt, generate_practice_subgroup_measures_appts_table_2021-04-05_appt, generate_practice_subgroup_measures_appts_table_2022-04-04_appt, generate_practice_subgroup_measures_appts_table_2023-04-03_appt, generate_practice_subgroup_measures_appts_table_2024-04-01_appt, generate_practice_subgroup_measures_appts_table_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_appts_table_appt/proc_practice_subgroup_measures*.arrow
+  generate_freq_table_practice_subgroup_appts_table_appt:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set appts_table --appt
+    needs: [generate_pre_processing_practice_subgroup_appts_table_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_appts_table_appt/freq_table_practice_subgroup.csv
+  generate_normalization_practice_subgroup_appts_table_appt:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --appt
+    needs: [generate_pre_processing_practice_subgroup_appts_table_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_appts_table_appt/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_appts_table_appt/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table_appt/weekly*.csv
+
+  generate_pre_processing_practice_subgroup_sro:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro
+    needs: [generate_practice_subgroup_measures_sro_2016-04-11, generate_practice_subgroup_measures_sro_2017-04-10, generate_practice_subgroup_measures_sro_2018-04-09, generate_practice_subgroup_measures_sro_2019-04-08, generate_practice_subgroup_measures_sro_2020-04-06, generate_practice_subgroup_measures_sro_2021-04-05, generate_practice_subgroup_measures_sro_2022-04-04, generate_practice_subgroup_measures_sro_2023-04-03, generate_practice_subgroup_measures_sro_2024-04-01, generate_practice_subgroup_measures_sro_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures*.arrow
+  generate_freq_table_practice_subgroup_sro:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set sro
+    needs: [generate_pre_processing_practice_subgroup_sro]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_sro/freq_table_practice_subgroup.csv
+  generate_normalization_practice_subgroup_sro:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro
+    needs: [generate_pre_processing_practice_subgroup_sro]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_sro/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_sro/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_sro/weekly*.csv
+
+  generate_pre_processing_practice_subgroup_sro_appt:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro --appt
+    needs: [generate_practice_subgroup_measures_sro_2016-04-11_appt, generate_practice_subgroup_measures_sro_2017-04-10_appt, generate_practice_subgroup_measures_sro_2018-04-09_appt, generate_practice_subgroup_measures_sro_2019-04-08_appt, generate_practice_subgroup_measures_sro_2020-04-06_appt, generate_practice_subgroup_measures_sro_2021-04-05_appt, generate_practice_subgroup_measures_sro_2022-04-04_appt, generate_practice_subgroup_measures_sro_2023-04-03_appt, generate_practice_subgroup_measures_sro_2024-04-01_appt, generate_practice_subgroup_measures_sro_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures*.arrow
+  generate_freq_table_practice_subgroup_sro_appt:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set sro --appt
+    needs: [generate_pre_processing_practice_subgroup_sro_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_sro_appt/freq_table_practice_subgroup.csv
+  generate_normalization_practice_subgroup_sro_appt:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt
+    needs: [generate_pre_processing_practice_subgroup_sro_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_sro_appt/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_sro_appt/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_sro_appt/weekly*.csv
+
+  generate_pre_processing_practice_subgroup_resp:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp
+    needs: [generate_practice_subgroup_measures_resp_2016-04-11, generate_practice_subgroup_measures_resp_2017-04-10, generate_practice_subgroup_measures_resp_2018-04-09, generate_practice_subgroup_measures_resp_2019-04-08, generate_practice_subgroup_measures_resp_2020-04-06, generate_practice_subgroup_measures_resp_2021-04-05, generate_practice_subgroup_measures_resp_2022-04-04, generate_practice_subgroup_measures_resp_2023-04-03, generate_practice_subgroup_measures_resp_2024-04-01, generate_practice_subgroup_measures_resp_2025-03-31]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures*.arrow
+  generate_freq_table_practice_subgroup_resp:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set resp
+    needs: [generate_pre_processing_practice_subgroup_resp]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_resp/freq_table_practice_subgroup.csv
+  generate_normalization_practice_subgroup_resp:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp
+    needs: [generate_pre_processing_practice_subgroup_resp]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_resp/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_resp/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_resp/weekly*.csv
+
+  generate_pre_processing_practice_subgroup_resp_appt:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp --appt
+    needs: [generate_practice_subgroup_measures_resp_2016-04-11_appt, generate_practice_subgroup_measures_resp_2017-04-10_appt, generate_practice_subgroup_measures_resp_2018-04-09_appt, generate_practice_subgroup_measures_resp_2019-04-08_appt, generate_practice_subgroup_measures_resp_2020-04-06_appt, generate_practice_subgroup_measures_resp_2021-04-05_appt, generate_practice_subgroup_measures_resp_2022-04-04_appt, generate_practice_subgroup_measures_resp_2023-04-03_appt, generate_practice_subgroup_measures_resp_2024-04-01_appt, generate_practice_subgroup_measures_resp_2025-03-31_appt]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures*.arrow
+  generate_freq_table_practice_subgroup_resp_appt:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set resp --appt
+    needs: [generate_pre_processing_practice_subgroup_resp_appt]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_resp_appt/freq_table_practice_subgroup.csv
+  generate_normalization_practice_subgroup_resp_appt:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt
+    needs: [generate_pre_processing_practice_subgroup_resp_appt]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_resp_appt/practice_level*.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_resp_appt/Results*.csv
+        weekly_tables: output/practice_subgroup_measures_resp_appt/weekly*.csv
+ 
+ # --------------- VISUALIZATION ACTIONS ------------------------------------------
+  generate_deciles_charts_appts_table_rate_per_1000_wday_mp6:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table, generate_pre_processing_practice_subgroup_appts_table] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+  # generate_decomposition_plots_appts_table_rate_per_1000_wday_mp6:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table/decompositions/*rate_per_1000_wday_mp6.png
+  #       decomposition_summaries: output/practice_measures_appts_table/decompositions/summary_*rate_per_1000_wday_mp6.txt
+
+  generate_deciles_charts_appts_table_RR_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table, generate_pre_processing_practice_subgroup_appts_table] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RR_prev_summr.csv
+  # generate_decomposition_plots_appts_table_RR_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table/decompositions/*RR_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_appts_table/decompositions/summary_*RR_prev_summr.txt
+
+  generate_deciles_charts_appts_table_RD_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table, generate_pre_processing_practice_subgroup_appts_table] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RD_prev_summr.csv
+  # generate_decomposition_plots_appts_table_RD_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_appts_table, generate_pre_processing_practice_appts_table]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table/decompositions/*RD_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_appts_table/decompositions/summary_*RD_prev_summr.txt
+
+  generate_deciles_charts_appts_table_appt_rate_per_1000_wday_mp6:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table_appt, generate_pre_processing_practice_subgroup_appts_table_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+  # generate_decomposition_plots_appts_table_appt_rate_per_1000_wday_mp6:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --appt --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table_appt/decompositions/*rate_per_1000_wday_mp6.png
+  #       decomposition_summaries: output/practice_measures_appts_table_appt/decompositions/summary_*rate_per_1000_wday_mp6.txt
+
+  generate_deciles_charts_appts_table_appt_RR_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt, generate_pre_processing_practice_subgroup_appts_table_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr.csv
+  # generate_decomposition_plots_appts_table_appt_RR_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --appt --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table_appt/decompositions/*RR_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_appts_table_appt/decompositions/summary_*RR_prev_summr.txt
+
+  generate_deciles_charts_appts_table_appt_RD_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures  --set appts_table --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt, generate_pre_processing_practice_subgroup_appts_table_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr.csv
+  # generate_decomposition_plots_appts_table_appt_RD_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set appts_table --appt --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_appts_table_appt, generate_pre_processing_practice_appts_table_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table_appt/decompositions/*RD_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_appts_table_appt/decompositions/summary_*RD_prev_summr.txt
+
+  generate_deciles_charts_sro_rate_per_1000_wday_mp6:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+  # generate_decomposition_plots_sro_rate_per_1000_wday_mp6:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set sro --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro/decompositions/*rate_per_1000_wday_mp6.png
+  #       decomposition_summaries: output/practice_measures_sro/decompositions/summary_*rate_per_1000_wday_mp6.txt
+
+  generate_deciles_charts_sro_RR_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_value RR_prev_summr
+    needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots/*RR_prev_summr.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RR_prev_summr.csv
+  # generate_decomposition_plots_sro_RR_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set sro --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro/decompositions/*RR_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_sro/decompositions/summary_*RR_prev_summr.txt
+
+  generate_deciles_charts_sro_RD_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --y_value RD_prev_summr
+    needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots/*RD_prev_summr.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RD_prev_summr.csv
+  # generate_decomposition_plots_sro_RD_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set sro --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_sro, generate_pre_processing_practice_sro]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro/decompositions/*RD_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_sro/decompositions/summary_*RD_prev_summr.txt
+
+  generate_deciles_charts_sro_appt_rate_per_1000_wday_mp6:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+  # generate_decomposition_plots_sro_appt_rate_per_1000_wday_mp6:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set sro --appt --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro_appt/decompositions/*rate_per_1000_wday_mp6.png
+  #       decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*rate_per_1000_wday_mp6.txt
+
+  generate_deciles_charts_sro_appt_RR_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots/*RR_prev_summr.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RR_prev_summr.csv
+  # generate_decomposition_plots_sro_appt_RR_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set sro --appt --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro_appt/decompositions/*RR_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*RR_prev_summr.txt
+
+  generate_deciles_charts_sro_appt_RD_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set sro --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots/*RD_prev_summr.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RD_prev_summr.csv
+  # generate_decomposition_plots_sro_appt_RD_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set sro --appt --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_sro_appt, generate_pre_processing_practice_sro_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro_appt/decompositions/*RD_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*RD_prev_summr.txt
+
+  generate_deciles_charts_resp_rate_per_1000_wday_mp6:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+  # generate_decomposition_plots_resp_rate_per_1000_wday_mp6:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set resp --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp/decompositions/*rate_per_1000_wday_mp6.png
+  #       decomposition_summaries: output/practice_measures_resp/decompositions/summary_*rate_per_1000_wday_mp6.txt
+
+  generate_deciles_charts_resp_RR_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_value RR_prev_summr
+    needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots/*RR_prev_summr.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RR_prev_summr.csv
+  # generate_decomposition_plots_resp_RR_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set resp --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp/decompositions/*RR_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_resp/decompositions/summary_*RR_prev_summr.txt
+
+  generate_deciles_charts_resp_RD_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --y_value RD_prev_summr
+    needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots/*RD_prev_summr.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RD_prev_summr.csv
+  # generate_decomposition_plots_resp_RD_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set resp --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_resp, generate_pre_processing_practice_resp]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp/decompositions/*RD_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_resp/decompositions/summary_*RD_prev_summr.txt
+
+  generate_deciles_charts_resp_appt_rate_per_1000_wday_mp6:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6.csv
+  # generate_decomposition_plots_resp_appt_rate_per_1000_wday_mp6:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set resp --appt --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp_appt/decompositions/*rate_per_1000_wday_mp6.png
+  #       decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*rate_per_1000_wday_mp6.txt
+
+  generate_deciles_charts_resp_appt_RR_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots/*RR_prev_summr.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RR_prev_summr.csv
+  # generate_decomposition_plots_resp_appt_RR_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set resp --appt --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp_appt/decompositions/*RR_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*RR_prev_summr.txt
+
+  generate_deciles_charts_resp_appt_RD_prev_summr:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures  --set resp --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots/*RD_prev_summr.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RD_prev_summr.csv
+  # generate_decomposition_plots_resp_appt_RD_prev_summr:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures  --set resp --appt --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_resp_appt, generate_pre_processing_practice_resp_appt]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp_appt/decompositions/*RD_prev_summr.png
+  #       decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*RD_prev_summr.txt
+
+  generate_deciles_charts_appts_table_rate_per_1000_wday_mp6_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table_test, generate_pre_processing_practice_subgroup_appts_table_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+  # generate_decomposition_plots_appts_table_rate_per_1000_wday_mp6_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table/decompositions/*rate_per_1000_wday_mp6_test.png
+  #       decomposition_summaries: output/practice_measures_appts_table/decompositions/summary_*rate_per_1000_wday_mp6_test.txt
+
+  generate_deciles_charts_appts_table_RR_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_test, generate_pre_processing_practice_subgroup_appts_table_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RR_prev_summr_test.csv
+  # generate_decomposition_plots_appts_table_RR_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table/decompositions/*RR_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_appts_table/decompositions/summary_*RR_prev_summr_test.txt
+
+  generate_deciles_charts_appts_table_RD_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_test, generate_pre_processing_practice_subgroup_appts_table_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table/decile_tables/decile_table_*RD_prev_summr_test.csv
+  # generate_decomposition_plots_appts_table_RD_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_appts_table_test, generate_pre_processing_practice_appts_table_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table/decompositions/*RD_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_appts_table/decompositions/summary_*RD_prev_summr_test.txt
+
+  generate_deciles_charts_appts_table_appt_rate_per_1000_wday_mp6_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_subgroup_appts_table_appt_test, generate_pre_processing_practice_subgroup_appts_table_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+  # generate_decomposition_plots_appts_table_appt_rate_per_1000_wday_mp6_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --appt --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table_appt/decompositions/*rate_per_1000_wday_mp6_test.png
+  #       decomposition_summaries: output/practice_measures_appts_table_appt/decompositions/summary_*rate_per_1000_wday_mp6_test.txt
+
+  generate_deciles_charts_appts_table_appt_RR_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt_test, generate_pre_processing_practice_subgroup_appts_table_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
+  # generate_decomposition_plots_appts_table_appt_RR_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --appt --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table_appt/decompositions/*RR_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_appts_table_appt/decompositions/summary_*RR_prev_summr_test.txt
+
+  generate_deciles_charts_appts_table_appt_RD_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --test --set appts_table --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_subgroup_appts_table_appt_test, generate_pre_processing_practice_subgroup_appts_table_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_appt/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_subgroup_measures_appts_table_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
+  # generate_decomposition_plots_appts_table_appt_RD_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set appts_table --appt --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_appts_table_appt_test, generate_pre_processing_practice_appts_table_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_appts_table_appt/decompositions/*RD_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_appts_table_appt/decompositions/summary_*RD_prev_summr_test.txt
+
+  generate_deciles_charts_sro_rate_per_1000_wday_mp6_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+  # generate_decomposition_plots_sro_rate_per_1000_wday_mp6_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set sro --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro/decompositions/*rate_per_1000_wday_mp6_test.png
+  #       decomposition_summaries: output/practice_measures_sro/decompositions/summary_*rate_per_1000_wday_mp6_test.txt
+
+  generate_deciles_charts_sro_RR_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_value RR_prev_summr
+    needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RR_prev_summr_test.csv
+  # generate_decomposition_plots_sro_RR_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set sro --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro/decompositions/*RR_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_sro/decompositions/summary_*RR_prev_summr_test.txt
+
+  generate_deciles_charts_sro_RD_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --y_value RD_prev_summr
+    needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_measures_sro/decile_tables/decile_table_*RD_prev_summr_test.csv
+  # generate_decomposition_plots_sro_RD_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set sro --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_sro_test, generate_pre_processing_practice_sro_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro/decompositions/*RD_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_sro/decompositions/summary_*RD_prev_summr_test.txt
+
+  generate_deciles_charts_sro_appt_rate_per_1000_wday_mp6_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+  # generate_decomposition_plots_sro_appt_rate_per_1000_wday_mp6_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set sro --appt --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro_appt/decompositions/*rate_per_1000_wday_mp6_test.png
+  #       decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*rate_per_1000_wday_mp6_test.txt
+
+  generate_deciles_charts_sro_appt_RR_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
+  # generate_decomposition_plots_sro_appt_RR_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set sro --appt --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro_appt/decompositions/*RR_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*RR_prev_summr_test.txt
+
+  generate_deciles_charts_sro_appt_RD_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set sro --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_sro_appt/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_measures_sro_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
+  # generate_decomposition_plots_sro_appt_RD_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set sro --appt --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_sro_appt_test, generate_pre_processing_practice_sro_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_sro_appt/decompositions/*RD_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_sro_appt/decompositions/summary_*RD_prev_summr_test.txt
+
+  generate_deciles_charts_resp_rate_per_1000_wday_mp6_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+  # generate_decomposition_plots_resp_rate_per_1000_wday_mp6_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set resp --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp/decompositions/*rate_per_1000_wday_mp6_test.png
+  #       decomposition_summaries: output/practice_measures_resp/decompositions/summary_*rate_per_1000_wday_mp6_test.txt
+
+  generate_deciles_charts_resp_RR_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_value RR_prev_summr
+    needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RR_prev_summr_test.csv
+  # generate_decomposition_plots_resp_RR_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set resp --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp/decompositions/*RR_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_resp/decompositions/summary_*RR_prev_summr_test.txt
+
+  generate_deciles_charts_resp_RD_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --y_value RD_prev_summr
+    needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_measures_resp/decile_tables/decile_table_*RD_prev_summr_test.csv
+  # generate_decomposition_plots_resp_RD_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set resp --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_resp_test, generate_pre_processing_practice_resp_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp/decompositions/*RD_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_resp/decompositions/summary_*RD_prev_summr_test.txt
+
+  generate_deciles_charts_resp_appt_rate_per_1000_wday_mp6_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_value rate_per_1000_wday_mp6
+    needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots_test/*rate_per_1000_wday_mp6.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*rate_per_1000_wday_mp6_test.csv
+  # generate_decomposition_plots_resp_appt_rate_per_1000_wday_mp6_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set resp --appt --y_val rate_per_1000_wday_mp6
+  #   needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp_appt/decompositions/*rate_per_1000_wday_mp6_test.png
+  #       decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*rate_per_1000_wday_mp6_test.txt
+
+  generate_deciles_charts_resp_appt_RR_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_value RR_prev_summr
+    needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots_test/*RR_prev_summr.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RR_prev_summr_test.csv
+  # generate_decomposition_plots_resp_appt_RR_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set resp --appt --y_val RR_prev_summr
+  #   needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp_appt/decompositions/*RR_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*RR_prev_summr_test.txt
+
+  generate_deciles_charts_resp_appt_RD_prev_summr_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --test --set resp --appt --y_value RD_prev_summr
+    needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_appt/plots_test/*RD_prev_summr.png
+        deciles_table: output/practice_measures_resp_appt/decile_tables/decile_table_*RD_prev_summr_test.csv
+  # generate_decomposition_plots_resp_appt_RD_prev_summr_test:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures --test --set resp --appt --y_val RD_prev_summr
+  #   needs: [generate_normalization_practice_resp_appt_test, generate_pre_processing_practice_resp_appt_test]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/practice_measures_resp_appt/decompositions/*RD_prev_summr_test.png
+  #       decomposition_summaries: output/practice_measures_resp_appt/decompositions/summary_*RD_prev_summr_test.txt
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_appts_table_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_appts_table/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_appts_table/demograph_measures_2023-05-08_test.arrow
+  generate_practice_measures_appts_table_test:
     run: ehrql:v1 generate-measures analysis/wp_measures.py
-      --output output/practice_measures/practice_measures_2016-08-10_test.csv.gz
+      --output output/practice_measures_appts_table/practice_measures_2023-05-08_test.arrow
       --
       --practice_measures
-      --start_intv 2016-08-10
+      --start_intv 2023-05-08
       --test
+      --set appts_table
     outputs:
       highly_sensitive:
-        dataset: output/practice_measures/practice_measures_2016-08-10_test.csv.gz
-  generate_pre_processing_test:
-    run: python:latest analysis/pre_processing.py --test
-    needs: [generate_patient_measures_test, generate_practice_measures_test]
+        dataset: output/practice_measures_appts_table/practice_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_appts_table_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_appts_table/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_appts_table/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_appts_table_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_appts_table/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_appts_table/demograph_measures_2023-05-08_test.arrow
+  generate_practice_subgroup_measures_appts_table_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2023-05-08_test.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-05-08
+      --test
+      --set appts_table
     outputs:
       highly_sensitive:
-        practice_measure: output/practice_measures/proc_practice_measures_test.csv.gz
-        patient_measure: output/patient_measures/proc_patient_measures_test.csv.gz
-      moderately_sensitive:
-        frequency_table: output/patient_measures/frequency_table_test.csv
-  generate_tables_test:
-    run: r:latest analysis/table_generation.r --test 
-    needs: [generate_pre_processing_test]
+        dataset: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_appts_table_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_appts_table/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_appts_table/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_appts_table_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_appts_table_appt/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_appts_table_appt/demograph_measures_2023-05-08_test.arrow
+  generate_practice_measures_appts_table_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_appts_table_appt/practice_measures_2023-05-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-05-08
+      --test
+      --set appts_table --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_appts_table_appt/practice_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_appts_table_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_appts_table_appt/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_appts_table_appt/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_appts_table_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_appts_table_appt/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_appts_table_appt/demograph_measures_2023-05-08_test.arrow
+  generate_practice_subgroup_measures_appts_table_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2023-05-08_test.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-05-08
+      --test
+      --set appts_table --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_appts_table_appt/practice_subgroup_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_appts_table_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_appts_table_appt/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set appts_table --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_appts_table_appt/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_sro_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
+  generate_practice_measures_sro_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro/practice_measures_2023-05-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-05-08
+      --test
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro/practice_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_sro_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_sro_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_sro/demograph_measures_2023-05-08_test.arrow
+  generate_practice_subgroup_measures_sro_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro/practice_subgroup_measures_2023-05-08_test.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-05-08
+      --test
+      --set sro
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro/practice_subgroup_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_sro_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_sro/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_sro_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
+  generate_practice_measures_sro_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_sro_appt/practice_measures_2023-05-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-05-08
+      --test
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_sro_appt/practice_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_sro_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_sro_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_sro_appt/demograph_measures_2023-05-08_test.arrow
+  generate_practice_subgroup_measures_sro_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2023-05-08_test.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-05-08
+      --test
+      --set sro --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_sro_appt/practice_subgroup_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_sro_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set sro --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_sro_appt/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_resp_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
+  generate_practice_measures_resp_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp/practice_measures_2023-05-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-05-08
+      --test
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp/practice_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_resp_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_resp_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_resp/demograph_measures_2023-05-08_test.arrow
+  generate_practice_subgroup_measures_resp_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp/practice_subgroup_measures_2023-05-08_test.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-05-08
+      --test
+      --set resp
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp/practice_subgroup_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_resp_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_resp/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_resp_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
+  generate_practice_measures_resp_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_measures_resp_appt/practice_measures_2023-05-08_test.arrow
+      --
+      --practice_measures
+      --start_intv 2023-05-08
+      --test
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_measures_resp_appt/practice_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_resp_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
+
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_resp_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_resp_appt/demograph_measures_2023-05-08_test.arrow
+  generate_practice_subgroup_measures_resp_appt_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2023-05-08_test.arrow
+      --
+      --practice_subgroup_measures
+      --start_intv 2023-05-08
+      --test
+      --set resp --appt
+    outputs:
+      highly_sensitive:
+        dataset: output/practice_subgroup_measures_resp_appt/practice_subgroup_measures_2023-05-08_test.arrow
+  # generate_comorbid_measures_resp_appt_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv 2023-05-08
+  #     --test
+  #     --set resp --appt
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_resp_appt/comorbid_measures_2023-05-08_test.arrow
+
+  generate_pre_processing_practice_appts_table_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set appts_table --test
+    needs: [generate_practice_measures_appts_table_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_appts_table/proc_practice_measures*_test.arrow
+  generate_freq_table_practice_appts_table_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set appts_table --test
+    needs: [generate_pre_processing_practice_appts_table_test]
     outputs:
       moderately_sensitive:
-        total_measures_tables_test: output/total_measures/plots/*_test.csv
-        practice_measures_tables_test: output/practice_measures/plots/*_test.csv
-        patient_measures_tables_test: output/patient_measures/plots/*_test.csv
-        total_measures_plots_test: output/total_measures/plots/*_test.png
-        practice_measures_plots_test: output/practice_measures/plots/*_test.png
-        patient_measures_plots_test: output/patient_measures/plots/*_test.png
-  #generate_test_data:
-  #  run: ehrql:v1 generate-dataset analysis/dataset.py --output output/patient_measures/test.csv --test-data-file analysis/test_dataset.py
-  #  outputs:
-  #    highly_sensitive:
-  #      dataset: output/patient_measures/test.csv
+        freq_table: output/practice_measures_appts_table/freq_table_practice_test.csv
+  generate_normalization_practice_appts_table_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set appts_table --test
+    needs: [generate_pre_processing_practice_appts_table_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_appts_table/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_appts_table/Results*_test.csv
+        weekly_tables: output/practice_measures_appts_table/weekly*_test.csv
+
+  generate_pre_processing_practice_appts_table_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set appts_table --appt --test
+    needs: [generate_practice_measures_appts_table_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_appts_table_appt/proc_practice_measures*_test.arrow
+  generate_freq_table_practice_appts_table_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set appts_table --appt --test
+    needs: [generate_pre_processing_practice_appts_table_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_appts_table_appt/freq_table_practice_test.csv
+  generate_normalization_practice_appts_table_appt_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set appts_table --appt --test
+    needs: [generate_pre_processing_practice_appts_table_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_appts_table_appt/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_appts_table_appt/Results*_test.csv
+        weekly_tables: output/practice_measures_appts_table_appt/weekly*_test.csv
+
+  generate_pre_processing_practice_sro_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro --test
+    needs: [generate_practice_measures_sro_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro/proc_practice_measures*_test.arrow
+  generate_freq_table_practice_sro_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro --test
+    needs: [generate_pre_processing_practice_sro_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro/freq_table_practice_test.csv
+  generate_normalization_practice_sro_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro --test
+    needs: [generate_pre_processing_practice_sro_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_sro/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_sro/Results*_test.csv
+        weekly_tables: output/practice_measures_sro/weekly*_test.csv
+
+  generate_pre_processing_practice_sro_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set sro --appt --test
+    needs: [generate_practice_measures_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_sro_appt/proc_practice_measures*_test.arrow
+  generate_freq_table_practice_sro_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set sro --appt --test
+    needs: [generate_pre_processing_practice_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_sro_appt/freq_table_practice_test.csv
+  generate_normalization_practice_sro_appt_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set sro --appt --test
+    needs: [generate_pre_processing_practice_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_sro_appt/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_sro_appt/Results*_test.csv
+        weekly_tables: output/practice_measures_sro_appt/weekly*_test.csv
+
+  generate_pre_processing_practice_resp_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --test
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp/proc_practice_measures*_test.arrow
+  generate_freq_table_practice_resp_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp --test
+    needs: [generate_pre_processing_practice_resp_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp/freq_table_practice_test.csv
+  generate_normalization_practice_resp_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp --test
+    needs: [generate_pre_processing_practice_resp_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_resp/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_resp/Results*_test.csv
+        weekly_tables: output/practice_measures_resp/weekly*_test.csv
+
+  generate_pre_processing_practice_resp_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_measures --set resp --appt --test
+    needs: [generate_practice_measures_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_measures_resp_appt/proc_practice_measures*_test.arrow
+  generate_freq_table_practice_resp_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_measures --set resp --appt --test
+    needs: [generate_pre_processing_practice_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_measures_resp_appt/freq_table_practice_test.csv
+  generate_normalization_practice_resp_appt_test:
+    run: python:v2 analysis/normalization.py --practice_measures --set resp --appt --test
+    needs: [generate_pre_processing_practice_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_measures_resp_appt/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_measures_resp_appt/Results*_test.csv
+        weekly_tables: output/practice_measures_resp_appt/weekly*_test.csv
+
+  generate_pre_processing_practice_subgroup_appts_table_test:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table --test
+    needs: [generate_practice_subgroup_measures_appts_table_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_appts_table/proc_practice_subgroup_measures*_test.arrow
+  generate_freq_table_practice_subgroup_appts_table_test:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set appts_table --test
+    needs: [generate_pre_processing_practice_subgroup_appts_table_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_appts_table/freq_table_practice_subgroup_test.csv
+  generate_normalization_practice_subgroup_appts_table_test:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --test
+    needs: [generate_pre_processing_practice_subgroup_appts_table_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_appts_table/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_appts_table/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table/weekly*_test.csv
+
+  generate_pre_processing_practice_subgroup_appts_table_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set appts_table --appt --test
+    needs: [generate_practice_subgroup_measures_appts_table_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_appts_table_appt/proc_practice_subgroup_measures*_test.arrow
+  generate_freq_table_practice_subgroup_appts_table_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set appts_table --appt --test
+    needs: [generate_pre_processing_practice_subgroup_appts_table_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_appts_table_appt/freq_table_practice_subgroup_test.csv
+  generate_normalization_practice_subgroup_appts_table_appt_test:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --appt --test
+    needs: [generate_pre_processing_practice_subgroup_appts_table_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_appts_table_appt/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_appts_table_appt/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_appts_table_appt/weekly*_test.csv
+
+  generate_pre_processing_practice_subgroup_sro_test:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro --test
+    needs: [generate_practice_subgroup_measures_sro_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_sro/proc_practice_subgroup_measures*_test.arrow
+  generate_freq_table_practice_subgroup_sro_test:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set sro --test
+    needs: [generate_pre_processing_practice_subgroup_sro_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_sro/freq_table_practice_subgroup_test.csv
+  generate_normalization_practice_subgroup_sro_test:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --test
+    needs: [generate_pre_processing_practice_subgroup_sro_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_sro/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_sro/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_sro/weekly*_test.csv
+
+  generate_pre_processing_practice_subgroup_sro_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set sro --appt --test
+    needs: [generate_practice_subgroup_measures_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_sro_appt/proc_practice_subgroup_measures*_test.arrow
+  generate_freq_table_practice_subgroup_sro_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set sro --appt --test
+    needs: [generate_pre_processing_practice_subgroup_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_sro_appt/freq_table_practice_subgroup_test.csv
+  generate_normalization_practice_subgroup_sro_appt_test:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt --test
+    needs: [generate_pre_processing_practice_subgroup_sro_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_sro_appt/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_sro_appt/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_sro_appt/weekly*_test.csv
+
+  generate_pre_processing_practice_subgroup_resp_test:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp --test
+    needs: [generate_practice_subgroup_measures_resp_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_resp/proc_practice_subgroup_measures*_test.arrow
+  generate_freq_table_practice_subgroup_resp_test:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set resp --test
+    needs: [generate_pre_processing_practice_subgroup_resp_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_resp/freq_table_practice_subgroup_test.csv
+  generate_normalization_practice_subgroup_resp_test:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --test
+    needs: [generate_pre_processing_practice_subgroup_resp_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_resp/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_resp/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_resp/weekly*_test.csv
+
+  generate_pre_processing_practice_subgroup_resp_appt_test:
+    run: python:v2 analysis/pre_processing.py --practice_subgroup_measures --set resp --appt --test
+    needs: [generate_practice_subgroup_measures_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        measures: output/practice_subgroup_measures_resp_appt/proc_practice_subgroup_measures*_test.arrow
+  generate_freq_table_practice_subgroup_resp_appt_test:
+    run: python:v2 analysis/freq_table.py --practice_subgroup_measures --set resp --appt --test
+    needs: [generate_pre_processing_practice_subgroup_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/practice_subgroup_measures_resp_appt/freq_table_practice_subgroup_test.csv
+  generate_normalization_practice_subgroup_resp_appt_test:
+    run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt --test
+    needs: [generate_pre_processing_practice_subgroup_resp_appt_test]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/practice_subgroup_measures_resp_appt/practice_level*_test.arrow
+      moderately_sensitive:
+        seasonal_tables: output/practice_subgroup_measures_resp_appt/Results*_test.csv
+        weekly_tables: output/practice_subgroup_measures_resp_appt/weekly*_test.csv
+ 
+ # --------------- SENSE CHECK ACTIONS ------------------------------------------
+
+  generate_sense_check_appts_table:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set appts_table
+    needs: [generate_practice_measures_appts_table_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_appts_table/sense_check*.csv
+
+
+  generate_sense_check_appts_table_appt:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set appts_table --appt
+    needs: [generate_practice_measures_appts_table_appt_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_appts_table_appt/sense_check*.csv
+
+
+  generate_sense_check_sro:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set sro
+    needs: [generate_practice_measures_sro_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_sro/sense_check*.csv
+
+
+  generate_sense_check_sro_appt:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set sro --appt
+    needs: [generate_practice_measures_sro_appt_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_sro_appt/sense_check*.csv
+
+
+  generate_sense_check_resp:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set resp
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_resp/sense_check*.csv
+
+
+  generate_sense_check_resp_appt:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set resp --appt
+    needs: [generate_practice_measures_resp_appt_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/practice_measures_resp_appt/sense_check*.csv
+
+
+  # --------------- OTHER ACTIONS ------------------------------------------
+
+  # Assurance test
+  generate_dataset:
+    run: >
+        ehrql:v1 generate-dataset
+        analysis/dataset.py
+        --test-data-file analysis/test_dataset.py
+        --output output/dataset.csv
+    outputs:
+      highly_sensitive:
+        population: output/dataset.csv
+
+  # Analyse low appts practices
+  analyse_low_appts:
+    run: >
+      python:v2 analysis/analyse_low_appts.py
+      --set appts_table
+      --practice_subgroup_measures
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      moderately_sensitive:
+        low_appt_analysis: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_demographics.csv
+
+  # Generate national weekly aggregates for a measure, for sense checking with other work packages.
+  generate_national_weekly:
+    run: python:v2 analysis/national_weekly.py
+    needs: [generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2022-04-04]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_measures_resp/national_weekly*.csv
+
+  # Troubleshoot duplicate rows in the raw measure outputs.
+  check_raw_measure_duplicates:
+    run: python:v2 analysis/check_raw_measure_duplicates.py --path output/practice_measures_resp/practice_measures_2023-04-03.arrow
+    needs: [generate_practice_measures_resp_2023-04-03]
+    outputs:
+      moderately_sensitive:
+        duplicate_summary: output/practice_measures_resp/duplicate_summary.csv
+  # Troubleshoot duplicate rows in the raw measure outputs.
+  check_raw_measure_duplicates_test:
+    run: python:v2 analysis/check_raw_measure_duplicates.py --path output/practice_measures_resp/practice_measures_2023-05-08_test.csv
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        duplicate_summary: output/practice_measures_resp/duplicate_summary_test.csv
+ 
+ # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------
+  # Weekly aggregates
+  generate_weekly_aggregates_appts_table:
+    run: python:v2 analysis/aggregate_weekly.py --practice_subgroup_measures --set appts_table  
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_subgroup_measures_appts_table_weeklyagg/*.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_subgroup_measures_appts_table_weeklyagg/*.arrow
+  generate_deciles_charts_appts_table_weeklyagg:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --weekly_agg --set appts_table 
+    needs: [generate_weekly_aggregates_appts_table] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_weeklyagg/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table_weeklyagg/decile_tables/decile_table_*_rate_mp6.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates_appts_table_test:
+    run: python:v2 analysis/aggregate_weekly.py --practice_subgroup_measures --set appts_table --test 
+    needs: [generate_pre_processing_practice_subgroup_appts_table_test]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_subgroup_measures_appts_table_weeklyagg/*_test.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_subgroup_measures_appts_table_weeklyagg/*_test.arrow
+  generate_deciles_charts_appts_table_weeklyagg_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_subgroup_measures --weekly_agg --set appts_table --test
+    needs: [generate_weekly_aggregates_appts_table_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_subgroup_measures_appts_table_weeklyagg/plots_test/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_subgroup_measures_appts_table_weeklyagg/decile_tables/decile_table_*_rate_mp6_test.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates_resp:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp  
+    needs: [generate_pre_processing_practice_resp]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*.arrow
+  generate_deciles_charts_resp_weeklyagg:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set resp 
+    needs: [generate_weekly_aggregates_resp] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_weeklyagg/plots/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6.csv
+
+  # Weekly aggregates
+  generate_weekly_aggregates_resp_test:
+    run: python:v2 analysis/aggregate_weekly.py --practice_measures --set resp --test 
+    needs: [generate_pre_processing_practice_resp_test]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/practice_measures_resp_weeklyagg/*_test.arrow
+  generate_deciles_charts_resp_weeklyagg_test:
+    run: >
+      r:v2 analysis/decile_charts.r --practice_measures --weekly_agg --set resp --test
+    needs: [generate_weekly_aggregates_resp_test] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures_resp_weeklyagg/plots_test/decile_chart_*_rate_mp6.png
+        deciles_table: output/practice_measures_resp_weeklyagg/decile_tables/decile_table_*_rate_mp6_test.csv

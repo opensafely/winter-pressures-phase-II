@@ -1,0 +1,216 @@
+# This script generates faceted line plots (not decile plots) for PATIENT measures data,
+# e.g. appts by age group, faceted by comoribidity status. Also generates the underlying tables for output release.
+# Options
+# --practice_measures/practice_subgroup_measures to choose which type of measures to process
+# --test uses test data
+# --set specifies the measure set (appts_table, sro, resp)
+# --released uses already released data
+# --appt restricts measures to those with an appointment in interval
+
+# ------------ Configuration -------------------------------------------------------
+
+library(ggplot2)
+library(dplyr)
+library(glue)
+library(optparse)
+library(arrow)
+
+# Define option list
+option_list <- list(
+  make_option("--test",
+    action = "store_true", default = FALSE,
+    help = "Uses test data instead of full data"
+  ),
+  make_option("--comorbid",
+    action = "store_true", default = FALSE,
+    help = "Uses comorbid data"
+  ),
+  make_option("--demograph",
+    action = "store_true", default = FALSE,
+    help = "Uses demographic data"
+  )
+)
+# Parse arguments
+opt <- parse_args(OptionParser(option_list = option_list))
+
+# ------------- Read in files ------------------------------------------------------
+
+if (opt$test) {
+  if (opt$comorbid) {
+    print("Using test comorbid data")
+    suffix <- "_comorbid_test"
+    measures <- read.csv("output/patient_measures/proc_patient_measures_comorbid_midpoint6_test.csv.gz")
+  } else if (opt$demograph) {
+    print("Using test demograph data")
+    suffix <- "_demograph_test"
+    measures <- read.csv("output/patient_measures/proc_patient_measures_midpoint6_test.csv.gz")
+  }
+} else if (opt$comorbid) {
+  print("Using full comorbid data")
+  suffix <- "_comorbid"
+  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_comorbid_midpoint6.arrow"))
+} else if (opt$demograph) {
+  print("Using test comorbid data")
+  suffix <- "_demograph"
+  measures <- as.data.frame(read_arrow("output/patient_measures/proc_patient_measures_midpoint6.arrow"))
+}
+
+
+# ------------ Functions -----------------------------------------------------------
+
+aggregate_trends_by_facet <- function(df, main_col, facet_col, filter_col, folder, suffix) {
+
+  # Aggregates timetrends for patient charcteristics (col_name), faceted by another characteristics, & can be filtered to only some population
+  # Args:
+  #  df: dataframe to be aggregated
+  #  main_col: primary characteristic to be aggregated
+  #  facet_col: secondary characteristic to be faceted
+  #  filter_col: subpopulation to use as filter
+  #  folder: folder to save the output
+  # Returns:
+  #  csv file with aggregated data to be used for downstream analysis and plottting
+
+
+  # Group by interval_start, measure, main_col, facet_col
+  group_vars <- c("interval_start", "measure")
+
+  # Add main_col and facet_col to grouping variables if present
+  if (!is.null(main_col)) {
+    group_vars <- append(group_vars, main_col)
+  } else {
+    main_col <- "total"
+  }
+  if (!is.null(facet_col)) {
+    group_vars <- append(group_vars, facet_col)
+  } else {
+    facet_col <- "none"
+  }
+
+  # Filter by filter_col if present
+  if (!is.null(filter_col)) {
+    df <- filter(df, !!sym(filter_col) == TRUE)
+  } else {
+    filter_col <- "all"
+  }
+  print(group_vars)
+  # Summarise by numerator, denominator, and calculate rate per 1000
+  df <- df %>%
+    group_by(across(all_of(group_vars))) %>%
+    summarise(numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6), measure_rate_per_1000 = (sum(numerator_midpoint6) / sum(list_size_midpoint6)) * 1000, .groups = "drop")
+
+  write.csv(df, glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
+}
+
+plot_aggregated_data <- function(df, main_col, facet_col, filter_col, folder, suffix) {
+  # Plots aggregated data
+  # Args:
+  #  df: dataframe to be plotted
+  #  main_col: primary characteristic to be aggregated
+  #  facet_col: secondary characteristic to be faceted
+  #  filter_col: subpopulation to use as filter
+  #  folder: folder to save the output
+  # Returns:
+  #  png file with the plot
+
+  # Set default values
+  if (is.null(main_col)) {
+    main_col <- "total"
+  }
+  if (is.null(facet_col)) {
+    facet_col <- "none"
+  }
+  if (is.null(filter_col)) {
+    filter_col <- "all"
+  }
+
+  # Load data
+  df <- read.csv(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.csv"))
+  df$interval_start <- as.Date(df$interval_start)
+  # Plot
+  p <- ggplot(df, aes(
+    x = interval_start, y = measure_rate_per_1000,
+    color = factor(.data[[main_col]]), group = factor(.data[[main_col]])
+  )) +
+    geom_line() +
+    geom_point() +
+    labs(title = glue("{main_col} by {facet_col} for {filter_col}"), x = "Interval Start", y = "Rate per 1000") +
+    scale_x_date(date_breaks = "1 year", date_labels = "%b %Y") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+  # Facet by facet_col if present
+  if (main_col != "total") {
+    p <- p + facet_wrap(vars(measure), scales = "free_y")
+  }
+  # Save plot
+  ggsave(glue("output/{folder}/{main_col}_by_{facet_col}_filter_for_{filter_col}{suffix}.png"),
+    plot = p, width = 20, height = 10, dpi = 400
+  )
+}
+
+
+calculate_stats <- function(df, main_col = NULL, folder, suffix = suffix) {
+  if (is.null(main_col)) {
+    stats_df <- df %>%
+      mutate(measure_rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+      group_by(measure) %>%
+      summarise(
+        numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6),
+        measure_rate_per_1000 = (sum(numerator_midpoint6) / sum(list_size_midpoint6)) * 1000,
+        min = min(measure_rate_per_1000), max = max(measure_rate_per_1000),
+        avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
+        IQR(measure_rate_per_1000), .groups = "drop"
+      )
+
+    write.csv(stats_df, glue("output/{folder}/summary_stats{suffix}.csv"))
+  } else {
+    stats_df <- df %>%
+      mutate(measure_rate_per_1000 = (numerator_midpoint6 / list_size_midpoint6) * 1000) %>%
+      group_by(measure, main_col) %>%
+      summarise(
+        numerator_total = sum(numerator_midpoint6), list_size_total = sum(list_size_midpoint6),
+        measure_rate_per_1000 = (sum(numerator_midpoint6) / sum(list_size_midpoint6)) * 1000,
+        min = min(measure_rate_per_1000), max = max(measure_rate_per_1000),
+        avg = mean(measure_rate_per_1000), median = median(measure_rate_per_1000),
+        IQR(measure_rate_per_1000), .groups = "drop"
+      )
+
+    write.csv(stats_df, glue("output/{folder}/summary_stats_{main_col}_{suffix}.csv"))
+  }
+}
+
+
+
+# --- Process and produce summary statistics ----------------------------------------------
+
+# Changing date columns to date type
+measures$interval_start <- as.Date(measures$interval_start)
+
+# --- Aggregating measures stratified by patient characteristics ------------------------------------------------
+
+# Create plots for different patient characteristic
+# length - 1 to avoid plot for practice_pseudo_id
+start_index <- which(names(measures) == "interval_start") + 1
+end_index <- which(names(measures) == "numerator_midpoint6") - 1
+for (col in colnames(measures)[start_index:end_index]) {
+  aggregate_trends_by_facet(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
+  plot_aggregated_data(measures, main_col = col, facet_col = NULL, filter_col = NULL, folder = "patient_measures/plots", suffix)
+  # calculate_stats(measures, main_col = col, folder = "patient_measures", suffix)
+}
+
+# --- Aggregating measures stratified by vax status and comorbidities ------------------------------------------------
+
+# Aggregating vax trends by age, no filter
+# lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) aggregate_trends_by_facet(measures, main_col = vax, facet_col = "age", filter_col = NULL, folder = "patient_measures"))
+
+# Aggregating vax trends by age & indication (comorbidity)
+# for (disease in c("comorbid_chronic_resp", "comorbid_copd", "comorbid_asthma")) {
+#  lapply(c("vax_flu_12m", "vax_covid_12m", "vax_pneum_12m"), function(vax) aggregate_trends_by_facet(measures, main_col = vax, facet_col = "age", filter_col = disease, folder = "patient_measures"))
+# }
+
+# Aggregating comorbid trends by age
+# comorbid_any <- c("comorbid_chronic_resp","comorbid_copd", "comorbid_asthma", "comorbid_dm", "comorbid_htn", "comorbid_depres", "comorbid_mh", "comorbid_neuro", "comorbid_immuno")
+# lapply(comorbid_any, function(comorbid) aggregate_trends_by_facet(measures, main_col = comorbid, facet_col = "age", filter_col = NULL, folder = "patient_measures"))
+
+# Aggregating comorbid trends by imd
+# lapply(comorbid_any, function(comorbid) aggregate_trends_by_facet(measures, main_col = comorbid, facet_col = "imd_quintile", filter_col = NULL, folder = "patient_measures"))

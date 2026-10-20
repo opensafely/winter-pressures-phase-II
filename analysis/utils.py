@@ -1,27 +1,906 @@
 from datetime import datetime, timedelta
+import resource
+import pandas as pd
+import numpy as np
+from scipy import stats
+import pyarrow.feather as feather
+import seaborn as sns
+import matplotlib.pyplot as plt
+from parse_args import config
+import pickle
 
-def generate_annual_dates(start_year, end_date):
+# --------- Pre-processing functions ------------------------------------------------
+
+
+def generate_annual_dates(end_date, n_years):
     """
     Generates a list of annual start dates from the start year to the end date.
-    
+
     Args:
-        start_year: The starting year for the dates.
-        end_date: The end date for the dates.
-        
+        end_date (str): The end date in 'YYYY-MM-DD' format.
+        n_years (int): The number of years to generate.
     Returns:
-        A list of start dates (52 weeks apart from each other) in 'YYYY-MM-DD' format.
+        list: A list of annual start dates in 'YYYY-MM-DD' format.
     """
-    # Generate annual start days for the study period: August 2016 -  31 July 2024
-    start_date = datetime.strptime(end_date, '%Y-%m-%d') - timedelta(weeks=52)
+    # Convert the start and end dates to datetime objects
+    end_date = datetime.strptime(end_date, "%Y-%m-%d")
 
-    # Subtract 52 weeks until we reach August 2016
+    # Subtract 52 weeks until we reach April 2016
     dates = []
-    current_date = start_date
+    current_date = end_date
 
-    # Loop to subtract 52 weeks (1 year) in each iteration
-    while current_date.year > start_year or (current_date.year == start_year and current_date.month > 7):
-        dates.append(current_date.strftime('%Y-%m-%d'))
+    # Loop to subtract 52 weeks (1 year) in each iteration until April of the start year
+    for i in range(n_years):
+        print(f"Adding date: {current_date.strftime('%Y-%m-%d')}")
+        dates.append(current_date.strftime("%Y-%m-%d"))
         current_date -= timedelta(weeks=52)
 
     dates.reverse()
     return dates
+
+
+def log_memory_usage(label=""):
+    """
+    Logs the memory usage of the current process.
+    Args:
+        label (str): A label to identify the point at which the memory usage is logged.
+    Returns:
+        Prints the memory usage in kilobytes to the action log.
+    """
+    usage = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss  # In kilobytes
+    usage = usage / 1024  # Convert to MB
+    usage = round(usage, 2)  # Round to 2 decimal places
+    print(f"usage at {label}: {usage} mb", flush=True)
+
+
+def replace_nums(df, replace_ethnicity=True, replace_rur_urb=True, **kwargs):
+    """
+    Replaces numerical values with their corresponding string values for the following columns:
+    - Rural urban classification
+    - Ethnicity
+    Args:
+        df (pd.DataFrame): DataFrame to be processed
+    Returns:
+        pd.DataFrame: Processed DataFrame
+    """
+    # Reformat rur_urb column
+    if replace_rur_urb:
+        print(f"Replacing rur_urb, prior values:, {df['rur_urb_class'].unique()}")
+        # Convert string col to category for efficiency
+        df["rur_urb_class"] = df["rur_urb_class"].astype("string")
+        df["rur_urb_class"] = df["rur_urb_class"].astype("category")
+        df["rur_urb_class"] = df["rur_urb_class"].cat.add_categories(
+            ["Urban", "Rural", "Unknown"]
+        )
+        df["rur_urb_class"].fillna("Unknown", inplace=True)
+        # Aggregate urban and rural subcategories
+        df["rur_urb_class"] = (
+            df["rur_urb_class"]
+            .replace(
+                {
+                    "1": "Urban",
+                    "2": "Urban",
+                    "3": "Urban",
+                    "4": "Urban",  # Urban = 1
+                    "5": "Rural",
+                    "6": "Rural",
+                    "7": "Rural",
+                    "8": "Rural",  # Rural = 2
+                }
+            )
+            .fillna("Unknown")
+        )
+        print(f"New datatype of rur_urb: {df['rur_urb_class'].dtype}")
+        print(f"Post-replace values:, {df['rur_urb_class'].unique()}")
+
+    if replace_ethnicity:
+
+        # 'Demograph measures' will require not filtering on measures with 'ethnicity' in the name
+        if config["practice_subgroup_measures"] == True:
+
+            print(f"Replacing ethnicity, prior valuess:, {df['ethnicity'].unique()}")
+            df_ethnicity = df[
+                df["measure"].str.contains("ethnicity", case=False, na=False)
+            ]
+            # Identify missing values
+            df_ethnicity["ethnicity"].replace("6", pd.NA, inplace=True)
+            print(f"Prior Nan count: {df_ethnicity['ethnicity'].isna().sum()}")
+            # Fill missing values with values from sus_ethnicity
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(
+                df_ethnicity["ethnicity_sus"]
+            )
+            # Convert string col to category for efficiency
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].astype("category")
+            # Reformat ethnicity data
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].cat.add_categories(
+                ["White", "Mixed", "South Asian", "Black", "Other", "Not stated"]
+            )
+            df_ethnicity["ethnicity"].replace(
+                {
+                    "1": "White",
+                    "2": "Mixed",
+                    "3": "South Asian",
+                    "4": "Black",
+                    "5": "Other",
+                    "A": "White",
+                    "B": "White",
+                    "C": "White",
+                    "D": "Mixed",
+                    "E": "Mixed",
+                    "F": "Mixed",
+                    "G": "Mixed",
+                    "H": "South Asian",
+                    "J": "South Asian",
+                    "K": "South Asian",
+                    "L": "South Asian",
+                    "M": "Black",
+                    "N": "Black",
+                    "P": "Black",
+                    "R": "Other",
+                    "S": "Other",
+                    "Z": "Not stated",
+                },
+                inplace=True,
+            )
+            # Impute missing ethnicity with ethnicity sus
+            df_ethnicity["ethnicity"] = df_ethnicity["ethnicity"].fillna(
+                df_ethnicity["ethnicity_sus"]
+            )
+            print(f"New datatype of ethnicity: {df_ethnicity['ethnicity'].dtype}")
+            print(f"Post-replace Nan count: {df_ethnicity['ethnicity'].isna().sum()}")
+            print(
+                f"Post-replace ehtnicity values:, {df_ethnicity['ethnicity'].unique()}"
+            )
+            df = df.drop("ethnicity_sus", axis=1)
+            df_ethnicity = df_ethnicity.drop("ethnicity_sus", axis=1)
+
+            # Aggregate ethnicity categories
+            group_cols = [
+                col
+                for col in df_ethnicity.columns
+                if col not in ["numerator", "list_size"]
+            ]
+            df_ethnicity = df_ethnicity.groupby(
+                group_cols, as_index=False, observed=True, dropna=False
+            )[["numerator", "list_size"]].sum()
+
+            # Drop original ethnicity measures and merge back aggregated measures
+            df = df[~df["measure"].str.contains("ethnicity", case=False, na=False)]
+            df = pd.concat([df, df_ethnicity], ignore_index=True)
+
+            print(f"Post-aggregation values:, {df['ethnicity'].unique()}")
+            print(f"Post-replace df: {df.head()}")
+
+    return df
+
+
+# ----------- Summer-winter comparison functions ---------------------------------------------
+
+
+def flatten_multiindex_columns(df):
+    """
+    Flattens multi-index columns in a DataFrame by joining the levels with an underscore.
+    Args:
+        df (pd.DataFrame): DataFrame with multi-index columns.
+    Returns:
+        pd.DataFrame: DataFrame with flattened column names.
+    """
+    # Handle both MultiIndex (tuple) and single-level column indexes safely
+    new_columns = []
+    for col in df.columns.values:
+        if isinstance(col, tuple):
+            # Join non-None parts of the tuple with underscores
+            parts = [str(part) for part in col if part is not None]
+            new_col = "_".join(parts).strip("_")
+        else:
+            # Single-level column: use its string representation directly
+            new_col = str(col)
+        new_columns.append(new_col)
+
+    df = df.copy()
+    df.columns = new_columns
+    return df
+
+
+def build_aggregate_df(rate_df, strata, aggregation_dict, initial_list_size=False):
+    """
+    Builds an aggregate DataFrame based on the specified grouping columns and aggregation functions.
+    Args:
+    - rate_df (pd.DataFrame): The input DataFrame containing the data to be aggregated
+    - strata (list): List of column names to group by
+    - aggregation_dict (dict): Dictionary specifying the aggregation functions for each column
+    - initial_list_size (bool): If True, calculates the list size at the first interval
+    """
+
+    # Ensure grouping columns are correct
+    agg = (rate_df.groupby(strata, observed=True).agg(aggregation_dict)).reset_index()
+    agg = flatten_multiindex_columns(agg)
+
+    # If initial list size desired, use the first national-week list_size as
+    # yearly list size to avoid inflating list_size by summing list sizes
+    # across weeks or accidentally taking a practice-level list_size value.
+    if initial_list_size == True:
+        if (
+            "list_size" not in rate_df.columns
+            or "interval_start" not in rate_df.columns
+        ):
+            raise ValueError(
+                "initial_list_size=True requires 'list_size' and 'interval_start' columns in rate_df"
+            )
+
+        # Aggregate list_size to national-week level first (sum across rows),
+        # then take the earliest week list_size within each stratum.
+        strata_no_interval = [col for col in strata if col != "interval_start"]
+        weekly_strata = list(dict.fromkeys(strata_no_interval + ["interval_start"]))
+
+        weekly_list_size = rate_df.groupby(
+            weekly_strata, as_index=False, observed=True
+        )["list_size"].sum()
+
+        first_week_list_size = (
+            weekly_list_size.sort_values("interval_start")
+            .groupby(strata_no_interval, as_index=False, observed=True)["list_size"]
+            .first()
+        )
+
+        first_week_list_size = flatten_multiindex_columns(first_week_list_size)
+        agg = agg.merge(first_week_list_size, on=strata_no_interval, how="left")
+
+        # Rename list_size column to reflect that it's the first week list_size, not the sum of weekly list_sizes
+        agg.rename(columns={"list_size": "list_size_initial"}, inplace=True)
+
+    return agg
+
+
+def transpose_summer(df, baseline):
+
+    # 1. Extract the baseline (Jun-Jul rows) CURRENTLY PREV SUMMER ONLY
+    summer_df = df[df["season"] == "Jun-Jul"][
+        ["measure", "pandemic", "rate_per_1000_midpoint6_derived"]
+    ]
+    summer_df = summer_df.rename(
+        columns={"rate_per_1000_midpoint6_derived": f"{baseline}_rate"}
+    )
+
+    # 2. Merge baseline back on measure + pandemic
+    df = df.merge(summer_df, on=["measure", "pandemic"], how="left")
+
+    # 3. Compute rate ratio
+    df["RR"] = df["rate_per_1000_midpoint6_derived"] / df[f"{baseline}_rate"]
+
+    return df
+
+
+def test_difference(row, agg_df):
+
+    # Skip summer-summer comparisons
+    if row["season"] == "Jun-Jul":
+        return np.nan
+
+    key_summer = (row["measure"], "Jun-Jul", row["practice_pseudo_id"], row["pandemic"])
+    key_season = (
+        row["measure"],
+        row["season"],
+        row["practice_pseudo_id"],
+        row["pandemic"],
+    )
+
+    print(f"Comparing {key_season} with {key_summer}")
+
+    # Fetch rates for each season NEED TO UPDATE TOTAL_RATE
+    summer_rate = round(agg_df.loc[key_summer, "total_rate"])
+    summer_n = agg_df.loc[key_summer, "intervals"]
+    winter_rate = round(agg_df.loc[key_season, "total_rate"])
+    winter_n = agg_df.loc[key_season, "intervals"]
+
+    # Skip comparisons with 0 intervals
+    if summer_n == 0 or winter_n == 0:
+        print("Skipping as n = 0")
+        return np.nan
+
+    result = stats.poisson_means_test(
+        summer_rate, summer_n, winter_rate, winter_n, alternative="two-sided"
+    )
+    return round(result.pvalue, 4)
+
+
+def get_season(month):
+    """
+    Returns the season for a given month.
+    Args:
+        month (int): Month number (1-12).
+    Returns:
+        str: Season name (2 month period).
+    """
+    if month in [9, 10]:
+        return "Sep-Oct"
+    elif month in [11, 12]:
+        return "Nov-Dec"
+    elif month in [1, 2]:
+        return "Jan-Feb"
+    elif month in [3, 4]:
+        return "Mar-Apr"  # QOF deadline to flag for qof inflation, important for sro
+    elif month in [6, 7]:
+        return "Jun-Jul"
+    else:
+        return None  # Exclude non-winter months
+
+
+def read_write(
+    read_or_write,
+    path,
+    file_type="arrow",
+    test=config["test"],
+    yearly=config["yearly"],
+    split=False,
+    df=None,
+    dtype=None,
+    **kwargs,
+):
+    """
+    Function to read or write a file based on the test flag.
+    Args:
+        df (pd.DataFrame/Dict): DataFrame/Dict to write if read_or_write is 'write'.
+        read_or_write (str): 'read' or 'write' to specify the operation.
+        test (bool): If True, use test versions of datasets.
+        path (str): Path to the file.
+    Returns:
+        pd.DataFrame: DataFrame read from the file if read_or_write is 'read'.
+    """
+
+    if test:
+        path = path + "_test"
+
+    if read_or_write == "read":
+
+        if file_type == "csv":
+            df = pd.read_csv(path + ".csv", **kwargs)
+
+        elif file_type == "csv.gz":
+            df = pd.read_csv(path + ".csv.gz", compression="gzip", **kwargs)
+
+        elif file_type == "arrow":
+            df = feather.read_feather(path + ".arrow")
+
+            if dtype is not None:
+                df = df.astype(dtype)
+                df["interval_start"] = pd.to_datetime(df["interval_start"])
+
+                # Convert boolean columns to boolean type
+                bool_cols = [col for col, typ in dtype.items() if typ == "bool"]
+                for col in bool_cols:
+                    df[col] = df[col] == "T"
+
+            return df
+
+        elif file_type == "pickle":
+            with open(path + ".pickle", "rb") as handle:
+                df = pickle.load(handle)
+            return df
+
+    elif read_or_write == "write":
+
+        if df is None:
+            raise Exception("Must supply dataframe when writing")
+
+        test_suffix = "_test" if path.endswith("_test") else ""
+        output_path = path[:-len(test_suffix)] if test_suffix else path
+
+        # Split large dataframes into multiple files if split == True
+        rows_per_file = 5000
+        n_files = max(1, (len(df) + rows_per_file - 1) // rows_per_file) if split else 1
+
+        if split and n_files > 4:
+            raise ValueError("File is too large to write across four files")
+
+        for file_number in range(1, n_files + 1):
+            start = (file_number - 1) * rows_per_file
+            end = file_number * rows_per_file
+            output_df = df.iloc[start:end] if split else df
+            file_num = f"_{file_number}" if n_files > 1 else ""
+
+            if file_type == "csv":
+                print(f"Writing CSV: {output_path}{file_num}{test_suffix}")
+                output_df.to_csv(f"{output_path}{file_num}{test_suffix}.csv", **kwargs)
+
+            elif file_type == "csv.gz":
+                output_df.to_csv(
+                    f"{output_path}{file_num}{test_suffix}.csv.gz",
+                    compression="gzip",
+                    **kwargs,
+                )
+
+            elif file_type == "arrow":
+                feather.write_feather(
+                    output_df, f"{output_path}{file_num}{test_suffix}.arrow"
+                )
+
+            elif file_type == "pickle":
+                with open(f"{output_path}{file_num}{test_suffix}.pickle", "wb") as handle:
+                    pickle.dump(output_df, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+
+def simulate_dataframe(dtype_dict, n_rows):
+    """
+    Simulate a DataFrame with specified dtypes and number of rows.
+    Args:
+        dtype_dict (dict): Dictionary mapping column names to dtypes.
+        n_rows (int): Number of rows to generate.
+    Returns:
+        pd.DataFrame: Simulated DataFrame with specified dtypes.
+    """
+    data = {}
+    for col, dtype in dtype_dict.items():
+        if dtype == "int64":
+            data[col] = np.random.randint(0, 1000, size=n_rows)
+        elif dtype == "int16":
+            data[col] = np.random.randint(-30000, 30000, size=n_rows).astype(np.int16)
+        elif dtype == "int8":
+            data[col] = np.random.randint(1, 6, size=n_rows).astype(np.int8)
+        elif dtype == "bool":
+            data[col] = np.random.choice(["T", "F"], size=n_rows)
+        elif dtype == "category":
+            data[col] = pd.Categorical(np.random.choice(["A", "B", "C"], size=n_rows))
+        elif dtype == "string":
+            data[col] = pd.Series(
+                np.random.choice(["x", "y", "z", None], size=n_rows), dtype="string"
+            )
+        else:
+            raise ValueError(f"Unhandled dtype: {dtype}")
+
+    df = pd.DataFrame(data).astype(dtype_dict)
+    return df
+
+
+def merge_seasons(summer_df, non_summer_df, practice_level):
+    """
+    Merges summer (baseline) and non-summer dataframes
+    Args:
+        summer_df: Summer dataframe of counts
+        non_summer_df: Non-Summer dataframe of counts
+        practice_level: Boolean, determines whether merging is done at practice level
+    Returns:
+        pd.DataFrame: Merged dataframe containing columns for summer and non_summer rates per measure
+    """
+
+    # Merge keys: use summer_year, measure, pandemic, and practice if practice_level
+    merge_cols = ["measure", "summer_year", "pandemic"]
+    if practice_level:
+        merge_cols.append("practice_pseudo_id")
+
+    # Perform left merge: every non-summer row gets the same summer baseline
+    combined_seasons_df = non_summer_df.merge(
+        summer_df, on=merge_cols, how="left", suffixes=[None, "_prev_summr"]
+    )
+
+    # Find the first valid summer year for each measure
+    first_summer_years = summer_df.groupby("measure")["summer_year"].min().reset_index()
+    # Merge to keep only the first summer for a given practice and measure
+    first_summer_df = summer_df.merge(
+        first_summer_years, on=["measure", "summer_year"]
+    ).drop(
+        columns="summer_year"
+    )  # Drop original summer_year after filtering
+
+    # Merge first-summer baseline independent of pandemic period so
+    # post-pandemic rows can still reference the 2016 summer baseline.
+    merge_cols = ["measure"]
+    if practice_level == True:
+        merge_cols.append("practice_pseudo_id")
+
+    combined_seasons_df_final = combined_seasons_df.merge(
+        first_summer_df, on=merge_cols, how="left", suffixes=[None, "_first_summr"]
+    )
+
+    return combined_seasons_df_final
+
+
+def generate_dist_plot(df, var, facet_var, **kwargs):
+
+    facet_plot = sns.FacetGrid(
+        data=df,
+        col=facet_var,
+        col_wrap=4,
+        height=4,
+        aspect=1,
+        sharex=False,  # ✅ works properly here
+        sharey=False,
+    )
+
+    facet_plot.map_dataframe(sns.histplot, x=var, element="bars")
+
+    return facet_plot
+
+
+def _print_rounding_checks(unrounded, rounded, col_name, low_value_threshold=10):
+    """
+    Print rounding checks comparing rounded vs unrounded values for a column.
+    """
+    unrounded_series = pd.Series(unrounded).astype("float64")
+    rounded_series = pd.Series(rounded).astype("float64")
+
+    rounding_difference = rounded_series - unrounded_series
+    rounding_diff_counts = rounding_difference.value_counts(dropna=False).sort_index()
+    print(
+        f"Rounding difference counts for {col_name}:\n{rounding_diff_counts}",
+        flush=True,
+    )
+
+    low_unrounded = (
+        unrounded_series[unrounded_series < low_value_threshold]
+        .value_counts(dropna=False)
+        .sort_index()
+    )
+    low_rounded = (
+        rounded_series[rounded_series < low_value_threshold]
+        .value_counts(dropna=False)
+        .sort_index()
+    )
+    print(
+        f"Low unrounded value counts for {col_name} (< {low_value_threshold}):\n{low_unrounded}",
+        flush=True,
+    )
+    print(
+        f"Low rounded value counts for {col_name} (< {low_value_threshold}):\n{low_rounded}",
+        flush=True,
+    )
+
+
+def roundmid_any(df, cols, to=6, low_value_threshold=10):
+    """
+    Round values using midpoint rounding and always print checks comparing
+    rounded and unrounded counts.
+    Args:
+    - x: Series of values to be rounded
+    - to: The number to which to round (e.g., 6 for rounding to the nearest 6)
+    - low_value_threshold: Threshold below which to print value counts for rounded and unrounded values
+                            to check for potential over-rounding of low values.
+    """
+
+    original_columns = df.columns.tolist()
+
+    for col in cols:
+        rounded_col = np.ceil(df[col] / to) * to - (np.floor(to / 2) * (df[col] != 0))
+        df[f"{col}_mp6"] = rounded_col
+
+    # Print changes caused by rounding
+    for col in cols:
+        _print_rounding_checks(
+            df[col],
+            df[f"{col}_mp6"],
+            col_name=col,
+            low_value_threshold=low_value_threshold,
+        )
+
+    # Preserve initial column ordering
+    df = df.drop(columns=cols)
+    reordered_columns = []
+    for col in original_columns:
+        if col in cols:
+            reordered_columns.append(f"{col}_mp6")
+        else:
+            reordered_columns.append(col)
+    df = df[reordered_columns]
+
+    return df
+
+
+def column_total_check(df, column, year, measure_name):
+
+    total_count = df[
+        (df["measure"] == measure_name) & (df["interval_start"].dt.year == year)
+    ][column].sum()
+
+    return f"Total {measure_name} cases in {year}: {total_count}"
+
+
+def aggregate_unweighted_rr_results(practice_level_df, group_cols):
+    """
+    Aggregate RR medians, RD medians, and proportions of RR results.
+    Args:
+    - practice_level_df: DataFrame with practice-level RRs and rate differences.
+    - group_cols: List of columns to group by for aggregation (e.g., measure, season, pandemic).
+    """
+
+    df = practice_level_df.copy()
+
+    # Named percentile functions to keep readable output column names.
+    def p01(x):
+        return x.quantile(0.01)
+
+    p01.__name__ = "p01"
+
+    def p25(x):
+        return x.quantile(0.25)
+
+    p25.__name__ = "p25"
+
+    def p75(x):
+        return x.quantile(0.75)
+
+    p75.__name__ = "p75"
+
+    def p99(x):
+        return x.quantile(0.99)
+
+    p99.__name__ = "p99"
+
+    # Indicator columns for RR direction used in grouped counts.
+    for baseline in ["prev_summr", "first_summr"]:
+        rr_col = f"RR_{baseline}"
+        df[f"{rr_col}_>5%"] = df[rr_col] > 1.05
+        df[f"{rr_col}_=1"] = (df[rr_col] >= 0.95) & (df[rr_col] <= 1.05)
+        df[f"{rr_col}_<5%"] = df[rr_col] < 0.95
+
+    # Debug check: number of unique practices and baseline-linked practice counts by year.
+    practice_count_by_year = (
+        df.groupby("summer_year", observed=True)["practice_pseudo_id"]
+        .nunique()
+        .reset_index(name="n_unique_practices")
+        .sort_values("summer_year")
+    )
+    baseline_count_by_year = (
+        df.groupby("summer_year", observed=True)[
+            ["list_size_count_prev_summr", "list_size_count_first_summr"]
+        ]
+        .sum()
+        .reset_index()
+        .sort_values("summer_year")
+    )
+    if config['test']:
+        print("Practice counts by summer_year before unweighted aggregation:", flush=True)
+        print(practice_count_by_year.to_string(index=False), flush=True)
+        print("Baseline-linked practice counts by summer_year:", flush=True)
+        print(baseline_count_by_year.to_string(index=False), flush=True)
+
+    # Aggregate RR percentiles and practice counts
+    # Practices without a valid summer baseline are ignored by default
+    results_df = build_aggregate_df(
+        df,
+        group_cols,
+        {
+            "Rate_per_1000_per_wday": ["median"],
+            "Rate_per_1000_per_wday_prev_summr": ["median"],
+            "Rate_per_1000_per_wday_first_summr": ["median"],
+            "wdays_in_interval_sum": ["max"],
+            "list_size_count": ["sum"],
+            "list_size_count_first_summr": ["sum"],
+            "list_size_count_prev_summr": ["sum"],
+            "RR_prev_summr": [p01, p25, "median", p75, p99, "var"],
+            "RR_first_summr": [p01, p25, "median", p75, p99, "var"],
+            "RD_prev_summr": [p01, p25, "median", p75, p99, "var"],
+            "RD_first_summr": [p01, p25, "median",p75, p99, "var"],
+            "RR_prev_summr_>5%": ["sum"],
+            "RR_prev_summr_=1": ["sum"],
+            "RR_prev_summr_<5%": ["sum"],
+            "RR_first_summr_>5%": ["sum"],
+            "RR_first_summr_=1": ["sum"],
+            "RR_first_summr_<5%": ["sum"],
+        },
+    )
+
+    # Proportion of practices with RR > 1, = 1, and < 1.
+    rr_categories = ["_>5%", "_=1", "_<5%"]
+    for baseline in ["prev_summr", "first_summr"]:
+        for category in rr_categories:
+            results_df[f"%_RR_{baseline}{category}"] = (
+                results_df[f"RR_{baseline}{category}_sum"]
+                / results_df[f"list_size_count_{baseline}_sum"]
+            )
+
+    results_df = results_df.drop(
+        columns=[
+            "RR_prev_summr_>5%_sum",
+            "RR_prev_summr_=1_sum",
+            "RR_prev_summr_<5%_sum",
+            "RR_first_summr_>5%_sum",
+            "RR_first_summr_=1_sum",
+            "RR_first_summr_<5%_sum",
+        ]
+    )
+
+    # Split first summer and prev summer RR into different tables
+    core_columns = [
+        "measure",
+        "season",
+        "pandemic",
+        "summer_year",
+        "Rate_per_1000_per_wday_median",
+        "wdays_in_interval_sum_max",
+    ]
+    results_df_first_summer = results_df[
+        [
+            col
+            for col in results_df.columns
+            if "first_summr" in col or col in core_columns
+        ]
+    ]
+    results_df_prev_summer = results_df[
+        [
+            col
+            for col in results_df.columns
+            if "prev_summr" in col or col in core_columns
+        ]
+    ]
+
+    return (results_df_first_summer, results_df_prev_summer)
+
+
+def filter_pandemic_mismatches(df):
+    # Filter out pandemic period mismatches
+
+    if config["test"]:
+        pandemic_start_year = pd.to_datetime(
+            config["test_config"]["pandemic_start"]
+        ).year
+        pandemic_end_year = pd.to_datetime(config["test_config"]["pandemic_end"]).year
+    else:
+        pandemic_start_year = pd.to_datetime(config["pandemic_start"]).year
+        pandemic_end_year = pd.to_datetime(config["pandemic_end"]).year
+
+    summer_year = pd.to_numeric(df["summer_year"], errors="coerce")
+
+    return df[
+        ~(
+            ((df["pandemic"] == "Before") & (summer_year > pandemic_end_year))
+            | ((df["pandemic"] == "After") & (summer_year < pandemic_start_year))
+        )
+    ]
+
+
+def calculate_rate_ratios(summer_df, non_summer_df, practice_level, mp6_input):
+    """
+    Calculates rate ratios and rate differences comparing each season to the two summer baselines (prev summer and first summer).
+    Args:
+    - summer_df: DataFrame containing summer season counts (used as baseline/denominator)
+    - non_summer_df: DataFrame containing non-summer season counts (used as comparison/numerator)
+    - practice_level: Boolean indicating whether the data is at the practice level (True) or national
+    - mp6_input: Boolean indicating whether the input has been mp6 rounded
+    """
+
+    if mp6_input:
+        mp6_suffix = "_mp6"
+    else:
+        mp6_suffix = ""
+
+    # National level has additional level of aggregation, so use the higher aggregate column counts when practice level = False
+    if practice_level == True:
+        numerator_col = f"numerator_sum{mp6_suffix}"
+        denominator_col = f"list_size_initial{mp6_suffix}"
+        wdays_col = f"wdays_in_interval_sum"
+    else:
+        numerator_col = f"numerator_sum_sum{mp6_suffix}"
+        denominator_col = f"list_size_initial_sum{mp6_suffix}"
+        wdays_col = f"wdays_in_interval_sum_max"
+
+    # Set the count column based on whether the practice data has been aggregated
+    count_col = f"list_size_count{mp6_suffix}" if practice_level else f"list_size_count_sum{mp6_suffix}"
+
+    # Keep only columns needed for RR/RD calculations and downstream outputs
+    # to reduce memory pressure during merges.
+    merge_keys = ["measure", "summer_year", "pandemic"]
+    if practice_level:
+        merge_keys.append("practice_pseudo_id")
+
+    required_cols = merge_keys + ["season", numerator_col, denominator_col, count_col, wdays_col]
+    non_summer_rr = non_summer_df[required_cols].copy()
+    summer_rr = summer_df[required_cols].copy()
+
+    rr_df = merge_seasons(summer_rr, non_summer_rr, practice_level=practice_level)
+
+    # Calculate rate ratios
+    rate_per_1000_col = f"Rate_per_1000_per_wday{mp6_suffix}"
+    rr_df[rate_per_1000_col] = ((rr_df[numerator_col] / rr_df[denominator_col]) * 1000) / rr_df[wdays_col]
+
+    baselines = ["_prev_summr", "_first_summr"]
+
+    for baseline in baselines:
+        # Calculate baseline rate per 1000 per wday, rate ratio (RR), and rate difference (RD) for each baseline
+        baseline_rate_col = f"Rate_per_1000_per_wday{baseline}{mp6_suffix}"
+        rr_col = f"RR{baseline}{mp6_suffix}"
+        rd_col = f"RD{baseline}{mp6_suffix}"
+
+        # Calculate baseline rate per 1000 per wday for the summer baseline
+        rr_df[baseline_rate_col] = ((
+            rr_df[f"{numerator_col}{baseline}"] / rr_df[f"{denominator_col}{baseline}"]
+        ) * 1000) / rr_df[f"{wdays_col}{baseline}"]
+
+        # Offset-based RR avoids NaNs for true 0/0 cases while limiting
+        # memory overhead by reusing preallocated arrays.
+        offset = 1e-4
+        rr_values = rr_df[rate_per_1000_col].to_numpy(copy=True)
+        rr_values += offset
+        baseline_values = rr_df[baseline_rate_col].to_numpy(copy=True)
+        baseline_values += offset
+
+        # Calculate rate ratios
+        np.divide(rr_values, baseline_values, out=rr_values)
+        rr_df[rr_col] = rr_values
+
+        # Calculate rate differences
+        rr_df[rd_col] = rr_df[rate_per_1000_col] - rr_df[baseline_rate_col]
+
+    # temporarily removed filter_pandemic_mismatches to see if it is necessary
+    # rr_df = filter_pandemic_mismatches(rr_df)
+    return rr_df
+
+def count_working_days(df, config=config):
+
+    bank_holidays = pd.read_json("analysis/bank_holidays.json")
+    
+    # Convert to DataFrame and extract dates
+    bank_holidays = bank_holidays["england-and-wales"]["events"]
+    bank_holidays_df = pd.DataFrame(bank_holidays)
+    bank_holidays_df["date"] = pd.to_datetime(bank_holidays_df["date"])
+
+    df["interval_start"] = pd.to_datetime(df["interval_start"])
+    df["interval_end"] = df["interval_start"] + pd.Timedelta(days=6)
+
+    # Sort bank holidays in ascending order
+    holiday_dates = np.sort(bank_holidays_df["date"].to_numpy(dtype="datetime64[D]"))
+    interval_starts = df["interval_start"].to_numpy(dtype="datetime64[D]")
+    interval_ends = df["interval_end"].to_numpy(dtype="datetime64[D]")
+
+    # Find the position of the earliest bank holiday that is after interval start
+    left_idx = np.searchsorted(holiday_dates, interval_starts, side="left")
+    # Find the position of the earliest bank holiday that is after interval end
+    right_idx = np.searchsorted(holiday_dates, interval_ends, side="right")
+    # The difference between their positions gives the number of bank holidays that occur in the interval
+    holiday_counts = right_idx - left_idx
+
+    if config["normalize_holidays"]:
+        df["wdays_in_interval"] = 7 - holiday_counts
+    else:
+        # Set 7 day intervals if not normalizing
+        df["wdays_in_interval"] = 7
+    df.drop(columns=["interval_end"], inplace=True)
+
+    return(df)
+
+def tshoot_wdays(df):
+    "Function that produces summaries of wdays to identify cause of inflated wday counts upon aggregation"
+    
+    # Example specific season, year, measure, and practice combination
+    example_season_df = df[
+        (df["season"] == "Nov-Dec") &
+        (df["summer_year"] == 2023) &
+        (df["measure"] == "overall_resp_sensitive") &
+        (df["practice_pseudo_id"] == np.random.choice(df["practice_pseudo_id"].unique()))
+    ]
+
+    # Example of a practice with inflated wdays_in_interval counts
+    filtered_df = df[df["measure"] == "overall_resp_sensitive"]
+    agg_practice_seasons_df = build_aggregate_df(
+        filtered_df,
+        ["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        {"numerator": ["sum"], "list_size": ["sum"], "wdays_in_interval": ["sum"]},
+    )
+
+    # Merge aggregate with original to show the wday sum for each interval
+    merged_df = agg_practice_seasons_df.merge(
+        filtered_df,
+        on=["measure", "practice_pseudo_id", "season", "pandemic", "summer_year"],
+        how="left",
+    )
+
+    # Identify practice-season combinations with inflated wdays_in_interval counts
+    inflated_practice_seasons_df = merged_df[
+        merged_df["wdays_in_interval_sum"] > 100
+    ]
+
+    # If any of the dfs exceed 5000 rows, only extract the first 5000 rows
+    if len(example_season_df) > 5000:
+        example_season_df = example_season_df.head(5000)
+    if len(agg_practice_seasons_df) > 5000:
+        agg_practice_seasons_df = agg_practice_seasons_df.head(5000)
+    if len(inflated_practice_seasons_df) > 5000:
+        inflated_practice_seasons_df = inflated_practice_seasons_df.head(5000)
+
+    # Annonymize counts
+    example_season_df = roundmid_any(example_season_df, ['numerator','list_size'], to=6)
+    agg_practice_seasons_df = roundmid_any(agg_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
+    inflated_practice_seasons_df = roundmid_any(inflated_practice_seasons_df, ['numerator_sum','list_size_sum'], to=6)
+
+    return (example_season_df, agg_practice_seasons_df, inflated_practice_seasons_df)
+
+    

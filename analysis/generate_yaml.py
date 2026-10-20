@@ -1,0 +1,436 @@
+"""
+Description:
+- This script generates the YAML file for the project.
+- It iteratively generates actions for practice/demographic/comorbidity measures, split across many years.
+- It also generates test actions for each action.
+
+Usage:
+- python generate_yaml.py
+
+Output:
+- project.yaml
+"""
+
+from datetime import datetime, timedelta
+from utils import generate_annual_dates
+from parse_args import config
+
+dates = generate_annual_dates(config["study_end_date"], config["n_years"])
+
+# --- YAML HEADER ---
+
+yaml_header = """
+version: '5.0'
+
+actions:
+"""
+
+# ------- YAML MEASURES --------------------------------------------
+
+# Patient and practice measures flags to loop
+flags = ["practice_measures", "practice_subgroup_measures"]
+groups = []
+for flag in flags:
+    groups.append(flag.replace("_measures", ""))  # practice/demograph/comorbid
+# Set of measures to loop
+measure_sets = ["appts_table", "sro", "resp"]
+# Appt variants
+appt_variants = ["", "_appt"]
+
+# Temple for measures generation, for each combination of patient/practice measure and start_intv date
+yaml_measures_template = """
+  generate_{flag}_{set}_{date}{appt_suffix}:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
+      --
+      --{flag}
+      --start_intv {date}
+      --set {set}{appt_flag}
+      
+    outputs:
+      highly_sensitive:
+        dataset: output/{flag}_{set}{appt_suffix}/{flag}_{date}.arrow
+"""
+
+yaml_measures = ""
+needs = {}
+
+# Iterate over flags
+for flag in flags:
+
+    # Iterate over sets of measures
+    for set in measure_sets:
+
+        # Iterate over appt variants
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+
+            needs[f"{flag}_{set}{appt_suffix}"] = []
+
+            # Iterate over dates and generate yaml list of needs for each combination
+            for date in dates:
+
+                yaml_measures += yaml_measures_template.format(
+                    flag=flag,
+                    date=date,
+                    set=set,
+                    appt_suffix=appt_suffix,
+                    appt_flag=appt_flag,
+                )
+                needs[f"{flag}_{set}{appt_suffix}"].append(
+                    f"generate_{flag}_{set}_{date}{appt_suffix}"
+                )
+
+            # Join list into string for each flag
+            needs[f"{flag}_{set}{appt_suffix}"] = ", ".join(
+                needs[f"{flag}_{set}{appt_suffix}"]
+            )
+
+yaml_measures_test_template = """
+# --------------- TEST ACTIONS ------------------------------------------
+
+  # generate_demograph_measures_{set}{appt_suffix}_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py 
+  #     --output output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
+  #     --
+  #     --demograph_measures
+  #     --start_intv {start_date}
+  #     --test
+  #     --set {set}{appt_flag}
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/demograph_measures_{set}{appt_suffix}/demograph_measures_{start_date}_test.arrow
+  generate_{group}_measures_{set}{appt_suffix}_test:
+    run: ehrql:v1 generate-measures analysis/wp_measures.py
+      --output output/{group}_measures_{set}{appt_suffix}/{group}_measures_{start_date}_test.arrow
+      --
+      --{group}_measures
+      --start_intv {start_date}
+      --test
+      --set {set}{appt_flag}
+    outputs:
+      highly_sensitive:
+        dataset: output/{group}_measures_{set}{appt_suffix}/{group}_measures_{start_date}_test.arrow
+  # generate_comorbid_measures_{set}{appt_suffix}_test:
+  #   run: ehrql:v1 generate-measures analysis/wp_measures.py
+  #     --output output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
+  #     --
+  #     --comorbid_measures
+  #     --start_intv {start_date}
+  #     --test
+  #     --set {set}{appt_flag}
+  #   outputs:
+  #     highly_sensitive:
+  #       dataset: output/comorbid_measures_{set}{appt_suffix}/comorbid_measures_{start_date}_test.arrow
+"""
+yaml_measures_test = ""
+for set in measure_sets:
+    for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+        for group in groups:
+            yaml_measures_test += yaml_measures_test_template.format(
+                start_date=config["test_config"]["start_date"],
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
+                group=group,
+            )
+
+# --------------- YAML APPT REPORT ------------------------------------------
+yaml_appt_report = ""
+
+appt_dates = {
+    1: datetime.strptime("2023-07-01", "%Y-%m-%d").date(),
+    2: datetime.strptime("2023-12-01", "%Y-%m-%d").date(),
+    3: datetime.strptime("2018-07-01", "%Y-%m-%d").date(),
+    4: datetime.strptime("2018-12-01", "%Y-%m-%d").date(),
+}
+
+appt_needs = []
+
+yaml_appt_template = """
+  generate_app_measures_intv_{key}:
+     run: ehrql:v1 generate-measures analysis/appointments/app_measures.py
+      --output output/appointments/app_measures_{key}.csv 
+      -- 
+      --start_intv {appt_date}
+     outputs:
+       moderately_sensitive:
+         dataset: output/appointments/app_measures_{key}.csv
+ """
+
+for key, value in appt_dates.items():
+    yaml_appt_report += yaml_appt_template.format(key=key, appt_date=value)
+    appt_needs.append(f"generate_app_measures_intv_{key}")
+
+appt_list = ", ".join(appt_needs)
+
+yaml_appt_processing_template = """
+  generate_app_processing:
+     run: r:v2 analysis/appointments/app_processing.r
+     needs: [{appt_list}]
+     outputs:
+       moderately_sensitive:
+         table_rounded: output/appointments/app_measures_rounded_*.csv
+"""
+yaml_appt_processing = yaml_appt_processing_template.format(appt_list=appt_list)
+
+yaml_appt_report = yaml_appt_report + yaml_appt_processing
+yaml_appt_report += (
+    " \n # --------------- PROCESSING ------------------------------------------\n"
+)
+
+yaml_processing_template = """
+  generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/pre_processing.py --{group}_measures --set {set}{appt_flag}{test_flag}
+    needs: [{needs}{test_suffix}]
+    outputs:
+      highly_sensitive:
+        measures: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/proc_{group}_measures*{test_suffix}.arrow
+  generate_freq_table_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/freq_table.py --{group}_measures --set {set}{appt_flag}{test_flag}
+    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
+    outputs:
+      moderately_sensitive:
+        freq_table: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/freq_table_{group}{test_suffix}.csv
+  generate_normalization_{group}_{set}{appt_suffix}{test_suffix}:
+    run: python:v2 analysis/normalization.py --{group}_measures --set {set}{appt_flag}{test_flag}
+    needs: [generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
+    outputs:
+      highly_sensitive:
+        practice_level_arrow: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/practice_level*{test_suffix}.arrow
+      moderately_sensitive:
+        seasonal_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/Results*{test_suffix}.csv
+        weekly_tables: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/weekly*{test_suffix}.csv
+"""
+
+yaml_processing = ""
+yaml_processing_test = ""
+for group in groups:
+    for set in measure_sets:
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            # Actions for processing real data
+            yaml_processing += yaml_processing_template.format(
+                group=group,
+                needs=needs[f"{group}_measures_{set}{appt_suffix}"],
+                test_suffix="",
+                test_flag="",
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
+                agg_suffix="",
+            )
+
+for group in groups:
+    for set in measure_sets:
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            # Actions for processing test data
+            yaml_processing_test += yaml_processing_template.format(
+                group=group,
+                needs=f"generate_{group}_measures_{set}{appt_suffix}",
+                test_suffix="_test",
+                test_flag=" --test",
+                set=set,
+                appt_suffix=appt_suffix,
+                appt_flag=appt_flag,
+                agg_suffix="",
+            )
+
+yaml_viz = " \n # --------------- VISUALIZATION ACTIONS ------------------------------------------"
+
+yaml_viz_template = """
+  generate_deciles_charts_{set}{appt_suffix}_{y_val}{test_suffix}:
+    run: >
+      r:v2 analysis/decile_charts.r --practice{subgroup}_measures {test_flag} --set {set}{appt_flag} --y_value {y_val}
+    needs: [generate_normalization_{group}{subgroup}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}{subgroup}_{set}{appt_suffix}{test_suffix}] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/{group}{subgroup}_measures_{set}{appt_suffix}{agg_suffix}/plots{test_suffix}/*{y_val}.png
+        deciles_table: output/{group}{subgroup}_measures_{set}{appt_suffix}{agg_suffix}/decile_tables/decile_table_*{y_val}{test_suffix}.csv
+  # generate_decomposition_plots_{set}{appt_suffix}_{y_val}{test_suffix}:
+  #   run: >
+  #     r:v2 analysis/decomposition.r --practice_measures {test_flag} --set {set}{appt_flag} --y_val {y_val}
+  #   needs: [generate_normalization_{group}_{set}{appt_suffix}{test_suffix}, generate_pre_processing_{group}_{set}{appt_suffix}{test_suffix}]
+  #   outputs:
+  #     moderately_sensitive:
+  #       decomposition_plots: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/*{y_val}{test_suffix}.png
+  #       decomposition_summaries: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/decompositions/summary_*{y_val}{test_suffix}.txt
+"""
+
+""" TEMPORARILY COMMENTED OUT:
+
+  # Visualisation
+  generate_tables_demograph{test_suffix}:
+    run: r:v2 analysis/table_generation.r --demograph_measures {test_flag}
+    needs: [generate_pre_processing_demograph_{set}{appt_suffix}{test_suffix}]
+    outputs:
+     moderately_sensitive:
+       tables: output/demograph_measures/plots/*_demograph{test_suffix}.csv
+       plots: output/demograph_measures/plots/*_demograph{test_suffix}.png
+  generate_tables_comorbid{test_suffix}:
+    run: r:v2 analysis/table_generation.r --comorbid_measures {test_flag}
+    needs: [generate_pre_processing_comorbid_{set}{appt_suffix}{test_suffix}]
+    outputs:
+     moderately_sensitive:
+        tables: output/comorbid_measures/plots/*_comorbid{test_suffix}.csv
+        plots: output/comorbid_measures/plots/*_comorbid{test_suffix}.png
+
+  generate_deciles_charts_RR{test_suffix}:
+    run: >
+      r:v2 analysis/decile_charts.r --RR {test_flag}
+    needs: [generate_normalization{test_suffix}]
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/practice_measures/plots/decile_chart_*_RR{test_suffix}.png
+        deciles_table: output/practice_measures/decile_tables/decile_table_*_RR{test_suffix}.csv
+"""
+
+suffixes = ["", "_test"]
+test_flags = ["", "--test"]
+y_vals = ["rate_per_1000_wday_mp6", "RR_prev_summr", "RD_prev_summr"] 
+for test_suffix, test_flag in zip(suffixes, test_flags):
+    for set in measure_sets:
+        for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+            for y_val in y_vals: # decomposition actually doesn't use y_val but included for simplicty of looping
+              if set == "appts_table":
+                subgroup = "_subgroup"
+              else:
+                subgroup = ""
+              
+              yaml_viz += yaml_viz_template.format(
+                  test_suffix=test_suffix,
+                  test_flag=test_flag,
+                  set=set,
+                  appt_suffix=appt_suffix,
+                  appt_flag=appt_flag,
+                  group="practice",
+                  agg_suffix="",
+                  y_val=y_val,
+                  subgroup=subgroup,
+              )
+
+yaml_sense_check = " \n # --------------- SENSE CHECK ACTIONS ------------------------------------------"
+
+yaml_sense_check_template = """
+
+  generate_sense_check_{set}{appt_suffix}:
+    run: python:v2 analysis/sense_check.py --test --practice_measures --set {set}{appt_flag}
+    needs: [generate_practice_measures_{set}{appt_suffix}_test]
+    outputs:
+      moderately_sensitive:
+        totals: output/{group}_measures_{set}{appt_suffix}{agg_suffix}/sense_check*.csv
+"""
+
+for set in measure_sets:
+    for appt_suffix, appt_flag in zip(appt_variants, ["", " --appt"]):
+        yaml_sense_check += yaml_sense_check_template.format(
+            set=set,
+            appt_suffix=appt_suffix,
+            appt_flag=appt_flag,
+            group="practice",
+            agg_suffix="",
+        )
+
+yaml_other = """
+
+  # --------------- OTHER ACTIONS ------------------------------------------
+
+  # Assurance test
+  generate_dataset:
+    run: >
+        ehrql:v1 generate-dataset
+        analysis/dataset.py
+        --test-data-file analysis/test_dataset.py
+        --output output/dataset.csv
+    outputs:
+      highly_sensitive:
+        population: output/dataset.csv
+
+  # Analyse low appts practices
+  analyse_low_appts:
+    run: >
+      python:v2 analysis/analyse_low_appts.py
+      --set appts_table
+      --practice_subgroup_measures
+    needs: [generate_pre_processing_practice_subgroup_appts_table]
+    outputs:
+      moderately_sensitive:
+        low_appt_analysis: output/practice_subgroup_measures_appts_table/practice_subgroup_measures_demographics.csv
+
+  # Generate national weekly aggregates for a measure, for sense checking with other work packages.
+  generate_national_weekly:
+    run: python:v2 analysis/national_weekly.py
+    needs: [generate_practice_measures_resp_2023-04-03, generate_practice_measures_resp_2022-04-04]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/practice_measures_resp/national_weekly*.csv
+
+  # Troubleshoot duplicate rows in the raw measure outputs.
+  check_raw_measure_duplicates:
+    run: python:v2 analysis/check_raw_measure_duplicates.py --path output/practice_measures_resp/practice_measures_2023-04-03.arrow
+    needs: [generate_practice_measures_resp_2023-04-03]
+    outputs:
+      moderately_sensitive:
+        duplicate_summary: output/practice_measures_resp/duplicate_summary.csv
+  # Troubleshoot duplicate rows in the raw measure outputs.
+  check_raw_measure_duplicates_test:
+    run: python:v2 analysis/check_raw_measure_duplicates.py --path output/practice_measures_resp/practice_measures_2023-05-08_test.csv
+    needs: [generate_practice_measures_resp_test]
+    outputs:
+      moderately_sensitive:
+        duplicate_summary: output/practice_measures_resp/duplicate_summary_test.csv
+"""
+
+yaml_yearly = " \n # --------------- VISUALIZATION ACTIONS  WEEKLY------------------------------------------"
+
+yaml_yearly_template = """
+  # Weekly aggregates
+  generate_weekly_aggregates_{set}{test_suffix}:
+    run: python:v2 analysis/aggregate_weekly.py --practice{subgroup}_measures --set {set} {test_flag} 
+    needs: [generate_pre_processing_practice{subgroup}_{set}{test_suffix}]
+    outputs:
+      moderately_sensitive:
+        national_weekly_aggregates: output/{group}{subgroup}_measures_{set}_weeklyagg/*{test_suffix}.csv
+      highly_sensitive:
+        practice_weekly_aggregates: output/{group}{subgroup}_measures_{set}_weeklyagg/*{test_suffix}.arrow
+  generate_deciles_charts_{set}_weeklyagg{test_suffix}:
+    run: >
+      r:v2 analysis/decile_charts.r --practice{subgroup}_measures --weekly_agg --set {set} {test_flag}
+    needs: [generate_weekly_aggregates_{set}{test_suffix}] 
+    outputs:
+      moderately_sensitive:
+        deciles_charts: output/{group}{subgroup}_measures_{set}_weeklyagg/plots{test_suffix}/decile_chart_*_rate_mp6.png
+        deciles_table: output/{group}{subgroup}_measures_{set}_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+"""
+
+# Weekly aggregate for resp and appts_table measure sets only
+measure_sets.remove("sro")
+for measure_set in measure_sets:
+    for test_suffix, test_flag in zip(suffixes, test_flags):
+        if measure_set == "appts_table":
+            subgroup = "_subgroup"
+        else:
+            subgroup = ""
+        yaml_yearly += yaml_yearly_template.format(
+            test_suffix=test_suffix,
+            test_flag=test_flag,
+            group="practice",
+            set=measure_set,
+            subgroup=subgroup,
+        )
+
+# -------- Combine scripts and print file -----------
+
+yaml = (
+    yaml_header
+    + yaml_measures
+    + yaml_appt_report
+    + yaml_processing
+    + yaml_viz
+    + yaml_measures_test
+    + yaml_processing_test
+    + yaml_sense_check
+    + yaml_other
+    + yaml_yearly
+)
+
+with open("/workspaces/winter-pressures-phase-II/project.yaml", "w") as file:
+    file.write(yaml)

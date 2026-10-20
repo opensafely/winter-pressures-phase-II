@@ -6,7 +6,7 @@ library(scales)
 library(tidyr)
 
 # Import appointments data
-appointments <- read.csv('output/appointments/app_pivot_counts.csv')
+appointments <- read.csv("output/appointments/app_pivot_counts.csv")
 appointments$interval_start <- as.Date(appointments$interval_start)
 
 # ---- Overall heatmap ----------------------------------------------------------------
