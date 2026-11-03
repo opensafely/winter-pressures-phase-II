@@ -57,9 +57,8 @@ patient_df = patient_df[
     & (patient_df["measure"].str.contains("seen_in_interval"))
     & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
 ]
-patient_df.rename(columns={"denominator": "list_size"}, inplace=True)
 patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
-config["subgroups"].remove("stp")
+table_subgroups = [subgroup for subgroup in config["subgroups"] if subgroup != "stp"]
 
 if config["test"]:
     # Increase numerator and list_size for testing of downstream functions
@@ -67,32 +66,26 @@ if config["test"]:
     patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
     output_path = output_path + "_test"
 
-    #  ------------ Test Cases ---------------------------------------------
-
-    # 1 - Total list size check for seen_in_interval_sex
-    total_list_size = patient_df[patient_df["measure"] == "seen_in_interval_sex"][
-        "list_size"
-    ].sum()
-
 # ---------------  Create frequency table -----------------------------------------------
 
 table_one = {}
 # Iterate over all the demographic variables we want in table one
-for var in config["subgroups"]:
+for var in table_subgroups:
     # Create an binary matrix composed of indicator variables representing the categorical value for each group (e.g. cols ethnicity_black: 0, ethnicity_white: 1)
     # Multiply this matrix by the vector of list_sizes representing the size of the given group
     # Sum to get the total denominator value from all the groups (Sum(Categories x list_size))
     # e.g. (e.g. cols ethnicity_black: 0, ethnicity_white: 1, list_size: 500) -> 1 X 500 -> level: white, count: 500
+    var_df = patient_df[patient_df["measure"] == f"seen_in_interval_{var}"]
     table_one[var] = (
-        pd.get_dummies(patient_df[var])
-        .multiply(patient_df["list_size"], axis=0)
+        pd.get_dummies(var_df[var])
+        .multiply(var_df["list_size"], axis=0)
         .sum()
         .reset_index()
     )
     table_one[var].columns = ["level", "count"]
     # Round values
-    table_one[var]["count"] = roundmid_any(table_one[var]["count"], to=6)
-    table_one[var]["prop"] = table_one[var]["count"] / table_one[var]["count"].sum()
+    table_one[var] = roundmid_any(table_one[var], ["count"], to=6)
+    table_one[var]["prop"] = table_one[var]["count_mp6"] / table_one[var]["count_mp6"].sum()
 
 # Initialize an empty list to hold formatted DataFrames
 formatted_list = []
@@ -102,7 +95,7 @@ for key, df in table_one.items():
     # Add a column for the category (e.g., age, sex, ethnicity)
     df["Category"] = key
     # Append the DataFrame to the list
-    formatted_list.append(df[["Category", "level", "count", "prop"]])
+    formatted_list.append(df[["Category", "level", "count_mp6", "prop"]])
 
 # Concatenate all DataFrames into one
 result_df = pd.concat(formatted_list, axis=0, ignore_index=True)
@@ -110,25 +103,20 @@ result_df["prop"] = (result_df["prop"]) * 100
 
 # Add total row for each category
 total_row = (
-    result_df.groupby("Category").agg({"count": "sum", "prop": "sum"}).reset_index()
+    result_df.groupby("Category")
+    .agg({"count_mp6": "sum", "prop": "sum"})
+    .reset_index()
 )
 # Merge total row with the original DataFrame
 result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
 
 # Rename cols
-result_df.rename(
-    columns={
-        "count": "count_mp6",
-        "prop": "prop_mp6_derived",
-        "total": "total_mp6_derived",
-    },
-    inplace=True,
-)
+result_df.rename(columns={"prop": "prop_mp6_derived"}, inplace=True)
 
 # ------------- Test case check ----------------------------
 
 if config["test"]:
-    # 1 - Total list size check for seen_in_interval_sex
+    total_list_size = table_one["sex"]["count_mp6"].sum()
     test_total_list_size = result_df[
         (result_df["Category"] == "sex") & (result_df["level"] == "Total")
     ]["count_mp6"].iloc[0]
