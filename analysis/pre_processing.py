@@ -460,8 +460,7 @@ if config['group'] == "practice_subgroup":
         subgroup_dfs[subgroup]["subgroup"] = subgroup
         subgroup_dfs[subgroup]["measure"] = subgroup_dfs[subgroup]["measure"].str.replace(f"_{subgroup}$", "", regex=True)
 
-    # Concatenate all subgroups into one dataframe
-    practice_interval_df = pd.concat(subgroup_dfs.values(), ignore_index=True)
+    practice_interval_df = subgroup_dfs["sex"]
     del subgroup_dfs  # Free up memory
 
     # Aggregate to practice-week-measure level again to ensure no duplicates across subgroups
