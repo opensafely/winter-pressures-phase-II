@@ -305,20 +305,34 @@ for subgroup in config["subgroups"]:
     ]
     log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after pre-2016 filter")
 
-    # Remove practices with < 750 list size
-    if config["practice_measures"]:
-        print(
-            f"Number of practices before filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
-            flush=True,
-        )
-        measures_dict[subgroup] = measures_dict[subgroup][
-            (measures_dict[subgroup]["list_size"] > 750)
-        ]
-        print(
-            f"Number of practices after filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
-            flush=True,
-        )
-        log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after list_size > 750 filter")
+    # Record practice counts before filtering because the excluded rows will not
+    # be available to downstream table-one calculations.
+    practice_counts = measures_dict[subgroup].groupby("interval_start").agg(
+        n_practices_pre_list_size_filter=("practice_pseudo_id", "nunique"),
+        n_practices_post_list_size_filter=(
+            "practice_pseudo_id",
+            lambda ids: ids[measures_dict[subgroup].loc[ids.index, "list_size"] > 750].nunique(),
+        ),
+    )
+    measures_dict[subgroup] = measures_dict[subgroup].merge(
+        practice_counts,
+        left_on="interval_start",
+        right_index=True,
+        how="left",
+    )
+
+    print(
+        f"Number of practices before filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
+        flush=True,
+    )
+    measures_dict[subgroup] = measures_dict[subgroup][
+        (measures_dict[subgroup]["list_size"] > 750)
+    ]
+    print(
+        f"Number of practices after filtering: {measures_dict[subgroup]['practice_pseudo_id'].nunique()}",
+        flush=True,
+    )
+    log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after list_size > 750 filter")
 
     # Count total rsv_specific cases in 2023 for sense check
     if config["set"] == "resp":
