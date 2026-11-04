@@ -37,6 +37,7 @@ else:
 print(f"Loading {config['group']} measures {date}", flush=True)
 base_dir = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}"
 output_path = f"{base_dir}/freq_table_{config['group']}"
+last_interval_output_path = output_path + "_last_interval"
 
 patient_df_dict = {}
 for subgroup in config["subgroups"]:
@@ -46,85 +47,88 @@ for subgroup in config["subgroups"]:
 
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
 
-# 1. Extract first week of data
-# 2. Use seen_in_interval denominator, which will capture registered patients from all practices that had at least one appt per week
-# 3. Drop practice IDs and STPs as we can't release for discolosure control
-target_iso = date.isocalendar()
-interval_iso = patient_df["interval_start"].dt.isocalendar()
+# Keep only the seen-in-interval measure rows used for table one.
 patient_df = patient_df[
-    (interval_iso.year == target_iso[0])
-    & (interval_iso.week == target_iso[1])
-    & (patient_df["measure"].str.contains("seen_in_interval"))
+    (patient_df["measure"].str.contains("seen_in_interval"))
     & ~(patient_df["measure"].str.contains("practice_pseudo_id|stp"))
 ]
-patient_df.drop(columns=["practice_pseudo_id", "stp"], inplace=True)
+
 table_subgroups = [subgroup for subgroup in config["subgroups"] if subgroup != "stp"]
 
 if config["test"]:
-    # Increase numerator and list_size for testing of downstream functions
-    patient_df["numerator"] = np.random.randint(0, 1000, size=len(patient_df))
-    patient_df["list_size"] = np.random.randint(1000, 2000, size=len(patient_df))
     output_path = output_path + "_test"
+    last_interval_output_path = last_interval_output_path + "_test"
 
-# ---------------  Create frequency table -----------------------------------------------
 
-table_one = {}
-# Iterate over all the demographic variables we want in table one
-for var in table_subgroups:
-    # Create an binary matrix composed of indicator variables representing the categorical value for each group (e.g. cols ethnicity_black: 0, ethnicity_white: 1)
-    # Multiply this matrix by the vector of list_sizes representing the size of the given group
-    # Sum to get the total denominator value from all the groups (Sum(Categories x list_size))
-    # e.g. (e.g. cols ethnicity_black: 0, ethnicity_white: 1, list_size: 500) -> 1 X 500 -> level: white, count: 500
-    var_df = patient_df[patient_df["measure"] == f"seen_in_interval_{var}"]
-    table_one[var] = (
-        pd.get_dummies(var_df[var])
-        .multiply(var_df["list_size"], axis=0)
-        .sum()
+def create_frequency_table(patient_df, interval_start, output_path, check_total=False):
+    interval_df = patient_df[patient_df["interval_start"] == interval_start]
+
+    table_one = {}
+    for var in table_subgroups:
+        var_df = interval_df[interval_df["measure"] == f"seen_in_interval_{var}"]
+        table_one[var] = (
+            pd.get_dummies(var_df[var])
+            .multiply(var_df["list_size"], axis=0)
+            .sum()
+            .reset_index()
+        )
+        table_one[var].columns = ["level", "count"]
+        table_one[var] = roundmid_any(table_one[var], ["count"], to=6)
+        table_one[var]["prop"] = (
+            table_one[var]["count_mp6"] / table_one[var]["count_mp6"].sum()
+        )
+
+    formatted_list = []
+    for key, df in table_one.items():
+        df["Category"] = key
+        formatted_list.append(df[["Category", "level", "count_mp6", "prop"]])
+
+    result_df = pd.concat(formatted_list, axis=0, ignore_index=True)
+    result_df["prop"] = result_df["prop"] * 100
+
+    total_row = (
+        result_df.groupby("Category")
+        .agg({"count_mp6": "sum", "prop": "sum"})
         .reset_index()
     )
-    table_one[var].columns = ["level", "count"]
-    # Round values
-    table_one[var] = roundmid_any(table_one[var], ["count"], to=6)
-    table_one[var]["prop"] = table_one[var]["count_mp6"] / table_one[var]["count_mp6"].sum()
+    result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
 
-# Initialize an empty list to hold formatted DataFrames
-formatted_list = []
+    sex_df = interval_df[interval_df["measure"] == "seen_in_interval_sex"]
+    n_practices_before_filter = sex_df[
+        "n_practices_pre_list_size_filter"
+    ].iloc[0]
+    n_practices_after_filter = sex_df[
+        "n_practices_post_list_size_filter"
+    ].iloc[0]
+    practice_rows = pd.DataFrame(
+        {
+            "Category": ["n_practices", "n_practices"],
+            "level": ["pre_list_size_filter", "post_list_size_filter"],
+            "count_mp6": [n_practices_before_filter, n_practices_after_filter],
+            "prop": [np.nan, np.nan],
+        }
+    )
+    result_df = pd.concat([result_df, practice_rows], ignore_index=True)
+    result_df.rename(columns={"prop": "prop_mp6_derived"}, inplace=True)
 
-# Loop over each item in the dictionary
-for key, df in table_one.items():
-    # Add a column for the category (e.g., age, sex, ethnicity)
-    df["Category"] = key
-    # Append the DataFrame to the list
-    formatted_list.append(df[["Category", "level", "count_mp6", "prop"]])
+    if check_total:
+        total_list_size = table_one["sex"]["count_mp6"].sum()
+        test_total_list_size = result_df[
+            (result_df["Category"] == "sex") & (result_df["level"] == "Total")
+        ]["count_mp6"].iloc[0]
+        assert total_list_size == test_total_list_size, (
+            "Total list size for seen_in_interval_sex does not match expected value. "
+            f"Expected: {total_list_size}, Got: {test_total_list_size}"
+        )
 
-# Concatenate all DataFrames into one
-result_df = pd.concat(formatted_list, axis=0, ignore_index=True)
-result_df["prop"] = (result_df["prop"]) * 100
+    result_df.round(3).to_csv(output_path + ".csv", index=False)
 
-# Add total row for each category
-total_row = (
-    result_df.groupby("Category")
-    .agg({"count_mp6": "sum", "prop": "sum"})
-    .reset_index()
+
+create_frequency_table(patient_df, date, output_path, check_total=config["test"])
+
+last_interval = patient_df["interval_start"].max()
+create_frequency_table(
+    patient_df,
+    last_interval,
+    last_interval_output_path,
 )
-# Merge total row with the original DataFrame
-result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
-
-# Rename cols
-result_df.rename(columns={"prop": "prop_mp6_derived"}, inplace=True)
-
-# ------------- Test case check ----------------------------
-
-if config["test"]:
-    total_list_size = table_one["sex"]["count_mp6"].sum()
-    test_total_list_size = result_df[
-        (result_df["Category"] == "sex") & (result_df["level"] == "Total")
-    ]["count_mp6"].iloc[0]
-    assert (
-        total_list_size == test_total_list_size
-    ), f"Total list size for seen_in_interval_sex does not match expected value. Expected: {total_list_size}, Got: {test_total_list_size}"
-
-result_df = result_df.round(3)
-
-# Save processed file
-result_df.to_csv(output_path + ".csv", index=False)

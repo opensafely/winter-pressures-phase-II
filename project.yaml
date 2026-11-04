@@ -1500,6 +1500,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_appts_table/freq_table_practice.csv
+        freq_table_last_interval: output/practice_measures_appts_table/freq_table_practice_last_interval.csv
   generate_normalization_practice_appts_table:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table
     needs: [generate_pre_processing_practice_appts_table]
@@ -1522,6 +1523,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_appts_table_appt/freq_table_practice.csv
+        freq_table_last_interval: output/practice_measures_appts_table_appt/freq_table_practice_last_interval.csv
   generate_normalization_practice_appts_table_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table --appt
     needs: [generate_pre_processing_practice_appts_table_appt]
@@ -1544,6 +1546,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_sro/freq_table_practice.csv
+        freq_table_last_interval: output/practice_measures_sro/freq_table_practice_last_interval.csv
   generate_normalization_practice_sro:
     run: python:v2 analysis/normalization.py --practice_measures --set sro
     needs: [generate_pre_processing_practice_sro]
@@ -1566,6 +1569,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_sro_appt/freq_table_practice.csv
+        freq_table_last_interval: output/practice_measures_sro_appt/freq_table_practice_last_interval.csv
   generate_normalization_practice_sro_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --appt
     needs: [generate_pre_processing_practice_sro_appt]
@@ -1588,6 +1592,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_resp/freq_table_practice.csv
+        freq_table_last_interval: output/practice_measures_resp/freq_table_practice_last_interval.csv
   generate_normalization_practice_resp:
     run: python:v2 analysis/normalization.py --practice_measures --set resp
     needs: [generate_pre_processing_practice_resp]
@@ -1610,6 +1615,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_resp_appt/freq_table_practice.csv
+        freq_table_last_interval: output/practice_measures_resp_appt/freq_table_practice_last_interval.csv
   generate_normalization_practice_resp_appt:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --appt
     needs: [generate_pre_processing_practice_resp_appt]
@@ -1632,6 +1638,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_appts_table/freq_table_practice_subgroup.csv
+        freq_table_last_interval: output/practice_subgroup_measures_appts_table/freq_table_practice_subgroup_last_interval.csv
   generate_normalization_practice_subgroup_appts_table:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table
     needs: [generate_pre_processing_practice_subgroup_appts_table]
@@ -1654,6 +1661,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_appts_table_appt/freq_table_practice_subgroup.csv
+        freq_table_last_interval: output/practice_subgroup_measures_appts_table_appt/freq_table_practice_subgroup_last_interval.csv
   generate_normalization_practice_subgroup_appts_table_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --appt
     needs: [generate_pre_processing_practice_subgroup_appts_table_appt]
@@ -1676,6 +1684,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_sro/freq_table_practice_subgroup.csv
+        freq_table_last_interval: output/practice_subgroup_measures_sro/freq_table_practice_subgroup_last_interval.csv
   generate_normalization_practice_subgroup_sro:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro
     needs: [generate_pre_processing_practice_subgroup_sro]
@@ -1698,6 +1707,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_sro_appt/freq_table_practice_subgroup.csv
+        freq_table_last_interval: output/practice_subgroup_measures_sro_appt/freq_table_practice_subgroup_last_interval.csv
   generate_normalization_practice_subgroup_sro_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt
     needs: [generate_pre_processing_practice_subgroup_sro_appt]
@@ -1720,6 +1730,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_resp/freq_table_practice_subgroup.csv
+        freq_table_last_interval: output/practice_subgroup_measures_resp/freq_table_practice_subgroup_last_interval.csv
   generate_normalization_practice_subgroup_resp:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp
     needs: [generate_pre_processing_practice_subgroup_resp]
@@ -1742,6 +1753,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_resp_appt/freq_table_practice_subgroup.csv
+        freq_table_last_interval: output/practice_subgroup_measures_resp_appt/freq_table_practice_subgroup_last_interval.csv
   generate_normalization_practice_subgroup_resp_appt:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt
     needs: [generate_pre_processing_practice_subgroup_resp_appt]
@@ -2809,6 +2821,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_appts_table/freq_table_practice_test.csv
+        freq_table_last_interval: output/practice_measures_appts_table/freq_table_practice_last_interval_test.csv
   generate_normalization_practice_appts_table_test:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table --test
     needs: [generate_pre_processing_practice_appts_table_test]
@@ -2831,6 +2844,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_appts_table_appt/freq_table_practice_test.csv
+        freq_table_last_interval: output/practice_measures_appts_table_appt/freq_table_practice_last_interval_test.csv
   generate_normalization_practice_appts_table_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set appts_table --appt --test
     needs: [generate_pre_processing_practice_appts_table_appt_test]
@@ -2853,6 +2867,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_sro/freq_table_practice_test.csv
+        freq_table_last_interval: output/practice_measures_sro/freq_table_practice_last_interval_test.csv
   generate_normalization_practice_sro_test:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --test
     needs: [generate_pre_processing_practice_sro_test]
@@ -2875,6 +2890,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_sro_appt/freq_table_practice_test.csv
+        freq_table_last_interval: output/practice_measures_sro_appt/freq_table_practice_last_interval_test.csv
   generate_normalization_practice_sro_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set sro --appt --test
     needs: [generate_pre_processing_practice_sro_appt_test]
@@ -2897,6 +2913,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_resp/freq_table_practice_test.csv
+        freq_table_last_interval: output/practice_measures_resp/freq_table_practice_last_interval_test.csv
   generate_normalization_practice_resp_test:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --test
     needs: [generate_pre_processing_practice_resp_test]
@@ -2919,6 +2936,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_measures_resp_appt/freq_table_practice_test.csv
+        freq_table_last_interval: output/practice_measures_resp_appt/freq_table_practice_last_interval_test.csv
   generate_normalization_practice_resp_appt_test:
     run: python:v2 analysis/normalization.py --practice_measures --set resp --appt --test
     needs: [generate_pre_processing_practice_resp_appt_test]
@@ -2941,6 +2959,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_appts_table/freq_table_practice_subgroup_test.csv
+        freq_table_last_interval: output/practice_subgroup_measures_appts_table/freq_table_practice_subgroup_last_interval_test.csv
   generate_normalization_practice_subgroup_appts_table_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --test
     needs: [generate_pre_processing_practice_subgroup_appts_table_test]
@@ -2963,6 +2982,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_appts_table_appt/freq_table_practice_subgroup_test.csv
+        freq_table_last_interval: output/practice_subgroup_measures_appts_table_appt/freq_table_practice_subgroup_last_interval_test.csv
   generate_normalization_practice_subgroup_appts_table_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set appts_table --appt --test
     needs: [generate_pre_processing_practice_subgroup_appts_table_appt_test]
@@ -2985,6 +3005,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_sro/freq_table_practice_subgroup_test.csv
+        freq_table_last_interval: output/practice_subgroup_measures_sro/freq_table_practice_subgroup_last_interval_test.csv
   generate_normalization_practice_subgroup_sro_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --test
     needs: [generate_pre_processing_practice_subgroup_sro_test]
@@ -3007,6 +3028,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_sro_appt/freq_table_practice_subgroup_test.csv
+        freq_table_last_interval: output/practice_subgroup_measures_sro_appt/freq_table_practice_subgroup_last_interval_test.csv
   generate_normalization_practice_subgroup_sro_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set sro --appt --test
     needs: [generate_pre_processing_practice_subgroup_sro_appt_test]
@@ -3029,6 +3051,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_resp/freq_table_practice_subgroup_test.csv
+        freq_table_last_interval: output/practice_subgroup_measures_resp/freq_table_practice_subgroup_last_interval_test.csv
   generate_normalization_practice_subgroup_resp_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --test
     needs: [generate_pre_processing_practice_subgroup_resp_test]
@@ -3051,6 +3074,7 @@ actions:
     outputs:
       moderately_sensitive:
         freq_table: output/practice_subgroup_measures_resp_appt/freq_table_practice_subgroup_test.csv
+        freq_table_last_interval: output/practice_subgroup_measures_resp_appt/freq_table_practice_subgroup_last_interval_test.csv
   generate_normalization_practice_subgroup_resp_appt_test:
     run: python:v2 analysis/normalization.py --practice_subgroup_measures --set resp --appt --test
     needs: [generate_pre_processing_practice_subgroup_resp_appt_test]
