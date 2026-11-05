@@ -177,7 +177,7 @@ for date in dates:
 for subgroup in config["subgroups"]:
 
     # Save Concatenate yearly intervals into a single dataframe
-    measures_dict[subgroup] = pd.concat(measures_dict[subgroup])
+    measures_dict[subgroup] = pd.concat(measures_dict[subgroup], ignore_index=True)
 
     print(f"Data types of input: {measures_dict[subgroup].dtypes}", flush=True)
     log_duplicate_intervals(measures_dict[subgroup], f"{subgroup} after concat")

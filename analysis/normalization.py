@@ -55,16 +55,16 @@ practice_interval_df = practice_interval_df.loc[
 ]
 
 # Separate pandemic period from main dataset
-pandemic_df = practice_interval_df.loc[
-    practice_interval_df["pandemic"].isin(["During"])
-]
+# pandemic_df = practice_interval_df.loc[
+#     practice_interval_df["pandemic"].isin(["During"])
+# ]
 
-practice_interval_df = practice_interval_df.loc[
-    ~practice_interval_df["pandemic"].isin(["During"])
-]
-print(
-    f"2. Total numerator after filtering = {practice_interval_df['numerator'].sum()}, \nTotal denominator after filtering = {practice_interval_df['list_size'].sum()}, \nTotal practices after filtering = {practice_interval_df['practice_pseudo_id'].nunique()}"
-)
+# practice_interval_df = practice_interval_df.loc[
+#     ~practice_interval_df["pandemic"].isin(["During"])
+# ]
+# print(
+#     f"2. Total numerator after filtering = {practice_interval_df['numerator'].sum()}, \nTotal denominator after filtering = {practice_interval_df['list_size'].sum()}, \nTotal practices after filtering = {practice_interval_df['practice_pseudo_id'].nunique()}"
+# )
 
 wdays_log.append(f"2 - {practice_interval_df['wdays_in_interval'].max()}")
 
