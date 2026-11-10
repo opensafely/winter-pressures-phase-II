@@ -124,10 +124,15 @@ def create_frequency_table(patient_df, interval_start, output_path, check_total=
         {
             "Category": ["n_practices", "n_practices"],
             "level": ["pre_list_size_filter", "post_list_size_filter"],
-            "count_mp6": [n_practices_before_filter, n_practices_after_filter],
+            "count": [n_practices_before_filter, n_practices_after_filter],
             "prop": [np.nan, np.nan],
         }
     )
+
+    # Apply the same midpoint-6 rounding to practice counts as to subgroup
+    # list-size totals before adding them to the shared count_mp6 column.
+    practice_rows = roundmid_any(practice_rows, ["count"], to=6)
+
     # Add practice rows to the result dataframe
     result_df = pd.concat([result_df, practice_rows], ignore_index=True)
     result_df.rename(columns={"prop": "prop_mp6_derived"}, inplace=True)
