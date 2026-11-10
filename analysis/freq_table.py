@@ -45,6 +45,8 @@ for subgroup in config["subgroups"]:
     input_path = f"{base_dir}/proc_{config['group']}_measures_{subgroup}"
     patient_df_dict[subgroup] = read_write("read", input_path)
 
+# Combine the practice-level rows for all subgroup measures. The national
+# subgroup totals are produced below by summing across these practice rows.
 patient_df = pd.concat(patient_df_dict.values(), ignore_index=True)
 
 # Keep only the seen-in-interval measure rows used for table one.
@@ -61,11 +63,20 @@ if config["test"]:
 
 
 def create_frequency_table(patient_df, interval_start, output_path, check_total=False):
+    """
+    Create a frequency table for the given interval.
+    """
     interval_df = patient_df[patient_df["interval_start"] == interval_start]
 
     table_one = {}
+    
     for var in table_subgroups:
+        # Use the seen_in_interval measure for the variable to get the counts and proportions
         var_df = interval_df[interval_df["measure"] == f"seen_in_interval_{var}"]
+
+        # Create one indicator column per subgroup level and weight each
+        # practice by its list size. Summing across practices therefore gives
+        # the national list size for each subgroup level.
         table_one[var] = (
             pd.get_dummies(var_df[var])
             .multiply(var_df["list_size"], axis=0)
@@ -73,19 +84,26 @@ def create_frequency_table(patient_df, interval_start, output_path, check_total=
             .reset_index()
         )
         table_one[var].columns = ["level", "count"]
+
+        # Apply midpoint-6 rounding after practice list sizes have been
+        # summed, rather than rounding each practice contribution first.
         table_one[var] = roundmid_any(table_one[var], ["count"], to=6)
+
+        # Calculate proportions from the rounded national subgroup totals.
         table_one[var]["prop"] = (
             table_one[var]["count_mp6"] / table_one[var]["count_mp6"].sum()
         )
 
+    # Format the table one dataframes into a single dataframe 
     formatted_list = []
     for key, df in table_one.items():
         df["Category"] = key
         formatted_list.append(df[["Category", "level", "count_mp6", "prop"]])
-
     result_df = pd.concat(formatted_list, axis=0, ignore_index=True)
     result_df["prop"] = result_df["prop"] * 100
 
+    # Add a total row for each category from the rounded national subgroup
+    # counts shown in the table.
     total_row = (
         result_df.groupby("Category")
         .agg({"count_mp6": "sum", "prop": "sum"})
@@ -93,6 +111,8 @@ def create_frequency_table(patient_df, interval_start, output_path, check_total=
     )
     result_df = pd.concat([result_df, total_row.assign(level="Total")], ignore_index=True)
 
+    # Add practice rows - use the seen_in_interval_sex measure to get the number of practices before and after the list size filter
+    # because it is guaranteed to be present in all datasets
     sex_df = interval_df[interval_df["measure"] == "seen_in_interval_sex"]
     n_practices_before_filter = sex_df[
         "n_practices_pre_list_size_filter"
@@ -108,9 +128,11 @@ def create_frequency_table(patient_df, interval_start, output_path, check_total=
             "prop": [np.nan, np.nan],
         }
     )
+    # Add practice rows to the result dataframe
     result_df = pd.concat([result_df, practice_rows], ignore_index=True)
     result_df.rename(columns={"prop": "prop_mp6_derived"}, inplace=True)
 
+    # Add a check to ensure that the total list size for seen_in_interval_sex matches the expected value
     if check_total:
         total_list_size = table_one["sex"]["count_mp6"].sum()
         test_total_list_size = result_df[
