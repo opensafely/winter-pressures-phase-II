@@ -29,7 +29,7 @@ from pathlib import Path
 dates = generate_annual_dates(config["study_end_date"], config["n_years"])
 date_objects = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
 
-input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures_midpoint6"
+input_path = f"output/{config['group']}_measures_{config['set']}{config['appt_suffix']}/proc_{config['group']}_measures"
 
 if config["group"] == "practice_subgroup":
     # Use sex subgroup for practice-level aggregation as its required in inclusion criteria
@@ -48,7 +48,7 @@ if config["set"] == "resp":
     print(
         column_total_check(
             practice_interval_df,
-            column="numerator_midpoint6",
+            column="numerator",
             year=2023,
             measure_name="rsv_specific",
         )
@@ -59,29 +59,29 @@ if config["set"] == "resp":
 if config["test"]:
 
     # 1 - Specific_flu in 2023 with all practices having zero counts
-    practice_interval_df["numerator_midpoint6"] = np.where(
+    practice_interval_df["numerator"] = np.where(
         (practice_interval_df["measure"] == "flu_specific")
         & (practice_interval_df["interval_start"].dt.year == 2023),
         0,
-        practice_interval_df["numerator_midpoint6"],
+        practice_interval_df["numerator"],
     )
 
     # 2 - Specific RSV in 2024 with 1 practice with a rate of 0
     unique_practices = practice_interval_df["practice_pseudo_id"].unique()
     random_practice = random.choice(unique_practices.tolist())
-    practice_interval_df["numerator_midpoint6"] = np.where(
+    practice_interval_df["numerator"] = np.where(
         (practice_interval_df["measure"] == "rsv_specific")
         & (practice_interval_df["interval_start"].dt.year == 2024)
         & (practice_interval_df["practice_pseudo_id"] == random_practice),
         0,
-        practice_interval_df["numerator_midpoint6"],
+        practice_interval_df["numerator"],
     )
 
     # 3 - rsv_specific where all practices have list size = 100
-    practice_interval_df["list_size_midpoint6"] = np.where(
+    practice_interval_df["list_size"] = np.where(
         (practice_interval_df["measure"] == "rsv_specific"),
         100,
-        practice_interval_df["list_size_midpoint6"],
+        practice_interval_df["list_size"],
     )
 
     # 4 - 2025 having fewer practices than other years to test count of practices in national summary
@@ -102,11 +102,11 @@ if config["test"]:
     )
 
     # 5 - All practices have numerator = 10 for rsv_specific in 2024 to test numerator aggregation
-    practice_interval_df["numerator_midpoint6"] = np.where(
+    practice_interval_df["numerator"] = np.where(
         (practice_interval_df["measure"] == "rsv_specific")
         & (practice_interval_df["interval_start"].dt.year == 2024),
         10,
-        practice_interval_df["numerator_midpoint6"],
+        practice_interval_df["numerator"],
     )
 
 # -------- Aggregate practice-weekly to practice-yearly ----------------------------------
@@ -121,7 +121,7 @@ if config["set"] == "resp":
     print(
         column_total_check(
             practice_interval_df,
-            column="numerator_midpoint6",
+            column="numerator",
             year=2023,
             measure_name="rsv_specific",
         )
@@ -130,7 +130,7 @@ if config["set"] == "resp":
 practice_yearly_df = build_aggregate_df(
     practice_interval_df,
     ["measure", "practice_pseudo_id", "year"],
-    {"numerator_midpoint6": ["sum"]},
+    {"numerator": ["sum"]},
 )
 print(
     f"Number of practices: {practice_yearly_df[practice_yearly_df['year'] == 2025]['practice_pseudo_id'].nunique()}"
@@ -139,17 +139,27 @@ print(
 # For list size we want the value from the earliest interval in the year
 list_size_df = (
     practice_interval_df.sort_values(
-        by=["measure", "practice_pseudo_id", "year", "interval_start"]
+        by=        ["measure", "practice_pseudo_id", "year", "interval_start"]
     )
     .drop_duplicates(subset=["measure", "practice_pseudo_id", "year"], keep="first")[
-        ["measure", "practice_pseudo_id", "year", "list_size_midpoint6"]
+        ["measure", "practice_pseudo_id", "year", "list_size"]
     ]
-    .rename(columns={"list_size_midpoint6": "list_size_midpoint6_first"})
+    .rename(columns={"list_size": "list_size_first"})
 )
 
 # Merge earliest list size into practice-yearly frame
 practice_yearly_df = practice_yearly_df.merge(
     list_size_df, on=["measure", "practice_pseudo_id", "year"], how="left"
+)
+practice_yearly_df = roundmid_any(
+    practice_yearly_df, ["numerator_sum", "list_size_first"], to=6
+)
+practice_yearly_df.rename(
+    columns={
+        "numerator_sum_mp6": "numerator_midpoint6_sum",
+        "list_size_first_mp6": "list_size_midpoint6_first",
+    },
+    inplace=True,
 )
 
 # Identify practices with zero counts for the year
@@ -208,15 +218,10 @@ national_yearly_df = build_aggregate_df(
 )
 
 # Apply midpoint 6 rounding to zero_indicator columns
-national_yearly_df["zero_indicator_sum_mp6"] = roundmid_any(
-    national_yearly_df["zero_indicator_sum"], to=6
-)
-national_yearly_df["zero_indicator_count_mp6"] = roundmid_any(
-    national_yearly_df["zero_indicator_count"], to=6
-)
-# Drop original zero_indicator columns
-national_yearly_df.drop(
-    columns=["zero_indicator_sum", "zero_indicator_count"], inplace=True
+national_yearly_df = roundmid_any(
+    national_yearly_df,
+    ["zero_indicator_sum", "zero_indicator_count"],
+    to=6,
 )
 
 # Rename columns for clarity
@@ -310,12 +315,10 @@ if config["test"] and config["set"] == "resp":
     ]
     print("Test Output for rsv_specific in 2024:")
     print(test_output)
-    # Expect cum_sum to be 10 multiplied by observed practice-interval rows in 2024
-    expected_cum_sum = 10 * len(
-        practice_interval_df[
-            (practice_interval_df["measure"] == "rsv_specific")
-            & (practice_interval_df["interval_start"].dt.year == 2024)
-        ]
-    )
+    # National totals should equal the sum of rounded practice-year values.
+    expected_cum_sum = practice_yearly_df[
+        (practice_yearly_df["measure"] == "rsv_specific")
+        & (practice_yearly_df["year"] == 2024)
+    ]["numerator_midpoint6_sum"].sum()
 
     assert test_output["cum_sum_numerator_mp6"].values[0] == expected_cum_sum
