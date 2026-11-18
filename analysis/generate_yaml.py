@@ -394,12 +394,12 @@ yaml_yearly_template = """
         practice_weekly_aggregates: output/{group}{subgroup}_measures_{set}_weeklyagg/*{test_suffix}.arrow
   generate_deciles_charts_{set}_weeklyagg{test_suffix}:
     run: >
-      r:v2 analysis/decile_charts.r --practice{subgroup}_measures --weekly_agg --set {set} {test_flag}
+      r:v2 analysis/decile_charts.r --practice{subgroup}_measures --weekly_agg --set {set} --y_value rate_mp6{weekly_test_flag}
     needs: [generate_weekly_aggregates_{set}{test_suffix}] 
     outputs:
       moderately_sensitive:
-        deciles_charts: output/{group}{subgroup}_measures_{set}_weeklyagg/plots{test_suffix}/decile_chart_*_rate_mp6.png
-        deciles_table: output/{group}{subgroup}_measures_{set}_weeklyagg/decile_tables/decile_table_*_rate_mp6{test_suffix}.csv
+        deciles_charts: output/{group}{subgroup}_measures_{set}_weeklyagg/plots{test_suffix}/*rate_mp6.png
+        deciles_table: output/{group}{subgroup}_measures_{set}_weeklyagg/decile_tables/decile_table_*rate_mp6{test_suffix}.csv
 """
 
 # Weekly aggregate for resp and appts_table measure sets only
@@ -413,6 +413,7 @@ for measure_set in measure_sets:
         yaml_yearly += yaml_yearly_template.format(
             test_suffix=test_suffix,
             test_flag=test_flag,
+            weekly_test_flag=f" {test_flag}" if test_flag else "",
             group="practice",
             set=measure_set,
             subgroup=subgroup,

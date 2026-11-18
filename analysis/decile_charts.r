@@ -68,21 +68,28 @@ if (config$released == FALSE){
   else {
     print("Processing rates...")
 
-    input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/proc_{config$group}_measures")
+    input_name <- if (config$weekly_agg) {
+      glue("proc_{config$group}_measures_midpoint6")
+    } else {
+      glue("proc_{config$group}_measures")
+    }
+    input_path <- glue("output/{config$group}_measures_{config$set}{config$appt_suffix}{config$agg_suffix}/{input_name}")
     practice_measures <- read_write("read", input_path)
     print(head(practice_measures))
-    # Round rates
-    practice_measures <- practice_measures %>%
-      mutate(numerator_midpoint6 = roundmid_any(numerator), list_size_midpoint6 = roundmid_any(list_size))
+    if (!config$weekly_agg) {
+      # Round rates
+      practice_measures <- practice_measures %>%
+        mutate(numerator_midpoint6 = roundmid_any(numerator), list_size_midpoint6 = roundmid_any(list_size))
 
-    if (config$test) {
-        # Generate simulated rate data (since dummy data contains too many 0's to graph)
-        practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
-        practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)
+      if (config$test) {
+          # Generate simulated rate data (since dummy data contains too many 0's to graph)
+          practice_measures$numerator_midpoint6 <- sample(1:100, nrow(practice_measures), replace = TRUE)
+          practice_measures$list_size_midpoint6 <- sample(101:200, nrow(practice_measures), replace = TRUE)
+      }
+
+      # Calculate rate per 1000
+      practice_measures <- mutate(practice_measures, rate_per_1000_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval)
     }
-    
-    # Calculate rate per 1000
-    practice_measures <- mutate(practice_measures, rate_per_1000_wday_mp6 = ((numerator_midpoint6 / list_size_midpoint6) * 1000) / wdays_in_interval)
     practice_measures$interval_start <- as.Date(practice_measures$interval_start)
 
 
